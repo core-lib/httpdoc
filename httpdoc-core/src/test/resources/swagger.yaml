@@ -1,0 +1,48 @@
+httpdoc: "1.0.0"
+protocol: "http"
+hostname: "api.regentsoft.com"
+context: "/"
+description: null
+version: "v1"
+schemas:
+  Value:
+    superclass: "#/schemas/Product"
+    properties: {}
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-13 10:52"
+  Product:
+    superclass: "Object"
+    properties:
+      name: "String"
+      price: "Double"
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-12 19:35"
+  Gender:
+    superclass: "Enum"
+    constants:
+      MALE: "男"
+      FEMALE: "女"
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-13 13:29"
+  Girl:
+    superclass: "#/schemas/Person"
+    properties:
+      boyfriend: "#/schemas/Boy"
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-12 16:26"
+  Boy:
+    superclass: "#/schemas/Person"
+    properties:
+      girlfriend: "#/schemas/Girl"
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-12 16:26"
+  Person:
+    superclass: "Object"
+    properties:
+      age: "int"
+      attribute: "Map<String, Map<String, #/schemas/Value[]>>"
+      birthday: "Date"
+      children: "#/schemas/Person[][]"
+      father: "#/schemas/Person"
+      gender:
+        type: "#/schemas/Gender"
+        comment: "性别\n MALE: 男性\n FEMALE: 女性"
+      name: "String"
+      tags: "String[]"
+    comment: "@author 杨昌沛 646742615@qq.com\n @date 2018-04-12 15:53"
+controllers: []
