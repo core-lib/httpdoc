@@ -6,11 +6,14 @@ package io.httpdoc.core;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:41
  **/
-public class Parameter {
+public class Parameter extends Definition {
+    private static final long serialVersionUID = 8199679343694443326L;
+
     private int index;
     private String name;
     private String scope;
     private Schema schema;
+    private String description;
 
     public int getIndex() {
         return index;
@@ -43,4 +46,5 @@ public class Parameter {
     public void setSchema(Schema schema) {
         this.schema = schema;
     }
+
 }

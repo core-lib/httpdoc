@@ -8,7 +8,9 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:35
  **/
-public class Operator {
+public class Operation extends Definition {
+    private static final long serialVersionUID = 5078545277567296662L;
+
     private String name;
     private String method;
     private String path;
@@ -16,7 +18,6 @@ public class Operator {
     private List<String> consumes;
     private List<Parameter> parameters;
     private Result result;
-    private String comment;
 
     public String getName() {
         return name;
@@ -74,11 +75,4 @@ public class Operator {
         this.result = result;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }

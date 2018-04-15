@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.httpdoc.core.description.Describer;
+import io.httpdoc.core.description.NullDescriber;
+import io.httpdoc.core.exception.UnsupportedSchemaException;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -28,7 +31,9 @@ import java.util.*;
  **/
 @JsonSerialize(using = Schema.SchemaReferenceSerializer.class)
 @JsonDeserialize(using = Schema.SchemaReferenceDeserializer.class)
-public class Schema {
+public class Schema extends Definition {
+    private static final long serialVersionUID = 9146240988324413872L;
+
     public static final Map<Type, Schema> PROVIDED = new HashMap<>();
     public static final String PREFIX = "#/schemas/";
 
@@ -64,9 +69,8 @@ public class Schema {
 
     private boolean provided;
     private String name;
-    private Schema parent;
+    private Schema superclass;
     private Map<String, Property> properties;
-    private String comment;
     private Schema component;
     private Constant[] constants;
     private final Collection<Schema> dependencies;
@@ -84,57 +88,61 @@ public class Schema {
         this.definitions = null;
     }
 
-    public Schema(Map<String, Object> definitions) {
+    private Schema(Map<String, Object> definitions) {
         this.dependencies = null;
         this.definitions = definitions;
     }
 
-    private Schema(Type type, Map<Type, Schema> cache) throws Exception {
+    private Schema(Type type, Map<Type, Schema> cache, Describer describer) throws Exception {
         try {
             cache.put(type, this);
             if (type instanceof Class<?>) {
                 Class<?> clazz = (Class<?>) type;
                 if (clazz.isArray()) {
-                    name = ARRAY;
-                    component = Schema.valueOf(clazz.getComponentType(), cache);
-                    provided = true;
+                    this.name = ARRAY;
+                    this.component = Schema.valueOf(clazz.getComponentType(), cache, describer);
+                    this.provided = true;
                     cache.remove(type);
                 } else if (Collection.class.isAssignableFrom(clazz)) {
-                    name = ARRAY;
-                    component = Schema.valueOf(Object.class, cache);
-                    provided = true;
+                    this.name = ARRAY;
+                    this.component = Schema.valueOf(Object.class, cache, describer);
+                    this.provided = true;
                     cache.remove(type);
                 } else if (Map.class.isAssignableFrom(clazz)) {
-                    name = MAP;
-                    component = Schema.valueOf(Object.class, cache);
-                    provided = true;
+                    this.name = MAP;
+                    this.component = Schema.valueOf(Object.class, cache, describer);
+                    this.provided = true;
                     cache.remove(type);
                 } else if (clazz.isEnum()) {
-                    name = clazz.getSimpleName();
-                    parent = Schema.valueOf(clazz.getSuperclass(), cache);
-                    Object[] enumerations = clazz.getEnumConstants();
-                    constants = new Constant[enumerations.length];
+                    Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
+                    this.name = clazz.getSimpleName();
+                    this.superclass = Schema.valueOf(clazz.getSuperclass(), cache, describer);
+                    Enum<?>[] enumerations = enumClass.getEnumConstants();
+                    this.constants = new Constant[enumerations.length];
                     for (int i = 0; i < enumerations.length; i++) {
-                        String constant = enumerations[i].toString();
-                        String comment = DocKit.forConstant(clazz, constant);
-                        constants[i] = new Constant(constant, comment);
+                        Enum<?> constant = enumerations[i];
+                        String description = describer.describe(constant);
+                        this.constants[i] = new Constant(constant.name(), description);
                     }
-                    comment = DocKit.forClass(clazz);
+                    this.description = describer.describe(clazz);
                 } else {
-                    name = clazz.getSimpleName();
-                    parent = Schema.valueOf(clazz.getSuperclass(), cache);
+                    this.name = clazz.getSimpleName();
+                    this.superclass = Schema.valueOf(clazz.getSuperclass(), cache, describer);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-                    properties = new LinkedHashMap<>();
+                    this.properties = new LinkedHashMap<>();
                     for (PropertyDescriptor pd : descriptors) {
                         String field = pd.getName();
                         if (field.equals("class")) continue;
                         Method getter = pd.getReadMethod();
                         if (getter.getDeclaringClass() != clazz) continue;
                         Type rtype = getter.getGenericReturnType();
-                        Property property = new Property(Schema.valueOf(rtype, cache), DocKit.forField(clazz, field));
-                        properties.put(field, property);
+                        Schema schema = Schema.valueOf(rtype, cache, describer);
+                        String description = describer.describe(getter);
+                        if (description == null) describer.describe(clazz.getDeclaredField(field));
+                        Property property = new Property(schema, description);
+                        this.properties.put(field, property);
                     }
-                    comment = DocKit.forClass(clazz);
+                    this.description = describer.describe(clazz);
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType ptype = (ParameterizedType) type;
@@ -143,27 +151,27 @@ public class Schema {
                     Class<?> clazz = (Class<?>) rtype;
                     if (Collection.class.isAssignableFrom(clazz)) {
                         Type atype = ptype.getActualTypeArguments()[0];
-                        name = ARRAY;
-                        component = Schema.valueOf(atype, cache);
-                        provided = true;
+                        this.name = ARRAY;
+                        this.component = Schema.valueOf(atype, cache, describer);
+                        this.provided = true;
                         cache.remove(type);
                     } else if (Map.class.isAssignableFrom(clazz)) {
                         Type atype = ptype.getActualTypeArguments()[1];
-                        name = MAP;
-                        component = Schema.valueOf(atype, cache);
-                        provided = true;
+                        this.name = MAP;
+                        this.component = Schema.valueOf(atype, cache, describer);
+                        this.provided = true;
                         cache.remove(type);
                     } else {
-                        throw new IllegalArgumentException("unsupported type : " + rtype);
+                        throw new UnsupportedSchemaException(rtype);
                     }
                 } else {
-                    throw new IllegalArgumentException("unsupported type : " + type);
+                    throw new UnsupportedSchemaException(type);
                 }
             } else {
-                throw new IllegalArgumentException("unsupported type : " + type);
+                throw new UnsupportedSchemaException(type);
             }
-            dependencies = new HashSet<>(cache.values());
-            definitions = null;
+            this.dependencies = new HashSet<>(cache.values());
+            this.definitions = null;
         } catch (Exception e) {
             cache.remove(type);
             throw e;
@@ -171,15 +179,18 @@ public class Schema {
     }
 
     public static Schema valueOf(Type type) throws Exception {
-        Map<Type, Schema> map = new HashMap<>();
-        return valueOf(type, map);
+        return valueOf(type, new NullDescriber());
     }
 
-    private static Schema valueOf(Type type, Map<Type, Schema> cache) throws Exception {
-        Schema provided = PROVIDED.get(type);
-        if (provided != null) return provided;
+    public static Schema valueOf(Type type, Describer describer) throws Exception {
+        Map<Type, Schema> map = new HashMap<>();
+        return valueOf(type, map, describer);
+    }
+
+    private static Schema valueOf(Type type, Map<Type, Schema> cache, Describer describer) throws Exception {
+        if (Schema.PROVIDED.containsKey(type)) return Schema.PROVIDED.get(type);
         Schema schema = cache.get(type);
-        return schema != null ? schema : new Schema(type, cache);
+        return schema != null ? schema : new Schema(type, cache, describer);
     }
 
     public boolean isProvided() {
@@ -198,12 +209,12 @@ public class Schema {
         this.name = name;
     }
 
-    public Schema getParent() {
-        return parent;
+    public Schema getSuperclass() {
+        return superclass;
     }
 
-    public void setParent(Schema parent) {
-        this.parent = parent;
+    public void setSuperclass(Schema superclass) {
+        this.superclass = superclass;
     }
 
     public Map<String, Property> getProperties() {
@@ -212,14 +223,6 @@ public class Schema {
 
     public void setProperties(Map<String, Property> properties) {
         this.properties = properties;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public Schema getComponent() {
@@ -268,10 +271,10 @@ public class Schema {
                 String name = entry.getKey();
                 Schema schema = entry.getValue();
                 gen.writeObjectFieldStart(name);
-                if (schema.parent != null) gen.writeObjectField("superclass", schema.parent);
+                if (schema.superclass != null) gen.writeObjectField("superclass", schema.superclass);
                 if (schema.constants != null) {
                     gen.writeObjectFieldStart("constants");
-                    for (Constant constant : schema.constants) gen.writeStringField(constant.getName(), constant.getComment());
+                    for (Constant constant : schema.constants) gen.writeStringField(constant.getName(), constant.getDescription());
                     gen.writeEndObject();
                 }
                 if (schema.properties != null) {
@@ -279,19 +282,19 @@ public class Schema {
                     for (Map.Entry<String, Property> e : schema.properties.entrySet()) {
                         String field = e.getKey();
                         String clazz = e.getValue().toString();
-                        String comment = e.getValue().getComment();
-                        if (comment == null || comment.trim().equals("")) {
+                        String description = e.getValue().getDescription();
+                        if (description == null || description.trim().equals("")) {
                             gen.writeStringField(field, clazz);
                         } else {
                             gen.writeObjectFieldStart(field);
                             gen.writeStringField("type", clazz);
-                            gen.writeStringField("comment", comment);
+                            gen.writeStringField("description", description);
                             gen.writeEndObject();
                         }
                     }
                     gen.writeEndObject();
                 }
-                if (schema.comment != null) gen.writeStringField("comment", schema.comment);
+                if (schema.description != null) gen.writeStringField("description", schema.description);
                 gen.writeEndObject();
             }
             gen.writeEndObject();
@@ -322,8 +325,8 @@ public class Schema {
                     switch (definition.getKey()) {
                         case "superclass":
                             String superclass = (String) value;
-                            if (superclass.startsWith(PREFIX)) schema.parent = schemas.get(superclass.substring(PREFIX.length()));
-                            else schema.parent = new Schema(superclass);
+                            if (superclass.startsWith(PREFIX)) schema.superclass = schemas.get(superclass.substring(PREFIX.length()));
+                            else schema.superclass = new Schema(superclass);
                             break;
                         case "constants":
                             if (value.getClass().isArray()) {
@@ -339,7 +342,11 @@ public class Schema {
                                 Map<?, ?> map = (Map<?, ?>) value;
                                 schema.constants = new Constant[map.size()];
                                 int index = 0;
-                                for (Map.Entry<?, ?> constant : map.entrySet()) schema.constants[index++] = new Constant(constant.getKey().toString(), constant.getValue().toString());
+                                for (Map.Entry<?, ?> constant : map.entrySet()) {
+                                    String name = (String) constant.getKey();
+                                    String description = (String) constant.getValue();
+                                    schema.constants[index++] = new Constant(name, description);
+                                }
                             }
                             break;
                         case "properties":
@@ -354,14 +361,14 @@ public class Schema {
                                 } else {
                                     Map<?, ?> map = (Map<?, ?>) clazz;
                                     Object type = map.get("type");
-                                    Object comment = map.get("comment");
+                                    Object description = map.get("description");
                                     String expression = (String) type;
-                                    schema.properties.put(name, new Property(convert(schemas, expression), (String) comment));
+                                    schema.properties.put(name, new Property(convert(schemas, expression), (String) description));
                                 }
                             }
                             break;
-                        case "comment":
-                            schema.comment = value.toString();
+                        case "description":
+                            schema.description = value.toString();
                             break;
                         default:
                             break;

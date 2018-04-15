@@ -4,9 +4,10 @@ package io.httpdoc.core;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-13 14:16
  **/
-public class Constant {
+public class Constant extends Definition {
+    private static final long serialVersionUID = 852426625919743178L;
+
     private String name;
-    private String comment;
 
     public Constant() {
     }
@@ -15,9 +16,9 @@ public class Constant {
         this.name = name;
     }
 
-    public Constant(String name, String comment) {
+    public Constant(String name, String description) {
         this.name = name;
-        this.comment = comment;
+        this.description = description;
     }
 
     public String getName() {
@@ -28,11 +29,4 @@ public class Constant {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }

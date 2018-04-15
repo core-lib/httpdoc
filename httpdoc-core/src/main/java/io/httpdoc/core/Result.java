@@ -6,8 +6,11 @@ package io.httpdoc.core;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:42
  **/
-public class Result {
+public class Result extends Definition {
+    private static final long serialVersionUID = -228264825667769977L;
+
     private Schema schema;
+    private String description;
 
     public Schema getSchema() {
         return schema;
@@ -16,4 +19,5 @@ public class Result {
     public void setSchema(Schema schema) {
         this.schema = schema;
     }
+
 }

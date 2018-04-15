@@ -12,12 +12,13 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 19:06
  **/
-public class Document {
+public class Document extends Definition {
+    private static final long serialVersionUID = 4240537886514527060L;
+
     private String httpdoc;
     private String protocol;
     private String hostname;
     private String context;
-    private String description;
     private String version;
     private List<Controller> controllers;
     private Map<String, Schema> schemas;
@@ -52,14 +53,6 @@ public class Document {
 
     public void setContext(String context) {
         this.context = context;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getVersion() {

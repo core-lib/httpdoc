@@ -6,9 +6,11 @@ package io.httpdoc.core;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:43
  **/
-public class Property {
+public class Property extends Definition {
+    private static final long serialVersionUID = 5280642997370612295L;
+
     private Schema schema;
-    private String comment;
+    private String description;
 
     public Property() {
     }
@@ -17,9 +19,9 @@ public class Property {
         this.schema = schema;
     }
 
-    Property(Schema schema, String comment) {
+    Property(Schema schema, String description) {
         this.schema = schema;
-        this.comment = comment;
+        this.description = description;
     }
 
     public Schema getSchema() {
@@ -28,14 +30,6 @@ public class Property {
 
     public void setSchema(Schema schema) {
         this.schema = schema;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     @Override

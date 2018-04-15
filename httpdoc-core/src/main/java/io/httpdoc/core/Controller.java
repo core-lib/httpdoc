@@ -8,13 +8,14 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:35
  **/
-public class Controller {
+public class Controller extends Definition {
+    private static final long serialVersionUID = -8892526543537266934L;
+
     private String name;
     private String path;
     private List<String> produces;
     private List<String> consumes;
-    private List<Operator> operators;
-    private String comment;
+    private List<Operation> operations;
 
     public String getName() {
         return name;
@@ -48,19 +49,12 @@ public class Controller {
         this.consumes = consumes;
     }
 
-    public List<Operator> getOperators() {
-        return operators;
+    public List<Operation> getOperations() {
+        return operations;
     }
 
-    public void setOperators(List<Operator> operators) {
-        this.operators = operators;
+    public void setOperations(List<Operation> operations) {
+        this.operations = operations;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }
