@@ -94,4 +94,28 @@ public abstract class StandardCompiler implements Compiler {
         return map;
     }
 
+    protected static String format(Schema schema) {
+        if (schema == null) return "Object";
+        Category category = schema.getCategory();
+        switch (category) {
+            case BASIC:
+                return schema.getName();
+            case DICTIONARY:
+                return "Dictionary<String, " + format(schema.getComponent()) + ">";
+            case ARRAY:
+                return format(schema.getComponent()) + "[]";
+            case ENUM:
+                return "@/schemas/" + schema.getName();
+            case OBJECT:
+                return "@/schemas/" + schema.getName();
+            default:
+                return null;
+        }
+    }
+
+    public static void main(String... args) throws Exception {
+        Schema schema = Schema.valueOf(Schema.class);
+        System.out.println(format(schema));
+    }
+
 }
