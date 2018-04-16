@@ -1,8 +1,5 @@
 package io.httpdoc.core;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +15,7 @@ public class Document extends Definition {
     private String httpdoc;
     private String protocol;
     private String hostname;
-    private String context;
+    private String ctxtpath;
     private String version;
     private List<Controller> controllers;
     private Map<String, Schema> schemas;
@@ -47,12 +44,12 @@ public class Document extends Definition {
         this.hostname = hostname;
     }
 
-    public String getContext() {
-        return context;
+    public String getCtxtpath() {
+        return ctxtpath;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setCtxtpath(String ctxtpath) {
+        this.ctxtpath = ctxtpath;
     }
 
     public String getVersion() {
@@ -71,8 +68,6 @@ public class Document extends Definition {
         this.controllers = controllers;
     }
 
-    @JsonSerialize(using = Schema.SchemaDefinitionSerializer.class)
-    @JsonDeserialize(using = Schema.SchemaDefinitionDeserializer.class)
     public Map<String, Schema> getSchemas() {
         return schemas;
     }
@@ -80,6 +75,5 @@ public class Document extends Definition {
     public void setSchemas(Map<String, Schema> schemas) {
         this.schemas = schemas;
     }
-
 
 }

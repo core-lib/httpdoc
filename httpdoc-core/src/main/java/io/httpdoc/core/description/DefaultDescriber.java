@@ -1,9 +1,10 @@
 package io.httpdoc.core.description;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class NullDescriber implements Describer {
+public class DefaultDescriber implements Describer {
 
     @Override
     public String describe(Class<?> clazz) {
@@ -22,6 +23,11 @@ public class NullDescriber implements Describer {
 
     @Override
     public String describe(Enum<?> constant) {
+        return null;
+    }
+
+    @Override
+    public String describe(PropertyDescriptor descriptor) {
         return null;
     }
 }

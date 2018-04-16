@@ -38,3 +38,161 @@ schemas:
     superclass: "#/schemas/Person"
     properties:
       girlfriend: "#/schemas/Girl"
+
+ public static class SchemaDefinitionSerializer extends JsonSerializer<Map<String, Schema>> {
+
+        @Override
+        public void serialize(Map<String, Schema> schemas, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+            for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
+                String name = entry.getKey();
+                Schema schema = entry.getValue();
+                gen.writeObjectFieldStart(name);
+                if (schema.superclass != null) gen.writeObjectField("superclass", schema.superclass);
+                if (schema.constants != null) {
+                    gen.writeObjectFieldStart("constants");
+                    for (Constant constant : schema.constants) gen.writeStringField(constant.getName(), constant.getDescription());
+                    gen.writeEndObject();
+                }
+                if (schema.properties != null) {
+                    gen.writeObjectFieldStart("properties");
+                    for (Map.Entry<String, Property> e : schema.properties.entrySet()) {
+                        String field = e.getKey();
+                        String clazz = e.getValue().toString();
+                        String description = e.getValue().getDescription();
+                        if (description == null || description.trim().equals("")) {
+                            gen.writeStringField(field, clazz);
+                        } else {
+                            gen.writeObjectFieldStart(field);
+                            gen.writeStringField("type", clazz);
+                            gen.writeStringField("description", description);
+                            gen.writeEndObject();
+                        }
+                    }
+                    gen.writeEndObject();
+                }
+                if (schema.description != null) gen.writeStringField("description", schema.description);
+                gen.writeEndObject();
+            }
+            gen.writeEndObject();
+        }
+
+    }
+
+public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<String, Schema>> {
+
+        @Override
+        public Map<String, Schema> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+            Map<String, Schema> schemas = new LinkedHashMap<>();
+            Map<String, Map<String, Object>> map = jp.readValueAs(new TypeReference<Map<String, Map<String, Object>>>() {
+            });
+            for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) schemas.put(entry.getKey(), new Schema(entry.getValue()));
+            assemble(schemas);
+            return schemas;
+        }
+
+        private void assemble(Map<String, Schema> schemas) {
+            for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
+                Schema schema = entry.getValue();
+                schema.name = entry.getKey();
+                Map<String, Object> definitions = schema.definitions;
+                assert definitions != null;
+                for (Map.Entry<String, Object> definition : definitions.entrySet()) {
+                    Object value = definition.getValue();
+                    switch (definition.getKey()) {
+                        case "superclass":
+                            String superclass = (String) value;
+                            if (superclass.startsWith(PREFIX)) schema.superclass = schemas.get(superclass.substring(PREFIX.length()));
+                            else schema.superclass = new Schema(superclass);
+                            break;
+                        case "constants":
+                            if (value.getClass().isArray()) {
+                                int length = Array.getLength(value);
+                                schema.constants = new Constant[length];
+                                for (int i = 0; i < length; i++) schema.constants[i] = new Constant(Array.get(value, i).toString());
+                            } else if (value instanceof Collection<?>) {
+                                Collection<?> collection = (Collection<?>) value;
+                                schema.constants = new Constant[collection.size()];
+                                int index = 0;
+                                for (Object constant : collection) schema.constants[index++] = new Constant(constant.toString());
+                            } else if (value instanceof Map<?, ?>) {
+                                Map<?, ?> map = (Map<?, ?>) value;
+                                schema.constants = new Constant[map.size()];
+                                int index = 0;
+                                for (Map.Entry<?, ?> constant : map.entrySet()) {
+                                    String name = (String) constant.getKey();
+                                    String description = (String) constant.getValue();
+                                    schema.constants[index++] = new Constant(name, description);
+                                }
+                            }
+                            break;
+                        case "properties":
+                            Map<?, ?> properties = (Map<?, ?>) value;
+                            schema.properties = new LinkedHashMap<>(properties.size());
+                            for (Map.Entry<?, ?> property : properties.entrySet()) {
+                                String name = property.getKey().toString();
+                                Object clazz = property.getValue();
+                                if (clazz instanceof String) {
+                                    String expression = (String) clazz;
+                                    schema.properties.put(name, new Property(convert(schemas, expression)));
+                                } else {
+                                    Map<?, ?> map = (Map<?, ?>) clazz;
+                                    Object type = map.get("type");
+                                    Object description = map.get("description");
+                                    String expression = (String) type;
+                                    schema.properties.put(name, new Property(convert(schemas, expression), (String) description));
+                                }
+                            }
+                            break;
+                        case "description":
+                            schema.description = value.toString();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        private Schema convert(Map<String, Schema> schemas, String expression) {
+            expression = expression.replace(" ", "");
+            Schema schema;
+            if (expression.startsWith(PREFIX)) {
+                String name = expression.replace("[]", "").substring(PREFIX.length());
+                schema = schemas.get(name);
+            } else if (expression.startsWith(MAP)) {
+                String component = expression.substring((MAP + "<String,").length(), expression.length() - 1);
+                schema = new Schema(MAP);
+                schema.component = convert(schemas, component);
+            } else {
+                String name = expression.replace("[]", "");
+                schema = new Schema(name);
+            }
+            while (expression.endsWith("[]")) {
+                Schema array = new Schema(ARRAY);
+                array.component = schema;
+                schema = array;
+                expression = expression.substring(0, expression.length() - 2);
+            }
+            return schema;
+        }
+
+    }
+
+    public static class SchemaReferenceSerializer extends JsonSerializer<Schema> {
+
+        @Override
+        public void serialize(Schema schema, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeString(schema.toString());
+        }
+
+    }
+
+    public static class SchemaReferenceDeserializer extends JsonDeserializer<Schema> {
+
+        @Override
+        public Schema deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            return null;
+        }
+
+    }
