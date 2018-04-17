@@ -46,17 +46,17 @@ schemas:
             gen.writeStartObject();
             for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
                 String name = entry.getKey();
-                Schema schema = entry.getValue();
+                Schema type = entry.getValue();
                 gen.writeObjectFieldStart(name);
-                if (schema.superclass != null) gen.writeObjectField("superclass", schema.superclass);
-                if (schema.constants != null) {
+                if (type.superclass != null) gen.writeObjectField("superclass", type.superclass);
+                if (type.constants != null) {
                     gen.writeObjectFieldStart("constants");
-                    for (Constant constant : schema.constants) gen.writeStringField(constant.getName(), constant.getDescription());
+                    for (Constant constant : type.constants) gen.writeStringField(constant.getName(), constant.getDescription());
                     gen.writeEndObject();
                 }
-                if (schema.properties != null) {
+                if (type.properties != null) {
                     gen.writeObjectFieldStart("properties");
-                    for (Map.Entry<String, Property> e : schema.properties.entrySet()) {
+                    for (Map.Entry<String, Property> e : type.properties.entrySet()) {
                         String field = e.getKey();
                         String clazz = e.getValue().toString();
                         String description = e.getValue().getDescription();
@@ -71,7 +71,7 @@ schemas:
                     }
                     gen.writeEndObject();
                 }
-                if (schema.description != null) gen.writeStringField("description", schema.description);
+                if (type.description != null) gen.writeStringField("description", type.description);
                 gen.writeEndObject();
             }
             gen.writeEndObject();
@@ -93,59 +93,59 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
 
         private void assemble(Map<String, Schema> schemas) {
             for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
-                Schema schema = entry.getValue();
-                schema.name = entry.getKey();
-                Map<String, Object> definitions = schema.definitions;
+                Schema type = entry.getValue();
+                type.name = entry.getKey();
+                Map<String, Object> definitions = type.definitions;
                 assert definitions != null;
                 for (Map.Entry<String, Object> definition : definitions.entrySet()) {
                     Object value = definition.getValue();
                     switch (definition.getKey()) {
                         case "superclass":
                             String superclass = (String) value;
-                            if (superclass.startsWith(PREFIX)) schema.superclass = schemas.get(superclass.substring(PREFIX.length()));
-                            else schema.superclass = new Schema(superclass);
+                            if (superclass.startsWith(PREFIX)) type.superclass = schemas.get(superclass.substring(PREFIX.length()));
+                            else type.superclass = new Schema(superclass);
                             break;
                         case "constants":
                             if (value.getClass().isArray()) {
                                 int length = Array.getLength(value);
-                                schema.constants = new Constant[length];
-                                for (int i = 0; i < length; i++) schema.constants[i] = new Constant(Array.get(value, i).toString());
+                                type.constants = new Constant[length];
+                                for (int i = 0; i < length; i++) type.constants[i] = new Constant(Array.get(value, i).toString());
                             } else if (value instanceof Collection<?>) {
                                 Collection<?> collection = (Collection<?>) value;
-                                schema.constants = new Constant[collection.size()];
+                                type.constants = new Constant[collection.size()];
                                 int index = 0;
-                                for (Object constant : collection) schema.constants[index++] = new Constant(constant.toString());
+                                for (Object constant : collection) type.constants[index++] = new Constant(constant.toString());
                             } else if (value instanceof Map<?, ?>) {
                                 Map<?, ?> map = (Map<?, ?>) value;
-                                schema.constants = new Constant[map.size()];
+                                type.constants = new Constant[map.size()];
                                 int index = 0;
                                 for (Map.Entry<?, ?> constant : map.entrySet()) {
                                     String name = (String) constant.getKey();
                                     String description = (String) constant.getValue();
-                                    schema.constants[index++] = new Constant(name, description);
+                                    type.constants[index++] = new Constant(name, description);
                                 }
                             }
                             break;
                         case "properties":
                             Map<?, ?> properties = (Map<?, ?>) value;
-                            schema.properties = new LinkedHashMap<>(properties.size());
+                            type.properties = new LinkedHashMap<>(properties.size());
                             for (Map.Entry<?, ?> property : properties.entrySet()) {
                                 String name = property.getKey().toString();
                                 Object clazz = property.getValue();
                                 if (clazz instanceof String) {
                                     String expression = (String) clazz;
-                                    schema.properties.put(name, new Property(doConvertControllers(schemas, expression)));
+                                    type.properties.put(name, new Property(doConvertControllers(schemas, expression)));
                                 } else {
                                     Map<?, ?> map = (Map<?, ?>) clazz;
                                     Object type = map.get("type");
                                     Object description = map.get("description");
                                     String expression = (String) type;
-                                    schema.properties.put(name, new Property(doConvertControllers(schemas, expression), (String) description));
+                                    type.properties.put(name, new Property(doConvertControllers(schemas, expression), (String) description));
                                 }
                             }
                             break;
                         case "description":
-                            schema.description = value.toString();
+                            type.description = value.toString();
                             break;
                         default:
                             break;
@@ -156,25 +156,25 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
 
         private Schema doConvertControllers(Map<String, Schema> schemas, String expression) {
             expression = expression.replace(" ", "");
-            Schema schema;
+            Schema type;
             if (expression.startsWith(PREFIX)) {
                 String name = expression.replace("[]", "").substring(PREFIX.length());
-                schema = schemas.get(name);
+                type = schemas.get(name);
             } else if (expression.startsWith(MAP)) {
                 String component = expression.substring((MAP + "<String,").length(), expression.length() - 1);
-                schema = new Schema(MAP);
-                schema.component = doConvertControllers(schemas, component);
+                type = new Schema(MAP);
+                type.component = doConvertControllers(schemas, component);
             } else {
                 String name = expression.replace("[]", "");
-                schema = new Schema(name);
+                type = new Schema(name);
             }
             while (expression.endsWith("[]")) {
                 Schema array = new Schema(ARRAY);
-                array.component = schema;
-                schema = array;
+                array.component = type;
+                type = array;
                 expression = expression.substring(0, expression.length() - 2);
             }
-            return schema;
+            return type;
         }
 
     }
@@ -182,8 +182,8 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
     public static class SchemaReferenceSerializer extends JsonSerializer<Schema> {
 
         @Override
-        public void serialize(Schema schema, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeString(schema.toString());
+        public void serialize(Schema type, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeString(type.toString());
         }
 
     }

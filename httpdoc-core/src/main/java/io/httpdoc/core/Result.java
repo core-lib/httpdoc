@@ -9,14 +9,14 @@ package io.httpdoc.core;
 public class Result extends Definition {
     private static final long serialVersionUID = -228264825667769977L;
 
-    private Schema schema;
+    private Schema type;
 
-    public Schema getSchema() {
-        return schema;
+    public Schema getType() {
+        return type;
     }
 
-    public void setSchema(Schema schema) {
-        this.schema = schema;
+    public void setType(Schema type) {
+        this.type = type;
     }
 
 }

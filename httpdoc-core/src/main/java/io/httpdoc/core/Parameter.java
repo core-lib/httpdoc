@@ -11,7 +11,7 @@ public class Parameter extends Definition {
 
     private String name;
     private String scope; // query body header path
-    private Schema schema;
+    private Schema type;
 
     public String getName() {
         return name;
@@ -29,12 +29,12 @@ public class Parameter extends Definition {
         this.scope = scope;
     }
 
-    public Schema getSchema() {
-        return schema;
+    public Schema getType() {
+        return type;
     }
 
-    public void setSchema(Schema schema) {
-        this.schema = schema;
+    public void setType(Schema type) {
+        this.type = type;
     }
 
 }

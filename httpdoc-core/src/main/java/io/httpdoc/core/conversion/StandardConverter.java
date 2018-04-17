@@ -86,7 +86,8 @@ public class StandardConverter implements Converter {
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null && !parameters.isEmpty()) map.put("parameters", parameters.size() == 1 ? doConvertParameter(parameters.get(0)) : doConvertParameters(parameters));
 
-
+        Result result = operation.getResult();
+        if (result != null) map.put("result", doConvertResult(result));
 
         return map;
     }
@@ -99,8 +100,20 @@ public class StandardConverter implements Converter {
 
     protected Map<String, Object> doConvertParameter(Parameter parameter) {
         Map<String, Object> map = new LinkedHashMap<>();
+        String name = parameter.getName();
+        if (name != null) map.put("name", name);
+
+        String scope = parameter.getScope();
+        if (scope != null) map.put("scope", scope);
+
+
 
         return map;
+    }
+
+    protected Object doConvertResult(Result result) {
+
+        return null;
     }
 
     protected Map<String, Map<String, Object>> doConvertSchemas(Map<String, Schema> schemas) {
@@ -147,7 +160,7 @@ public class StandardConverter implements Converter {
                 for (Map.Entry<String, Property> entry : properties.entrySet()) {
                     String name = entry.getKey();
                     Property property = entry.getValue();
-                    Schema s = property.getSchema();
+                    Schema s = property.getType();
                     String description = property.getDescription();
                     String reference = doConvertReference(s);
                     if (description != null) {
@@ -279,12 +292,12 @@ public class StandardConverter implements Converter {
                     Property property = new Property();
                     if (value instanceof String) {
                         String reference = (String) value;
-                        property.setSchema(doConvertReference(document, reference));
+                        property.setType(doConvertReference(document, reference));
                     } else if (value instanceof Map<?, ?>) {
                         Map<?, ?> m = (Map<?, ?>) value;
                         String type = (String) m.get("type");
                         String description = (String) m.get("description");
-                        property.setSchema(doConvertReference(document, type));
+                        property.setType(doConvertReference(document, type));
                         property.setDescription(description);
                     } else {
                         continue;

@@ -9,31 +9,26 @@ package io.httpdoc.core;
 public class Property extends Definition {
     private static final long serialVersionUID = 5280642997370612295L;
 
-    private Schema schema;
-    private String description;
+    private Schema type;
 
     public Property() {
     }
 
-    Property(Schema schema) {
-        this.schema = schema;
-    }
-
-    Property(Schema schema, String description) {
-        this.schema = schema;
+    Property(Schema type, String description) {
+        this.type = type;
         this.description = description;
     }
 
-    public Schema getSchema() {
-        return schema;
+    public Schema getType() {
+        return type;
     }
 
-    public void setSchema(Schema schema) {
-        this.schema = schema;
+    public void setType(Schema type) {
+        this.type = type;
     }
 
     @Override
     public String toString() {
-        return schema.toString();
+        return type.toString();
     }
 }
