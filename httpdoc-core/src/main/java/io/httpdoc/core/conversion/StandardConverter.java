@@ -1,11 +1,7 @@
-package io.httpdoc.core.compilation;
+package io.httpdoc.core.conversion;
 
 import io.httpdoc.core.*;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,53 +13,44 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-16 14:40
  **/
-public abstract class StandardCompiler implements Compiler {
+public class StandardConverter implements Converter {
 
     @Override
-    public void compile(Document document, OutputStream out) throws IOException {
-        try (OutputStreamWriter writer = new OutputStreamWriter(out)) {
-            compile(document, writer);
-        }
-    }
-
-    @Override
-    public void compile(Document document, Writer writer) throws IOException {
+    public Map<String, Object> convert(Document document) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("httpdoc", document.getHttpdoc());
         map.put("protocol", document.getProtocol());
         map.put("hostname", document.getHostname());
         map.put("ctxtpath", document.getCtxtpath());
         map.put("version", document.getVersion());
-        map.put("controllers", convert(document.getControllers()));
-        map.put("schemas", convert(document.getSchemas()));
-        serialize(map, writer);
+        map.put("controllers", doConvert(document.getControllers()));
+        map.put("schemas", doConvert(document.getSchemas()));
+        return map;
     }
 
-    protected abstract void serialize(Map<String, Object> doc, Writer writer) throws IOException;
-
-    protected List<Map<String, Object>> convert(List<Controller> controllers) {
+    protected List<Map<String, Object>> doConvert(List<Controller> controllers) {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (Controller controller : controllers) list.add(convert(controller));
+        for (Controller controller : controllers) list.add(doConvert(controller));
         return list;
     }
 
-    protected Map<String, Object> convert(Controller controller) {
+    protected Map<String, Object> doConvert(Controller controller) {
         return null;
     }
 
-    protected Map<String, Map<String, Object>> convert(Map<String, Schema> schemas) {
+    protected Map<String, Map<String, Object>> doConvert(Map<String, Schema> schemas) {
         Map<String, Map<String, Object>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
             String name = entry.getKey();
             Schema schema = entry.getValue();
-            Map<String, Object> m = convert(schema);
+            Map<String, Object> m = doConvert(schema);
             if (m == null) continue;
             map.put(name, m);
         }
         return map;
     }
 
-    protected Map<String, Object> convert(Schema schema) {
+    protected Map<String, Object> doConvert(Schema schema) {
         Category category = schema.getCategory();
         Map<String, Object> map = new LinkedHashMap<>();
         switch (category) {
@@ -88,14 +75,34 @@ public abstract class StandardCompiler implements Compiler {
                 }
                 break;
             case OBJECT:
-
+                Schema superclass = schema.getSuperclass();
+                if (superclass != null) map.put("superclass", format(superclass));
+                Map<String, Property> properties = schema.getProperties();
+                Map<String, Object> m = new LinkedHashMap<>();
+                for (Map.Entry<String, Property> entry : properties.entrySet()) {
+                    String name = entry.getKey();
+                    Property property = entry.getValue();
+                    Schema s = property.getSchema();
+                    String description = property.getDescription();
+                    String reference = format(s);
+                    if (description != null) {
+                        Map<String, Object> p = new LinkedHashMap<>();
+                        p.put("type", reference);
+                        p.put("description", description);
+                        m.put("name", p);
+                    } else {
+                        m.put(name, reference);
+                    }
+                }
+                map.put("properties", m);
                 break;
         }
+        String description = schema.getDescription();
+        if (description != null) map.put("description", description);
         return map;
     }
 
-    protected static String format(Schema schema) {
-        if (schema == null) return "Object";
+    protected String format(Schema schema) {
         Category category = schema.getCategory();
         switch (category) {
             case BASIC:
@@ -113,9 +120,8 @@ public abstract class StandardCompiler implements Compiler {
         }
     }
 
-    public static void main(String... args) throws Exception {
-        Schema schema = Schema.valueOf(Schema.class);
-        System.out.println(format(schema));
+    @Override
+    public Document convert(Map<String, Object> dictionary) {
+        return null;
     }
-
 }

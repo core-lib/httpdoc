@@ -1,9 +1,8 @@
 package io.httpdoc.core;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.httpdoc.core.compilation.DefaultEncoder;
+import io.httpdoc.core.compilation.Encoder;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,22 +14,17 @@ public class Boy extends Person {
     private Girl girlfriend;
 
     public static void main(String... args) throws Exception {
-        YAMLMapper mapper = new YAMLMapper();
         Schema schema = Schema.valueOf(Boy.class);
 
-        mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false);
 
         Map<String, Schema> schemas = new HashMap<>();
         for (Schema s : schema.getDependencies()) schemas.put(s.getName(), s);
         Document document = new Document();
         document.setSchemas(schemas);
 
-        StringWriter sw = new StringWriter();
-        mapper.writeValue(sw, document);
-        String httpdoc = sw.toString();
-        System.out.println(httpdoc);
-        Document doc = mapper.readValue(httpdoc, Document.class);
-        System.out.println(doc);
+        Encoder encoder = new DefaultEncoder();
+        encoder.encode(document, System.out);
+
     }
 
     public Girl getGirlfriend() {

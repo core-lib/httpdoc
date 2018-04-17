@@ -123,9 +123,7 @@ public class Schema extends Definition {
     }
 
     public static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) throws Exception {
-        return type == Object.class
-                ? null
-                : cache.containsKey(type)
+        return cache.containsKey(type)
                 ? cache.get(type)
                 : provider.contains(type)
                 ? provider.acquire(type)

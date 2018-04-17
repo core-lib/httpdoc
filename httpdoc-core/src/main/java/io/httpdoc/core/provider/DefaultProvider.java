@@ -3,6 +3,7 @@ package io.httpdoc.core.provider;
 import io.httpdoc.core.Category;
 import io.httpdoc.core.Schema;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Date;
@@ -41,6 +42,8 @@ public class DefaultProvider implements Provider {
         if (CharSequence.class.isAssignableFrom(clazz)) return build("String");
         if (Number.class.isAssignableFrom(clazz)) return build("Number");
         if (Date.class.isAssignableFrom(clazz)) return build("Date");
+        if (File.class.isAssignableFrom(clazz)) return build("File");
+        if (Object.class == clazz) return build("Object");
         return null;
     }
 

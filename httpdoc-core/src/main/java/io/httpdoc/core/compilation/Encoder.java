@@ -12,10 +12,10 @@ import java.io.Writer;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-16 14:31
  **/
-public interface Compiler {
+public interface Encoder {
 
-    void compile(Document document, OutputStream out) throws IOException;
+    void encode(Document document, OutputStream out) throws IOException;
 
-    void compile(Document document, Writer writer) throws IOException;
+    void encode(Document document, Writer writer) throws IOException;
 
 }

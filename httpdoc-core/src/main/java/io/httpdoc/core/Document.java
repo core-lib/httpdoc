@@ -1,5 +1,7 @@
 package io.httpdoc.core;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +19,8 @@ public class Document extends Definition {
     private String hostname;
     private String ctxtpath;
     private String version;
-    private List<Controller> controllers;
-    private Map<String, Schema> schemas;
+    private List<Controller> controllers = new ArrayList<>();
+    private Map<String, Schema> schemas = new LinkedHashMap<>();
 
     public String getHttpdoc() {
         return httpdoc;
