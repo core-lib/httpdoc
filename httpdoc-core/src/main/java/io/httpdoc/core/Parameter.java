@@ -9,18 +9,9 @@ package io.httpdoc.core;
 public class Parameter extends Definition {
     private static final long serialVersionUID = 8199679343694443326L;
 
-    private int index;
     private String name;
     private String scope; // query body header path
     private Schema schema;
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 
     public String getName() {
         return name;

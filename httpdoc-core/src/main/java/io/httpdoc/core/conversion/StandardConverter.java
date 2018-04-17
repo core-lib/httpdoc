@@ -39,7 +39,68 @@ public class StandardConverter implements Converter {
     }
 
     protected Map<String, Object> doConvertController(Controller controller) {
-        return null;
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        String name = controller.getName();
+        if (name != null) map.put("name", name);
+
+        String path = controller.getPath();
+        if (path != null) map.put("path", path);
+
+        List<String> produces = controller.getProduces();
+        if (produces != null && !produces.isEmpty()) map.put("produces", produces.size() == 1 ? produces.get(0) : produces);
+
+        List<String> consumes = controller.getConsumes();
+        if (consumes != null && !consumes.isEmpty()) map.put("consumes", consumes.size() == 1 ? consumes.get(0) : consumes);
+
+        List<Operation> operations = controller.getOperations();
+        if (operations != null && !operations.isEmpty()) map.put("operations", doConvertOperations(operations));
+
+        return map;
+    }
+
+    protected List<Map<String, Object>> doConvertOperations(List<Operation> operations) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Operation operation : operations) list.add(doConvertOperation(operation));
+        return list;
+    }
+
+    protected Map<String, Object> doConvertOperation(Operation operation) {
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        String name = operation.getName();
+        if (name != null) map.put("name", name);
+
+        String path = operation.getPath();
+        if (path != null) map.put("path", path);
+
+        String method = operation.getMethod();
+        if (method != null) map.put("method", method);
+
+        List<String> produces = operation.getProduces();
+        if (produces != null && !produces.isEmpty()) map.put("produces", produces.size() == 1 ? produces.get(0) : produces);
+
+        List<String> consumes = operation.getConsumes();
+        if (consumes != null && !consumes.isEmpty()) map.put("consumes", consumes.size() == 1 ? consumes.get(0) : consumes);
+
+        List<Parameter> parameters = operation.getParameters();
+        if (parameters != null && !parameters.isEmpty()) map.put("parameters", parameters.size() == 1 ? doConvertParameter(parameters.get(0)) : doConvertParameters(parameters));
+
+
+
+        return map;
+    }
+
+    protected List<Map<String, Object>> doConvertParameters(List<Parameter> parameters) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Parameter parameter : parameters) list.add(doConvertParameter(parameter));
+        return list;
+    }
+
+    protected Map<String, Object> doConvertParameter(Parameter parameter) {
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        return map;
     }
 
     protected Map<String, Map<String, Object>> doConvertSchemas(Map<String, Schema> schemas) {
