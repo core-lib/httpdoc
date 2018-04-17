@@ -151,10 +151,8 @@ public class StandardConverter implements Converter {
             definitions.put(name, new SchemaDefinition(schema, definition));
         }
         for (Map.Entry<String, SchemaDefinition> entry : definitions.entrySet()) {
-            String name = entry.getKey();
             SchemaDefinition definition = entry.getValue();
             definition.assemble(document);
-            document.getSchemas().put(name, definition.schema);
         }
     }
 
@@ -220,13 +218,17 @@ public class StandardConverter implements Converter {
                     Property property = new Property();
                     if (value instanceof String) {
                         String reference = (String) value;
-                        
+                        property.setSchema(doConvertReference(document, reference));
                     } else if (value instanceof Map<?, ?>) {
-
+                        Map<?, ?> m = (Map<?, ?>) value;
+                        String type = (String) m.get("type");
+                        String description = (String) m.get("description");
+                        property.setSchema(doConvertReference(document, type));
+                        property.setDescription(description);
                     } else {
                         continue;
                     }
-
+                    schema.getProperties().put(name, property);
                 }
             } else {
                 schema.setProperties(null);

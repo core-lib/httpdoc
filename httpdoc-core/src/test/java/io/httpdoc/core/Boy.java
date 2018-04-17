@@ -18,8 +18,6 @@ public class Boy extends Person {
     private Girl girlfriend;
 
     public static void main(String... args) throws Exception {
-
-
         Schema schema = Schema.valueOf(Boy.class);
 
         Map<String, Schema> schemas = new HashMap<>();
@@ -31,10 +29,12 @@ public class Boy extends Person {
         Encoder encoder = new DefaultEncoder();
         encoder.encode(document, baos);
 
+        System.out.println(baos.toString());
+
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         Decoder decoder = new DefaultDecoder();
         Document doc = decoder.decode(bais);
-
+        System.out.println(doc);
     }
 
     public Girl getGirlfriend() {
