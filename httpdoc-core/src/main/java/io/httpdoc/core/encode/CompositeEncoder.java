@@ -1,4 +1,4 @@
-package io.httpdoc.core.compilation;
+package io.httpdoc.core.encode;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.Converter;

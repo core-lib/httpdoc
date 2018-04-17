@@ -10,7 +10,6 @@ public class Result extends Definition {
     private static final long serialVersionUID = -228264825667769977L;
 
     private Schema schema;
-    private String description;
 
     public Schema getSchema() {
         return schema;

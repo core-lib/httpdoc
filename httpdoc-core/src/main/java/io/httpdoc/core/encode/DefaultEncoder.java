@@ -1,4 +1,4 @@
-package io.httpdoc.core.compilation;
+package io.httpdoc.core.encode;
 
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.serialization.YamlSerializer;

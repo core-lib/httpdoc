@@ -1,7 +1,7 @@
 package io.httpdoc.core;
 
-import io.httpdoc.core.description.Describer;
 import io.httpdoc.core.description.DefaultDescriber;
+import io.httpdoc.core.description.Describer;
 import io.httpdoc.core.exception.UnsupportedSchemaException;
 import io.httpdoc.core.provider.DefaultProvider;
 import io.httpdoc.core.provider.Provider;
@@ -27,7 +27,7 @@ public class Schema extends Definition {
     private Schema superclass;
     private Map<String, Property> properties = new LinkedHashMap<>();
     private Schema component;
-    private List<Constant> constants = new ArrayList<>();
+    private Set<Constant> constants = new LinkedHashSet<>();
     private Collection<Schema> dependencies;
 
     public Schema() {
@@ -115,14 +115,18 @@ public class Schema extends Definition {
     }
 
     public static Schema valueOf(Type type, Describer describer) throws Exception {
-        return valueOf(type, new HashMap<Type, Schema>(), new DefaultProvider(), describer);
+        return valueOf(type, new DefaultProvider(), describer);
     }
 
     public static Schema valueOf(Type type, Provider provider) throws Exception {
-        return valueOf(type, new HashMap<Type, Schema>(), provider, new DefaultDescriber());
+        return valueOf(type, provider, new DefaultDescriber());
     }
 
-    public static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) throws Exception {
+    public static Schema valueOf(Type type, Provider provider, Describer describer) throws Exception {
+        return valueOf(type, new HashMap<Type, Schema>(), provider, describer);
+    }
+
+    private static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) throws Exception {
         return cache.containsKey(type)
                 ? cache.get(type)
                 : provider.contains(type)
@@ -166,11 +170,11 @@ public class Schema extends Definition {
         return component;
     }
 
-    public List<Constant> getConstants() {
+    public Set<Constant> getConstants() {
         return constants;
     }
 
-    public void setConstants(List<Constant> constants) {
+    public void setConstants(Set<Constant> constants) {
         this.constants = constants;
     }
 

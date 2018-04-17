@@ -11,9 +11,8 @@ public class Parameter extends Definition {
 
     private int index;
     private String name;
-    private String scope;
+    private String scope; // query body header path
     private Schema schema;
-    private String description;
 
     public int getIndex() {
         return index;

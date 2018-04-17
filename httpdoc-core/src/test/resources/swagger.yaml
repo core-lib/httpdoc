@@ -134,13 +134,13 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
                                 Object clazz = property.getValue();
                                 if (clazz instanceof String) {
                                     String expression = (String) clazz;
-                                    schema.properties.put(name, new Property(doConvert(schemas, expression)));
+                                    schema.properties.put(name, new Property(doConvertControllers(schemas, expression)));
                                 } else {
                                     Map<?, ?> map = (Map<?, ?>) clazz;
                                     Object type = map.get("type");
                                     Object description = map.get("description");
                                     String expression = (String) type;
-                                    schema.properties.put(name, new Property(doConvert(schemas, expression), (String) description));
+                                    schema.properties.put(name, new Property(doConvertControllers(schemas, expression), (String) description));
                                 }
                             }
                             break;
@@ -154,7 +154,7 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
             }
         }
 
-        private Schema doConvert(Map<String, Schema> schemas, String expression) {
+        private Schema doConvertControllers(Map<String, Schema> schemas, String expression) {
             expression = expression.replace(" ", "");
             Schema schema;
             if (expression.startsWith(PREFIX)) {
@@ -163,7 +163,7 @@ public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<St
             } else if (expression.startsWith(MAP)) {
                 String component = expression.substring((MAP + "<String,").length(), expression.length() - 1);
                 schema = new Schema(MAP);
-                schema.component = doConvert(schemas, component);
+                schema.component = doConvertControllers(schemas, component);
             } else {
                 String name = expression.replace("[]", "");
                 schema = new Schema(name);
