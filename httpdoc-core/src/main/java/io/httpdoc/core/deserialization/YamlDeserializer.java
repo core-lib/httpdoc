@@ -19,7 +19,7 @@ public class YamlDeserializer implements Deserializer {
     private final YAMLMapper mapper;
 
     public YamlDeserializer() {
-        this(new YAMLMapper());
+        this(new YAMLFactory());
     }
 
     public YamlDeserializer(YAMLFactory factory) {

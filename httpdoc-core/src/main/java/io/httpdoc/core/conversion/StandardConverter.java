@@ -13,7 +13,7 @@ import java.util.*;
  * @date 2018-04-16 14:40
  **/
 public class StandardConverter implements Converter {
-    private static final String REFERENCE_PREFIX = "@/schemas/";
+    private static final String REFERENCE_PREFIX = "/schemas/";
     private static final String REFERENCE_SUFFIX = "";
     private static final String DICTIONARY_PREFIX = "Dictionary<String,";
     private static final String DICTIONARY_SUFFIX = ">";
@@ -71,12 +71,10 @@ public class StandardConverter implements Converter {
         if (produces.size() == 1) return produces.get(0);
 
         StringBuilder builder = new StringBuilder();
-        builder.append("[");
         for (int i = 0; i < produces.size(); i++) {
             if (i > 0) builder.append(", ");
             builder.append(produces.get(i));
         }
-        builder.append("]");
         return builder.toString();
     }
 

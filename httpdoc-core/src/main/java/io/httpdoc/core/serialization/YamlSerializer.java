@@ -1,6 +1,7 @@
 package io.httpdoc.core.serialization;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.IOException;
@@ -18,11 +19,13 @@ public class YamlSerializer implements Serializer {
     private final YAMLMapper mapper;
 
     public YamlSerializer() {
-        this(new YAMLMapper());
+        this(new YAMLFactory());
     }
 
     public YamlSerializer(YAMLFactory factory) {
         this(new YAMLMapper(factory));
+        this.mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false);
+        this.mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
     }
 
     public YamlSerializer(YAMLMapper mapper) {
