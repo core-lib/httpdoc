@@ -1,5 +1,6 @@
 package io.httpdoc.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,9 +14,9 @@ public class Controller extends Definition {
 
     private String name;
     private String path;
-    private List<String> produces;
-    private List<String> consumes;
-    private List<Operation> operations;
+    private List<String> produces = new ArrayList<>();
+    private List<String> consumes = new ArrayList<>();
+    private List<Operation> operations = new ArrayList<>();
 
     public String getName() {
         return name;

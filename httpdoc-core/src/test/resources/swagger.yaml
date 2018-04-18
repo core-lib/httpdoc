@@ -1,198 +1,60 @@
-description: null
+---
 httpdoc: null
 protocol: null
 hostname: null
-context: null
+ctxtpath: null
 version: null
-controllers: null
+controllers:
+  name: "ProductController"
+  path: "/products"
+  produces: "application/json"
+  consumes: "[application/json, application/xml]"
+  operations:
+    name: "create"
+    path: "/"
+    method: "POST"
+    produces: "application/json"
+    consumes: "[application/json, application/xml]"
+    parameters:
+    - name: "product"
+      scope: "body"
+      type: "@/schemas/Product"
+      description: "产品DTO"
+    - name: "product"
+      scope: "body"
+      type: "@/schemas/Product"
+      description: "产品DTO"
+    result: "Long"
+    description: "创建产品"
+  description: "产品管理器"
 schemas:
   Value:
-    superclass: "#/schemas/Product"
-    properties: {}
+    superclass: "@/schemas/Product"
   Product:
     superclass: "Object"
     properties:
       name: "String"
       price: "Double"
   Gender:
-    superclass: "Enum"
     constants:
-      MALE: null
-      FEMALE: null
+    - "MALE"
+    - "FEMALE"
   Person:
     superclass: "Object"
     properties:
       age: "int"
-      attribute: "Map<String, #/schemas/Value>"
+      attribute: "Dictionary<String,@/schemas/Value>"
       birthday: "Date"
-      children: "#/schemas/Person[][]"
-      father: "#/schemas/Person"
-      gender: "#/schemas/Gender"
+      children: "@/schemas/Person[][]"
+      father: "@/schemas/Person"
+      gender: "@/schemas/Gender"
       name: "String"
       tags: "String[]"
   Girl:
-    superclass: "#/schemas/Person"
+    superclass: "@/schemas/Person"
     properties:
-      boyfriend: "#/schemas/Boy"
+      boyfriend: "@/schemas/Boy"
   Boy:
-    superclass: "#/schemas/Person"
+    superclass: "@/schemas/Person"
     properties:
-      girlfriend: "#/schemas/Girl"
-
- public static class SchemaDefinitionSerializer extends JsonSerializer<Map<String, Schema>> {
-
-        @Override
-        public void serialize(Map<String, Schema> schemas, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeStartObject();
-            for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
-                String name = entry.getKey();
-                Schema type = entry.getValue();
-                gen.writeObjectFieldStart(name);
-                if (type.superclass != null) gen.writeObjectField("superclass", type.superclass);
-                if (type.constants != null) {
-                    gen.writeObjectFieldStart("constants");
-                    for (Constant constant : type.constants) gen.writeStringField(constant.getName(), constant.getDescription());
-                    gen.writeEndObject();
-                }
-                if (type.properties != null) {
-                    gen.writeObjectFieldStart("properties");
-                    for (Map.Entry<String, Property> e : type.properties.entrySet()) {
-                        String field = e.getKey();
-                        String clazz = e.getValue().toString();
-                        String description = e.getValue().getDescription();
-                        if (description == null || description.trim().equals("")) {
-                            gen.writeStringField(field, clazz);
-                        } else {
-                            gen.writeObjectFieldStart(field);
-                            gen.writeStringField("type", clazz);
-                            gen.writeStringField("description", description);
-                            gen.writeEndObject();
-                        }
-                    }
-                    gen.writeEndObject();
-                }
-                if (type.description != null) gen.writeStringField("description", type.description);
-                gen.writeEndObject();
-            }
-            gen.writeEndObject();
-        }
-
-    }
-
-public static class SchemaDefinitionDeserializer extends JsonDeserializer<Map<String, Schema>> {
-
-        @Override
-        public Map<String, Schema> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-            Map<String, Schema> schemas = new LinkedHashMap<>();
-            Map<String, Map<String, Object>> map = jp.readValueAs(new TypeReference<Map<String, Map<String, Object>>>() {
-            });
-            for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) schemas.put(entry.getKey(), new Schema(entry.getValue()));
-            assemble(schemas);
-            return schemas;
-        }
-
-        private void assemble(Map<String, Schema> schemas) {
-            for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
-                Schema type = entry.getValue();
-                type.name = entry.getKey();
-                Map<String, Object> definitions = type.definitions;
-                assert definitions != null;
-                for (Map.Entry<String, Object> definition : definitions.entrySet()) {
-                    Object value = definition.getValue();
-                    switch (definition.getKey()) {
-                        case "superclass":
-                            String superclass = (String) value;
-                            if (superclass.startsWith(PREFIX)) type.superclass = schemas.get(superclass.substring(PREFIX.length()));
-                            else type.superclass = new Schema(superclass);
-                            break;
-                        case "constants":
-                            if (value.getClass().isArray()) {
-                                int length = Array.getLength(value);
-                                type.constants = new Constant[length];
-                                for (int i = 0; i < length; i++) type.constants[i] = new Constant(Array.get(value, i).toString());
-                            } else if (value instanceof Collection<?>) {
-                                Collection<?> collection = (Collection<?>) value;
-                                type.constants = new Constant[collection.size()];
-                                int index = 0;
-                                for (Object constant : collection) type.constants[index++] = new Constant(constant.toString());
-                            } else if (value instanceof Map<?, ?>) {
-                                Map<?, ?> map = (Map<?, ?>) value;
-                                type.constants = new Constant[map.size()];
-                                int index = 0;
-                                for (Map.Entry<?, ?> constant : map.entrySet()) {
-                                    String name = (String) constant.getKey();
-                                    String description = (String) constant.getValue();
-                                    type.constants[index++] = new Constant(name, description);
-                                }
-                            }
-                            break;
-                        case "properties":
-                            Map<?, ?> properties = (Map<?, ?>) value;
-                            type.properties = new LinkedHashMap<>(properties.size());
-                            for (Map.Entry<?, ?> property : properties.entrySet()) {
-                                String name = property.getKey().toString();
-                                Object clazz = property.getValue();
-                                if (clazz instanceof String) {
-                                    String expression = (String) clazz;
-                                    type.properties.put(name, new Property(doConvertControllers(schemas, expression)));
-                                } else {
-                                    Map<?, ?> map = (Map<?, ?>) clazz;
-                                    Object type = map.get("type");
-                                    Object description = map.get("description");
-                                    String expression = (String) type;
-                                    type.properties.put(name, new Property(doConvertControllers(schemas, expression), (String) description));
-                                }
-                            }
-                            break;
-                        case "description":
-                            type.description = value.toString();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-
-        private Schema doConvertControllers(Map<String, Schema> schemas, String expression) {
-            expression = expression.replace(" ", "");
-            Schema type;
-            if (expression.startsWith(PREFIX)) {
-                String name = expression.replace("[]", "").substring(PREFIX.length());
-                type = schemas.get(name);
-            } else if (expression.startsWith(MAP)) {
-                String component = expression.substring((MAP + "<String,").length(), expression.length() - 1);
-                type = new Schema(MAP);
-                type.component = doConvertControllers(schemas, component);
-            } else {
-                String name = expression.replace("[]", "");
-                type = new Schema(name);
-            }
-            while (expression.endsWith("[]")) {
-                Schema array = new Schema(ARRAY);
-                array.component = type;
-                type = array;
-                expression = expression.substring(0, expression.length() - 2);
-            }
-            return type;
-        }
-
-    }
-
-    public static class SchemaReferenceSerializer extends JsonSerializer<Schema> {
-
-        @Override
-        public void serialize(Schema type, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeString(type.toString());
-        }
-
-    }
-
-    public static class SchemaReferenceDeserializer extends JsonDeserializer<Schema> {
-
-        @Override
-        public Schema deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            return null;
-        }
-
-    }
+      girlfriend: "@/schemas/Girl"

@@ -1,5 +1,6 @@
 package io.httpdoc.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +15,9 @@ public class Operation extends Definition {
     private String name;
     private String method;
     private String path;
-    private List<String> produces;
-    private List<String> consumes;
-    private List<Parameter> parameters;
+    private List<String> produces = new ArrayList<>();
+    private List<String> consumes = new ArrayList<>();
+    private List<Parameter> parameters = new ArrayList<>();
     private Result result;
 
     public String getName() {
