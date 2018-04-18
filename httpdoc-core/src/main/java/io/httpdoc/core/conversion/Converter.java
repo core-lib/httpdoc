@@ -14,6 +14,8 @@ public interface Converter {
 
     Map<String, Object> convert(Document document);
 
+    Map<String, Object> convert(Document document, Format format);
+
     Document convert(Map<String, Object> dictionary);
 
 }

@@ -22,28 +22,33 @@ public class StandardConverter implements Converter {
 
     @Override
     public Map<String, Object> convert(Document document) {
+        return convert(document, new DefaultFormat());
+    }
+
+    @Override
+    public Map<String, Object> convert(Document document, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("httpdoc", document.getHttpdoc());
         map.put("protocol", document.getProtocol());
         map.put("hostname", document.getHostname());
         map.put("ctxtpath", document.getCtxtpath());
         map.put("version", document.getVersion());
-        map.put("controllers", doConvertControllers(document.getControllers()));
-        map.put("schemas", doConvertSchemas(document.getSchemas()));
+        map.put("controllers", doConvertControllers(document.getControllers(), format));
+        map.put("schemas", doConvertSchemas(document.getSchemas(), format));
         return map;
     }
 
-    protected Object doConvertControllers(List<Controller> controllers) {
+    protected Object doConvertControllers(List<Controller> controllers, Format format) {
         if (controllers.size() == 1) {
-            return doConvertController(controllers.get(0));
+            return doConvertController(controllers.get(0), format);
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
-            for (Controller controller : controllers) list.add(doConvertController(controller));
+            for (Controller controller : controllers) list.add(doConvertController(controller, format));
             return list;
         }
     }
 
-    protected Map<String, Object> doConvertController(Controller controller) {
+    protected Map<String, Object> doConvertController(Controller controller, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
 
         String name = controller.getName();
@@ -53,13 +58,13 @@ public class StandardConverter implements Converter {
         if (path != null) map.put("path", path);
 
         List<String> produces = controller.getProduces();
-        if (produces != null && !produces.isEmpty()) map.put("produces", doConvertProduces(produces));
+        if (produces != null && !produces.isEmpty()) map.put("produces", doConvertProduces(produces, format));
 
         List<String> consumes = controller.getConsumes();
-        if (consumes != null && !consumes.isEmpty()) map.put("consumes", doConvertConsumes(consumes));
+        if (consumes != null && !consumes.isEmpty()) map.put("consumes", doConvertConsumes(consumes, format));
 
         List<Operation> operations = controller.getOperations();
-        if (operations != null && !operations.isEmpty()) map.put("operations", doConvertOperations(operations));
+        if (operations != null && !operations.isEmpty()) map.put("operations", doConvertOperations(operations, format));
 
         String description = controller.getDescription();
         if (description != null) map.put("description", description);
@@ -67,7 +72,7 @@ public class StandardConverter implements Converter {
         return map;
     }
 
-    protected Object doConvertProduces(List<String> produces) {
+    protected Object doConvertProduces(List<String> produces, Format format) {
         if (produces.size() == 1) return produces.get(0);
 
         StringBuilder builder = new StringBuilder();
@@ -78,21 +83,21 @@ public class StandardConverter implements Converter {
         return builder.toString();
     }
 
-    protected Object doConvertConsumes(List<String> consumes) {
-        return doConvertProduces(consumes);
+    protected Object doConvertConsumes(List<String> consumes, Format format) {
+        return doConvertProduces(consumes, format);
     }
 
-    protected Object doConvertOperations(List<Operation> operations) {
+    protected Object doConvertOperations(List<Operation> operations, Format format) {
         if (operations.size() == 1) {
-            return doConvertOperation(operations.get(0));
+            return doConvertOperation(operations.get(0), format);
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
-            for (Operation operation : operations) list.add(doConvertOperation(operation));
+            for (Operation operation : operations) list.add(doConvertOperation(operation, format));
             return list;
         }
     }
 
-    protected Map<String, Object> doConvertOperation(Operation operation) {
+    protected Map<String, Object> doConvertOperation(Operation operation, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
 
         String name = operation.getName();
@@ -105,16 +110,16 @@ public class StandardConverter implements Converter {
         if (method != null) map.put("method", method);
 
         List<String> produces = operation.getProduces();
-        if (produces != null && !produces.isEmpty()) map.put("produces", doConvertProduces(produces));
+        if (produces != null && !produces.isEmpty()) map.put("produces", doConvertProduces(produces, format));
 
         List<String> consumes = operation.getConsumes();
-        if (consumes != null && !consumes.isEmpty()) map.put("consumes", doConvertConsumes(consumes));
+        if (consumes != null && !consumes.isEmpty()) map.put("consumes", doConvertConsumes(consumes, format));
 
         List<Parameter> parameters = operation.getParameters();
-        if (parameters != null && !parameters.isEmpty()) map.put("parameters", doConvertParameters(parameters));
+        if (parameters != null && !parameters.isEmpty()) map.put("parameters", doConvertParameters(parameters, format));
 
         Result result = operation.getResult();
-        if (result != null) map.put("result", doConvertResult(result));
+        if (result != null) map.put("result", doConvertResult(result, format));
 
         String description = operation.getDescription();
         if (description != null) map.put("description", description);
@@ -122,17 +127,17 @@ public class StandardConverter implements Converter {
         return map;
     }
 
-    protected Object doConvertParameters(List<Parameter> parameters) {
+    protected Object doConvertParameters(List<Parameter> parameters, Format format) {
         if (parameters.size() == 1) {
-            return doConvertParameter(parameters.get(0));
+            return doConvertParameter(parameters.get(0), format);
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
-            for (Parameter parameter : parameters) list.add(doConvertParameter(parameter));
+            for (Parameter parameter : parameters) list.add(doConvertParameter(parameter, format));
             return list;
         }
     }
 
-    protected Map<String, Object> doConvertParameter(Parameter parameter) {
+    protected Map<String, Object> doConvertParameter(Parameter parameter, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
         String name = parameter.getName();
         if (name != null) map.put("name", name);
@@ -141,7 +146,7 @@ public class StandardConverter implements Converter {
         if (scope != null) map.put("scope", scope);
 
         Schema type = parameter.getType();
-        if (type != null) map.put("type", doConvertReference(type));
+        if (type != null) map.put("type", doConvertReference(type, format));
 
         String description = parameter.getDescription();
         if (description != null) map.put("description", description);
@@ -149,34 +154,34 @@ public class StandardConverter implements Converter {
         return map;
     }
 
-    protected Object doConvertResult(Result result) {
+    protected Object doConvertResult(Result result, Format format) {
         Schema type = result.getType();
         if (type == null) return null;
 
         String description = result.getDescription();
         if (description != null) {
             Map<String, String> map = new LinkedHashMap<>();
-            map.put("type", doConvertReference(type));
+            map.put("type", doConvertReference(type, format));
             map.put("description", description);
             return map;
         }
 
-        return doConvertReference(type);
+        return doConvertReference(type, format);
     }
 
-    protected Map<String, Map<String, Object>> doConvertSchemas(Map<String, Schema> schemas) {
+    protected Map<String, Map<String, Object>> doConvertSchemas(Map<String, Schema> schemas, Format format) {
         Map<String, Map<String, Object>> map = new LinkedHashMap<>();
         for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
             String name = entry.getKey();
             Schema schema = entry.getValue();
-            Map<String, Object> m = doConvertSchema(schema);
+            Map<String, Object> m = doConvertSchema(schema, format);
             if (m == null) continue;
             map.put(name, m);
         }
         return map;
     }
 
-    protected Map<String, Object> doConvertSchema(Schema schema) {
+    protected Map<String, Object> doConvertSchema(Schema schema, Format format) {
         Category category = schema.getCategory();
         Map<String, Object> map = new LinkedHashMap<>();
         switch (category) {
@@ -202,15 +207,15 @@ public class StandardConverter implements Converter {
                 break;
             case OBJECT:
                 Schema superclass = schema.getSuperclass();
-                if (superclass != null) map.put("superclass", doConvertReference(superclass));
+                if (superclass != null) map.put("superclass", doConvertReference(superclass, format));
                 Map<String, Property> properties = schema.getProperties();
                 Map<String, Object> m = new LinkedHashMap<>();
                 for (Map.Entry<String, Property> entry : properties.entrySet()) {
                     String name = entry.getKey();
                     Property property = entry.getValue();
-                    Schema s = property.getType();
+                    Schema type = property.getType();
                     String description = property.getDescription();
-                    String reference = doConvertReference(s);
+                    String reference = doConvertReference(type, format);
                     if (description != null) {
                         Map<String, Object> p = new LinkedHashMap<>();
                         p.put("type", reference);
@@ -228,15 +233,15 @@ public class StandardConverter implements Converter {
         return map;
     }
 
-    protected String doConvertReference(Schema schema) {
+    protected String doConvertReference(Schema schema, Format format) {
         Category category = schema.getCategory();
         switch (category) {
             case BASIC:
                 return schema.getName();
             case DICTIONARY:
-                return DICTIONARY_PREFIX + " " + doConvertReference(schema.getComponent()) + DICTIONARY_SUFFIX;
+                return DICTIONARY_PREFIX + " " + doConvertReference(schema.getComponent(), format) + DICTIONARY_SUFFIX;
             case ARRAY:
-                return ARRAY_PREFIX + doConvertReference(schema.getComponent()) + ARRAY_SUFFIX;
+                return ARRAY_PREFIX + doConvertReference(schema.getComponent(), format) + ARRAY_SUFFIX;
             case ENUM:
                 return REFERENCE_PREFIX + schema.getName() + REFERENCE_SUFFIX;
             case OBJECT:
