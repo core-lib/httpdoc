@@ -25,6 +25,8 @@ public class Boy extends Person {
         Map<String, Schema> schemas = new HashMap<>();
         for (Schema s : schema.getDependencies()) schemas.put(s.getName(), s);
         Document document = new Document();
+        document.setHttpdoc("null");
+
         document.setSchemas(schemas);
 
         Controller controller = new Controller();

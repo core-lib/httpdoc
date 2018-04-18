@@ -17,27 +17,11 @@ controllers:
     parameters:
     - name: product
       scope: body
-      type: /schemas/Product
+      type: $/schemas/Product
       description: 产品DTO
     - name: product
       scope: body
-      type: /schemas/Product
-      description: 产品DTO
-    result: Long
-    description: 创建产品
-  - name: create
-    path: /
-    method: POST
-    produces: application/json
-    consumes: application/json, application/xml
-    parameters:
-    - name: product
-      scope: body
-      type: /schemas/Product
-      description: 产品DTO
-    - name: product
-      scope: body
-      type: /schemas/Product
+      type: $/schemas/Product
       description: 产品DTO
     result: Long
     description: 创建产品
@@ -49,18 +33,34 @@ controllers:
     parameters:
     - name: product
       scope: body
-      type: /schemas/Product
+      type: $/schemas/Product
       description: 产品DTO
     - name: product
       scope: body
-      type: /schemas/Product
+      type: $/schemas/Product
+      description: 产品DTO
+    result: Long
+    description: 创建产品
+  - name: create
+    path: /
+    method: POST
+    produces: application/json
+    consumes: application/json, application/xml
+    parameters:
+    - name: product
+      scope: body
+      type: $/schemas/Product
+      description: 产品DTO
+    - name: product
+      scope: body
+      type: $/schemas/Product
       description: 产品DTO
     result: Long
     description: 创建产品
   description: 产品管理器
 schemas:
   Value:
-    superclass: /schemas/Product
+    superclass: $/schemas/Product
   Product:
     superclass: Object
     properties:
@@ -74,18 +74,18 @@ schemas:
     superclass: Object
     properties:
       age: int
-      attribute: Dictionary<String, /schemas/Value>
+      attribute: Dictionary<String, $/schemas/Value>
       birthday: Date
-      children: /schemas/Person[][]
-      father: /schemas/Person
-      gender: /schemas/Gender
+      children: $/schemas/Person[][]
+      father: $/schemas/Person
+      gender: $/schemas/Gender
       name: String
       tags: String[]
   Girl:
-    superclass: /schemas/Person
+    superclass: $/schemas/Person
     properties:
-      boyfriend: /schemas/Boy
+      boyfriend: $/schemas/Boy
   Boy:
-    superclass: /schemas/Person
+    superclass: $/schemas/Person
     properties:
-      girlfriend: /schemas/Girl
+      girlfriend: $/schemas/Girl

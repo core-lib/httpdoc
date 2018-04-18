@@ -13,7 +13,7 @@ import java.util.*;
  * @date 2018-04-16 14:40
  **/
 public class StandardConverter implements Converter {
-    private static final String REFERENCE_PREFIX = "/schemas/";
+    private static final String REFERENCE_PREFIX = "$/schemas/";
     private static final String REFERENCE_SUFFIX = "";
     private static final String DICTIONARY_PREFIX = "Dictionary<String,";
     private static final String DICTIONARY_SUFFIX = ">";
