@@ -6,7 +6,7 @@ package io.httpdoc.core.conversion;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-19 11:03
  **/
-public class ConfigureableFormat implements Format {
+public class ConfigurableFormat implements Format {
     private String refPrefix = Format.REF_PREFIX;
     private String refSuffix = Format.REF_SUFFIX;
     private String mapPrefix = Format.MAP_PREFIX;

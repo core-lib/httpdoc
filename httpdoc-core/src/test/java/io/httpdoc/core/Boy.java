@@ -1,6 +1,6 @@
 package io.httpdoc.core;
 
-import io.httpdoc.core.conversion.ConfigureableFormat;
+import io.httpdoc.core.conversion.ConfigurableFormat;
 import io.httpdoc.core.decode.Decoder;
 import io.httpdoc.core.decode.DefaultDecoder;
 import io.httpdoc.core.encode.DefaultEncoder;
@@ -73,7 +73,7 @@ public class Boy extends Person {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Encoder encoder = new DefaultEncoder();
-        ConfigureableFormat format = new ConfigureableFormat();
+        ConfigurableFormat format = new ConfigurableFormat();
         format.setRefPrefix("#/schemas/");
         encoder.encode(document, format, baos);
 
