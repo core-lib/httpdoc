@@ -1,5 +1,7 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.exception.DocumentTranslationException;
+
 /**
  * 文档翻译器
  *
@@ -7,5 +9,7 @@ package io.httpdoc.core;
  * @date 2018-04-19 15:48
  **/
 public interface Translator {
+
+    Document translate(String expression) throws DocumentTranslationException;
 
 }

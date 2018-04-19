@@ -2,7 +2,7 @@ package io.httpdoc.core;
 
 import io.httpdoc.core.description.DefaultDescriber;
 import io.httpdoc.core.description.Describer;
-import io.httpdoc.core.exception.UnsupportedSchemaException;
+import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.provider.DefaultProvider;
 import io.httpdoc.core.provider.Provider;
 
@@ -95,13 +95,13 @@ public class Schema extends Definition {
                         this.component = Schema.valueOf(actualTypeArgument, cache, provider, describer);
                         cache.remove(type);
                     } else {
-                        throw new UnsupportedSchemaException(rawType);
+                        throw new SchemaUnsupportedException(rawType);
                     }
                 } else {
-                    throw new UnsupportedSchemaException(type);
+                    throw new SchemaUnsupportedException(type);
                 }
             } else {
-                throw new UnsupportedSchemaException(type);
+                throw new SchemaUnsupportedException(type);
             }
             this.dependencies = new HashSet<>(cache.values());
         } catch (Exception e) {

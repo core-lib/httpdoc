@@ -2,7 +2,6 @@ package io.httpdoc.core.encode;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.Converter;
-import io.httpdoc.core.conversion.DefaultFormat;
 import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.serialization.Serializer;
 

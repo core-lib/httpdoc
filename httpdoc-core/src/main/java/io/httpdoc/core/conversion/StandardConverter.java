@@ -1,7 +1,7 @@
 package io.httpdoc.core.conversion;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.exception.UndefinedSchemaException;
+import io.httpdoc.core.exception.SchemaUnrecognizedException;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -546,7 +546,7 @@ public class StandardConverter implements Converter {
         if (reference.startsWith(document.getRefPrefix()) && reference.endsWith(document.getRefSuffix())) {
             String name = reference.substring(document.getRefPrefix().length(), reference.length() - document.getRefSuffix().length());
             schema = schemas.get(name);
-            if (schema == null) throw new UndefinedSchemaException(name);
+            if (schema == null) throw new SchemaUnrecognizedException(name);
         } else if (reference.startsWith(document.getMapPrefix()) && reference.endsWith(document.getMapSuffix())) {
             reference = reference.substring(document.getMapPrefix().length(), reference.length() - document.getMapSuffix().length());
             schema = new Schema();
