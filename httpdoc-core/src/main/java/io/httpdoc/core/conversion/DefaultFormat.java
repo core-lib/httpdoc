@@ -38,6 +38,4 @@ public class DefaultFormat implements Format {
         return ARR_SUFFIX;
     }
 
-
-
 }
