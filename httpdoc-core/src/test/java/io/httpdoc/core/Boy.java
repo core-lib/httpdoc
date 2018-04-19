@@ -1,5 +1,6 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.conversion.ConfigureableFormat;
 import io.httpdoc.core.decode.Decoder;
 import io.httpdoc.core.decode.DefaultDecoder;
 import io.httpdoc.core.encode.DefaultEncoder;
@@ -36,7 +37,7 @@ public class Boy extends Person {
         controller.setProduces(Collections.singletonList("application/json"));
         controller.setDescription("产品管理器");
 
-        for (int i = 0 ; i < 3 ; i ++) {
+        for (int i = 0; i < 3; i++) {
             Operation operation = new Operation();
             operation.setName("create");
             operation.setPath("/");
@@ -72,7 +73,9 @@ public class Boy extends Person {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Encoder encoder = new DefaultEncoder();
-        encoder.encode(document, baos);
+        ConfigureableFormat format = new ConfigureableFormat();
+        format.setRefPrefix("#/schemas/");
+        encoder.encode(document, format, baos);
 
         System.out.println(baos.toString());
 

@@ -2,6 +2,8 @@ package io.httpdoc.core.encode;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.Converter;
+import io.httpdoc.core.conversion.DefaultFormat;
+import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.serialization.Serializer;
 
 import java.io.IOException;
@@ -33,6 +35,18 @@ public class CompositeEncoder implements Encoder {
     @Override
     public void encode(Document document, Writer writer) throws IOException {
         Map<String, Object> doc = converter.convert(document);
+        serializer.serialize(doc, writer);
+    }
+
+    @Override
+    public void encode(Document document, Format format, OutputStream out) throws IOException {
+        Map<String, Object> doc = converter.convert(document, format);
+        serializer.serialize(doc, out);
+    }
+
+    @Override
+    public void encode(Document document, Format format, Writer writer) throws IOException {
+        Map<String, Object> doc = converter.convert(document, format);
         serializer.serialize(doc, writer);
     }
 

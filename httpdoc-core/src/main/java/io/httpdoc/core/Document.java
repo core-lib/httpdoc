@@ -1,5 +1,7 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.conversion.Format;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +21,12 @@ public class Document extends Definition {
     private String hostname;
     private String ctxtpath;
     private String version;
+    private String refPrefix = Format.REF_PREFIX;
+    private String refSuffix = Format.REF_SUFFIX;
+    private String mapPrefix = Format.MAP_PREFIX;
+    private String mapSuffix = Format.MAP_SUFFIX;
+    private String arrPrefix = Format.ARR_PREFIX;
+    private String arrSuffix = Format.ARR_SUFFIX;
     private List<Controller> controllers = new ArrayList<>();
     private Map<String, Schema> schemas = new LinkedHashMap<>();
 
@@ -60,6 +68,54 @@ public class Document extends Definition {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getRefPrefix() {
+        return refPrefix;
+    }
+
+    public void setRefPrefix(String refPrefix) {
+        this.refPrefix = refPrefix;
+    }
+
+    public String getRefSuffix() {
+        return refSuffix;
+    }
+
+    public void setRefSuffix(String refSuffix) {
+        this.refSuffix = refSuffix;
+    }
+
+    public String getMapPrefix() {
+        return mapPrefix;
+    }
+
+    public void setMapPrefix(String mapPrefix) {
+        this.mapPrefix = mapPrefix;
+    }
+
+    public String getMapSuffix() {
+        return mapSuffix;
+    }
+
+    public void setMapSuffix(String mapSuffix) {
+        this.mapSuffix = mapSuffix;
+    }
+
+    public String getArrPrefix() {
+        return arrPrefix;
+    }
+
+    public void setArrPrefix(String arrPrefix) {
+        this.arrPrefix = arrPrefix;
+    }
+
+    public String getArrSuffix() {
+        return arrSuffix;
+    }
+
+    public void setArrSuffix(String arrSuffix) {
+        this.arrSuffix = arrSuffix;
     }
 
     public List<Controller> getControllers() {

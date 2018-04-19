@@ -13,12 +13,6 @@ import java.util.*;
  * @date 2018-04-16 14:40
  **/
 public class StandardConverter implements Converter {
-    private static final String REFERENCE_PREFIX = "$/schemas/";
-    private static final String REFERENCE_SUFFIX = "";
-    private static final String DICTIONARY_PREFIX = "Dictionary<String,";
-    private static final String DICTIONARY_SUFFIX = ">";
-    private static final String ARRAY_PREFIX = "";
-    private static final String ARRAY_SUFFIX = "[]";
 
     @Override
     public Map<String, Object> convert(Document document) {
@@ -33,6 +27,12 @@ public class StandardConverter implements Converter {
         map.put("hostname", document.getHostname());
         map.put("ctxtpath", document.getCtxtpath());
         map.put("version", document.getVersion());
+        if (!Format.REF_PREFIX.equals(format.getRefPrefix())) map.put("refPrefix", format.getRefPrefix());
+        if (!Format.REF_SUFFIX.equals(format.getRefSuffix())) map.put("refSuffix", format.getRefSuffix());
+        if (!Format.MAP_PREFIX.equals(format.getMapPrefix())) map.put("mapPrefix", format.getMapPrefix());
+        if (!Format.MAP_SUFFIX.equals(format.getMapSuffix())) map.put("mapSuffix", format.getMapSuffix());
+        if (!Format.ARR_PREFIX.equals(format.getArrPrefix())) map.put("arrPrefix", format.getArrPrefix());
+        if (!Format.ARR_SUFFIX.equals(format.getArrSuffix())) map.put("arrSuffix", format.getArrSuffix());
         map.put("controllers", doConvertControllers(document.getControllers(), format));
         map.put("schemas", doConvertSchemas(document.getSchemas(), format));
         return map;
@@ -239,13 +239,13 @@ public class StandardConverter implements Converter {
             case BASIC:
                 return schema.getName();
             case DICTIONARY:
-                return DICTIONARY_PREFIX + " " + doConvertReference(schema.getComponent(), format) + DICTIONARY_SUFFIX;
+                return format.getMapPrefix() + " " + doConvertReference(schema.getComponent(), format) + format.getMapSuffix();
             case ARRAY:
-                return ARRAY_PREFIX + doConvertReference(schema.getComponent(), format) + ARRAY_SUFFIX;
+                return format.getArrPrefix() + doConvertReference(schema.getComponent(), format) + format.getArrSuffix();
             case ENUM:
-                return REFERENCE_PREFIX + schema.getName() + REFERENCE_SUFFIX;
+                return format.getRefPrefix() + schema.getName() + format.getRefSuffix();
             case OBJECT:
-                return REFERENCE_PREFIX + schema.getName() + REFERENCE_SUFFIX;
+                return format.getRefPrefix() + schema.getName() + format.getRefSuffix();
             default:
                 return null;
         }
@@ -259,6 +259,22 @@ public class StandardConverter implements Converter {
         document.setHostname((String) dictionary.get("hostname"));
         document.setCtxtpath((String) dictionary.get("ctxtpath"));
         document.setVersion((String) dictionary.get("version"));
+
+        String refPrefix = (String) dictionary.get("refPrefix");
+        if (refPrefix != null) document.setRefPrefix(refPrefix);
+        String refSuffix = (String) dictionary.get("refSuffix");
+        if (refSuffix != null) document.setRefSuffix(refSuffix);
+
+        String mapPrefix = (String) dictionary.get("mapPrefix");
+        if (mapPrefix != null) document.setMapPrefix(mapPrefix);
+        String mapSuffix = (String) dictionary.get("mapSuffix");
+        if (mapSuffix != null) document.setMapSuffix(mapSuffix);
+
+        String arrPrefix = (String) dictionary.get("arrPrefix");
+        if (arrPrefix != null) document.setRefPrefix(arrPrefix);
+        String arrSuffix = (String) dictionary.get("arrSuffix");
+        if (arrSuffix != null) document.setRefSuffix(arrSuffix);
+
         doConvertSchemas(document, dictionary.get("schemas"));
         doConvertControllers(document, dictionary.get("controllers"));
         return document;
@@ -523,16 +539,16 @@ public class StandardConverter implements Converter {
         Map<String, Schema> schemas = document.getSchemas();
         reference = reference.replace(" ", "");
         int dimension = 0;
-        while (reference.startsWith(ARRAY_PREFIX) && reference.endsWith(ARRAY_SUFFIX)) {
-            reference = reference.substring(ARRAY_PREFIX.length(), reference.length() - ARRAY_SUFFIX.length());
+        while (reference.startsWith(document.getArrPrefix()) && reference.endsWith(document.getArrSuffix())) {
+            reference = reference.substring(document.getArrPrefix().length(), reference.length() - document.getArrSuffix().length());
             dimension++;
         }
-        if (reference.startsWith(REFERENCE_PREFIX) && reference.endsWith(REFERENCE_SUFFIX)) {
-            String name = reference.substring(REFERENCE_PREFIX.length(), reference.length() - REFERENCE_SUFFIX.length());
+        if (reference.startsWith(document.getRefPrefix()) && reference.endsWith(document.getRefSuffix())) {
+            String name = reference.substring(document.getRefPrefix().length(), reference.length() - document.getRefSuffix().length());
             schema = schemas.get(name);
             if (schema == null) throw new UndefinedSchemaException(name);
-        } else if (reference.startsWith(DICTIONARY_PREFIX) && reference.endsWith(DICTIONARY_SUFFIX)) {
-            reference = reference.substring(DICTIONARY_PREFIX.length(), reference.length() - DICTIONARY_SUFFIX.length());
+        } else if (reference.startsWith(document.getMapPrefix()) && reference.endsWith(document.getMapSuffix())) {
+            reference = reference.substring(document.getMapPrefix().length(), reference.length() - document.getMapSuffix().length());
             schema = new Schema();
             schema.setCategory(Category.DICTIONARY);
             schema.setComponent(doConvertReference(document, reference));

@@ -1,6 +1,7 @@
 package io.httpdoc.core.encode;
 
 import io.httpdoc.core.Document;
+import io.httpdoc.core.conversion.Format;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,5 +18,9 @@ public interface Encoder {
     void encode(Document document, OutputStream out) throws IOException;
 
     void encode(Document document, Writer writer) throws IOException;
+
+    void encode(Document document, Format format, OutputStream out) throws IOException;
+
+    void encode(Document document, Format format, Writer writer) throws IOException;
 
 }

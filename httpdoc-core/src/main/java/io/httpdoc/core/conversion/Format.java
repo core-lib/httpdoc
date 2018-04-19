@@ -8,5 +8,23 @@ package io.httpdoc.core.conversion;
  **/
 public interface Format {
 
+    String REF_PREFIX = "$/schemas/";
+    String REF_SUFFIX = "";
+    String MAP_PREFIX = "Dictionary<String,";
+    String MAP_SUFFIX = ">";
+    String ARR_PREFIX = "";
+    String ARR_SUFFIX = "[]";
+
+    String getRefPrefix();
+
+    String getRefSuffix();
+
+    String getMapPrefix();
+
+    String getMapSuffix();
+
+    String getArrPrefix();
+
+    String getArrSuffix();
 
 }
