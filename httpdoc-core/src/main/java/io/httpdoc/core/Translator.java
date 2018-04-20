@@ -10,6 +10,6 @@ import io.httpdoc.core.exception.DocumentTranslationException;
  **/
 public interface Translator {
 
-    Document translate(String expression) throws DocumentTranslationException;
+    Document translate(Translation translation) throws DocumentTranslationException;
 
 }
