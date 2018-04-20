@@ -79,7 +79,6 @@
     </profiles>
 
     <build>
-        <finalName>mallx-assembly-web</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
