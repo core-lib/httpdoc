@@ -119,6 +119,10 @@
                             <directory>${project.basedir}/src/main/resources/${package.environment}</directory>
                             <targetPath>WEB-INF/classes</targetPath>
                         </resource>
+                        <resource>
+                            <directory>${build.sourceDirectory}</directory>
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
@@ -154,6 +158,24 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+                            <includeScope>system</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

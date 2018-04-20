@@ -90,7 +90,9 @@ public class SourceDescriber implements Describer {
 
         private static List<String> getProjectAllJavaFiles() {
             if (allJavaFiles != null) return allJavaFiles;
-            return allJavaFiles = getAllJavaFiles(new File(System.getProperty("user.dir")));
+            String path = System.getProperty("java.src.path", System.getProperty("user.dir"));
+            File root = new File(path);
+            return allJavaFiles = getAllJavaFiles(root);
         }
 
         private static List<String> getAllJavaFiles(File root) {

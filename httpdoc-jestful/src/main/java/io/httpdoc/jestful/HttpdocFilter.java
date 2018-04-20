@@ -22,23 +22,29 @@ public class HttpdocFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        try {
+            ServletContext servletContext = filterConfig.getServletContext();
+            String path = servletContext.getResource("").getPath();
+            System.setProperty("java.src.path", path);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        ServletContext servletContext = request.getServletContext();
-        Provider provider = new DefaultProvider();
-        Describer describer = new SourceDescriber();
-        Translator translator = new JestfulServerTranslator();
         try {
+            ServletContext servletContext = request.getServletContext();
+            Provider provider = new DefaultProvider();
+            Describer describer = new SourceDescriber();
+            Translator translator = new JestfulServerTranslator();
             Document document = translator.translate(new Translation(servletContext, provider, describer));
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=UTF-8");
             Encoder encoder = new DefaultEncoder();
             encoder.encode(document, response.getOutputStream());
         } catch (DocumentTranslationException e) {
-            e.printStackTrace();
+            throw new ServletException(e);
         }
     }
 
