@@ -2,6 +2,7 @@ package io.httpdoc.core;
 
 import io.httpdoc.core.description.DefaultDescriber;
 import io.httpdoc.core.description.Describer;
+import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.provider.DefaultProvider;
 import io.httpdoc.core.provider.Provider;
@@ -28,12 +29,12 @@ public class Schema extends Definition {
     private Map<String, Property> properties = new LinkedHashMap<>();
     private Schema component;
     private Set<Constant> constants = new LinkedHashSet<>();
-    private Collection<Schema> dependencies;
+    private Collection<Schema> dependencies = new ArrayList<>();
 
     public Schema() {
     }
 
-    private Schema(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) throws Exception {
+    private Schema(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) {
         try {
             cache.put(type, this);
             if (type instanceof Class<?>) {
@@ -106,27 +107,27 @@ public class Schema extends Definition {
             this.dependencies = new HashSet<>(cache.values());
         } catch (Exception e) {
             cache.remove(type);
-            throw e;
+            throw new HttpdocRuntimeException(e);
         }
     }
 
-    public static Schema valueOf(Type type) throws Exception {
+    public static Schema valueOf(Type type) {
         return valueOf(type, new DefaultDescriber());
     }
 
-    public static Schema valueOf(Type type, Describer describer) throws Exception {
+    public static Schema valueOf(Type type, Describer describer) {
         return valueOf(type, new DefaultProvider(), describer);
     }
 
-    public static Schema valueOf(Type type, Provider provider) throws Exception {
+    public static Schema valueOf(Type type, Provider provider) {
         return valueOf(type, provider, new DefaultDescriber());
     }
 
-    public static Schema valueOf(Type type, Provider provider, Describer describer) throws Exception {
+    public static Schema valueOf(Type type, Provider provider, Describer describer) {
         return valueOf(type, new HashMap<Type, Schema>(), provider, describer);
     }
 
-    private static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) throws Exception {
+    private static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Describer describer) {
         return cache.containsKey(type)
                 ? cache.get(type)
                 : provider.contains(type)

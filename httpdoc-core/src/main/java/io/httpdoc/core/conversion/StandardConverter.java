@@ -220,7 +220,7 @@ public class StandardConverter implements Converter {
                         Map<String, Object> p = new LinkedHashMap<>();
                         p.put("type", reference);
                         p.put("description", description);
-                        m.put("name", p);
+                        m.put(name, p);
                     } else {
                         m.put(name, reference);
                     }

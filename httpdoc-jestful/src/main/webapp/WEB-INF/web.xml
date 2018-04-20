@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:/jestful/*.xml,
+            classpath*:*-context.xml
+        </param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>httpdoc</filter-name>
+        <filter-class>io.httpdoc.jestful.HttpdocFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>httpdoc</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>jestful</filter-name>
+        <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
+        <init-param>
+            <param-name>view-prefix</param-name>
+            <param-value>/WEB-INF/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>view-suffix</param-name>
+            <param-value>.jsp</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>jestful</filter-name>
+        <url-pattern>*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+
+</web-app>

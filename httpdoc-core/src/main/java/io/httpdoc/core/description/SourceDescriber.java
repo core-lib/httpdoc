@@ -39,7 +39,7 @@ public class SourceDescriber implements Describer {
         try {
             Method method = descriptor.getReadMethod();
             String description = describe(method);
-            if (description != null) return description;
+            if (description != null && description.trim().length() > 0) return description;
             Class<?> clazz = method.getDeclaringClass();
             String name = descriptor.getName();
             Field field = clazz.getDeclaredField(name);
@@ -50,7 +50,7 @@ public class SourceDescriber implements Describer {
     }
 
     public static abstract class Javadoc {
-        private static Map<Class<?>, ClassDoc> cache = new HashMap<Class<?>, ClassDoc>();
+        private static Map<Class<?>, ClassDoc> cache = new HashMap<>();
         private static List<String> allJavaFiles;
         private static RootDoc root;
 
@@ -59,7 +59,7 @@ public class SourceDescriber implements Describer {
             return true;
         }
 
-        public synchronized static ClassDoc getClassDoc(Class<?> clazz) {
+        private synchronized static ClassDoc getClassDoc(Class<?> clazz) {
             if (cache.containsKey(clazz)) return cache.get(clazz);
 
             String path = getProjectClassAbsolutePath(clazz);
@@ -95,7 +95,7 @@ public class SourceDescriber implements Describer {
 
         private static List<String> getAllJavaFiles(File root) {
             if (root.isDirectory()) {
-                List<String> files = new ArrayList<String>();
+                List<String> files = new ArrayList<>();
                 File[] subs = root.listFiles();
                 for (int i = 0; subs != null && i < subs.length; i++) files.addAll(getAllJavaFiles(subs[i]));
                 return files;
@@ -106,31 +106,31 @@ public class SourceDescriber implements Describer {
             }
         }
 
-        public static String describe(Class<?> clazz) {
+        private static String describe(Class<?> clazz) {
             ClassDoc doc = getClassDoc(clazz);
-            return doc != null ? doc.getRawCommentText() : null;
+            return doc != null ? doc.getRawCommentText().trim() : null;
         }
 
-        public static String describe(Field field) {
+        private static String describe(Field field) {
             Class<?> clazz = field.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields(false);
-            for (FieldDoc fd : fields) if (fd.name().equals(field)) return fd.getRawCommentText();
+            for (FieldDoc fd : fields) if (fd.name().equals(field.getName())) return fd.getRawCommentText().trim();
             return null;
         }
 
-        public static String describe(Enum<?> constant) {
+        private static String describe(Enum<?> constant) {
             Class<?> clazz = constant.getDeclaringClass();
             String name = constant.name();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields();
-            for (FieldDoc fd : fields) if (fd.name().equals(name)) return fd.getRawCommentText();
+            for (FieldDoc fd : fields) if (fd.name().equals(name)) return fd.getRawCommentText().trim();
             return null;
         }
 
-        public static String describe(Method method) {
+        private static String describe(Method method) {
             Class<?> clazz = method.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
@@ -158,7 +158,7 @@ public class SourceDescriber implements Describer {
             }
             builder.append(")");
             String signature = builder.toString();
-            for (MethodDoc md : doc.methods()) if (signature.equals(md.toString())) return md.getRawCommentText();
+            for (MethodDoc md : doc.methods()) if (signature.equals(md.toString())) return md.getRawCommentText().trim();
             return null;
         }
 
