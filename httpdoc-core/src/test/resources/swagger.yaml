@@ -80,7 +80,7 @@ schemas:
       father: $/schemas/Person
       gender: $/schemas/Gender
       name: String
-      tags: String[]
+      notes: String[]
   Girl:
     superclass: $/schemas/Person
     properties:

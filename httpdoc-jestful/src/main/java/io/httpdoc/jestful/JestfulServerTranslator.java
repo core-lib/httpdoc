@@ -2,7 +2,7 @@ package io.httpdoc.jestful;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.Result;
-import io.httpdoc.core.description.Describer;
+import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.provider.Provider;
 import org.qfox.jestful.core.*;
@@ -31,7 +31,7 @@ public class JestfulServerTranslator implements Translator {
 
         ServletContext servletContext = translation.getServletContext();
         Provider provider = translation.getProvider();
-        Describer describer = translation.getDescriber();
+        Interpreter interpreter = translation.getInterpreter();
         ApplicationContext applicationContext = (ApplicationContext) servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         MappingRegistry mappingRegistry = applicationContext.getBean(MappingRegistry.class);
         Enumeration<Mapping> mappings = mappingRegistry.enumeration();
@@ -77,15 +77,15 @@ public class JestfulServerTranslator implements Translator {
                     default:
                         continue loop;
                 }
-                Schema type = Schema.valueOf(parameter.getType(), provider, describer);
+                Schema type = Schema.valueOf(parameter.getType(), provider, interpreter);
                 param.setType(type);
                 operation.getParameters().add(param);
             }
             Result result = new Result();
-            Schema type = Schema.valueOf(mapping.getResult().getType(), provider, describer);
+            Schema type = Schema.valueOf(mapping.getResult().getType(), provider, interpreter);
             result.setType(type);
             operation.setResult(result);
-            operation.setDescription(describer.describe(method));
+            operation.setDescription(interpreter.interpret(method));
 
             controller.getOperations().add(operation);
         }

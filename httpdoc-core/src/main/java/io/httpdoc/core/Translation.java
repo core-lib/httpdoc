@@ -1,6 +1,6 @@
 package io.httpdoc.core;
 
-import io.httpdoc.core.description.Describer;
+import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.provider.Provider;
 
 import javax.servlet.ServletContext;
@@ -14,15 +14,15 @@ import javax.servlet.ServletContext;
 public class Translation {
     private ServletContext servletContext;
     private Provider provider;
-    private Describer describer;
+    private Interpreter interpreter;
 
     public Translation() {
     }
 
-    public Translation(ServletContext servletContext, Provider provider, Describer describer) {
+    public Translation(ServletContext servletContext, Provider provider, Interpreter interpreter) {
         this.servletContext = servletContext;
         this.provider = provider;
-        this.describer = describer;
+        this.interpreter = interpreter;
     }
 
     public ServletContext getServletContext() {
@@ -41,11 +41,11 @@ public class Translation {
         this.provider = provider;
     }
 
-    public Describer getDescriber() {
-        return describer;
+    public Interpreter getInterpreter() {
+        return interpreter;
     }
 
-    public void setDescriber(Describer describer) {
-        this.describer = describer;
+    public void setInterpreter(Interpreter interpreter) {
+        this.interpreter = interpreter;
     }
 }

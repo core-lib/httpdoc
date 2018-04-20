@@ -1,9 +1,6 @@
-package io.httpdoc.core.description;
+package io.httpdoc.core.interpretation;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.*;
 import com.sun.tools.javadoc.Main;
 
 import java.beans.PropertyDescriptor;
@@ -12,38 +9,58 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class SourceDescriber implements Describer {
+public class SourceInterpreter implements Interpreter {
 
     @Override
-    public String describe(Class<?> clazz) {
-        return Javadoc.describe(clazz);
+    public ClassInterpretation interpret(Class<?> clazz) {
+        ClassDoc doc = Javadoc.of(clazz);
+        if (doc == null) return null;
+        Tag[] tags = doc.tags();
+        Note[] notes = new Note[tags != null ? tags.length : 0];
+        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        return new ClassInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
     @Override
-    public String describe(Method method) {
-        return Javadoc.describe(method);
+    public MethodInterpretation interpret(Method method) {
+        MethodDoc doc = Javadoc.of(method);
+        if (doc == null) return null;
+        Tag[] tags = doc.tags();
+        Note[] notes = new Note[tags != null ? tags.length : 0];
+        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        return new MethodInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
     @Override
-    public String describe(Field field) {
-        return Javadoc.describe(field);
+    public FieldInterpretation interpret(Field field) {
+        FieldDoc doc = Javadoc.of(field);
+        if (doc == null) return null;
+        Tag[] tags = doc.tags();
+        Note[] notes = new Note[tags != null ? tags.length : 0];
+        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        return new FieldInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
     @Override
-    public String describe(Enum<?> constant) {
-        return Javadoc.describe(constant);
+    public EnumInterpretation interpret(Enum<?> constant) {
+        FieldDoc doc = Javadoc.of(constant);
+        if (doc == null) return null;
+        Tag[] tags = doc.tags();
+        Note[] notes = new Note[tags != null ? tags.length : 0];
+        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        return new EnumInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
     @Override
-    public String describe(PropertyDescriptor descriptor) {
+    public Interpretation interpret(PropertyDescriptor descriptor) {
         try {
             Method method = descriptor.getReadMethod();
-            String description = describe(method);
-            if (description != null && description.trim().length() > 0) return description;
+            Interpretation interpretation = interpret(method);
+            if (interpretation != null) return interpretation;
             Class<?> clazz = method.getDeclaringClass();
             String name = descriptor.getName();
             Field field = clazz.getDeclaredField(name);
-            return describe(field);
+            return interpret(field);
         } catch (NoSuchFieldException e) {
             return null;
         }
@@ -108,31 +125,30 @@ public class SourceDescriber implements Describer {
             }
         }
 
-        private static String describe(Class<?> clazz) {
-            ClassDoc doc = getClassDoc(clazz);
-            return doc != null ? doc.getRawCommentText().trim() : null;
+        private static ClassDoc of(Class<?> clazz) {
+            return getClassDoc(clazz);
         }
 
-        private static String describe(Field field) {
+        private static FieldDoc of(Field field) {
             Class<?> clazz = field.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields(false);
-            for (FieldDoc fd : fields) if (fd.name().equals(field.getName())) return fd.getRawCommentText().trim();
+            for (FieldDoc fd : fields) if (fd.name().equals(field.getName())) return fd;
             return null;
         }
 
-        private static String describe(Enum<?> constant) {
+        private static FieldDoc of(Enum<?> constant) {
             Class<?> clazz = constant.getDeclaringClass();
             String name = constant.name();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields();
-            for (FieldDoc fd : fields) if (fd.name().equals(name)) return fd.getRawCommentText().trim();
+            for (FieldDoc fd : fields) if (fd.name().equals(name)) return fd;
             return null;
         }
 
-        private static String describe(Method method) {
+        private static MethodDoc of(Method method) {
             Class<?> clazz = method.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
             if (doc == null) return null;
@@ -160,7 +176,7 @@ public class SourceDescriber implements Describer {
             }
             builder.append(")");
             String signature = builder.toString();
-            for (MethodDoc md : doc.methods()) if (signature.equals(md.toString())) return md.getRawCommentText().trim();
+            for (MethodDoc md : doc.methods()) if (signature.equals(md.toString())) return md;
             return null;
         }
 

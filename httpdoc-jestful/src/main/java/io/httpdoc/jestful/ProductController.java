@@ -27,4 +27,14 @@ public class ProductController {
         return null;
     }
 
+    /**
+     *
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public <T> String update(T t) {
+        return null;
+    }
+
 }
