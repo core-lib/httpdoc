@@ -7,11 +7,14 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.Resource;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +72,35 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             controllerInfoHolder.setHandled(true);
 
             HandlerMethod handlerMethod = controllerInfoHolder.getHandlerMethod();
+            RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
+
+            RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
+            ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
+            ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
+            ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
+            PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
+            HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
+            RequestCondition<?> customCondition = requestMappingInfo.getCustomCondition();
+
             MethodParameter returnType = handlerMethod.getReturnType();
-            System.out.println(returnType);
+            Type genericParameterType = returnType.getGenericParameterType();
+
+            if (genericParameterType != null && genericParameterType instanceof ParameterizedType) {
+                // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
+                ParameterizedType responseEntityType = (ParameterizedType) genericParameterType;
+                Class<?> rawType = (Class<?>) responseEntityType.getRawType();
+                Type[] actualTypeArguments = responseEntityType.getActualTypeArguments();
+                System.out.println(responseEntityType);
+            } else {
+                // 接口返回普通Java类
+                Class<?> objectType = (Class<?>) genericParameterType;
+                System.out.println(objectType);
+            }
+
+            HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
+            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
+
+            System.out.println("hh");
         }
     }
 }
