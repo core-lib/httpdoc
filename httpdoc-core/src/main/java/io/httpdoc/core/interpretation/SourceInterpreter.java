@@ -25,10 +25,20 @@ public class SourceInterpreter implements Interpreter {
     public MethodInterpretation interpret(Method method) {
         MethodDoc doc = Javadoc.of(method);
         if (doc == null) return null;
-        Tag[] tags = doc.tags();
-        Note[] notes = new Note[tags != null ? tags.length : 0];
-        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
-        return new MethodInterpretation(doc.commentText(), notes, doc.getRawCommentText());
+        List<Note> notes = new ArrayList<>();
+        {
+            Tag[] tags = doc.paramTags();
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note(tags[i].kind(), tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.throwsTags();
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note(tags[i].kind(), tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.throwsTags();
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note(tags[i].kind(), tags[i].name(), tags[i].text()));
+        }
+        return new MethodInterpretation(doc.commentText(), notes.toArray(new Note[0]), doc.getRawCommentText());
     }
 
     @Override

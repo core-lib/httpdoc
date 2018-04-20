@@ -22,11 +22,7 @@ public class MethodInterpretation extends Interpretation {
 
     public Note[] getParamNotes() {
         List<Note> list = new ArrayList<>();
-        for (int i = 0; notes != null && i < notes.length; i++) {
-            if ("param".equals(notes[i].getKind())) {
-                list.add(notes[i]);
-            }
-        }
+        for (int i = 0; notes != null && i < notes.length; i++) if ("param".equals(notes[i].getKind())) list.add(notes[i]);
         return list.toArray(new Note[0]);
     }
 
