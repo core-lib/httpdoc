@@ -1,8 +1,9 @@
-package io.httpdoc.jestful;
+package io.httpdoc.sample;
 
 import org.qfox.jestful.core.http.Body;
 import org.qfox.jestful.core.http.HTTP;
 import org.qfox.jestful.core.http.POST;
+import org.qfox.jestful.core.http.PUT;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
@@ -28,11 +29,11 @@ public class ProductController {
     }
 
     /**
-     *
      * @param t
      * @param <T>
      * @return
      */
+    @PUT(value = "/", produces = "application/json", consumes = {"application/json", "application/xml"})
     public <T> String update(T t) {
         return null;
     }

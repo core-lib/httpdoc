@@ -22,7 +22,7 @@ public class DefaultInterpreter implements Interpreter {
     }
 
     @Override
-    public FieldInterpretation interpret(Enum<?> constant) {
+    public EnumInterpretation interpret(Enum<?> constant) {
         return null;
     }
 

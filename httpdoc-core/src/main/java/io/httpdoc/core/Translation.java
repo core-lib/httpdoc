@@ -3,8 +3,6 @@ package io.httpdoc.core;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.provider.Provider;
 
-import javax.servlet.ServletContext;
-
 /**
  * 翻译对象
  *
@@ -12,25 +10,25 @@ import javax.servlet.ServletContext;
  * @date 2018-04-19 16:35
  **/
 public class Translation {
-    private ServletContext servletContext;
+    private Context context;
     private Provider provider;
     private Interpreter interpreter;
 
     public Translation() {
     }
 
-    public Translation(ServletContext servletContext, Provider provider, Interpreter interpreter) {
-        this.servletContext = servletContext;
+    public Translation(Context context, Provider provider, Interpreter interpreter) {
+        this.context = context;
         this.provider = provider;
         this.interpreter = interpreter;
     }
 
-    public ServletContext getServletContext() {
-        return servletContext;
+    public Context getContext() {
+        return context;
     }
 
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public Provider getProvider() {

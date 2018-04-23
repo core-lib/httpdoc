@@ -16,7 +16,7 @@
 
     <filter>
         <filter-name>httpdoc</filter-name>
-        <filter-class>io.httpdoc.jestful.HttpdocFilter</filter-class>
+        <filter-class>io.httpdoc.web.HttpdocFilterSupport</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>httpdoc</filter-name>

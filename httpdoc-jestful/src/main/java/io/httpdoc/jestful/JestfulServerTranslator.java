@@ -1,17 +1,18 @@
 package io.httpdoc.jestful;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.Result;
-import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.exception.DocumentTranslationException;
+import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.provider.Provider;
-import org.qfox.jestful.core.*;
-import org.qfox.jestful.core.Parameter;
+import org.qfox.jestful.core.Mapping;
+import org.qfox.jestful.core.MediaType;
+import org.qfox.jestful.core.Position;
+import org.qfox.jestful.core.Resource;
 import org.qfox.jestful.server.MappingRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -29,12 +30,12 @@ public class JestfulServerTranslator implements Translator {
 
         Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
 
-        ServletContext servletContext = translation.getServletContext();
+        Context context = translation.getContext();
         Provider provider = translation.getProvider();
         Interpreter interpreter = translation.getInterpreter();
-        ApplicationContext applicationContext = (ApplicationContext) servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-        MappingRegistry mappingRegistry = applicationContext.getBean(MappingRegistry.class);
-        Enumeration<Mapping> mappings = mappingRegistry.enumeration();
+        ApplicationContext application = (ApplicationContext) context.get(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        MappingRegistry registry = application.getBean(MappingRegistry.class);
+        Enumeration<Mapping> mappings = registry.enumeration();
         while (mappings.hasMoreElements()) {
             Mapping mapping = mappings.nextElement();
             Method method = mapping.getMethod();
@@ -53,40 +54,41 @@ public class JestfulServerTranslator implements Translator {
             for (MediaType produce : mapping.getProduces()) operation.getProduces().add(produce.toString());
             for (MediaType produce : mapping.getConsumes()) operation.getConsumes().add(produce.toString());
             operation.setMethod(mapping.getRestful().getMethod());
+
             loop:
-            for (Parameter parameter : mapping.getParameters()) {
-                io.httpdoc.core.Parameter param = new io.httpdoc.core.Parameter();
-                param.setName(parameter.getName());
-                int position = parameter.getPosition();
+            for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
+                Parameter parameter = new Parameter();
+                parameter.setName(param.getName());
+                int position = param.getPosition();
                 switch (position) {
                     case Position.HEADER:
-                        param.setScope("header");
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_HEADER);
                         break;
                     case Position.PATH:
-                        param.setScope("path");
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_PATH);
                         break;
                     case Position.QUERY:
-                        param.setScope("query");
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_QUERY);
                         break;
                     case Position.BODY:
-                        param.setScope("body");
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                         break;
                     case Position.COOKIE:
-                        param.setScope("cookie");
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_COOKIE);
                         break;
                     default:
                         continue loop;
                 }
-                Schema type = Schema.valueOf(parameter.getType(), provider, interpreter);
-                param.setType(type);
-                operation.getParameters().add(param);
+                Schema type = Schema.valueOf(param.getType(), provider, interpreter);
+                parameter.setType(type);
+                operation.getParameters().add(parameter);
             }
             Result result = new Result();
             Schema type = Schema.valueOf(mapping.getResult().getType(), provider, interpreter);
             result.setType(type);
             operation.setResult(result);
-            operation.setDescription(interpreter.interpret(method));
-
+            MethodInterpretation interpretation = interpreter.interpret(method);
+            operation.setDescription(interpretation != null ? interpretation.getContent() : null);
             controller.getOperations().add(operation);
         }
 
@@ -94,7 +96,7 @@ public class JestfulServerTranslator implements Translator {
 
         for (Controller controller : controllers.values()) {
             for (Operation operation : controller.getOperations()) {
-                for (io.httpdoc.core.Parameter parameter : operation.getParameters()) {
+                for (Parameter parameter : operation.getParameters()) {
                     Schema type = parameter.getType();
                     Collection<Schema> dependencies = type.getDependencies();
                     for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);

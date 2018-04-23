@@ -1,9 +1,8 @@
 package io.httpdoc.core;
 
-import io.httpdoc.core.interpretation.DefaultInterpreter;
-import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
+import io.httpdoc.core.interpretation.*;
 import io.httpdoc.core.provider.DefaultProvider;
 import io.httpdoc.core.provider.Provider;
 
@@ -57,11 +56,13 @@ public class Schema extends Definition {
                     this.name = clazz.getSimpleName();
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
                     for (Enum<?> enumeration : enumerations) {
-                        String description = interpreter.interpret(enumeration);
+                        EnumInterpretation interpretation = interpreter.interpret(enumeration);
+                        String description = interpretation != null ? interpretation.getContent() : null;
                         Constant constant = new Constant(enumeration.name(), description);
                         this.constants.add(constant);
                     }
-                    this.description = interpreter.interpret(clazz);
+                    ClassInterpretation interpretation = interpreter.interpret(clazz);
+                    this.description = interpretation != null ? interpretation.getContent() : null;
                 } else {
                     this.category = Category.OBJECT;
                     this.name = clazz.getSimpleName();
@@ -74,11 +75,13 @@ public class Schema extends Definition {
                         if (getter.getDeclaringClass() != clazz) continue;
                         Type t = getter.getGenericReturnType();
                         Schema schema = Schema.valueOf(t, cache, provider, interpreter);
-                        String description = interpreter.interpret(descriptor);
+                        Interpretation interpretation = interpreter.interpret(descriptor);
+                        String description = interpretation != null ? interpretation.getContent() : null;
                         Property property = new Property(schema, description);
                         this.properties.put(field, property);
                     }
-                    this.description = interpreter.interpret(clazz);
+                    ClassInterpretation interpretation = interpreter.interpret(clazz);
+                    this.description = interpretation != null ? interpretation.getContent() : null;
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;

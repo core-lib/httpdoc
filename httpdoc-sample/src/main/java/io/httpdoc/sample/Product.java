@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.sample;
 
 import java.math.BigDecimal;
 

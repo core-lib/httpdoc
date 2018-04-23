@@ -10,6 +10,8 @@
     <modules>
         <module>httpdoc-core</module>
         <module>httpdoc-jestful</module>
+        <module>httpdoc-web</module>
+        <module>httpdoc-sample</module>
     </modules>
     <packaging>pom</packaging>
 

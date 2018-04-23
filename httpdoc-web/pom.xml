@@ -9,21 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>httpdoc-jestful</artifactId>
-    <name>httpdoc-jestful</name>
+    <artifactId>httpdoc-web</artifactId>
+    <name>httpdoc-web</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -32,21 +25,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-core</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
-            <artifactId>jestful-server</artifactId>
-            <version>v2.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>4.2.6.RELEASE</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
