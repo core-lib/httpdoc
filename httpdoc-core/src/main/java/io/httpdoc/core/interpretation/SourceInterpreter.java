@@ -117,7 +117,7 @@ public class SourceInterpreter implements Interpreter {
 
         private static List<String> getProjectAllJavaFiles() {
             if (allJavaFiles != null) return allJavaFiles;
-            String path = System.getProperty("java.src.path", System.getProperty("user.dir"));
+            String path = System.getProperty("httpdoc.src.path", System.getProperty("user.dir"));
             File root = new File(path);
             return allJavaFiles = getAllJavaFiles(root);
         }

@@ -3,7 +3,7 @@ package io.httpdoc.core;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
-import io.httpdoc.core.provider.DefaultProvider;
+import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.provider.Provider;
 
 import java.beans.Introspector;
@@ -119,7 +119,7 @@ public class Schema extends Definition {
     }
 
     public static Schema valueOf(Type type, Interpreter interpreter) {
-        return valueOf(type, new DefaultProvider(), interpreter);
+        return valueOf(type, new SystemProvider(), interpreter);
     }
 
     public static Schema valueOf(Type type, Provider provider) {

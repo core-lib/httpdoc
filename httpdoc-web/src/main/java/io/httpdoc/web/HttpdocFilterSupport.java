@@ -1,16 +1,10 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Context;
-import io.httpdoc.core.Document;
-import io.httpdoc.core.Translation;
 import io.httpdoc.core.Translator;
-import io.httpdoc.core.encode.DefaultEncoder;
-import io.httpdoc.core.encode.Encoder;
-import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.SourceInterpreter;
-import io.httpdoc.core.provider.DefaultProvider;
 import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.provider.SystemProvider;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -19,15 +13,30 @@ import java.io.IOException;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 12:13
  **/
-public class HttpdocFilterSupport implements Filter {
-    private Translator translator = new DefaultTranslator();
+public class HttpdocFilterSupport extends HttpdocWebSupport implements Filter {
+    private Translator translator = new SmartTranslator();
+    private Provider provider = new SystemProvider();
+    private Interpreter interpreter = new SourceInterpreter();
 
     @Override
     public void init(FilterConfig config) throws ServletException {
         try {
-            ServletContext context = config.getServletContext();
-            String path = context.getResource("").getPath();
-            System.setProperty("java.src.path", path);
+            String translator = config.getInitParameter("translator");
+            if (translator != null && translator.trim().length() > 0) {
+                this.translator = Class.forName(translator).asSubclass(Translator.class).newInstance();
+            }
+            String provider = config.getInitParameter("provider");
+            if (provider != null && provider.trim().length() > 0) {
+                this.provider = Class.forName(provider).asSubclass(Provider.class).newInstance();
+            }
+            String interpreter = config.getInitParameter("interpreter");
+            if (interpreter != null && interpreter.trim().length() > 0) {
+                this.interpreter = Class.forName(interpreter).asSubclass(Interpreter.class).newInstance();
+            }
+            String src = config.getInitParameter("src");
+            if (src != null && src.trim().length() > 0) {
+                System.setProperty("httpdoc.src.path", config.getServletContext().getRealPath(src));
+            }
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -35,23 +44,12 @@ public class HttpdocFilterSupport implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        try {
-            Context context = new HttpdocServletContext(request.getServletContext());
-            Provider provider = new DefaultProvider();
-            Interpreter interpreter = new SourceInterpreter();
-            Translation translation = new Translation(context, provider, interpreter);
-            Document document = translator.translate(translation);
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/plain; charset=UTF-8");
-            Encoder encoder = new DefaultEncoder();
-            encoder.encode(document, response.getOutputStream());
-        } catch (DocumentTranslationException e) {
-            throw new ServletException(e);
-        }
+        handle(request, response, translator, provider, interpreter);
     }
 
     @Override
     public void destroy() {
-
+        System.getProperties().remove("httpdoc.src.path");
     }
+
 }

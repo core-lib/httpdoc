@@ -17,6 +17,10 @@
     <filter>
         <filter-name>httpdoc</filter-name>
         <filter-class>io.httpdoc.web.HttpdocFilterSupport</filter-class>
+        <init-param>
+            <param-name>translator</param-name>
+            <param-value>io.httpdoc.jestful.JestfulServerTranslator</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>httpdoc</filter-name>

@@ -1,6 +1,5 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Attribute;
 import io.httpdoc.core.Context;
 
 import javax.servlet.ServletContext;
@@ -21,21 +20,21 @@ public class HttpdocServletContext implements Context {
 
     @Override
     public Object get(String name) {
-        return null;
+        return context.getAttribute(name);
     }
 
     @Override
-    public Enumeration<Attribute> enumeration() {
-        return null;
+    public Enumeration<String> names() {
+        return context.getAttributeNames();
     }
 
     @Override
     public void remove(String name) {
-
+        context.removeAttribute(name);
     }
 
     @Override
     public void set(String name, Object value) {
-
+        context.setAttribute(name, value);
     }
 }

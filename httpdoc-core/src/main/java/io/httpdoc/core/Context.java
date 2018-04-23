@@ -12,7 +12,7 @@ public interface Context {
 
     Object get(String name);
 
-    Enumeration<Attribute> enumeration();
+    Enumeration<String> names();
 
     void remove(String name);
 
