@@ -42,11 +42,6 @@
             <artifactId>httpdoc-core</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.core-lib</groupId>
-            <artifactId>detector</artifactId>
-            <version>v1.0.5</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -1,10 +1,15 @@
 package io.httpdoc.web;
 
 import io.httpdoc.core.Document;
+import io.httpdoc.core.Loader;
 import io.httpdoc.core.Translation;
 import io.httpdoc.core.Translator;
 import io.httpdoc.core.exception.DocumentTranslationException;
-import org.qfox.detector.DefaultResourceDetector;
+import io.httpdoc.web.exception.UnknownSerializerException;
+
+import java.net.URL;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * 缺省的翻译器
@@ -13,10 +18,29 @@ import org.qfox.detector.DefaultResourceDetector;
  * @date 2018-04-23 16:16
  **/
 public class SmartTranslator implements Translator {
+    private final Translator translator;
+
+    SmartTranslator() {
+        try {
+            Set<URL> urls = Loader.load(this.getClass().getClassLoader());
+            for (URL url : urls) {
+                if (!url.getFile().endsWith("/translator.properties")) continue;
+                Properties properties = new Properties();
+                properties.load(url.openStream());
+                if (properties.isEmpty()) continue;
+                String className = (String) properties.values().iterator().next();
+                translator = Class.forName(className).asSubclass(Translator.class).newInstance();
+                return;
+            }
+            throw new UnknownSerializerException("could not find any translator");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public Document translate(Translation translation) throws DocumentTranslationException {
-        return new Document();
+        return translator.translate(translation);
     }
 
 }

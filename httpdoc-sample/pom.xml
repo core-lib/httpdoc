@@ -44,6 +44,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-jackson</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
             <version>v2.0.1</version>

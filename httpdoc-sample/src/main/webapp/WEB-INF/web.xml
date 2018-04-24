@@ -30,14 +30,6 @@
     <servlet>
         <servlet-name>httpdoc</servlet-name>
         <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
-        <init-param>
-            <param-name>translator</param-name>
-            <param-value>io.httpdoc.jestful.JestfulServerTranslator</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serializer</param-name>
-            <param-value>io.httpdoc.jackson.serialization.JsonSerializer</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>httpdoc</servlet-name>
