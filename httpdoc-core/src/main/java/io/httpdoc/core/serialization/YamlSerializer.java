@@ -33,6 +33,16 @@ public class YamlSerializer implements Serializer {
     }
 
     @Override
+    public String getName() {
+        return "yaml";
+    }
+
+    @Override
+    public String getType() {
+        return "application/yaml";
+    }
+
+    @Override
     public void serialize(Map<String, Object> doc, OutputStream out) throws IOException {
         mapper.writeValue(out, doc);
     }

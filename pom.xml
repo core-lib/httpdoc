@@ -12,6 +12,7 @@
         <module>httpdoc-jestful</module>
         <module>httpdoc-web</module>
         <module>httpdoc-sample</module>
+        <module>httpdoc-jackson</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -14,18 +14,37 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <filter>
-        <filter-name>httpdoc</filter-name>
-        <filter-class>io.httpdoc.web.HttpdocFilterSupport</filter-class>
+    <!--<filter>-->
+        <!--<filter-name>httpdoc</filter-name>-->
+        <!--<filter-class>io.httpdoc.web.HttpdocFilterSupport</filter-class>-->
+        <!--<init-param>-->
+            <!--<param-name>translator</param-name>-->
+            <!--<param-value>io.httpdoc.jestful.JestfulServerTranslator</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>httpdoc</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
+
+    <servlet>
+        <servlet-name>httpdoc</servlet-name>
+        <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
         <init-param>
             <param-name>translator</param-name>
             <param-value>io.httpdoc.jestful.JestfulServerTranslator</param-value>
         </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>httpdoc</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+        <init-param>
+            <param-name>serializer</param-name>
+            <param-value>io.httpdoc.core.serialization.JsonSerializer</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>httpdoc</servlet-name>
+        <url-pattern>/httpdoc</url-pattern>
+        <url-pattern>/httpdoc.json</url-pattern>
+        <url-pattern>/httpdoc.yaml</url-pattern>
+    </servlet-mapping>
 
     <filter>
         <filter-name>jestful</filter-name>

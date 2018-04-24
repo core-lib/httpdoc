@@ -28,6 +28,8 @@ import java.io.IOException;
  * @date 2018-04-23 16:26
  **/
 public abstract class HttpdocWebSupport {
+    private String charset = "UTF-8";
+    private String contentType = null;
     private Translator translator = new SmartTranslator();
     private Provider provider = new SystemProvider();
     private Interpreter interpreter = new SourceInterpreter();
@@ -36,6 +38,14 @@ public abstract class HttpdocWebSupport {
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
+            String charset = config.getInitParameter("charset");
+            if (charset != null && charset.trim().length() > 0) {
+                this.charset = charset;
+            }
+            String contentType = config.getInitParameter("contentType");
+            if (contentType != null && contentType.trim().length() > 0) {
+                this.contentType = contentType;
+            }
             String translator = config.getInitParameter("translator");
             if (translator != null && translator.trim().length() > 0) {
                 this.translator = Class.forName(translator).asSubclass(Translator.class).newInstance();
@@ -70,8 +80,8 @@ public abstract class HttpdocWebSupport {
             Container container = new HttpdocWebContainer(request.getServletContext());
             Translation translation = new Translation(container, provider, interpreter);
             Document document = translator.translate(translation);
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/plain; charset=UTF-8");
+            response.setCharacterEncoding(charset);
+            response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);
             Encoder encoder = new CompositeEncoder(converter, serializer);
             encoder.encode(document, response.getOutputStream());
         } catch (DocumentTranslationException e) {
