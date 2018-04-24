@@ -6,6 +6,7 @@ import io.httpdoc.core.Translation;
 import io.httpdoc.core.Translator;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.web.exception.UnknownSerializerException;
+import io.httpdoc.web.exception.UnknownTranslatorException;
 
 import java.net.URL;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class SmartTranslator implements Translator {
                 translator = Class.forName(className).asSubclass(Translator.class).newInstance();
                 return;
             }
-            throw new UnknownSerializerException("could not find any translator");
+            throw new UnknownTranslatorException("could not find any translator");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
