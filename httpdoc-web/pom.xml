@@ -12,6 +12,13 @@
     <artifactId>httpdoc-web</artifactId>
     <name>httpdoc-web</name>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -34,6 +41,11 @@
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-core</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib</groupId>
+            <artifactId>detector</artifactId>
+            <version>v1.0.5</version>
         </dependency>
     </dependencies>
 
