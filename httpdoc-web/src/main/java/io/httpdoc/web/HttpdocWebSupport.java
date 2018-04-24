@@ -6,8 +6,6 @@ import io.httpdoc.core.Translation;
 import io.httpdoc.core.Translator;
 import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.StandardConverter;
-import io.httpdoc.core.encode.CompositeEncoder;
-import io.httpdoc.core.encode.Encoder;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.SourceInterpreter;
@@ -19,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Httpdoc web 容器支持
@@ -81,8 +80,8 @@ public abstract class HttpdocWebSupport {
             Document document = translator.translate(translation);
             response.setCharacterEncoding(charset);
             response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);
-            Encoder encoder = new CompositeEncoder(converter, serializer);
-            encoder.encode(document, response.getOutputStream());
+            Map<String, Object> doc = converter.convert(document);
+            serializer.serialize(doc, response.getOutputStream());
         } catch (DocumentTranslationException e) {
             throw new ServletException(e);
         }
