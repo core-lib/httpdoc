@@ -16,6 +16,8 @@ import io.httpdoc.core.serialization.Serializer;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
@@ -28,11 +30,11 @@ import java.util.Map;
 public abstract class HttpdocWebSupport {
     private String charset = "UTF-8";
     private String contentType = null;
-    private Translator translator = new SmartTranslator();
+    private Translator translator = new HttpdocMergedTranslator();
     private Provider provider = new SystemProvider();
     private Interpreter interpreter = new SourceInterpreter();
     private Converter converter = new StandardConverter();
-    private Serializer serializer = new SmartSerializer();
+    private Serializer serializer = new HttpdocSuffixSerializer();
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
@@ -75,6 +77,7 @@ public abstract class HttpdocWebSupport {
 
     public void handle(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         try {
+            HttpdocThreadLocal.bind((HttpServletRequest) request, (HttpServletResponse) response);
             Container container = new HttpdocWebContainer(request.getServletContext());
             Translation translation = new Translation(container, provider, interpreter);
             Document document = translator.translate(translation);
@@ -84,6 +87,8 @@ public abstract class HttpdocWebSupport {
             serializer.serialize(doc, response.getOutputStream());
         } catch (DocumentTranslationException e) {
             throw new ServletException(e);
+        } finally {
+            HttpdocThreadLocal.clear();
         }
     }
 
