@@ -14,7 +14,6 @@ import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
-import io.httpdoc.core.serialization.YamlSerializer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -34,7 +33,7 @@ public abstract class HttpdocWebSupport {
     private Provider provider = new SystemProvider();
     private Interpreter interpreter = new SourceInterpreter();
     private Converter converter = new StandardConverter();
-    private Serializer serializer = new YamlSerializer();
+    private Serializer serializer = new SmartSerializer();
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {

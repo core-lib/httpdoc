@@ -1,8 +1,9 @@
-package io.httpdoc.core.serialization;
+package io.httpdoc.jackson.serialization;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.httpdoc.core.serialization.Serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;

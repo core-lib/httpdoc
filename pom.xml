@@ -13,6 +13,7 @@
         <module>httpdoc-web</module>
         <module>httpdoc-sample</module>
         <module>httpdoc-jackson</module>
+        <module>httpdoc-gson</module>
     </modules>
     <packaging>pom</packaging>
 

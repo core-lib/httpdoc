@@ -1,7 +1,8 @@
-package io.httpdoc.core.serialization;
+package io.httpdoc.jackson.serialization;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.httpdoc.core.serialization.Serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,8 +1,9 @@
-package io.httpdoc.core.deserialization;
+package io.httpdoc.jackson.deserialization;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.httpdoc.core.deserialization.Deserializer;
 
 import java.io.IOException;
 import java.io.InputStream;

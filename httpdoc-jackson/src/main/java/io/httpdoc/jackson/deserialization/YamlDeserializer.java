@@ -1,8 +1,9 @@
-package io.httpdoc.core.deserialization;
+package io.httpdoc.jackson.deserialization;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.httpdoc.core.deserialization.Deserializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,23 +11,23 @@ import java.io.Reader;
 import java.util.Map;
 
 /**
- * Xml反序列化器
+ * YAML反序列化器
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-17 10:29
  **/
-public class XmlDeserializer implements Deserializer {
-    private final XmlMapper mapper;
+public class YamlDeserializer implements Deserializer {
+    private final YAMLMapper mapper;
 
-    public XmlDeserializer() {
-        this(new XmlFactory());
+    public YamlDeserializer() {
+        this(new YAMLFactory());
     }
 
-    public XmlDeserializer(XmlFactory factory) {
-        this(new XmlMapper(factory));
+    public YamlDeserializer(YAMLFactory factory) {
+        this(new YAMLMapper(factory));
     }
 
-    public XmlDeserializer(XmlMapper mapper) {
+    public YamlDeserializer(YAMLMapper mapper) {
         this.mapper = mapper;
     }
 
