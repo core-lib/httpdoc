@@ -30,10 +30,10 @@ public class JestfulServerTranslator implements Translator {
 
         Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
 
-        Context context = translation.getContext();
+        Container container = translation.getContainer();
         Provider provider = translation.getProvider();
         Interpreter interpreter = translation.getInterpreter();
-        ApplicationContext application = (ApplicationContext) context.get(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        ApplicationContext application = (ApplicationContext) container.get(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         MappingRegistry registry = application.getBean(MappingRegistry.class);
         Enumeration<Mapping> mappings = registry.enumeration();
         while (mappings.hasMoreElements()) {

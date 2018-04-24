@@ -1,20 +1,20 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Context;
+import io.httpdoc.core.Container;
 
 import javax.servlet.ServletContext;
 import java.util.Enumeration;
 
 /**
- * Httpdoc Servlet Context
+ * Httpdoc Servlet Container
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-23 16:14
  **/
-public class HttpdocServletContext implements Context {
+public class HttpdocServletContainer implements Container {
     private final ServletContext context;
 
-    HttpdocServletContext(ServletContext context) {
+    HttpdocServletContainer(ServletContext context) {
         this.context = context;
     }
 

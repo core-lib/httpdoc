@@ -1,6 +1,6 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Context;
+import io.httpdoc.core.Container;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Translation;
 import io.httpdoc.core.Translator;
@@ -31,8 +31,8 @@ public abstract class HttpdocWebSupport {
             Interpreter interpreter
     ) throws IOException, ServletException {
         try {
-            Context context = new HttpdocServletContext(request.getServletContext());
-            Translation translation = new Translation(context, provider, interpreter);
+            Container container = new HttpdocServletContainer(request.getServletContext());
+            Translation translation = new Translation(container, provider, interpreter);
             Document document = translator.translate(translation);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/plain; charset=UTF-8");

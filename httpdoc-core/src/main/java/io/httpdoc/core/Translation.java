@@ -10,25 +10,25 @@ import io.httpdoc.core.provider.Provider;
  * @date 2018-04-19 16:35
  **/
 public class Translation {
-    private Context context;
+    private Container container;
     private Provider provider;
     private Interpreter interpreter;
 
     public Translation() {
     }
 
-    public Translation(Context context, Provider provider, Interpreter interpreter) {
-        this.context = context;
+    public Translation(Container container, Provider provider, Interpreter interpreter) {
+        this.container = container;
         this.provider = provider;
         this.interpreter = interpreter;
     }
 
-    public Context getContext() {
-        return context;
+    public Container getContainer() {
+        return container;
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+    public void setContainer(Container container) {
+        this.container = container;
     }
 
     public Provider getProvider() {
