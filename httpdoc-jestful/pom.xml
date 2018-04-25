@@ -38,8 +38,21 @@
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
-            <artifactId>jestful-core</artifactId>
-            <version>v2.0.1</version>
+            <artifactId>jestful-server</artifactId>
+            <version>v2.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>4.2.6.RELEASE</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

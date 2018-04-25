@@ -9,8 +9,14 @@ package io.httpdoc.core;
 public class Parameter extends Definition {
     private static final long serialVersionUID = 8199679343694443326L;
 
+    public static final String HTTP_PARAM_SCOPE_HEADER = "header";
+    public static final String HTTP_PARAM_SCOPE_PATH = "path";
+    public static final String HTTP_PARAM_SCOPE_QUERY = "query";
+    public static final String HTTP_PARAM_SCOPE_BODY = "body";
+    public static final String HTTP_PARAM_SCOPE_COOKIE = "cookie";
+
     private String name;
-    private String scope; // query body header path
+    private String scope;
     private Schema type;
 
     public String getName() {

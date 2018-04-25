@@ -13,6 +13,10 @@ import java.util.Map;
  **/
 public interface Serializer {
 
+    String getName();
+
+    String getType();
+
     void serialize(Map<String, Object> doc, OutputStream out) throws IOException;
 
     void serialize(Map<String, Object> doc, Writer writer) throws IOException;
