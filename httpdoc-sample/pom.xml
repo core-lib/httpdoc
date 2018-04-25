@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
-            <version>v2.0.1</version>
+            <version>v2.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
