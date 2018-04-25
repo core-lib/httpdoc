@@ -11,10 +11,10 @@ import java.util.Enumeration;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-23 16:14
  **/
-public class JestfulWebContainer implements Container {
+public class JestfulHttpdocContainer implements Container {
     private final ServletContext context;
 
-    JestfulWebContainer(ServletContext context) {
+    JestfulHttpdocContainer(ServletContext context) {
         this.context = context;
     }
 

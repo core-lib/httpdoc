@@ -68,7 +68,7 @@ public class JestfulHttpdocController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException, DocumentTranslationException {
-        Container container = new JestfulWebContainer(request.getServletContext());
+        Container container = new JestfulHttpdocContainer(request.getServletContext());
         Translation translation = new Translation(container, provider, interpreter);
         Document document = translator.translate(translation);
         response.setCharacterEncoding(charset);
@@ -88,7 +88,7 @@ public class JestfulHttpdocController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException, DocumentTranslationException {
-        Container container = new JestfulWebContainer(request.getServletContext());
+        Container container = new JestfulHttpdocContainer(request.getServletContext());
         Translation translation = new Translation(container, provider, interpreter);
         Document document = translator.translate(translation);
         response.setCharacterEncoding(charset);
