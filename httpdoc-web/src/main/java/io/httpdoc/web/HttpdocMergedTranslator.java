@@ -24,7 +24,7 @@ public class HttpdocMergedTranslator implements Translator {
 
     HttpdocMergedTranslator() {
         try {
-            Set<URL> urls = Loader.load(this.getClass().getClassLoader());
+            Set<URL> urls = Loader.load(HttpdocMergedTranslator.class.getClassLoader());
             for (URL url : urls) {
                 if (!url.getFile().endsWith("/translator.properties")) continue;
                 Properties properties = new Properties();

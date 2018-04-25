@@ -22,7 +22,7 @@ public class HttpdocSuffixSerializer implements Serializer {
 
     HttpdocSuffixSerializer() {
         try {
-            Set<URL> urls = Loader.load(this.getClass().getClassLoader());
+            Set<URL> urls = Loader.load(HttpdocSuffixSerializer.class.getClassLoader());
             for (URL url : urls) {
                 if (!url.getFile().endsWith("/serializer.properties")) continue;
                 Properties properties = new Properties();
