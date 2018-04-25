@@ -72,6 +72,10 @@ public class JestfulHttpdocController {
         Translation translation = new Translation(container, provider, interpreter);
         Document document = translator.translate(translation);
         response.setCharacterEncoding(charset);
+        if (serializers == null) {
+            response.sendError(404);
+            return;
+        }
         Serializer serializer = serializers.values().iterator().next();
         charset = charset != null && charset.trim().length() > 0 ? charset : "UTF-8";
         contentType = contentType != null && charset.trim().length() > 0 ? contentType : serializer.getType();
@@ -93,7 +97,10 @@ public class JestfulHttpdocController {
         Document document = translator.translate(translation);
         response.setCharacterEncoding(charset);
         Serializer serializer = serializers.get(suffix);
-        if (serializer == null) throw new HttpdocRuntimeException("unknown serializer named " + suffix);
+        if (serializer == null) {
+            response.sendError(404);
+            return;
+        }
         charset = charset != null && charset.trim().length() > 0 ? charset : "UTF-8";
         contentType = contentType != null && charset.trim().length() > 0 ? contentType : serializer.getType();
         response.setContentType(contentType + "; charset=" + charset);
