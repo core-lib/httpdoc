@@ -1,7 +1,5 @@
 package io.httpdoc.core;
 
-import java.io.File;
-
 /**
  * 代码生成器
  *
@@ -10,6 +8,6 @@ import java.io.File;
  **/
 public interface Generator {
 
-    void generation(Generation generation, File directory);
+    void generate(Generation generation);
 
 }
