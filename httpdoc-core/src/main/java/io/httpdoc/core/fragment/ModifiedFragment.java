@@ -1,29 +1,26 @@
-package io.httpdoc.core.generating;
+package io.httpdoc.core.fragment;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.lang.reflect.Modifier;
 
 /**
- * ModifiedGenerating
+ * ModifiedFragment
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 16:45
  **/
-public abstract class ModifiedGenerating implements Generating {
+public abstract class ModifiedFragment implements Fragment {
     protected int modifier;
 
-    protected ModifiedGenerating() {
+    protected ModifiedFragment() {
     }
 
-    protected ModifiedGenerating(int modifier) {
+    protected ModifiedFragment(int modifier) {
         this.modifier = modifier;
     }
 
     @Override
-    public <T extends Appender<T>> void generate(T appender) throws IOException {
+    public <T extends Appender<T>> void joinTo(T appender) throws IOException {
         if (Modifier.isPublic(modifier)) appender.append("public ");
         if (Modifier.isProtected(modifier)) appender.append("protected ");
         if (Modifier.isPrivate(modifier)) appender.append("private ");

@@ -1,4 +1,4 @@
-package io.httpdoc.core.generating;
+package io.httpdoc.core.fragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,51 +10,51 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 16:31
  **/
-public class ClassGenerating extends ModifiedGenerating implements Generating {
+public class ClassFragment extends ModifiedFragment implements Fragment {
     private String pkg;
     private List<String> imports = new ArrayList<>();
     private String name;
     private String superclass;
     private List<String> interfaces = new ArrayList<>();
-    private List<FieldGenerating> fieldGeneratings = new ArrayList<>();
-    private List<StaticBlockGenerating> staticBlockGeneratings = new ArrayList<>();
-    private List<InstanceBlockGenerating> instanceBlockGeneratings = new ArrayList<>();
-    private List<ConstructorGenerating> constructorGeneratings = new ArrayList<>();
-    private List<MethodGenerating> methodGeneratings = new ArrayList<>();
-    private List<ClassGenerating> classGeneratings = new ArrayList<>();
+    private List<FieldFragment> fieldGeneratings = new ArrayList<>();
+    private List<StaticBlockFragment> staticBlockGeneratings = new ArrayList<>();
+    private List<InstanceBlockFragment> instanceBlockGeneratings = new ArrayList<>();
+    private List<ConstructorFragment> constructorGeneratings = new ArrayList<>();
+    private List<MethodFragment> methodGeneratings = new ArrayList<>();
+    private List<ClassFragment> classGeneratings = new ArrayList<>();
 
-    public ClassGenerating(String pkg, String name) {
+    public ClassFragment(String pkg, String name) {
         this.pkg = pkg;
         this.name = name;
     }
 
-    public ClassGenerating(int modifier, String pkg, String name) {
+    public ClassFragment(int modifier, String pkg, String name) {
         super(modifier);
         this.pkg = pkg;
         this.name = name;
     }
 
-    public ClassGenerating(String pkg, String name, String superclass) {
+    public ClassFragment(String pkg, String name, String superclass) {
         this.pkg = pkg;
         this.name = name;
         this.superclass = superclass;
     }
 
-    public ClassGenerating(int modifier, String pkg, String name, String superclass) {
+    public ClassFragment(int modifier, String pkg, String name, String superclass) {
         super(modifier);
         this.pkg = pkg;
         this.name = name;
         this.superclass = superclass;
     }
 
-    public ClassGenerating(String pkg, String name, String superclass, List<String> interfaces) {
+    public ClassFragment(String pkg, String name, String superclass, List<String> interfaces) {
         this.pkg = pkg;
         this.name = name;
         this.superclass = superclass;
         this.interfaces = interfaces;
     }
 
-    public ClassGenerating(int modifier, String pkg, String name, String superclass, List<String> interfaces) {
+    public ClassFragment(int modifier, String pkg, String name, String superclass, List<String> interfaces) {
         super(modifier);
         this.pkg = pkg;
         this.name = name;
@@ -63,12 +63,7 @@ public class ClassGenerating extends ModifiedGenerating implements Generating {
     }
 
     @Override
-    public <T extends Appender<T>> void generate(T appender) throws IOException {
-        appender.appendln("package " + pkg);
-        appender.appendln();
-        for (String i : imports) appender.appendln("import " + i);
-        appender.appendln();
-        super.generate(appender);
+    public <T extends Appender<T>> void joinTo(T appender) throws IOException {
 
     }
 
@@ -112,51 +107,51 @@ public class ClassGenerating extends ModifiedGenerating implements Generating {
         this.interfaces = interfaces;
     }
 
-    public List<FieldGenerating> getFieldGeneratings() {
+    public List<FieldFragment> getFieldGeneratings() {
         return fieldGeneratings;
     }
 
-    public void setFieldGeneratings(List<FieldGenerating> fieldGeneratings) {
+    public void setFieldGeneratings(List<FieldFragment> fieldGeneratings) {
         this.fieldGeneratings = fieldGeneratings;
     }
 
-    public List<StaticBlockGenerating> getStaticBlockGeneratings() {
+    public List<StaticBlockFragment> getStaticBlockGeneratings() {
         return staticBlockGeneratings;
     }
 
-    public void setStaticBlockGeneratings(List<StaticBlockGenerating> staticBlockGeneratings) {
+    public void setStaticBlockGeneratings(List<StaticBlockFragment> staticBlockGeneratings) {
         this.staticBlockGeneratings = staticBlockGeneratings;
     }
 
-    public List<InstanceBlockGenerating> getInstanceBlockGeneratings() {
+    public List<InstanceBlockFragment> getInstanceBlockGeneratings() {
         return instanceBlockGeneratings;
     }
 
-    public void setInstanceBlockGeneratings(List<InstanceBlockGenerating> instanceBlockGeneratings) {
+    public void setInstanceBlockGeneratings(List<InstanceBlockFragment> instanceBlockGeneratings) {
         this.instanceBlockGeneratings = instanceBlockGeneratings;
     }
 
-    public List<ConstructorGenerating> getConstructorGeneratings() {
+    public List<ConstructorFragment> getConstructorGeneratings() {
         return constructorGeneratings;
     }
 
-    public void setConstructorGeneratings(List<ConstructorGenerating> constructorGeneratings) {
+    public void setConstructorGeneratings(List<ConstructorFragment> constructorGeneratings) {
         this.constructorGeneratings = constructorGeneratings;
     }
 
-    public List<MethodGenerating> getMethodGeneratings() {
+    public List<MethodFragment> getMethodGeneratings() {
         return methodGeneratings;
     }
 
-    public void setMethodGeneratings(List<MethodGenerating> methodGeneratings) {
+    public void setMethodGeneratings(List<MethodFragment> methodGeneratings) {
         this.methodGeneratings = methodGeneratings;
     }
 
-    public List<ClassGenerating> getClassGeneratings() {
+    public List<ClassFragment> getClassGeneratings() {
         return classGeneratings;
     }
 
-    public void setClassGeneratings(List<ClassGenerating> classGeneratings) {
+    public void setClassGeneratings(List<ClassFragment> classGeneratings) {
         this.classGeneratings = classGeneratings;
     }
 }
