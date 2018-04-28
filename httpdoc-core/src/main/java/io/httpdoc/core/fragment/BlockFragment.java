@@ -1,6 +1,7 @@
 package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.appender.IndentedAppender;
 
 import java.io.IOException;
 
@@ -16,7 +17,9 @@ public class BlockFragment implements Fragment {
     @Override
     public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
         appender.append("{").enter();
-        appender.append(code).enter();
+        IndentedAppender apd = new IndentedAppender(preference.getIndent(), appender);
+        apd.append(code);
+        apd.flush();
         appender.append("}").enter();
     }
 

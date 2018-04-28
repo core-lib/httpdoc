@@ -1,5 +1,8 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.appender.Appender;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,30 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
     private List<ParameterFragment> parameterFragments = new ArrayList<>();
     private List<ExceptionFragment> exceptionFragments = new ArrayList<>();
     private BlockFragment blockFragment;
+
+    @Override
+    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
+        appender.enter();
+        super.joinTo(appender, preference);
+        if (type != null) appender.append(type).append(" ");
+        if (name != null) appender.append(name);
+        appender.append("(");
+        for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
+            if (i > 0) appender.append(", ");
+            ParameterFragment fragment = parameterFragments.get(i);
+            fragment.joinTo(appender, preference);
+        }
+        appender.append(")");
+        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
+            if (i == 0) appender.append("throws ");
+            if (i > 0) appender.append(", ");
+            ExceptionFragment fragment = exceptionFragments.get(i);
+            fragment.joinTo(appender, preference);
+        }
+        if (blockFragment != null) blockFragment.joinTo(appender, preference);
+        else appender.append(";");
+    }
 
     public CommentFragment getCommentFragment() {
         return commentFragment;
