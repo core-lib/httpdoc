@@ -1,4 +1,4 @@
-package io.httpdoc.core.fragment;
+package io.httpdoc.core.appender;
 
 import java.io.IOException;
 

@@ -42,7 +42,7 @@
         <filter-name>jestful</filter-name>
         <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
         <init-param>
-            <param-name>view-prefix</param-name>
+            <param-name>view-suffix</param-name>
             <param-value>/WEB-INF/</param-value>
         </init-param>
         <init-param>
