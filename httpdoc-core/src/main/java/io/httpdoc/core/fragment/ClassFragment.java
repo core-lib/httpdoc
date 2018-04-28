@@ -22,8 +22,8 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
     private String superclass;
     private List<String> interfaces = new ArrayList<>();
     private List<FieldFragment> fieldFragments = new ArrayList<>();
-    private List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
-    private List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
+    private List<StaticFragment> staticFragments = new ArrayList<>();
+    private List<InstanceFragment> instanceFragments = new ArrayList<>();
     private List<ConstructorFragment> constructorFragments = new ArrayList<>();
     private List<MethodFragment> methodFragments = new ArrayList<>();
     private List<ClassFragment> classFragments = new ArrayList<>();
@@ -63,7 +63,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         iapd.flush();
 
         // 静态代码块
-        for (Fragment fragment : staticBlockFragments) {
+        for (Fragment fragment : staticFragments) {
             fragment.joinTo(iapd, preference);
             iapd.enter();
         }
@@ -78,7 +78,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         iapd.flush();
 
         // 实例代码块
-        for (Fragment fragment : instanceBlockFragments) {
+        for (Fragment fragment : instanceFragments) {
             fragment.joinTo(iapd, preference);
             iapd.enter();
         }
@@ -91,7 +91,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         }
         iapd.flush();
 
-        // 构造器
+        // 方法
         for (Fragment fragment : methodFragments) {
             fragment.joinTo(iapd, preference);
             iapd.enter();
@@ -164,20 +164,20 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         this.fieldFragments = fieldFragments;
     }
 
-    public List<StaticBlockFragment> getStaticBlockFragments() {
-        return staticBlockFragments;
+    public List<StaticFragment> getStaticFragments() {
+        return staticFragments;
     }
 
-    public void setStaticBlockFragments(List<StaticBlockFragment> staticBlockFragments) {
-        this.staticBlockFragments = staticBlockFragments;
+    public void setStaticFragments(List<StaticFragment> staticFragments) {
+        this.staticFragments = staticFragments;
     }
 
-    public List<InstanceBlockFragment> getInstanceBlockFragments() {
-        return instanceBlockFragments;
+    public List<InstanceFragment> getInstanceFragments() {
+        return instanceFragments;
     }
 
-    public void setInstanceBlockFragments(List<InstanceBlockFragment> instanceBlockFragments) {
-        this.instanceBlockFragments = instanceBlockFragments;
+    public void setInstanceFragments(List<InstanceFragment> instanceFragments) {
+        this.instanceFragments = instanceFragments;
     }
 
     public List<ConstructorFragment> getConstructorFragments() {

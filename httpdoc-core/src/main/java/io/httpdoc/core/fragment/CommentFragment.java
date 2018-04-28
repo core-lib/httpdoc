@@ -1,6 +1,7 @@
 package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.appender.PrefixAppender;
 
 import java.io.IOException;
 
@@ -15,7 +16,12 @@ public class CommentFragment implements Fragment {
 
     @Override
     public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
-
+        if (content == null) return;
+        appender.append("/**");
+        PrefixAppender apd = new PrefixAppender(" * ", appender);
+        apd.append(content);
+        apd.flush();
+        appender.append(" */");
     }
 
     public String getContent() {

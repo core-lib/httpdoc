@@ -11,9 +11,20 @@ import java.io.IOException;
  * @date 2018-04-27 16:37
  **/
 public class BlockFragment implements Fragment {
+    private String code;
 
     @Override
     public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+        appender.append("{").enter();
+        appender.append(code).enter();
+        appender.append("}").enter();
+    }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

@@ -6,5 +6,5 @@ package io.httpdoc.core.fragment;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 16:35
  **/
-public class SetterMethodFragment extends MethodFragment {
+public class SetterFragment extends MethodFragment {
 }
