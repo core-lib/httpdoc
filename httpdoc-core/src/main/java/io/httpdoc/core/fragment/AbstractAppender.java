@@ -16,13 +16,14 @@ public abstract class AbstractAppender<T extends AbstractAppender<T>> implements
     }
 
     @Override
-    public T append(CharSequence text, int start, int end) throws IOException {
-        return append(text.subSequence(start, end));
+    public T append(CharSequence text) throws IOException {
+        return append(text, 0, text.length());
     }
 
     @Override
-    public T append(char c) throws IOException {
-        return append(String.valueOf(c), 0, 1);
+    public T append(CharSequence text, int start, int end) throws IOException {
+        for (int i = start; i < end; i++) append(text.charAt(i));
+        return (T) this;
     }
 
     @Override

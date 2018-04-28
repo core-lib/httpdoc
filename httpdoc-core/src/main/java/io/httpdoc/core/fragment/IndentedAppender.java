@@ -11,7 +11,7 @@ import java.io.IOException;
 public class IndentedAppender extends AbstractAppender<IndentedAppender> implements Appender<IndentedAppender> {
     private final Appender<?> appender;
     private final String space;
-    private volatile String buffer = null;
+    private volatile StringBuilder buffer = null;
     private volatile boolean first = true;
     private volatile boolean enter = false;
 
@@ -23,21 +23,22 @@ public class IndentedAppender extends AbstractAppender<IndentedAppender> impleme
     }
 
     @Override
-    public IndentedAppender append(CharSequence text) throws IOException {
-        buffer = buffer == null ? text.toString() : buffer + text;
-        int start = 0;
-        int end = buffer.indexOf("\n", start);
-        while (end >= 0) {
-            if (first || enter) appender.append(space);
-            String line = buffer.substring(start, end).trim();
-            appender.append(line).enter();
-            start = end + 1;
-            end = buffer.indexOf("\n", start);
-            first = false;
-            enter = true;
+    public IndentedAppender append(char c) throws IOException {
+        if (buffer == null) buffer = new StringBuilder();
+        switch (c) {
+            case '\r':
+                return this;
+            case '\n':
+                if (first || enter) appender.append(space);
+                appender.append(buffer).enter();
+                buffer.setLength(0);
+                first = false;
+                enter = true;
+                return this;
+            default:
+                buffer.append(c);
+                return this;
         }
-        buffer = buffer.substring(start);
-        return this;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class IndentedAppender extends AbstractAppender<IndentedAppender> impleme
         super.flush();
         if (first || enter) appender.append(space);
         appender.append(buffer);
-        buffer = "";
+        buffer.setLength(0);
         first = false;
         enter = false;
         appender.flush();

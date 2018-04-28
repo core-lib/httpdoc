@@ -16,8 +16,8 @@ public class AppendableAppender extends AbstractAppender<AppendableAppender> imp
     }
 
     @Override
-    public AppendableAppender append(CharSequence text) throws IOException {
-        appendable.append(text);
+    public AppendableAppender append(char c) throws IOException {
+        appendable.append(c);
         return this;
     }
 
