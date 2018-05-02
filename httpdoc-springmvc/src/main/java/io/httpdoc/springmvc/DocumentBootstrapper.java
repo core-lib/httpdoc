@@ -1,10 +1,14 @@
 package io.httpdoc.springmvc;
 
+import io.httpdoc.core.Controller;
+import io.httpdoc.core.Document;
+import io.httpdoc.core.Operation;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.*;
@@ -13,11 +17,10 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 文件启动加载器
@@ -37,6 +40,9 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     @Resource
     private List<RequestMappingInfoHandlerMapping> handlerMappings;
 
+    @Resource
+    private SpringmvcDocument document;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         for (RequestMappingHandlerMapping requestMappingHandlerMapping : requestMappingHandlerMappings) {
@@ -48,7 +54,77 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
             buildControllers(handlerMethods);
         }
-        handle();
+
+        document.setDocument(translate());
+    }
+
+    private Document translate() {
+        Document document = new Document();
+
+        List<Controller> controllers = new LinkedList<>();
+        document.setControllers(controllers);
+        for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
+            if (controllerInfoHolder.isHandled()) {
+                continue;
+            }
+            controllerInfoHolder.setHandled(true);
+            Controller controller = new Controller();
+
+            HandlerMethod handlerMethod = controllerInfoHolder.getHandlerMethod();
+            Method method = handlerMethod.getMethod();
+            controller.setName(method.getName());
+
+            RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
+
+            RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
+            // SpringMVC 一个接口只会有一个操作注解
+            Operation operation = new Operation();
+//            operation.setMethod(methodsCondition.);
+
+            ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
+            ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
+            Set<MediaType> consumableMediaTypes = consumesCondition.getConsumableMediaTypes();
+            List<String> consumes = new LinkedList<>();
+            for (MediaType consumableMediaType : consumableMediaTypes) {
+                consumes.add(consumableMediaType.toString());
+            }
+            controller.setConsumes(consumes);
+            ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
+            Set<MediaTypeExpression> expressions = producesCondition.getExpressions();
+            List<String> produces = new LinkedList<>();
+            for (MediaTypeExpression expression : expressions) {
+                produces.add(expression.getMediaType().toString());
+            }
+            controller.setProduces(produces);
+            PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
+            Set<String> patterns = patternsCondition.getPatterns();
+            if (patterns != null && patterns.size() > 0) {
+                controller.setPath(patterns.iterator().next());
+            }
+            HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
+            RequestCondition<?> customCondition = requestMappingInfo.getCustomCondition();
+
+            MethodParameter returnType = handlerMethod.getReturnType();
+            Type genericParameterType = returnType.getGenericParameterType();
+
+            if (genericParameterType != null && genericParameterType instanceof ParameterizedType) {
+                // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
+                ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+                Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                System.out.println(parameterizedType);
+            } else {
+                // 接口返回普通Java类
+                Class<?> objectType = (Class<?>) genericParameterType;
+                System.out.println(objectType);
+            }
+
+            HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
+            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
+
+            System.out.println("hh");
+        }
+        return document;
     }
 
     private void buildControllers(Map<RequestMappingInfo, HandlerMethod> map) {
@@ -60,47 +136,10 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             ControllerInfoHolder controllerInfoHolder = new ControllerInfoHolder();
             controllerInfoHolder.setHandlerMethod(handlerMethod);
             controllerInfoHolder.setRequestMappingInfo(requestMappingInfo);
-            controllerInfoHolders.add(controllerInfoHolder);
-        }
-    }
-
-    public void handle() {
-        for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
-            if (controllerInfoHolder.isHandled()) {
+            if (controllerInfoHolders.contains(controllerInfoHolder)) {
                 continue;
             }
-            controllerInfoHolder.setHandled(true);
-
-            HandlerMethod handlerMethod = controllerInfoHolder.getHandlerMethod();
-            RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
-
-            RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
-            ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
-            ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
-            ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
-            PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
-            HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
-            RequestCondition<?> customCondition = requestMappingInfo.getCustomCondition();
-
-            MethodParameter returnType = handlerMethod.getReturnType();
-            Type genericParameterType = returnType.getGenericParameterType();
-
-            if (genericParameterType != null && genericParameterType instanceof ParameterizedType) {
-                // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
-                ParameterizedType responseEntityType = (ParameterizedType) genericParameterType;
-                Class<?> rawType = (Class<?>) responseEntityType.getRawType();
-                Type[] actualTypeArguments = responseEntityType.getActualTypeArguments();
-                System.out.println(responseEntityType);
-            } else {
-                // 接口返回普通Java类
-                Class<?> objectType = (Class<?>) genericParameterType;
-                System.out.println(objectType);
-            }
-
-            HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
-            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-
-            System.out.println("hh");
+            controllerInfoHolders.add(controllerInfoHolder);
         }
     }
 }

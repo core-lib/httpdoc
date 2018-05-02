@@ -50,4 +50,19 @@ public class ControllerInfoHolder {
                 ", isHandled=" + isHandled +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ControllerInfoHolder that = (ControllerInfoHolder) o;
+
+        return requestMappingInfo != null ? requestMappingInfo.equals(that.requestMappingInfo) : that.requestMappingInfo == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return requestMappingInfo != null ? requestMappingInfo.hashCode() : 0;
+    }
 }
