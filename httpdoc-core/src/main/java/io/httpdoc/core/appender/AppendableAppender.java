@@ -8,7 +8,7 @@ import java.io.IOException;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-28 11:06
  **/
-public class AppendableAppender extends AbstractAppender<AppendableAppender> implements Appender<AppendableAppender> {
+public class AppendableAppender extends EnterableAppender<AppendableAppender> implements LineAppender<AppendableAppender> {
     private final Appendable appendable;
 
     public AppendableAppender(Appendable appendable) {
@@ -21,7 +21,4 @@ public class AppendableAppender extends AbstractAppender<AppendableAppender> imp
         return this;
     }
 
-    @Override
-    public void flush() throws IOException {
-    }
 }

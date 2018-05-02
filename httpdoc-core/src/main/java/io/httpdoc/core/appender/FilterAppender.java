@@ -21,9 +21,4 @@ public abstract class FilterAppender<T extends FilterAppender<T>> extends Abstra
         return (T) this;
     }
 
-    @Override
-    public void flush() throws IOException {
-        super.flush();
-        appender.flush();
-    }
 }

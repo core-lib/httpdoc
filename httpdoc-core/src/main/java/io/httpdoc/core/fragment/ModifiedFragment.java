@@ -1,6 +1,7 @@
 package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -22,7 +23,7 @@ public abstract class ModifiedFragment implements Fragment {
     }
 
     @Override
-    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (Modifier.isPublic(modifier)) appender.append("public ");
         if (Modifier.isProtected(modifier)) appender.append("protected ");
         if (Modifier.isPrivate(modifier)) appender.append("private ");

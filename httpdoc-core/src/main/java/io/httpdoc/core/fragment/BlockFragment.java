@@ -1,9 +1,11 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
 import io.httpdoc.core.appender.IndentedAppender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 代码块碎片
@@ -12,22 +14,22 @@ import java.io.IOException;
  * @date 2018-04-27 16:37
  **/
 public class BlockFragment implements Fragment {
-    private String code;
+    private List<SentenceFragment> sentenceFragments = new ArrayList<>();
 
     @Override
-    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         appender.append("{").enter();
-        IndentedAppender apd = new IndentedAppender(preference.getIndent(), appender);
-        apd.append(code);
-        apd.flush();
+        IndentedAppender apd = new IndentedAppender(appender, preference.getIndent());
+        for (SentenceFragment fragment : sentenceFragments) fragment.joinTo(apd, preference);
+        apd.close();
         appender.append("}").enter();
     }
 
-    public String getCode() {
-        return code;
+    public List<SentenceFragment> getSentenceFragments() {
+        return sentenceFragments;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSentenceFragments(List<SentenceFragment> sentenceFragments) {
+        this.sentenceFragments = sentenceFragments;
     }
 }

@@ -1,7 +1,7 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
-import io.httpdoc.core.appender.PrefixAppender;
+import io.httpdoc.core.appender.CommentedAppender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 
@@ -15,13 +15,9 @@ public class CommentFragment implements Fragment {
     private String content;
 
     @Override
-    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (content == null) return;
-        appender.append("/**");
-        PrefixAppender apd = new PrefixAppender(" * ", appender);
-        apd.append(content);
-        apd.flush();
-        appender.append(" */");
+        new CommentedAppender(appender).append(content).close();
     }
 
     public String getContent() {

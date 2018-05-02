@@ -1,6 +1,7 @@
 package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
     private String name;
 
     @Override
-    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
         super.joinTo(appender, preference);
         appender.append(type).append(" ").append(name).append(";").enter();

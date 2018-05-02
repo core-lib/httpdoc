@@ -6,15 +6,17 @@ import io.httpdoc.core.appender.LineAppender;
 import java.io.IOException;
 
 /**
- * 注解碎片
+ * 类型实参碎片
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-04-27 16:41
+ * @date 2018-05-02 10:04
  **/
-public class AnnotationFragment implements Fragment {
+public class TypeArgumentFragment implements Fragment {
+    private String name;
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
 
     }
+
 }

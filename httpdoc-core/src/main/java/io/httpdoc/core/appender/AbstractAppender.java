@@ -8,12 +8,7 @@ import java.io.IOException;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 17:46
  **/
-public abstract class AbstractAppender<T extends AbstractAppender<T>> implements Appender<T> {
-
-    @Override
-    public T enter() throws IOException {
-        return append("\n");
-    }
+public abstract class AbstractAppender<T extends AbstractAppender<T>> extends CloseableAppender<T> implements Appender<T> {
 
     @Override
     public T append(CharSequence text) throws IOException {
@@ -24,11 +19,6 @@ public abstract class AbstractAppender<T extends AbstractAppender<T>> implements
     public T append(CharSequence text, int start, int end) throws IOException {
         for (int i = start; i < end; i++) append(text.charAt(i));
         return (T) this;
-    }
-
-    @Override
-    public void flush() throws IOException {
-
     }
 
 }

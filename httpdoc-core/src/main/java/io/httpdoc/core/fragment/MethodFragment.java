@@ -1,6 +1,7 @@
 package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  **/
 public class MethodFragment extends ModifiedFragment implements Fragment {
     private CommentFragment commentFragment;
+    private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
     private String type;
     private String name;
     private List<ParameterFragment> parameterFragments = new ArrayList<>();
@@ -21,11 +23,20 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
     private BlockFragment blockFragment;
 
     @Override
-    public <T extends Appender<T>> void joinTo(T appender, Preference preference) throws IOException {
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.enter();
         super.joinTo(appender, preference);
+
+        for (int i = 0; typeParameterFragments != null && i < typeParameterFragments.size(); i++) {
+            if (i == 0) appender.append("<");
+            else appender.append(", ");
+            typeParameterFragments.get(i).joinTo(appender, preference);
+            if (i == typeParameterFragments.size() - 1) appender.append("> ");
+        }
+
         if (type != null) appender.append(type).append(" ");
+        else appender.append("void ");
         if (name != null) appender.append(name);
         appender.append("(");
         for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
@@ -50,6 +61,14 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     public void setCommentFragment(CommentFragment commentFragment) {
         this.commentFragment = commentFragment;
+    }
+
+    public List<TypeParameterFragment> getTypeParameterFragments() {
+        return typeParameterFragments;
+    }
+
+    public void setTypeParameterFragments(List<TypeParameterFragment> typeParameterFragments) {
+        this.typeParameterFragments = typeParameterFragments;
     }
 
     public String getType() {

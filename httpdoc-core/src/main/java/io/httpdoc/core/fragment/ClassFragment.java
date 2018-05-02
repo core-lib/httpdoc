@@ -1,7 +1,7 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
 import io.httpdoc.core.appender.IndentedAppender;
+import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -16,96 +16,96 @@ import java.util.List;
  **/
 public class ClassFragment extends ModifiedFragment implements Fragment {
     private String pkg;
-    private List<String> imports = new ArrayList<>();
     private CommentFragment commentFragment;
     private String name;
-    private String superclass;
-    private List<String> interfaces = new ArrayList<>();
+    private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
+    private SuperclassFragment superclassFragment;
+    private List<InterfaceFragment> interfaceFragments = new ArrayList<>();
     private List<FieldFragment> fieldFragments = new ArrayList<>();
-    private List<StaticFragment> staticFragments = new ArrayList<>();
-    private List<InstanceFragment> instanceFragments = new ArrayList<>();
+    private List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
+    private List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
     private List<ConstructorFragment> constructorFragments = new ArrayList<>();
     private List<MethodFragment> methodFragments = new ArrayList<>();
     private List<ClassFragment> classFragments = new ArrayList<>();
 
     @Override
-    public <T extends Appender<T>> void joinTo(T apd, Preference preference) throws IOException {
-        if (pkg != null) apd.append("package ").append(pkg).append(";").enter();
-        apd.enter();
+    public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
+        if (pkg != null) appender.append("package ").append(pkg).append(";").enter();
+        appender.enter();
 
-        for (String inport : imports) apd.append("import ").append(inport).append(";").enter();
-        apd.enter();
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
-        if (commentFragment != null) commentFragment.joinTo(apd, preference);
+        super.joinTo(appender, preference);
+        appender.append("class").append(name).append(" ");
 
-        super.joinTo(apd, preference);
-        apd.append("class").append(name).append(" ");
-
-        if (superclass != null) apd.append("extends ").append(superclass).append(" ");
-        if (!interfaces.isEmpty()) {
-            apd.append("implements ");
-            for (int i = 0; i < interfaces.size(); i++) {
-                if (i > 0) apd.append(",");
-                apd.append(interfaces.get(i)).append(" ");
-            }
+        for (int i = 0; typeParameterFragments != null && i < typeParameterFragments.size(); i++) {
+            if (i == 0) appender.append("<");
+            else appender.append(", ");
+            typeParameterFragments.get(i).joinTo(appender, preference);
+            if (i == typeParameterFragments.size() - 1) appender.append("> ");
         }
 
-        apd.append("{").enter();
+        if (superclassFragment != null) {
+            appender.append("extends ");
+            superclassFragment.joinTo(appender, preference);
+        }
 
-        IndentedAppender iapd = new IndentedAppender(preference.getIndent(), apd);
+        for (int i = 0; interfaceFragments != null && i < interfaceFragments.size(); i++) {
+            if (i == 0) appender.append("implements ");
+            else appender.append(", ");
+            interfaceFragments.get(i).joinTo(appender, preference);
+        }
+
+        appender.append("{").enter();
+
+        IndentedAppender indented = new IndentedAppender(appender, preference.getIndent());
 
         // 静态属性
         for (FieldFragment fragment : fieldFragments) {
             if (!Modifier.isStatic(fragment.modifier)) continue;
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 静态代码块
-        for (Fragment fragment : staticFragments) {
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+        for (Fragment fragment : staticBlockFragments) {
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 实例属性
         for (FieldFragment fragment : fieldFragments) {
             if (Modifier.isStatic(fragment.modifier)) continue;
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 实例代码块
-        for (Fragment fragment : instanceFragments) {
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+        for (Fragment fragment : instanceBlockFragments) {
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 构造器
         for (Fragment constructor : constructorFragments) {
-            constructor.joinTo(iapd, preference);
-            iapd.enter();
+            constructor.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 方法
         for (Fragment fragment : methodFragments) {
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
         // 内部类
         for (Fragment fragment : classFragments) {
-            fragment.joinTo(iapd, preference);
-            iapd.enter();
+            fragment.joinTo(indented, preference);
+            indented.enter();
         }
-        iapd.flush();
 
-        apd.append("}");
+        indented.close();
+        appender.append("}");
     }
 
     public String getPkg() {
@@ -114,14 +114,6 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
     public void setPkg(String pkg) {
         this.pkg = pkg;
-    }
-
-    public List<String> getImports() {
-        return imports;
-    }
-
-    public void setImports(List<String> imports) {
-        this.imports = imports;
     }
 
     public CommentFragment getCommentFragment() {
@@ -140,20 +132,28 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         this.name = name;
     }
 
-    public String getSuperclass() {
-        return superclass;
+    public List<TypeParameterFragment> getTypeParameterFragments() {
+        return typeParameterFragments;
     }
 
-    public void setSuperclass(String superclass) {
-        this.superclass = superclass;
+    public void setTypeParameterFragments(List<TypeParameterFragment> typeParameterFragments) {
+        this.typeParameterFragments = typeParameterFragments;
     }
 
-    public List<String> getInterfaces() {
-        return interfaces;
+    public SuperclassFragment getSuperclassFragment() {
+        return superclassFragment;
     }
 
-    public void setInterfaces(List<String> interfaces) {
-        this.interfaces = interfaces;
+    public void setSuperclassFragment(SuperclassFragment superclassFragment) {
+        this.superclassFragment = superclassFragment;
+    }
+
+    public List<InterfaceFragment> getInterfaceFragments() {
+        return interfaceFragments;
+    }
+
+    public void setInterfaceFragments(List<InterfaceFragment> interfaceFragments) {
+        this.interfaceFragments = interfaceFragments;
     }
 
     public List<FieldFragment> getFieldFragments() {
@@ -164,20 +164,20 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         this.fieldFragments = fieldFragments;
     }
 
-    public List<StaticFragment> getStaticFragments() {
-        return staticFragments;
+    public List<StaticBlockFragment> getStaticBlockFragments() {
+        return staticBlockFragments;
     }
 
-    public void setStaticFragments(List<StaticFragment> staticFragments) {
-        this.staticFragments = staticFragments;
+    public void setStaticBlockFragments(List<StaticBlockFragment> staticBlockFragments) {
+        this.staticBlockFragments = staticBlockFragments;
     }
 
-    public List<InstanceFragment> getInstanceFragments() {
-        return instanceFragments;
+    public List<InstanceBlockFragment> getInstanceBlockFragments() {
+        return instanceBlockFragments;
     }
 
-    public void setInstanceFragments(List<InstanceFragment> instanceFragments) {
-        this.instanceFragments = instanceFragments;
+    public void setInstanceBlockFragments(List<InstanceBlockFragment> instanceBlockFragments) {
+        this.instanceBlockFragments = instanceBlockFragments;
     }
 
     public List<ConstructorFragment> getConstructorFragments() {

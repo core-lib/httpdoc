@@ -8,15 +8,7 @@ import java.io.IOException;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 17:27
  **/
-public interface Appender<T extends Appender<T>> {
-
-    /**
-     * 回车
-     *
-     * @return {@code this}
-     * @throws IOException IO异常
-     */
-    T enter() throws IOException;
+public interface Appender<T extends Appender<T>> extends AutoCloseable {
 
     /**
      * 拼接
@@ -48,10 +40,10 @@ public interface Appender<T extends Appender<T>> {
     T append(char c) throws IOException;
 
     /**
-     * 冲刷
+     * 关闭
      *
      * @throws IOException IO异常
      */
-    void flush() throws IOException;
+    void close() throws IOException;
 
 }
