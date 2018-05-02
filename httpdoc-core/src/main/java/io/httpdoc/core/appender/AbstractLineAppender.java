@@ -21,6 +21,7 @@ public abstract class AbstractLineAppender<T extends AbstractLineAppender<T>> ex
 
     @Override
     public T append(char c) throws IOException {
+        validate();
         if (buffer == null) buffer = new StringBuilder();
         switch (c) {
             case '\r':

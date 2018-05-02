@@ -11,6 +11,10 @@ import java.io.IOException;
 public abstract class CloseableAppender<T extends CloseableAppender<T>> implements Appender<T> {
     protected volatile boolean closed;
 
+    protected void validate() throws IOException {
+        if (closed) throw new IOException("appender closed");
+    }
+
     @Override
     public void close() throws IOException {
         closed = true;

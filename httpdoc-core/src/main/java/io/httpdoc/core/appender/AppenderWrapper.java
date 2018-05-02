@@ -29,6 +29,7 @@ public abstract class AppenderWrapper<T extends AppenderWrapper<T>> extends Clos
 
     @Override
     public T append(char c) throws IOException {
+        validate();
         appender.append(c);
         return (T) this;
     }

@@ -1,6 +1,6 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.IndentedAppender;
+import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
         appender.append("{").enter();
 
-        IndentedAppender indented = new IndentedAppender(appender, preference.getIndent());
+        IndentAppender indented = new IndentAppender(appender, preference.getIndent());
 
         // 静态属性
         for (FieldFragment fragment : fieldFragments) {

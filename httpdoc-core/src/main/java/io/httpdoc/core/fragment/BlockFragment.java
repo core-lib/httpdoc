@@ -1,6 +1,6 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.IndentedAppender;
+import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class BlockFragment implements Fragment {
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         appender.append("{").enter();
-        IndentedAppender apd = new IndentedAppender(appender, preference.getIndent());
+        IndentAppender apd = new IndentAppender(appender, preference.getIndent());
         for (SentenceFragment fragment : sentenceFragments) fragment.joinTo(apd, preference);
         apd.close();
         appender.append("}").enter();

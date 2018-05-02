@@ -1,6 +1,6 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.CommentedAppender;
+import io.httpdoc.core.appender.CommentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class CommentFragment implements Fragment {
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (content == null) return;
-        new CommentedAppender(appender).append(content).close();
+        new CommentAppender(appender).append(content).close();
     }
 
     public String getContent() {

@@ -17,6 +17,7 @@ public abstract class FilterAppender<T extends FilterAppender<T>> extends Abstra
 
     @Override
     public T append(char c) throws IOException {
+        validate();
         appender.append(c);
         return (T) this;
     }

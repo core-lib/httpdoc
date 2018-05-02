@@ -17,6 +17,7 @@ public class AppendableAppender extends EnterableAppender<AppendableAppender> im
 
     @Override
     public AppendableAppender append(char c) throws IOException {
+        validate();
         appendable.append(c);
         return this;
     }
