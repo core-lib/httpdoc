@@ -8,8 +8,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -61,6 +61,8 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     private Document translate() {
         Document document = new Document();
 
+        Map<Class<?>, Controller> controllerMap = new LinkedHashMap<>();
+
         List<Controller> controllers = new LinkedList<>();
         document.setControllers(controllers);
         for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
@@ -68,63 +70,60 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
                 continue;
             }
             controllerInfoHolder.setHandled(true);
-            Controller controller = new Controller();
-
             HandlerMethod handlerMethod = controllerInfoHolder.getHandlerMethod();
-            Method method = handlerMethod.getMethod();
-            controller.setName(method.getName());
+
+            Class<?> beanType = handlerMethod.getBeanType();
+            Controller controller = controllerMap.get(beanType);
+            if (controller == null) {
+                controller = new Controller();
+                controller.setName(beanType.getSimpleName());
+            }
 
             RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
 
-            RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
-            // SpringMVC 一个接口只会有一个操作注解
-            Operation operation = new Operation();
-//            operation.setMethod(methodsCondition.);
-
-            ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
-            ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
-            Set<MediaType> consumableMediaTypes = consumesCondition.getConsumableMediaTypes();
-            List<String> consumes = new LinkedList<>();
-            for (MediaType consumableMediaType : consumableMediaTypes) {
-                consumes.add(consumableMediaType.toString());
-            }
-            controller.setConsumes(consumes);
-            ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
-            Set<MediaTypeExpression> expressions = producesCondition.getExpressions();
-            List<String> produces = new LinkedList<>();
-            for (MediaTypeExpression expression : expressions) {
-                produces.add(expression.getMediaType().toString());
-            }
-            controller.setProduces(produces);
-            PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
-            Set<String> patterns = patternsCondition.getPatterns();
-            if (patterns != null && patterns.size() > 0) {
-                controller.setPath(patterns.iterator().next());
-            }
-            HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
-            RequestCondition<?> customCondition = requestMappingInfo.getCustomCondition();
-
-            MethodParameter returnType = handlerMethod.getReturnType();
-            Type genericParameterType = returnType.getGenericParameterType();
-
-            if (genericParameterType != null && genericParameterType instanceof ParameterizedType) {
-                // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
-                ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-                Class<?> rawType = (Class<?>) parameterizedType.getRawType();
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                System.out.println(parameterizedType);
-            } else {
-                // 接口返回普通Java类
-                Class<?> objectType = (Class<?>) genericParameterType;
-                System.out.println(objectType);
-            }
-
-            HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
-            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-
-            System.out.println("hh");
+            List<Operation> operations = buildOperations(requestMappingInfo, handlerMethod);
+            controller.setOperations(operations);
         }
         return document;
+    }
+
+    private List<Operation> buildOperations(RequestMappingInfo requestMappingInfo, HandlerMethod handlerMethod) {
+        Method method = handlerMethod.getMethod();
+
+        RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
+        ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
+        ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
+        ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
+        HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
+
+        Set<RequestMethod> methods = methodsCondition.getMethods();
+        for (RequestMethod requestMethod : methods) {
+            Operation operation = new Operation();
+            operation.setName(method.getName());
+            operation.setMethod(requestMethod.name());
+
+//            operation.setPath();
+        }
+
+
+        MethodParameter returnType = handlerMethod.getReturnType();
+        Type genericParameterType = returnType.getGenericParameterType();
+
+        if (genericParameterType != null && genericParameterType instanceof ParameterizedType) {
+            // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
+            ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            System.out.println(parameterizedType);
+        } else {
+            // 接口返回普通Java类
+            Class<?> objectType = (Class<?>) genericParameterType;
+            System.out.println(objectType);
+        }
+
+        HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
+        MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
+        return null;
     }
 
     private void buildControllers(Map<RequestMappingInfo, HandlerMethod> map) {
