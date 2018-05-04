@@ -1,7 +1,7 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
 import io.httpdoc.core.appender.LineAppender;
+import io.httpdoc.core.type.JavaType;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
  **/
 public class FieldFragment extends ModifiedFragment implements Fragment {
     private CommentFragment commentFragment;
-    private String type;
+    private JavaType type;
     private String name;
 
     @Override
@@ -31,11 +31,11 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
         this.commentFragment = commentFragment;
     }
 
-    public String getType() {
+    public JavaType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(JavaType type) {
         this.type = type;
     }
 

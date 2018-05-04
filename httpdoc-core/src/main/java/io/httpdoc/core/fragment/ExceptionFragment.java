@@ -1,6 +1,5 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;

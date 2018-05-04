@@ -2,6 +2,7 @@ package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
+import io.httpdoc.core.type.JavaClass;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -17,7 +18,7 @@ import java.util.List;
 public class ClassFragment extends ModifiedFragment implements Fragment {
     private String pkg;
     private CommentFragment commentFragment;
-    private String name;
+    private JavaClass clazz;
     private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
     private SuperclassFragment superclassFragment;
     private List<InterfaceFragment> interfaceFragments = new ArrayList<>();
@@ -36,7 +37,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
         super.joinTo(appender, preference);
-        appender.append("class").append(name).append(" ");
+        appender.append("class").append(clazz).append(" ");
 
         for (int i = 0; typeParameterFragments != null && i < typeParameterFragments.size(); i++) {
             if (i == 0) appender.append("<");
@@ -124,12 +125,12 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         this.commentFragment = commentFragment;
     }
 
-    public String getName() {
-        return name;
+    public JavaClass getClazz() {
+        return clazz;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setClazz(JavaClass clazz) {
+        this.clazz = clazz;
     }
 
     public List<TypeParameterFragment> getTypeParameterFragments() {
