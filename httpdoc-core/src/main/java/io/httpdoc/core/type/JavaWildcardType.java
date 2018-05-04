@@ -13,11 +13,6 @@ public class JavaWildcardType extends JavaType {
     private JavaType[] upperBounds;
     private JavaType[] lowerBounds;
 
-    public JavaWildcardType(JavaType[] upperBounds, JavaType[] lowerBounds) {
-        this.upperBounds = upperBounds;
-        this.lowerBounds = lowerBounds;
-    }
-
     @Override
     public CharSequence getFormatName() {
         StringBuilder builder = new StringBuilder();
@@ -47,8 +42,15 @@ public class JavaWildcardType extends JavaType {
         return upperBounds;
     }
 
+    void setUpperBounds(JavaType[] upperBounds) {
+        this.upperBounds = upperBounds;
+    }
+
     public JavaType[] getLowerBounds() {
         return lowerBounds;
     }
 
+    void setLowerBounds(JavaType[] lowerBounds) {
+        this.lowerBounds = lowerBounds;
+    }
 }

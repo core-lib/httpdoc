@@ -10,15 +10,10 @@ import java.util.List;
  **/
 public class JavaTypeVariable extends JavaType {
     private final String name;
-    private final JavaType[] bounds;
+    private JavaType[] bounds;
 
     public JavaTypeVariable(String name) {
-        this(name, new JavaType[0]);
-    }
-
-    public JavaTypeVariable(String name, JavaType[] bounds) {
         this.name = name;
-        this.bounds = bounds;
     }
 
     @Override
@@ -44,5 +39,9 @@ public class JavaTypeVariable extends JavaType {
 
     public JavaType[] getBounds() {
         return bounds;
+    }
+
+    void setBounds(JavaType[] bounds) {
+        this.bounds = bounds;
     }
 }

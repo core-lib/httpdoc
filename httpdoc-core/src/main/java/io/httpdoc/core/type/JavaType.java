@@ -1,11 +1,9 @@
 package io.httpdoc.core.type;
 
-import io.httpdoc.core.appender.Appender;
-
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.io.Serializable;
+import java.lang.reflect.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,9 +16,16 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class JavaType implements CharSequence, Importable {
     private static final ConcurrentMap<Type, JavaType> CACHE = new ConcurrentHashMap<>();
 
-    public static void main(String... args) {
-        JavaClass javaClass = JavaType.valueOf(Appender.class);
-        System.out.println(javaClass.getFormatName());
+    public static void main(String... args) throws NoSuchMethodException {
+        Method test = JavaType.class.getMethod("test");
+        Type genericReturnType = test.getGenericReturnType();
+        JavaType javaType = valueOf(genericReturnType);
+        System.out.println(javaType);
+    }
+
+    public List<? extends Map<? super String, ? extends Serializable>> test() {
+
+        return null;
     }
 
     public static JavaType valueOf(Type type) {
@@ -30,6 +35,7 @@ public abstract class JavaType implements CharSequence, Importable {
         else if (type instanceof ParameterizedType) return valueOf((ParameterizedType) type);
         else if (type instanceof GenericArrayType) return valueOf((GenericArrayType) type);
         else if (type instanceof TypeVariable<?>) return valueOf((TypeVariable<?>) type);
+        else if (type instanceof WildcardType) return valueOf((WildcardType) type);
         else throw new IllegalArgumentException("unsupported type " + type);
     }
 
@@ -69,11 +75,29 @@ public abstract class JavaType implements CharSequence, Importable {
 
     public static JavaTypeVariable valueOf(TypeVariable<?> variable) {
         if (CACHE.containsKey(variable)) return (JavaTypeVariable) CACHE.get(variable);
-        JavaType[] bounds = new JavaType[variable.getBounds() != null ? variable.getBounds().length : 0];
-        for (int i = 0; i < bounds.length; i++) bounds[i] = valueOf(variable.getBounds()[i]);
-        JavaTypeVariable javaTypeVariable = new JavaTypeVariable(variable.getName(), bounds);
+        JavaTypeVariable javaTypeVariable = new JavaTypeVariable(variable.getName());
         JavaType javaType = CACHE.putIfAbsent(variable, javaTypeVariable);
+        if (javaType == null) {
+            JavaType[] bounds = new JavaType[variable.getBounds() != null ? variable.getBounds().length : 0];
+            for (int i = 0; i < bounds.length; i++) bounds[i] = valueOf(variable.getBounds()[i]);
+            javaTypeVariable.setBounds(bounds);
+        }
         return javaType != null ? (JavaTypeVariable) javaType : javaTypeVariable;
+    }
+
+    public static JavaWildcardType valueOf(WildcardType type) {
+        if (CACHE.containsKey(type)) return (JavaWildcardType) CACHE.get(type);
+        JavaWildcardType javaWildcardType = new JavaWildcardType();
+        JavaType javaType = CACHE.putIfAbsent(type, javaWildcardType);
+        if (javaType == null) {
+            JavaType[] upperBounds = new JavaType[type.getUpperBounds() != null ? type.getUpperBounds().length : 0];
+            for (int i = 0; i < upperBounds.length; i++) upperBounds[i] = valueOf(type.getUpperBounds()[i]);
+            javaWildcardType.setUpperBounds(upperBounds);
+            JavaType[] lowerBounds = new JavaType[type.getLowerBounds() != null ? type.getLowerBounds().length : 0];
+            for (int i = 0; i < lowerBounds.length; i++) lowerBounds[i] = valueOf(type.getLowerBounds()[i]);
+            javaWildcardType.setLowerBounds(lowerBounds);
+        }
+        return javaType != null ? (JavaWildcardType) javaType : javaWildcardType;
     }
 
     public abstract CharSequence getFormatName();
