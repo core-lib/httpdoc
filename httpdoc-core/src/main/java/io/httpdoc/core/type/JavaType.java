@@ -1,9 +1,6 @@
 package io.httpdoc.core.type;
 
-import java.io.Serializable;
 import java.lang.reflect.*;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -15,11 +12,6 @@ import java.util.concurrent.ConcurrentMap;
  **/
 public abstract class JavaType implements CharSequence, Importable {
     private static final ConcurrentMap<Type, JavaType> CACHE = new ConcurrentHashMap<>();
-
-    public List<? extends Map<? super String, ? extends Serializable>> test() {
-
-        return null;
-    }
 
     public static JavaType valueOf(Type type) {
         if (type == null) return null;
