@@ -4,6 +4,7 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDClass;
+import io.httpdoc.core.type.HDTypeVariable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 public class MethodFragment extends ModifiedFragment implements Fragment {
     private CommentFragment commentFragment;
     private List<HDAnnotation> annotations = new ArrayList<>();
-    private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
+    private List<HDTypeVariable> typeVariables = new ArrayList<>();
     private String type;
     private String name;
     private List<ParameterFragment> parameterFragments = new ArrayList<>();
@@ -37,11 +38,11 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         appender.enter();
         super.joinTo(appender, preference);
 
-        for (int i = 0; typeParameterFragments != null && i < typeParameterFragments.size(); i++) {
+        for (int i = 0; typeVariables != null && i < typeVariables.size(); i++) {
             if (i == 0) appender.append("<");
             else appender.append(", ");
-            typeParameterFragments.get(i).joinTo(appender, preference);
-            if (i == typeParameterFragments.size() - 1) appender.append("> ");
+            appender.append(typeVariables.get(i));
+            if (i == typeVariables.size() - 1) appender.append("> ");
         }
 
         if (type != null) appender.append(type).append(" ");
@@ -79,12 +80,12 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         this.annotations = annotations;
     }
 
-    public List<TypeParameterFragment> getTypeParameterFragments() {
-        return typeParameterFragments;
+    public List<HDTypeVariable> getTypeVariables() {
+        return typeVariables;
     }
 
-    public void setTypeParameterFragments(List<TypeParameterFragment> typeParameterFragments) {
-        this.typeParameterFragments = typeParameterFragments;
+    public void setTypeVariables(List<HDTypeVariable> typeVariables) {
+        this.typeVariables = typeVariables;
     }
 
     public String getType() {
