@@ -10,47 +10,47 @@ import java.util.List;
  * @date 2018-05-04 15:20
  **/
 public class JavaWildcardType extends JavaType {
-    private JavaType[] upperBounds;
-    private JavaType[] lowerBounds;
+    private JavaType upperBound;
+    private JavaType lowerBound;
+
+    JavaWildcardType() {
+    }
+
+    public JavaWildcardType(JavaType upperBound, JavaType lowerBound) {
+        this.upperBound = upperBound;
+        this.lowerBound = lowerBound;
+    }
 
     @Override
     public CharSequence getFormatName() {
         StringBuilder builder = new StringBuilder();
         builder.append("?");
-        for (int i = 0; upperBounds != null && i < upperBounds.length; i++) {
-            if (i == 0) builder.append(" extends ");
-            else builder.append(", ");
-            builder.append(upperBounds[i].getFormatName());
-        }
-        for (int i = 0; lowerBounds != null && i < lowerBounds.length; i++) {
-            if (i == 0) builder.append(" super ");
-            else builder.append(", ");
-            builder.append(lowerBounds[i].getFormatName());
-        }
+        if (lowerBound != null) builder.append(" super ").append(lowerBound.getFormatName());
+        else if (upperBound != null) builder.append(" extends ").append(upperBound.getFormatName());
         return builder;
     }
 
     @Override
     public List<String> imports() {
         List<String> imports = new ArrayList<>();
-        for (int i = 0; upperBounds != null && i < upperBounds.length; i++) imports.addAll(upperBounds[i].imports());
-        for (int i = 0; lowerBounds != null && i < lowerBounds.length; i++) imports.addAll(lowerBounds[i].imports());
+        if (lowerBound != null) imports.addAll(lowerBound.imports());
+        else if (upperBound != null) imports.addAll(upperBound.imports());
         return imports;
     }
 
-    public JavaType[] getUpperBounds() {
-        return upperBounds;
+    public JavaType getUpperBound() {
+        return upperBound;
     }
 
-    void setUpperBounds(JavaType[] upperBounds) {
-        this.upperBounds = upperBounds;
+    void setUpperBound(JavaType upperBound) {
+        this.upperBound = upperBound;
     }
 
-    public JavaType[] getLowerBounds() {
-        return lowerBounds;
+    public JavaType getLowerBound() {
+        return lowerBound;
     }
 
-    void setLowerBounds(JavaType[] lowerBounds) {
-        this.lowerBounds = lowerBounds;
+    void setLowerBound(JavaType lowerBound) {
+        this.lowerBound = lowerBound;
     }
 }

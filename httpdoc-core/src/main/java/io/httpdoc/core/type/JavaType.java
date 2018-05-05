@@ -16,13 +16,6 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class JavaType implements CharSequence, Importable {
     private static final ConcurrentMap<Type, JavaType> CACHE = new ConcurrentHashMap<>();
 
-    public static void main(String... args) throws NoSuchMethodException {
-        Method test = JavaType.class.getMethod("test");
-        Type genericReturnType = test.getGenericReturnType();
-        JavaType javaType = valueOf(genericReturnType);
-        System.out.println(javaType);
-    }
-
     public List<? extends Map<? super String, ? extends Serializable>> test() {
 
         return null;
@@ -45,8 +38,8 @@ public abstract class JavaType implements CharSequence, Importable {
         JavaType javaType = CACHE.putIfAbsent(clazz, javaClass);
         if (javaType == null) {
             TypeVariable<?>[] variables = clazz.getTypeParameters();
-            JavaTypeVariable[] typeParameters = new JavaTypeVariable[variables.length];
-            for (int i = 0; i < variables.length; i++) typeParameters[i] = JavaType.valueOf(variables[i]);
+            JavaTypeVariable[] typeParameters = new JavaTypeVariable[variables != null ? variables.length : 0];
+            for (int i = 0; variables != null && i < variables.length; i++) typeParameters[i] = JavaType.valueOf(variables[i]);
             javaClass.setTypeParameters(typeParameters);
         }
         return javaType != null ? (JavaClass) javaType : javaClass;
@@ -54,11 +47,13 @@ public abstract class JavaType implements CharSequence, Importable {
 
     public static JavaParameterizedType valueOf(ParameterizedType type) {
         if (CACHE.containsKey(type)) return (JavaParameterizedType) CACHE.get(type);
-        JavaType rawType = valueOf(type.getRawType());
-        JavaType ownerType = valueOf(type.getOwnerType());
-        JavaParameterizedType javaParameterizedType = new JavaParameterizedType(rawType, ownerType);
+        JavaParameterizedType javaParameterizedType = new JavaParameterizedType();
         JavaType javaType = CACHE.putIfAbsent(type, javaParameterizedType);
         if (javaType == null) {
+            JavaType rawType = valueOf(type.getRawType());
+            javaParameterizedType.setRawType(rawType);
+            JavaType ownerType = valueOf(type.getOwnerType());
+            javaParameterizedType.setOwnerType(ownerType);
             JavaType[] actualTypeArguments = new JavaType[type.getActualTypeArguments() != null ? type.getActualTypeArguments().length : 0];
             for (int i = 0; i < actualTypeArguments.length; i++) actualTypeArguments[i] = valueOf(type.getActualTypeArguments()[i]);
             javaParameterizedType.setActualTypeArguments(actualTypeArguments);
@@ -68,8 +63,12 @@ public abstract class JavaType implements CharSequence, Importable {
 
     public static JavaGenericArrayType valueOf(GenericArrayType type) {
         if (CACHE.containsKey(type)) return (JavaGenericArrayType) CACHE.get(type);
-        JavaGenericArrayType javaGenericArrayType = new JavaGenericArrayType(valueOf(type.getGenericComponentType()));
+        JavaGenericArrayType javaGenericArrayType = new JavaGenericArrayType();
         JavaType javaType = CACHE.putIfAbsent(type, javaGenericArrayType);
+        if (javaType == null) {
+            JavaType genericComponentType = valueOf(type.getGenericComponentType());
+            javaGenericArrayType.setGenericComponentType(genericComponentType);
+        }
         return javaType != null ? (JavaGenericArrayType) javaType : javaGenericArrayType;
     }
 
@@ -78,9 +77,8 @@ public abstract class JavaType implements CharSequence, Importable {
         JavaTypeVariable javaTypeVariable = new JavaTypeVariable(variable.getName());
         JavaType javaType = CACHE.putIfAbsent(variable, javaTypeVariable);
         if (javaType == null) {
-            JavaType[] bounds = new JavaType[variable.getBounds() != null ? variable.getBounds().length : 0];
-            for (int i = 0; i < bounds.length; i++) bounds[i] = valueOf(variable.getBounds()[i]);
-            javaTypeVariable.setBounds(bounds);
+            Type[] bounds = variable.getBounds();
+            if (bounds != null && bounds.length > 0) javaTypeVariable.setBound(valueOf(bounds[0]));
         }
         return javaType != null ? (JavaTypeVariable) javaType : javaTypeVariable;
     }
@@ -90,12 +88,10 @@ public abstract class JavaType implements CharSequence, Importable {
         JavaWildcardType javaWildcardType = new JavaWildcardType();
         JavaType javaType = CACHE.putIfAbsent(type, javaWildcardType);
         if (javaType == null) {
-            JavaType[] upperBounds = new JavaType[type.getUpperBounds() != null ? type.getUpperBounds().length : 0];
-            for (int i = 0; i < upperBounds.length; i++) upperBounds[i] = valueOf(type.getUpperBounds()[i]);
-            javaWildcardType.setUpperBounds(upperBounds);
-            JavaType[] lowerBounds = new JavaType[type.getLowerBounds() != null ? type.getLowerBounds().length : 0];
-            for (int i = 0; i < lowerBounds.length; i++) lowerBounds[i] = valueOf(type.getLowerBounds()[i]);
-            javaWildcardType.setLowerBounds(lowerBounds);
+            Type[] upperBounds = type.getUpperBounds();
+            if (upperBounds != null && upperBounds.length > 0) javaWildcardType.setUpperBound(valueOf(upperBounds[0]));
+            Type[] lowerBounds = type.getLowerBounds();
+            if (lowerBounds != null && lowerBounds.length > 0) javaWildcardType.setLowerBound(valueOf(lowerBounds[0]));
         }
         return javaType != null ? (JavaWildcardType) javaType : javaWildcardType;
     }

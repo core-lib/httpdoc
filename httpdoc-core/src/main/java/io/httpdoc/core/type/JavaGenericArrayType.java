@@ -9,7 +9,10 @@ import java.util.List;
  * @date 2018-05-04 14:57
  **/
 public class JavaGenericArrayType extends JavaType {
-    private final JavaType genericComponentType;
+    private JavaType genericComponentType;
+
+    JavaGenericArrayType() {
+    }
 
     public JavaGenericArrayType(JavaType genericComponentType) {
         this.genericComponentType = genericComponentType;
@@ -29,4 +32,7 @@ public class JavaGenericArrayType extends JavaType {
         return genericComponentType;
     }
 
+    void setGenericComponentType(JavaType genericComponentType) {
+        this.genericComponentType = genericComponentType;
+    }
 }

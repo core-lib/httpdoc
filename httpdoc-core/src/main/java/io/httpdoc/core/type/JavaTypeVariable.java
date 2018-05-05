@@ -10,21 +10,22 @@ import java.util.List;
  **/
 public class JavaTypeVariable extends JavaType {
     private final String name;
-    private JavaType[] bounds;
+    private JavaType bound;
 
-    public JavaTypeVariable(String name) {
+    JavaTypeVariable(String name) {
         this.name = name;
+    }
+
+    public JavaTypeVariable(String name, JavaType bound) {
+        this.name = name;
+        this.bound = bound;
     }
 
     @Override
     public CharSequence getFormatName() {
         StringBuilder builder = new StringBuilder();
         builder.append(name);
-        for (int i = 0; bounds != null && i < bounds.length; i++) {
-            if (i == 0) builder.append(" extends ");
-            else builder.append(", ");
-            builder.append(bounds[i].getFormatName());
-        }
+        if (bound != null) builder.append(" extends ").append(bound.getFormatName());
         return builder;
     }
 
@@ -37,11 +38,11 @@ public class JavaTypeVariable extends JavaType {
         return name;
     }
 
-    public JavaType[] getBounds() {
-        return bounds;
+    public JavaType getBound() {
+        return bound;
     }
 
-    void setBounds(JavaType[] bounds) {
-        this.bounds = bounds;
+    void setBound(JavaType bound) {
+        this.bound = bound;
     }
 }

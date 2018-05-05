@@ -10,14 +10,17 @@ import java.util.List;
  * @date 2018-05-04 11:14
  **/
 public class JavaParameterizedType extends JavaType {
-    private final JavaType rawType;
-    private final JavaType ownerType;
+    private JavaType rawType;
+    private JavaType ownerType;
     private JavaType[] actualTypeArguments;
 
+    JavaParameterizedType() {
+    }
 
-    public JavaParameterizedType(JavaType rawType, JavaType ownerType) {
+    public JavaParameterizedType(JavaType rawType, JavaType ownerType, JavaType[] actualTypeArguments) {
         this.rawType = rawType;
         this.ownerType = ownerType;
+        this.actualTypeArguments = actualTypeArguments;
     }
 
     @Override
@@ -35,8 +38,7 @@ public class JavaParameterizedType extends JavaType {
 
     @Override
     public List<String> imports() {
-        List<String> imports = new ArrayList<>();
-        imports.addAll(rawType.imports());
+        List<String> imports = new ArrayList<>(rawType.imports());
         for (JavaType actualTypeArgument : actualTypeArguments) imports.addAll(actualTypeArgument.imports());
         return imports;
     }
@@ -45,8 +47,16 @@ public class JavaParameterizedType extends JavaType {
         return rawType;
     }
 
+    void setRawType(JavaType rawType) {
+        this.rawType = rawType;
+    }
+
     public JavaType getOwnerType() {
         return ownerType;
+    }
+
+    void setOwnerType(JavaType ownerType) {
+        this.ownerType = ownerType;
     }
 
     public JavaType[] getActualTypeArguments() {
@@ -56,5 +66,4 @@ public class JavaParameterizedType extends JavaType {
     void setActualTypeArguments(JavaType[] actualTypeArguments) {
         this.actualTypeArguments = actualTypeArguments;
     }
-
 }
