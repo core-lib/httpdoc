@@ -9,14 +9,14 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-04 15:20
  **/
-public class JavaWildcardType extends JavaType {
-    private JavaType upperBound;
-    private JavaType lowerBound;
+public class HDWildcardType extends HDType {
+    private HDType upperBound;
+    private HDType lowerBound;
 
-    JavaWildcardType() {
+    HDWildcardType() {
     }
 
-    public JavaWildcardType(JavaType upperBound, JavaType lowerBound) {
+    public HDWildcardType(HDType upperBound, HDType lowerBound) {
         this.upperBound = upperBound;
         this.lowerBound = lowerBound;
     }
@@ -38,19 +38,19 @@ public class JavaWildcardType extends JavaType {
         return imports;
     }
 
-    public JavaType getUpperBound() {
+    public HDType getUpperBound() {
         return upperBound;
     }
 
-    void setUpperBound(JavaType upperBound) {
+    void setUpperBound(HDType upperBound) {
         this.upperBound = upperBound;
     }
 
-    public JavaType getLowerBound() {
+    public HDType getLowerBound() {
         return lowerBound;
     }
 
-    void setLowerBound(JavaType lowerBound) {
+    void setLowerBound(HDType lowerBound) {
         this.lowerBound = lowerBound;
     }
 }

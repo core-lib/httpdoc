@@ -1,9 +1,13 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Preference;
+import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
-import io.httpdoc.core.type.JavaType;
+import io.httpdoc.core.type.HDType;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 字段碎片
@@ -13,12 +17,17 @@ import java.io.IOException;
  **/
 public class FieldFragment extends ModifiedFragment implements Fragment {
     private CommentFragment commentFragment;
-    private JavaType type;
+    private List<HDAnnotation> annotations = new ArrayList<>();
+    private HDType type;
     private String name;
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
+        for (int i = 0; annotations != null && i < annotations.size(); i++) {
+            annotations.get(i).joinTo(appender, preference);
+            appender.enter();
+        }
         super.joinTo(appender, preference);
         appender.append(type).append(" ").append(name).append(";").enter();
     }
@@ -31,11 +40,19 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
         this.commentFragment = commentFragment;
     }
 
-    public JavaType getType() {
+    public List<HDAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<HDAnnotation> annotations) {
+        this.annotations = annotations;
+    }
+
+    public HDType getType() {
         return type;
     }
 
-    public void setType(JavaType type) {
+    public void setType(HDType type) {
         this.type = type;
     }
 

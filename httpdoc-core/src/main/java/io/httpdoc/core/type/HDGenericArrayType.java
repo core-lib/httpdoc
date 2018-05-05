@@ -8,13 +8,13 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-04 14:57
  **/
-public class JavaGenericArrayType extends JavaType {
-    private JavaType genericComponentType;
+public class HDGenericArrayType extends HDType {
+    private HDType genericComponentType;
 
-    JavaGenericArrayType() {
+    HDGenericArrayType() {
     }
 
-    public JavaGenericArrayType(JavaType genericComponentType) {
+    public HDGenericArrayType(HDType genericComponentType) {
         this.genericComponentType = genericComponentType;
     }
 
@@ -28,11 +28,11 @@ public class JavaGenericArrayType extends JavaType {
         return genericComponentType.imports();
     }
 
-    public JavaType getGenericComponentType() {
+    public HDType getGenericComponentType() {
         return genericComponentType;
     }
 
-    void setGenericComponentType(JavaType genericComponentType) {
+    void setGenericComponentType(HDType genericComponentType) {
         this.genericComponentType = genericComponentType;
     }
 }

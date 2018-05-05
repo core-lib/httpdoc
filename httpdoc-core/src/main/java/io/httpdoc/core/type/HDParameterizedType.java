@@ -9,15 +9,15 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-04 11:14
  **/
-public class JavaParameterizedType extends JavaType {
-    private JavaType rawType;
-    private JavaType ownerType;
-    private JavaType[] actualTypeArguments;
+public class HDParameterizedType extends HDType {
+    private HDType rawType;
+    private HDType ownerType;
+    private HDType[] actualTypeArguments;
 
-    JavaParameterizedType() {
+    HDParameterizedType() {
     }
 
-    public JavaParameterizedType(JavaType rawType, JavaType ownerType, JavaType[] actualTypeArguments) {
+    public HDParameterizedType(HDType rawType, HDType ownerType, HDType[] actualTypeArguments) {
         this.rawType = rawType;
         this.ownerType = ownerType;
         this.actualTypeArguments = actualTypeArguments;
@@ -30,7 +30,7 @@ public class JavaParameterizedType extends JavaType {
         for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) {
             if (i == 0) builder.append("<");
             else builder.append(", ");
-            builder.append(actualTypeArguments[i] instanceof JavaTypeVariable ? ((JavaTypeVariable) actualTypeArguments[i]).getName() : actualTypeArguments[i].getFormatName());
+            builder.append(actualTypeArguments[i] instanceof HDTypeVariable ? ((HDTypeVariable) actualTypeArguments[i]).getName() : actualTypeArguments[i].getFormatName());
             if (i == actualTypeArguments.length - 1) builder.append(">");
         }
         return builder;
@@ -39,31 +39,31 @@ public class JavaParameterizedType extends JavaType {
     @Override
     public List<String> imports() {
         List<String> imports = new ArrayList<>(rawType.imports());
-        for (JavaType actualTypeArgument : actualTypeArguments) imports.addAll(actualTypeArgument.imports());
+        for (HDType actualTypeArgument : actualTypeArguments) imports.addAll(actualTypeArgument.imports());
         return imports;
     }
 
-    public JavaType getRawType() {
+    public HDType getRawType() {
         return rawType;
     }
 
-    void setRawType(JavaType rawType) {
+    void setRawType(HDType rawType) {
         this.rawType = rawType;
     }
 
-    public JavaType getOwnerType() {
+    public HDType getOwnerType() {
         return ownerType;
     }
 
-    void setOwnerType(JavaType ownerType) {
+    void setOwnerType(HDType ownerType) {
         this.ownerType = ownerType;
     }
 
-    public JavaType[] getActualTypeArguments() {
+    public HDType[] getActualTypeArguments() {
         return actualTypeArguments;
     }
 
-    void setActualTypeArguments(JavaType[] actualTypeArguments) {
+    void setActualTypeArguments(HDType[] actualTypeArguments) {
         this.actualTypeArguments = actualTypeArguments;
     }
 }

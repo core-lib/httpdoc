@@ -1,5 +1,6 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
@@ -14,22 +15,22 @@ import java.util.List;
  * @date 2018-04-27 16:37
  **/
 public class BlockFragment implements Fragment {
-    private List<SentenceFragment> sentenceFragments = new ArrayList<>();
+    private List<CharSequence> sentences = new ArrayList<>();
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         appender.append("{").enter();
         IndentAppender apd = new IndentAppender(appender, preference.getIndent());
-        for (SentenceFragment fragment : sentenceFragments) fragment.joinTo(apd, preference);
+        for (CharSequence sentence : sentences) apd.append(sentence);
         apd.close();
         appender.append("}").enter();
     }
 
-    public List<SentenceFragment> getSentenceFragments() {
-        return sentenceFragments;
+    public List<CharSequence> getSentences() {
+        return sentences;
     }
 
-    public void setSentenceFragments(List<SentenceFragment> sentenceFragments) {
-        this.sentenceFragments = sentenceFragments;
+    public void setSentences(List<CharSequence> sentences) {
+        this.sentences = sentences;
     }
 }

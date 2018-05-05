@@ -8,15 +8,15 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-04 16:34
  **/
-public class JavaTypeVariable extends JavaType {
+public class HDTypeVariable extends HDType {
     private final String name;
-    private JavaType bound;
+    private HDType bound;
 
-    JavaTypeVariable(String name) {
+    HDTypeVariable(String name) {
         this.name = name;
     }
 
-    public JavaTypeVariable(String name, JavaType bound) {
+    public HDTypeVariable(String name, HDType bound) {
         this.name = name;
         this.bound = bound;
     }
@@ -38,11 +38,11 @@ public class JavaTypeVariable extends JavaType {
         return name;
     }
 
-    public JavaType getBound() {
+    public HDType getBound() {
         return bound;
     }
 
-    void setBound(JavaType bound) {
+    void setBound(HDType bound) {
         this.bound = bound;
     }
 }

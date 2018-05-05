@@ -1,4 +1,4 @@
-package io.httpdoc.core.fragment;
+package io.httpdoc.core;
 
 /**
  * 代码风格偏好
@@ -9,5 +9,7 @@ package io.httpdoc.core.fragment;
 public interface Preference {
 
     int getIndent();
+
+    boolean isAnnotationDefaultValueHidden();
 
 }

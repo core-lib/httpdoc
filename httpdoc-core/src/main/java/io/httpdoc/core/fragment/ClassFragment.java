@@ -1,8 +1,12 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Preference;
+import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
-import io.httpdoc.core.type.JavaClass;
+import io.httpdoc.core.type.HDClass;
+import io.httpdoc.core.type.HDType;
+import io.httpdoc.core.type.HDTypeVariable;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -18,10 +22,10 @@ import java.util.List;
 public class ClassFragment extends ModifiedFragment implements Fragment {
     private String pkg;
     private CommentFragment commentFragment;
-    private JavaClass clazz;
-    private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
-    private SuperclassFragment superclassFragment;
-    private List<InterfaceFragment> interfaceFragments = new ArrayList<>();
+    private List<HDAnnotation> annotations = new ArrayList<>();
+    private HDClass clazz;
+    private HDType superclass;
+    private List<HDType> interfaces = new ArrayList<>();
     private List<FieldFragment> fieldFragments = new ArrayList<>();
     private List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
     private List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
@@ -34,27 +38,33 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         if (pkg != null) appender.append("package ").append(pkg).append(";").enter();
         appender.enter();
 
+        for (int i = 0; annotations != null && i < annotations.size(); i++) {
+            annotations.get(i).joinTo(appender, preference);
+            appender.enter();
+        }
+
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
         super.joinTo(appender, preference);
-        appender.append("class").append(clazz).append(" ");
+        appender.append(clazz.getCategory().name).append(clazz).append(" ");
 
-        for (int i = 0; typeParameterFragments != null && i < typeParameterFragments.size(); i++) {
+        HDTypeVariable[] typeParameters = clazz.getTypeParameters();
+        for (int i = 0; typeParameters != null && i < typeParameters.length; i++) {
             if (i == 0) appender.append("<");
             else appender.append(", ");
-            typeParameterFragments.get(i).joinTo(appender, preference);
-            if (i == typeParameterFragments.size() - 1) appender.append("> ");
+            appender.append(typeParameters[i].getFormatName());
+            if (i == typeParameters.length - 1) appender.append(">");
         }
 
-        if (superclassFragment != null) {
+        if (superclass != null) {
             appender.append("extends ");
-            superclassFragment.joinTo(appender, preference);
+            appender.append(superclass);
         }
 
-        for (int i = 0; interfaceFragments != null && i < interfaceFragments.size(); i++) {
+        for (int i = 0; interfaces != null && i < interfaces.size(); i++) {
             if (i == 0) appender.append("implements ");
             else appender.append(", ");
-            interfaceFragments.get(i).joinTo(appender, preference);
+            appender.append(interfaces.get(i));
         }
 
         appender.append("{").enter();
@@ -125,36 +135,36 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         this.commentFragment = commentFragment;
     }
 
-    public JavaClass getClazz() {
+    public List<HDAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<HDAnnotation> annotations) {
+        this.annotations = annotations;
+    }
+
+    public HDClass getClazz() {
         return clazz;
     }
 
-    public void setClazz(JavaClass clazz) {
+    public void setClazz(HDClass clazz) {
         this.clazz = clazz;
     }
 
-    public List<TypeParameterFragment> getTypeParameterFragments() {
-        return typeParameterFragments;
+    public HDType getSuperclass() {
+        return superclass;
     }
 
-    public void setTypeParameterFragments(List<TypeParameterFragment> typeParameterFragments) {
-        this.typeParameterFragments = typeParameterFragments;
+    public void setSuperclass(HDType superclass) {
+        this.superclass = superclass;
     }
 
-    public SuperclassFragment getSuperclassFragment() {
-        return superclassFragment;
+    public List<HDType> getInterfaces() {
+        return interfaces;
     }
 
-    public void setSuperclassFragment(SuperclassFragment superclassFragment) {
-        this.superclassFragment = superclassFragment;
-    }
-
-    public List<InterfaceFragment> getInterfaceFragments() {
-        return interfaceFragments;
-    }
-
-    public void setInterfaceFragments(List<InterfaceFragment> interfaceFragments) {
-        this.interfaceFragments = interfaceFragments;
+    public void setInterfaces(List<HDType> interfaces) {
+        this.interfaces = interfaces;
     }
 
     public List<FieldFragment> getFieldFragments() {

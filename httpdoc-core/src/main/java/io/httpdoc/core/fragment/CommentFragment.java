@@ -1,5 +1,6 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.CommentAppender;
 import io.httpdoc.core.appender.LineAppender;
 

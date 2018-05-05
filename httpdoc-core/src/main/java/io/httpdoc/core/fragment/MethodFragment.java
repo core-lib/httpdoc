@@ -1,7 +1,9 @@
 package io.httpdoc.core.fragment;
 
-import io.httpdoc.core.appender.Appender;
+import io.httpdoc.core.Preference;
+import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
+import io.httpdoc.core.type.HDClass;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,16 +17,23 @@ import java.util.List;
  **/
 public class MethodFragment extends ModifiedFragment implements Fragment {
     private CommentFragment commentFragment;
+    private List<HDAnnotation> annotations = new ArrayList<>();
     private List<TypeParameterFragment> typeParameterFragments = new ArrayList<>();
     private String type;
     private String name;
     private List<ParameterFragment> parameterFragments = new ArrayList<>();
-    private List<ExceptionFragment> exceptionFragments = new ArrayList<>();
+    private List<HDClass> exceptions = new ArrayList<>();
     private BlockFragment blockFragment;
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
+
+        for (int i = 0; annotations != null && i < annotations.size(); i++) {
+            annotations.get(i).joinTo(appender, preference);
+            appender.enter();
+        }
+
         appender.enter();
         super.joinTo(appender, preference);
 
@@ -45,11 +54,10 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
             fragment.joinTo(appender, preference);
         }
         appender.append(")");
-        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
+        for (int i = 0; exceptions != null && i < exceptions.size(); i++) {
             if (i == 0) appender.append("throws ");
-            if (i > 0) appender.append(", ");
-            ExceptionFragment fragment = exceptionFragments.get(i);
-            fragment.joinTo(appender, preference);
+            else appender.append(", ");
+            appender.append(exceptions.get(i));
         }
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
         else appender.append(";");
@@ -61,6 +69,14 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     public void setCommentFragment(CommentFragment commentFragment) {
         this.commentFragment = commentFragment;
+    }
+
+    public List<HDAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<HDAnnotation> annotations) {
+        this.annotations = annotations;
     }
 
     public List<TypeParameterFragment> getTypeParameterFragments() {
@@ -95,12 +111,12 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         this.parameterFragments = parameterFragments;
     }
 
-    public List<ExceptionFragment> getExceptionFragments() {
-        return exceptionFragments;
+    public List<HDClass> getExceptions() {
+        return exceptions;
     }
 
-    public void setExceptionFragments(List<ExceptionFragment> exceptionFragments) {
-        this.exceptionFragments = exceptionFragments;
+    public void setExceptions(List<HDClass> exceptions) {
+        this.exceptions = exceptions;
     }
 
     public BlockFragment getBlockFragment() {
