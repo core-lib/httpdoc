@@ -8,7 +8,6 @@ import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
