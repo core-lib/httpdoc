@@ -1,10 +1,7 @@
 package io.httpdoc.core.type;
 
-import io.httpdoc.core.Importable;
-
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 通配类型
@@ -34,11 +31,11 @@ public class HDWildcardType extends HDType {
     }
 
     @Override
-    public void importTo(Map<Importable, List<String>> imports) {
-        if (imports.containsKey(this)) return;
-        else imports.put(this, Collections.<String>emptyList());
-        if (upperBound != null) upperBound.importTo(imports);
-        if (lowerBound != null) lowerBound.importTo(imports);
+    public List<String> imports() {
+        List<String> imports = new ArrayList<>();
+        if (upperBound != null) imports.addAll(upperBound.imports());
+        if (lowerBound != null) imports.addAll(lowerBound.imports());
+        return imports;
     }
 
     public HDType getUpperBound() {

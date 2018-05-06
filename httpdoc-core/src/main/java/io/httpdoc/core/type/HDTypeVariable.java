@@ -1,10 +1,7 @@
 package io.httpdoc.core.type;
 
-import io.httpdoc.core.Importable;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 类型变量
@@ -34,10 +31,8 @@ public class HDTypeVariable extends HDType {
     }
 
     @Override
-    public void importTo(Map<Importable, List<String>> imports) {
-        if (imports.containsKey(this)) return;
-        else imports.put(this, Collections.<String>emptyList());
-        if (bound != null) bound.importTo(imports);
+    public List<String> imports() {
+        return bound != null ? bound.imports() : Collections.<String>emptyList();
     }
 
     public String getName() {

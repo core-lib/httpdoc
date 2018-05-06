@@ -1,5 +1,6 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.IndentAppender;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 类型碎片
@@ -45,6 +48,9 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (pkg != null) appender.append("package ").append(pkg).append(";").enter();
         appender.enter();
+
+        Set<String> imports = new TreeSet<>(this.imports());
+        for (String dependency : imports) appender.append("import ").append(dependency).append(";").enter();
 
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.enter();
@@ -126,6 +132,22 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
         indented.close();
         appender.append("}");
+    }
+
+    @Override
+    public List<String> imports() {
+        List<String> imports = new ArrayList<>();
+        if (commentFragment != null) imports.addAll(commentFragment.imports());
+        for (Importable importable : annotations) imports.addAll(importable.imports());
+        if (superclass != null) imports.addAll(superclass.imports());
+        for (Importable importable : interfaces) imports.addAll(importable.imports());
+        for (Importable importable : fieldFragments) imports.addAll(importable.imports());
+        for (Importable importable : staticBlockFragments) imports.addAll(importable.imports());
+        for (Importable importable : instanceBlockFragments) imports.addAll(importable.imports());
+        for (Importable importable : constructorFragments) imports.addAll(importable.imports());
+        for (Importable importable : methodFragments) imports.addAll(importable.imports());
+        for (Importable importable : classFragments) imports.addAll(importable.imports());
+        return imports;
     }
 
     public String getPkg() {

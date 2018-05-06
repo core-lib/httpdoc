@@ -1,12 +1,9 @@
 package io.httpdoc.core.type;
 
-import io.httpdoc.core.Importable;
-
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 参数化类型
@@ -48,12 +45,12 @@ public class HDParameterizedType extends HDType {
     }
 
     @Override
-    public void importTo(Map<Importable, List<String>> imports) {
-        if (imports.containsKey(this)) return;
-        else imports.put(this, Collections.<String>emptyList());
-        if (rawType != null) rawType.importTo(imports);
-        if (ownerType != null) ownerType.importTo(imports);
-        for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) actualTypeArguments[i].importTo(imports);
+    public List<String> imports() {
+        List<String> imports = new ArrayList<>();
+        if (rawType != null) imports.addAll(rawType.imports());
+        if (ownerType != null) imports.addAll(ownerType.imports());
+        for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) imports.addAll(actualTypeArguments[i].imports());
+        return imports;
     }
 
     public HDClass getRawType() {

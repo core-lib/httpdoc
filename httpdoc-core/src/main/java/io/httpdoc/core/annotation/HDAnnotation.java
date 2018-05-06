@@ -100,6 +100,13 @@ public class HDAnnotation extends HDAnnotationConstant {
         appender.append(")");
     }
 
+    @Override
+    public List<String> imports() {
+        List<String> imports = new ArrayList<>(type.imports());
+        for (HDAnnotationConstant[] constants : properties.values()) for (HDAnnotationConstant constant : constants) imports.addAll(constant.imports());
+        return imports;
+    }
+
     public HDClass getType() {
         return type;
     }

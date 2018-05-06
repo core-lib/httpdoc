@@ -1,7 +1,6 @@
 package io.httpdoc.core;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 可导入的
@@ -11,10 +10,6 @@ import java.util.Map;
  **/
 public interface Importable {
 
-    void importTo(Map<Importable, List<String>> imports);
-
-    int hashCode();
-
-    boolean equals(Object that);
+    List<String> imports();
 
 }

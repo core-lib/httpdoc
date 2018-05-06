@@ -1,10 +1,7 @@
 package io.httpdoc.core.type;
 
-import io.httpdoc.core.Importable;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static io.httpdoc.core.type.HDClass.Category.*;
 
@@ -55,11 +52,8 @@ public class HDClass extends HDType {
     }
 
     @Override
-    public void importTo(Map<Importable, List<String>> imports) {
-        if (imports.containsKey(this)) return;
-        else imports.put(this, Collections.<String>emptyList());
-        if (componentType != null) componentType.importTo(imports);
-        else imports.put(this, Collections.singletonList(name));
+    public List<String> imports() {
+        return componentType != null ? componentType.imports() : Collections.singletonList(name);
     }
 
     public String getSimpleName() {

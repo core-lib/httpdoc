@@ -7,6 +7,7 @@ import io.httpdoc.core.appender.LineAppender;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +35,11 @@ public class BlockFragment implements Fragment {
         for (CharSequence sentence : sentences) apd.append(sentence).enter();
         apd.close();
         appender.append("}").enter();
+    }
+
+    @Override
+    public List<String> imports() {
+        return imports != null ? imports : Collections.<String>emptyList();
     }
 
     public List<CharSequence> getSentences() {

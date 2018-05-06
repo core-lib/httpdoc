@@ -4,6 +4,8 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class HDAnnotationPrimary extends HDAnnotationConstant {
     private final Object primary;
@@ -49,4 +51,8 @@ public class HDAnnotationPrimary extends HDAnnotationConstant {
         appender.append(String.valueOf(primary));
     }
 
+    @Override
+    public List<String> imports() {
+        return Collections.emptyList();
+    }
 }

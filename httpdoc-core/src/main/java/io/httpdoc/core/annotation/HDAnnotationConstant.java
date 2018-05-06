@@ -1,6 +1,7 @@
 package io.httpdoc.core.annotation;
 
 import io.httpdoc.core.DefaultPreference;
+import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.Src;
 import io.httpdoc.core.appender.AppendableAppender;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 
-public abstract class HDAnnotationConstant implements Src<Preference> {
+public abstract class HDAnnotationConstant implements Src<Preference>, Importable {
 
     public static HDAnnotationConstant[] valuesOf(Object... objects) {
         if (objects == null) throw new NullPointerException();

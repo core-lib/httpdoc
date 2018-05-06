@@ -141,21 +141,21 @@ public class Schema extends Definition {
                 : new Schema(type, cache, provider, interpreter);
     }
 
-    public HDType toType(Provider provider) {
+    public HDType toType(String pkg, Provider provider) {
         switch (category) {
             case BASIC:
                 return HDType.valueOf(provider.acquire(this));
             case DICTIONARY:
                 HDClass rawType = new HDClass(Map.class);
-                HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(provider)};
+                HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(pkg, provider)};
                 return new HDParameterizedType(rawType, null, actualTypeArguments);
             case ARRAY:
-                HDClass componentType = (HDClass) component.toType(provider);
+                HDClass componentType = (HDClass) component.toType(pkg, provider);
                 return new HDClass(componentType);
             case ENUM:
                 return new HDClass(HDClass.Category.ENUM, name);
             case OBJECT:
-                return new HDClass(name);
+                return new HDClass(pkg + "." + name);
             default:
                 throw new IllegalStateException();
         }

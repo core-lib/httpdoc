@@ -52,33 +52,33 @@ public class JestfulClientGenerator implements Generator {
             interfase.getAnnotations().add(http);
 
             List<Operation> operations = controller.getOperations();
-            if (operations != null) generate(provider, interfase, operations);
+            if (operations != null) generate(pkg, provider, interfase, operations);
 
             interfase.joinTo(appender, new DefaultPreference());
             appender.close();
         }
     }
 
-    private void generate(Provider provider, ClassFragment interfase, List<Operation> operations) {
+    private void generate(String pkg, Provider provider, ClassFragment interfase, List<Operation> operations) {
         for (Operation operation : operations) {
-            MethodFragment method = new MethodFragment();
+            MethodFragment method = new MethodFragment(0);
             annotate(operation, method);
             Result result = operation.getResult();
-            HDType type = result != null && result.getType() != null ? result.getType().toType(provider) : HDType.valueOf(void.class);
+            HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : HDType.valueOf(void.class);
             method.setType(type);
             method.setName(operation.getName());
             List<Parameter> parameters = operation.getParameters();
-            if (parameters != null) generate(provider, method, parameters);
+            if (parameters != null) generate(pkg, provider, method, parameters);
             interfase.getMethodFragments().add(method);
         }
     }
 
-    private void generate(Provider provider, MethodFragment method, List<Parameter> parameters) {
+    private void generate(String pkg, Provider provider, MethodFragment method, List<Parameter> parameters) {
         for (Parameter param : parameters) {
             ParameterFragment parameter = new ParameterFragment();
             parameter.setName(param.getName());
             annotate(param, parameter);
-            parameter.setType(param.getType().toType(provider));
+            parameter.setType(param.getType().toType(pkg, provider));
             method.getParameterFragments().add(parameter);
         }
     }
@@ -179,7 +179,7 @@ public class JestfulClientGenerator implements Generator {
             Map<String, Property> properties = schema.getProperties();
             for (Map.Entry<String, Property> entry : properties.entrySet()) {
                 Property property = entry.getValue();
-                HDType type = property.getType().toType(provider);
+                HDType type = property.getType().toType(pkg, provider);
                 FieldFragment field = new FieldFragment();
                 field.setName(entry.getKey());
                 field.setType(type);

@@ -1,5 +1,6 @@
 package io.httpdoc.core.fragment;
 
+import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
@@ -39,6 +40,15 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
         }
         super.joinTo(appender, preference);
         appender.append(type).append(" ").append(name).append(";").enter();
+    }
+
+    @Override
+    public List<String> imports() {
+        List<String> imports = new ArrayList<>();
+        if (commentFragment != null) imports.addAll(commentFragment.imports());
+        for (Importable importable : annotations) imports.addAll(importable.imports());
+        if (type != null) imports.addAll(type.imports());
+        return imports;
     }
 
     public CommentFragment getCommentFragment() {

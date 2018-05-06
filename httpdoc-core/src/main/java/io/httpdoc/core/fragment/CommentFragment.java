@@ -5,6 +5,9 @@ import io.httpdoc.core.appender.CommentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 注释碎片
@@ -14,6 +17,7 @@ import java.io.IOException;
  **/
 public class CommentFragment implements Fragment {
     private String content;
+    private List<String> imports = new ArrayList<>();
 
     public CommentFragment() {
     }
@@ -22,10 +26,20 @@ public class CommentFragment implements Fragment {
         this.content = content;
     }
 
+    public CommentFragment(String content, List<String> imports) {
+        this.content = content;
+        this.imports = imports;
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (content == null) return;
         new CommentAppender(appender).append(content).close();
+    }
+
+    @Override
+    public List<String> imports() {
+        return imports != null ? imports : Collections.<String>emptyList();
     }
 
     public String getContent() {

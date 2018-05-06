@@ -4,6 +4,8 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class HDAnnotationString extends HDAnnotationConstant {
     private final String string;
@@ -18,4 +20,8 @@ public class HDAnnotationString extends HDAnnotationConstant {
         appender.append("\"").append(string).append("\"");
     }
 
+    @Override
+    public List<String> imports() {
+        return Collections.emptyList();
+    }
 }
