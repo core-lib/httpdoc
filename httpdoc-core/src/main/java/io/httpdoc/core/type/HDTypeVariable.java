@@ -1,6 +1,10 @@
 package io.httpdoc.core.type;
 
+import io.httpdoc.core.Importable;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类型变量
@@ -30,8 +34,10 @@ public class HDTypeVariable extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return null;
+    public void importTo(Map<Importable, List<String>> imports) {
+        if (imports.containsKey(this)) return;
+        else imports.put(this, Collections.<String>emptyList());
+        if (bound != null) bound.importTo(imports);
     }
 
     public String getName() {
@@ -45,4 +51,23 @@ public class HDTypeVariable extends HDType {
     void setBound(HDType bound) {
         this.bound = bound;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HDTypeVariable that = (HDTypeVariable) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return bound != null ? bound.equals(that.bound) : that.bound == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (bound != null ? bound.hashCode() : 0);
+        return result;
+    }
+
 }

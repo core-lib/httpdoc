@@ -1,8 +1,12 @@
 package io.httpdoc.core.type;
 
+import io.httpdoc.core.Importable;
+
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 参数化类型
@@ -44,10 +48,12 @@ public class HDParameterizedType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>(rawType.imports());
-        for (HDType actualTypeArgument : actualTypeArguments) imports.addAll(actualTypeArgument.imports());
-        return imports;
+    public void importTo(Map<Importable, List<String>> imports) {
+        if (imports.containsKey(this)) return;
+        else imports.put(this, Collections.<String>emptyList());
+        if (rawType != null) rawType.importTo(imports);
+        if (ownerType != null) ownerType.importTo(imports);
+        for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) actualTypeArguments[i].importTo(imports);
     }
 
     public HDClass getRawType() {
@@ -72,5 +78,25 @@ public class HDParameterizedType extends HDType {
 
     void setActualTypeArguments(HDType[] actualTypeArguments) {
         this.actualTypeArguments = actualTypeArguments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HDParameterizedType that = (HDParameterizedType) o;
+
+        if (rawType != null ? !rawType.equals(that.rawType) : that.rawType != null) return false;
+        if (ownerType != null ? !ownerType.equals(that.ownerType) : that.ownerType != null) return false;
+        return Arrays.equals(actualTypeArguments, that.actualTypeArguments);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rawType != null ? rawType.hashCode() : 0;
+        result = 31 * result + (ownerType != null ? ownerType.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(actualTypeArguments);
+        return result;
     }
 }

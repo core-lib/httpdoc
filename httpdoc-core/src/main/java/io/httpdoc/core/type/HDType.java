@@ -1,5 +1,7 @@
 package io.httpdoc.core.type;
 
+import io.httpdoc.core.Importable;
+
 import java.lang.reflect.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,7 +39,7 @@ public abstract class HDType implements CharSequence, Importable {
         if (HDType == null) {
             TypeVariable<?>[] variables = clazz.getTypeParameters();
             HDTypeVariable[] typeParameters = new HDTypeVariable[variables != null ? variables.length : 0];
-            for (int i = 0; variables != null && i < variables.length; i++) typeParameters[i] = HDType.valueOf(variables[i]);
+            for (int i = 0; variables != null && i < variables.length; i++) typeParameters[i] = valueOf(variables[i]);
             javaClass.setTypeParameters(typeParameters);
         }
         return HDType != null ? (HDClass) HDType : javaClass;

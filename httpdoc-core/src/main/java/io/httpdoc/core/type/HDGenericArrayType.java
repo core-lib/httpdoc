@@ -1,6 +1,10 @@
 package io.httpdoc.core.type;
 
+import io.httpdoc.core.Importable;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 泛型数组类型
@@ -24,8 +28,10 @@ public class HDGenericArrayType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return genericComponentType.imports();
+    public void importTo(Map<Importable, List<String>> imports) {
+        if (imports.containsKey(this)) return;
+        else imports.put(this, Collections.<String>emptyList());
+        genericComponentType.importTo(imports);
     }
 
     public HDType getGenericComponentType() {
@@ -34,5 +40,20 @@ public class HDGenericArrayType extends HDType {
 
     void setGenericComponentType(HDType genericComponentType) {
         this.genericComponentType = genericComponentType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HDGenericArrayType that = (HDGenericArrayType) o;
+
+        return genericComponentType != null ? genericComponentType.equals(that.genericComponentType) : that.genericComponentType == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return genericComponentType != null ? genericComponentType.hashCode() : 0;
     }
 }

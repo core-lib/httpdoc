@@ -100,12 +100,6 @@ public class HDAnnotation extends HDAnnotationConstant {
         appender.append(")");
     }
 
-    @Override
-    public List<String> imports() {
-
-        return null;
-    }
-
     public HDClass getType() {
         return type;
     }

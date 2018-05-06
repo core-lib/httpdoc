@@ -1,7 +1,10 @@
 package io.httpdoc.core.type;
 
-import java.util.ArrayList;
+import io.httpdoc.core.Importable;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 通配类型
@@ -31,11 +34,11 @@ public class HDWildcardType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
-        if (lowerBound != null) imports.addAll(lowerBound.imports());
-        else if (upperBound != null) imports.addAll(upperBound.imports());
-        return imports;
+    public void importTo(Map<Importable, List<String>> imports) {
+        if (imports.containsKey(this)) return;
+        else imports.put(this, Collections.<String>emptyList());
+        if (upperBound != null) upperBound.importTo(imports);
+        if (lowerBound != null) lowerBound.importTo(imports);
     }
 
     public HDType getUpperBound() {
@@ -52,5 +55,23 @@ public class HDWildcardType extends HDType {
 
     void setLowerBound(HDType lowerBound) {
         this.lowerBound = lowerBound;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HDWildcardType that = (HDWildcardType) o;
+
+        if (upperBound != null ? !upperBound.equals(that.upperBound) : that.upperBound != null) return false;
+        return lowerBound != null ? lowerBound.equals(that.lowerBound) : that.lowerBound == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = upperBound != null ? upperBound.hashCode() : 0;
+        result = 31 * result + (lowerBound != null ? lowerBound.hashCode() : 0);
+        return result;
     }
 }

@@ -1,7 +1,10 @@
 package io.httpdoc.core.type;
 
+import io.httpdoc.core.Importable;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static io.httpdoc.core.type.HDClass.Category.*;
 
@@ -52,8 +55,11 @@ public class HDClass extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return componentType != null ? componentType.imports() : Collections.singletonList(name);
+    public void importTo(Map<Importable, List<String>> imports) {
+        if (imports.containsKey(this)) return;
+        else imports.put(this, Collections.<String>emptyList());
+        if (componentType != null) componentType.importTo(imports);
+        else imports.put(this, Collections.singletonList(name));
     }
 
     public String getSimpleName() {
@@ -98,6 +104,24 @@ public class HDClass extends HDType {
 
     void setTypeParameters(HDTypeVariable[] typeParameters) {
         this.typeParameters = typeParameters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HDClass hdClass = (HDClass) o;
+
+        if (name != null ? !name.equals(hdClass.name) : hdClass.name != null) return false;
+        return componentType != null ? componentType.equals(hdClass.componentType) : hdClass.componentType == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (componentType != null ? componentType.hashCode() : 0);
+        return result;
     }
 
     public enum Category {

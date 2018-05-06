@@ -5,7 +5,6 @@ import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDClass;
 
 import java.io.IOException;
-import java.util.List;
 
 public class HDAnnotationClass extends HDAnnotationConstant {
     private final HDClass clazz;
@@ -25,11 +24,7 @@ public class HDAnnotationClass extends HDAnnotationConstant {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-
+        appender.append(clazz).append(".class");
     }
 
-    @Override
-    public List<String> imports() {
-        return null;
-    }
 }

@@ -16,7 +16,8 @@ import java.util.List;
  * @date 2018-04-27 16:37
  **/
 public class BlockFragment implements Fragment {
-    private List<CharSequence> sentences = new ArrayList<>();
+    protected List<CharSequence> sentences = new ArrayList<>();
+    protected List<String> imports = new ArrayList<>();
 
     public BlockFragment(CharSequence... sentences) {
         this(Arrays.asList(sentences));
@@ -41,5 +42,13 @@ public class BlockFragment implements Fragment {
 
     public void setSentences(List<CharSequence> sentences) {
         this.sentences = sentences;
+    }
+
+    public List<String> getImports() {
+        return imports;
+    }
+
+    public void setImports(List<String> imports) {
+        this.imports = imports;
     }
 }

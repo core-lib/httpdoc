@@ -63,6 +63,9 @@ public class JestfulClientGenerator implements Generator {
         for (Operation operation : operations) {
             MethodFragment method = new MethodFragment();
             annotate(operation, method);
+            Result result = operation.getResult();
+            HDType type = result != null && result.getType() != null ? result.getType().toType(provider) : HDType.valueOf(void.class);
+            method.setType(type);
             method.setName(operation.getName());
             List<Parameter> parameters = operation.getParameters();
             if (parameters != null) generate(provider, method, parameters);
