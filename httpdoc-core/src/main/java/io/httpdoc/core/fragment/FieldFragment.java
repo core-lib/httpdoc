@@ -6,6 +6,7 @@ import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDType;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,14 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
     private List<HDAnnotation> annotations = new ArrayList<>();
     private HDType type;
     private String name;
+
+    public FieldFragment() {
+        this(Modifier.PRIVATE);
+    }
+
+    public FieldFragment(int modifier) {
+        super(modifier);
+    }
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {

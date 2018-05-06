@@ -33,9 +33,20 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
     private List<MethodFragment> methodFragments = new ArrayList<>();
     private List<ClassFragment> classFragments = new ArrayList<>();
 
+    public ClassFragment() {
+        this(Modifier.PUBLIC);
+    }
+
+    public ClassFragment(int modifier) {
+        super(modifier);
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (pkg != null) appender.append("package ").append(pkg).append(";").enter();
+        appender.enter();
+
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.enter();
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
@@ -43,10 +54,8 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
             appender.enter();
         }
 
-        if (commentFragment != null) commentFragment.joinTo(appender, preference);
-
         super.joinTo(appender, preference);
-        appender.append(clazz.getCategory().name).append(clazz).append(" ");
+        appender.append(clazz.getCategory().name).append(" ").append(clazz).append(" ");
 
         HDTypeVariable[] typeParameters = clazz.getTypeParameters();
         for (int i = 0; typeParameters != null && i < typeParameters.length; i++) {

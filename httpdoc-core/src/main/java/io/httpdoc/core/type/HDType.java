@@ -13,6 +13,12 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class HDType implements CharSequence, Importable {
     private static final ConcurrentMap<Type, HDType> CACHE = new ConcurrentHashMap<>();
 
+    public static HDType[] valuesOf(Type... types) {
+        HDType[] arr = new HDType[types.length];
+        for (int i = 0; i < types.length; i++) arr[i] = valueOf(types[i]);
+        return arr;
+    }
+
     public static HDType valueOf(Type type) {
         if (type == null) return null;
         else if (CACHE.containsKey(type)) return CACHE.get(type);
@@ -42,7 +48,7 @@ public abstract class HDType implements CharSequence, Importable {
         HDParameterizedType javaParameterizedType = new HDParameterizedType();
         HDType HDType = CACHE.putIfAbsent(type, javaParameterizedType);
         if (HDType == null) {
-            HDType rawType = valueOf(type.getRawType());
+            HDClass rawType = valueOf((Class<?>) type.getRawType());
             javaParameterizedType.setRawType(rawType);
             HDType ownerType = valueOf(type.getOwnerType());
             javaParameterizedType.setOwnerType(ownerType);

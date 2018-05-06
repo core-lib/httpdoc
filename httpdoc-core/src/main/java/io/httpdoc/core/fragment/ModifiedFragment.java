@@ -15,9 +15,6 @@ import java.lang.reflect.Modifier;
 public abstract class ModifiedFragment implements Fragment {
     protected int modifier;
 
-    protected ModifiedFragment() {
-    }
-
     protected ModifiedFragment(int modifier) {
         this.modifier = modifier;
     }

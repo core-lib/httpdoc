@@ -16,4 +16,8 @@ public interface Provider {
 
     Schema acquire(Type type);
 
+    boolean contains(Schema schema);
+
+    Type acquire(Schema schema);
+
 }

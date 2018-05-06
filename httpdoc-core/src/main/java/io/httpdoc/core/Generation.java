@@ -1,5 +1,7 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.provider.Provider;
+
 /**
  * 生成对象
  *
@@ -9,6 +11,8 @@ package io.httpdoc.core;
 public class Generation {
     private Document document;
     private String directory;
+    private String pkg;
+    private Provider provider;
 
     public Document getDocument() {
         return document;
@@ -24,5 +28,21 @@ public class Generation {
 
     public void setDirectory(String directory) {
         this.directory = directory;
+    }
+
+    public String getPkg() {
+        return pkg;
+    }
+
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 }

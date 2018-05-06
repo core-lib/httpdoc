@@ -4,9 +4,11 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDClass;
+import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,25 +19,32 @@ import java.util.List;
  * @date 2018-04-27 16:31
  **/
 public class MethodFragment extends ModifiedFragment implements Fragment {
-    private CommentFragment commentFragment;
-    private List<HDAnnotation> annotations = new ArrayList<>();
-    private List<HDTypeVariable> typeVariables = new ArrayList<>();
-    private String type;
-    private String name;
-    private List<ParameterFragment> parameterFragments = new ArrayList<>();
-    private List<HDClass> exceptions = new ArrayList<>();
-    private BlockFragment blockFragment;
+    protected CommentFragment commentFragment;
+    protected List<HDAnnotation> annotations = new ArrayList<>();
+    protected List<HDTypeVariable> typeVariables = new ArrayList<>();
+    protected HDType type;
+    protected String name;
+    protected List<ParameterFragment> parameterFragments = new ArrayList<>();
+    protected List<HDClass> exceptions = new ArrayList<>();
+    protected BlockFragment blockFragment;
+
+    public MethodFragment() {
+        this(Modifier.PUBLIC);
+    }
+
+    public MethodFragment(int modifier) {
+        super(modifier);
+    }
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
+        appender.enter();
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
             annotations.get(i).joinTo(appender, preference);
             appender.enter();
         }
-
-        appender.enter();
         super.joinTo(appender, preference);
 
         for (int i = 0; typeVariables != null && i < typeVariables.size(); i++) {
@@ -88,11 +97,11 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         this.typeVariables = typeVariables;
     }
 
-    public String getType() {
+    public HDType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(HDType type) {
         this.type = type;
     }
 

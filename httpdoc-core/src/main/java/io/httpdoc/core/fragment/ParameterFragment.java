@@ -20,11 +20,29 @@ public class ParameterFragment extends ModifiedFragment {
     private HDType type;
     private String name;
 
+    public ParameterFragment() {
+        this(0);
+    }
+
+    public ParameterFragment(int modifier) {
+        super(modifier);
+    }
+
+    public ParameterFragment(HDType type, String name) {
+        this(0, type, name);
+    }
+
+    public ParameterFragment(int modifier, HDType type, String name) {
+        super(modifier);
+        this.type = type;
+        this.name = name;
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
             annotations.get(i).joinTo(appender, preference);
-            appender.enter();
+            appender.append(' ');
         }
         super.joinTo(appender, preference);
         appender.append(type);

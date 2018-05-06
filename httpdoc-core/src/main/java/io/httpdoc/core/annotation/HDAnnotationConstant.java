@@ -12,7 +12,7 @@ import java.lang.annotation.Annotation;
 
 public abstract class HDAnnotationConstant implements Src<Preference>, Importable {
 
-    public static HDAnnotationConstant[] valuesOf(Object[] objects) {
+    public static HDAnnotationConstant[] valuesOf(Object... objects) {
         if (objects == null) throw new NullPointerException();
         HDAnnotationConstant[] constants = new HDAnnotationConstant[objects.length];
         for (int i = 0; i < objects.length; i++) constants[i] = valueOf(objects[i]);

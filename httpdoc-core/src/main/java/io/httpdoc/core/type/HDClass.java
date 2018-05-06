@@ -14,21 +14,28 @@ import static io.httpdoc.core.type.HDClass.Category.*;
 public class HDClass extends HDType {
     private final Category category;
     private final String name;
-    private final HDClass component;
+    private final HDClass componentType;
     private HDTypeVariable[] typeParameters;
 
     public HDClass(String name) {
         if (name == null) throw new NullPointerException();
         this.name = name;
-        this.component = name.endsWith("[]") ? new HDClass(name.substring(0, name.length() - 2)) : null;
-        this.category = this.component != null ? ARRAY : Category.CLASS;
+        this.componentType = name.endsWith("[]") ? new HDClass(name.substring(0, name.length() - 2)) : null;
+        this.category = this.componentType != null ? ARRAY : Category.CLASS;
+    }
+
+    public HDClass(HDClass componentType) {
+        if (componentType == null) throw new NullPointerException();
+        this.category = ARRAY;
+        this.name = componentType.getName() + "[]";
+        this.componentType = componentType;
     }
 
     public HDClass(Category category, String name) {
         if (category == null || name == null) throw new NullPointerException();
         this.name = name;
-        this.component = name.endsWith("[]") ? new HDClass(category, name.substring(0, name.length() - 2)) : null;
-        this.category = this.component != null ? ARRAY : category;
+        this.componentType = name.endsWith("[]") ? new HDClass(category, name.substring(0, name.length() - 2)) : null;
+        this.category = this.componentType != null ? ARRAY : category;
     }
 
     public HDClass(Class<?> clazz) {
@@ -36,17 +43,17 @@ public class HDClass extends HDType {
             throw new NullPointerException();
         } else if (clazz.isArray()) {
             category = ARRAY;
-            name = (component = new HDClass(clazz.getComponentType())).getName() + "[]";
+            name = (componentType = new HDClass(clazz.getComponentType())).getName() + "[]";
         } else {
             category = clazz.isInterface() ? INTERFACE : clazz.isAnnotation() ? ANNOTATION : clazz.isEnum() ? ENUM : CLASS;
             name = clazz.getName();
-            component = null;
+            componentType = null;
         }
     }
 
     @Override
     public List<String> imports() {
-        return component != null ? component.imports() : Collections.singletonList(name);
+        return componentType != null ? componentType.imports() : Collections.singletonList(name);
     }
 
     public String getSimpleName() {
@@ -55,7 +62,7 @@ public class HDClass extends HDType {
 
     @Override
     public CharSequence getFormatName() {
-        return component != null ? component.getFormatName() + "[]" : getSimpleName();
+        return componentType != null ? componentType.getFormatName() + "[]" : getSimpleName();
     }
 
     @Override
@@ -81,8 +88,8 @@ public class HDClass extends HDType {
         return name;
     }
 
-    public HDClass getComponent() {
-        return component;
+    public HDClass getComponentType() {
+        return componentType;
     }
 
     public HDTypeVariable[] getTypeParameters() {

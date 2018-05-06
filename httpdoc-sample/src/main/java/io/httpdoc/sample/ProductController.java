@@ -1,12 +1,24 @@
 package io.httpdoc.sample;
 
+import io.httpdoc.core.Document;
+import io.httpdoc.core.Generation;
+import io.httpdoc.core.Generator;
+import io.httpdoc.core.conversion.Converter;
+import io.httpdoc.core.conversion.StandardConverter;
+import io.httpdoc.core.deserialization.Deserializer;
+import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.jackson.deserialization.YamlDeserializer;
+import io.httpdoc.jestful.JestfulClientGenerator;
 import org.qfox.jestful.core.http.Body;
 import org.qfox.jestful.core.http.HTTP;
 import org.qfox.jestful.core.http.POST;
 import org.qfox.jestful.core.http.PUT;
 import org.springframework.stereotype.Controller;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @author 杨昌沛 646742615@qq.com
@@ -15,6 +27,20 @@ import java.math.BigDecimal;
 @HTTP("/products")
 @Controller
 public class ProductController {
+
+    public static void main(String... args) throws IOException {
+        Deserializer deserializer = new YamlDeserializer();
+        Converter converter = new StandardConverter();
+        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("C:\\Users\\Chang\\Downloads\\httpdoc.yaml"));
+        Document document = converter.convert(doc);
+        Generation generation = new Generation();
+        generation.setDocument(document);
+        generation.setPkg("io.httpdoc.gen");
+        generation.setDirectory("C:/Users/Chang/Downloads");
+        generation.setProvider(new SystemProvider());
+        Generator generator = new JestfulClientGenerator();
+        generator.generate(generation);
+    }
 
     /**
      * 创建产品

@@ -1,5 +1,6 @@
 package io.httpdoc.core.type;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,17 +11,23 @@ import java.util.List;
  * @date 2018-05-04 11:14
  **/
 public class HDParameterizedType extends HDType {
-    private HDType rawType;
+    private HDClass rawType;
     private HDType ownerType;
     private HDType[] actualTypeArguments;
 
     HDParameterizedType() {
     }
 
-    public HDParameterizedType(HDType rawType, HDType ownerType, HDType[] actualTypeArguments) {
+    public HDParameterizedType(HDClass rawType, HDType ownerType, HDType[] actualTypeArguments) {
         this.rawType = rawType;
         this.ownerType = ownerType;
         this.actualTypeArguments = actualTypeArguments;
+    }
+
+    public HDParameterizedType(Class<?> rawType, Type ownerType, Type[] actualTypeArguments) {
+        this.rawType = HDType.valueOf(rawType);
+        this.ownerType = HDType.valueOf(ownerType);
+        this.actualTypeArguments = HDType.valuesOf(actualTypeArguments);
     }
 
     @Override
@@ -43,11 +50,11 @@ public class HDParameterizedType extends HDType {
         return imports;
     }
 
-    public HDType getRawType() {
+    public HDClass getRawType() {
         return rawType;
     }
 
-    void setRawType(HDType rawType) {
+    void setRawType(HDClass rawType) {
         this.rawType = rawType;
     }
 

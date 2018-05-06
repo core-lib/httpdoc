@@ -1,5 +1,7 @@
 package io.httpdoc.core;
 
+import java.io.IOException;
+
 /**
  * 代码生成器
  *
@@ -8,6 +10,6 @@ package io.httpdoc.core;
  **/
 public interface Generator {
 
-    void generate(Generation generation);
+    void generate(Generation generation) throws IOException;
 
 }

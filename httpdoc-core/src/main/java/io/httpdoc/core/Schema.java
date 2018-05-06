@@ -3,8 +3,11 @@ package io.httpdoc.core;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
-import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.core.type.HDClass;
+import io.httpdoc.core.type.HDParameterizedType;
+import io.httpdoc.core.type.HDType;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -136,6 +139,26 @@ public class Schema extends Definition {
                 : provider.contains(type)
                 ? provider.acquire(type)
                 : new Schema(type, cache, provider, interpreter);
+    }
+
+    public HDType toType(Provider provider) {
+        switch (category) {
+            case BASIC:
+                return HDType.valueOf(provider.acquire(this));
+            case DICTIONARY:
+                HDClass rawType = new HDClass(Map.class);
+                HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(provider)};
+                return new HDParameterizedType(rawType, null, actualTypeArguments);
+            case ARRAY:
+                HDClass componentType = (HDClass) component.toType(provider);
+                return new HDClass(componentType);
+            case ENUM:
+                return new HDClass(HDClass.Category.ENUM, name);
+            case OBJECT:
+                return new HDClass(name);
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     public Category getCategory() {

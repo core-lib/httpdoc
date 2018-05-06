@@ -13,12 +13,24 @@ public class HDAnnotation extends HDAnnotationConstant {
     private final HDClass type;
     private final Map<CharSequence, HDAnnotationConstant[]> properties;
 
+    public HDAnnotation(String type) {
+        this(type, null);
+    }
+
+    public HDAnnotation(Class<? extends Annotation> type) {
+        this(type, null);
+    }
+
+    public HDAnnotation(HDClass type) {
+        this(type, null);
+    }
+
     public HDAnnotation(String type, Map<CharSequence, HDAnnotationConstant[]> properties) {
         this.type = new HDClass(type);
         this.properties = properties != null ? new LinkedHashMap<>(properties) : new LinkedHashMap<CharSequence, HDAnnotationConstant[]>();
     }
 
-    public HDAnnotation(Class type, Map<CharSequence, HDAnnotationConstant[]> properties) {
+    public HDAnnotation(Class<? extends Annotation> type, Map<CharSequence, HDAnnotationConstant[]> properties) {
         this.type = new HDClass(type);
         this.properties = properties != null ? new LinkedHashMap<>(properties) : new LinkedHashMap<CharSequence, HDAnnotationConstant[]>();
     }

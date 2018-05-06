@@ -15,6 +15,13 @@ import java.io.IOException;
 public class CommentFragment implements Fragment {
     private String content;
 
+    public CommentFragment() {
+    }
+
+    public CommentFragment(String content) {
+        this.content = content;
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (content == null) return;

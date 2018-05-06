@@ -6,6 +6,7 @@ import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,11 +18,19 @@ import java.util.List;
 public class BlockFragment implements Fragment {
     private List<CharSequence> sentences = new ArrayList<>();
 
+    public BlockFragment(CharSequence... sentences) {
+        this(Arrays.asList(sentences));
+    }
+
+    public BlockFragment(List<CharSequence> sentences) {
+        this.sentences = new ArrayList<>(sentences);
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         appender.append("{").enter();
         IndentAppender apd = new IndentAppender(appender, preference.getIndent());
-        for (CharSequence sentence : sentences) apd.append(sentence);
+        for (CharSequence sentence : sentences) apd.append(sentence).enter();
         apd.close();
         appender.append("}").enter();
     }

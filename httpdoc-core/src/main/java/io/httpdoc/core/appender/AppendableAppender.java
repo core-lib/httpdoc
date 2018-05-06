@@ -12,6 +12,7 @@ public class AppendableAppender extends EnterableAppender<AppendableAppender> im
     private final Appendable appendable;
 
     public AppendableAppender(Appendable appendable) {
+        if (appendable == null) throw new NullPointerException();
         this.appendable = appendable;
     }
 
