@@ -11,8 +11,11 @@ import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.core.http.*;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.httpdoc.core.Parameter.*;
 
@@ -174,23 +177,35 @@ public class JestfulClientGenerator implements Generator {
             ClassFragment clazz = new ClassFragment();
             clazz.setPkg(pkg);
             clazz.setCommentFragment(new CommentFragment(schema.getDescription()));
-            clazz.setClazz(new HDClass(pkg + "." + name));
-            clazz.setSuperclass(schema.getSuperclass() != null ? new HDClass(pkg + "." + schema.getSuperclass().getName()) : null);
-            Map<String, Property> properties = schema.getProperties();
-            for (Map.Entry<String, Property> entry : properties.entrySet()) {
-                Property property = entry.getValue();
-                HDType type = property.getType().toType(pkg, provider);
-                FieldFragment field = new FieldFragment();
-                field.setName(entry.getKey());
-                field.setType(type);
-                field.setCommentFragment(new CommentFragment(property.getDescription()));
-                clazz.getFieldFragments().add(field);
+            switch (schema.getCategory()) {
+                case ENUM:
+                    clazz.setClazz(new HDClass(HDClass.Category.ENUM, pkg + "." + name));
+                    Set<Constant> constants = schema.getConstants();
+                    for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
+                        ConstantFragment con = new ConstantFragment(new CommentFragment(constant.getDescription()), constant.getName());
+                        clazz.getConstantFragments().add(con);
+                    }
+                    break;
+                case OBJECT:
+                    clazz.setClazz(new HDClass(HDClass.Category.CLASS, pkg + "." + name));
+                    clazz.setSuperclass(schema.getSuperclass() != null ? new HDClass(pkg + "." + schema.getSuperclass().getName()) : null);
+                    Map<String, Property> properties = schema.getProperties();
+                    for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
+                        Property property = entry.getValue();
+                        HDType type = property.getType().toType(pkg, provider);
+                        FieldFragment field = new FieldFragment();
+                        field.setName(entry.getKey());
+                        field.setType(type);
+                        field.setCommentFragment(new CommentFragment(property.getDescription()));
+                        clazz.getFieldFragments().add(field);
 
-                GetterMethodFragment getter = new GetterMethodFragment(type, entry.getKey());
-                clazz.getMethodFragments().add(getter);
+                        GetterMethodFragment getter = new GetterMethodFragment(type, entry.getKey());
+                        clazz.getMethodFragments().add(getter);
 
-                SetterMethodFragment setter = new SetterMethodFragment(type, entry.getKey());
-                clazz.getMethodFragments().add(setter);
+                        SetterMethodFragment setter = new SetterMethodFragment(type, entry.getKey());
+                        clazz.getMethodFragments().add(setter);
+                    }
+                    break;
             }
             clazz.joinTo(appender, new DefaultPreference());
             appender.close();

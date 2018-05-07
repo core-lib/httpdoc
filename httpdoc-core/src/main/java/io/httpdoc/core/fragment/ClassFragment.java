@@ -29,6 +29,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
     private HDClass clazz;
     private HDType superclass;
     private List<HDType> interfaces = new ArrayList<>();
+    private List<ConstantFragment> constantFragments = new ArrayList<>();
     private List<FieldFragment> fieldFragments = new ArrayList<>();
     private List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
     private List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
@@ -85,6 +86,14 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         appender.append("{").enter();
 
         IndentAppender indented = new IndentAppender(appender, preference.getIndent());
+
+        // 静态属性
+        for (int i = 0; i < constantFragments.size(); i++) {
+            ConstantFragment fragment = constantFragments.get(i);
+            fragment.joinTo(indented, preference);
+            if (i == constantFragments.size() - 1) indented.append(";").enter();
+            else indented.append(", ").enter();
+        }
 
         // 静态属性
         for (FieldFragment fragment : fieldFragments) {
@@ -196,6 +205,14 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
     public void setInterfaces(List<HDType> interfaces) {
         this.interfaces = interfaces;
+    }
+
+    public List<ConstantFragment> getConstantFragments() {
+        return constantFragments;
+    }
+
+    public void setConstantFragments(List<ConstantFragment> constantFragments) {
+        this.constantFragments = constantFragments;
     }
 
     public List<FieldFragment> getFieldFragments() {

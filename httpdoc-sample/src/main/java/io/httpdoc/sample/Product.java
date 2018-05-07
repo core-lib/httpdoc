@@ -21,6 +21,10 @@ public class Product {
      * 产品价格
      */
     private BigDecimal price;
+    /**
+     * 产品状态
+     */
+    private ProductStatus status;
 
     public Long getId() {
         return id;
@@ -44,5 +48,13 @@ public class Product {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductStatus status) {
+        this.status = status;
     }
 }

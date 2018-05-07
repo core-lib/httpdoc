@@ -153,7 +153,7 @@ public class Schema extends Definition {
                 HDClass componentType = (HDClass) component.toType(pkg, provider);
                 return new HDClass(componentType);
             case ENUM:
-                return new HDClass(HDClass.Category.ENUM, name);
+                return new HDClass(HDClass.Category.ENUM, pkg + "." + name);
             case OBJECT:
                 return new HDClass(pkg + "." + name);
             default:

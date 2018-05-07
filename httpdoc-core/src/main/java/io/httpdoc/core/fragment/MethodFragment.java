@@ -20,6 +20,8 @@ import java.util.List;
  * @date 2018-04-27 16:31
  **/
 public class MethodFragment extends ModifiedFragment implements Fragment {
+    public static final HDClass VOID = HDType.valueOf(void.class);
+
     protected CommentFragment commentFragment;
     protected List<HDAnnotation> annotations = new ArrayList<>();
     protected List<HDTypeVariable> typeVariables = new ArrayList<>();
@@ -80,7 +82,7 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
         for (Importable importable : typeVariables) imports.addAll(importable.imports());
-        if (type != null) imports.addAll(type.imports());
+        if (type != null && !type.equals(VOID)) imports.addAll(type.imports());
         for (Importable importable : parameterFragments) imports.addAll(importable.imports());
         for (Importable importable : exceptions) imports.addAll(importable.imports());
         if (blockFragment != null) imports.addAll(blockFragment.imports());

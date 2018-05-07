@@ -31,12 +31,12 @@ public class ProductController {
     public static void main(String... args) throws IOException {
         Deserializer deserializer = new YamlDeserializer();
         Converter converter = new StandardConverter();
-        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("C:\\Users\\Chang\\Downloads\\httpdoc.yaml"));
+        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (9).yaml"));
         Document document = converter.convert(doc);
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("C:/Users/Chang/Downloads");
+        generation.setDirectory("D:\\用户目录\\下载");
         generation.setProvider(new SystemProvider());
         Generator generator = new JestfulClientGenerator();
         generator.generate(generation);
