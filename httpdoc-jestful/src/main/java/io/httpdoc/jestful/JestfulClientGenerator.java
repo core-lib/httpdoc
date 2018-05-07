@@ -11,7 +11,6 @@ import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.core.http.*;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +187,7 @@ public class JestfulClientGenerator implements Generator {
                     break;
                 case OBJECT:
                     clazz.setClazz(new HDClass(HDClass.Category.CLASS, pkg + "." + name));
-                    clazz.setSuperclass(schema.getSuperclass() != null ? new HDClass(pkg + "." + schema.getSuperclass().getName()) : null);
+                    clazz.setSuperclass(schema.getSuperclass() != null && schema.getSuperclass().getCategory() == Category.OBJECT ? new HDClass(pkg + "." + schema.getSuperclass().getName()) : null);
                     Map<String, Property> properties = schema.getProperties();
                     for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                         Property property = entry.getValue();
