@@ -9,15 +9,12 @@ import io.httpdoc.core.deserialization.Deserializer;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.JestfulClientGenerator;
-import org.qfox.jestful.core.http.Body;
+import org.qfox.jestful.core.http.GET;
 import org.qfox.jestful.core.http.HTTP;
-import org.qfox.jestful.core.http.POST;
-import org.qfox.jestful.core.http.PUT;
 import org.springframework.stereotype.Controller;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -44,26 +41,8 @@ public class ProductController {
         generator.generate(generation);
     }
 
-    /**
-     * 创建产品
-     *
-     * @param name  产品名称
-     * @param price 产品价格
-     * @return 创建后的产品对象
-     */
-    @POST(value = "/", produces = "application/json", consumes = "applicaiton/json")
-    public Product create(@Body("name") String name, @Body("price") BigDecimal price) {
-        return null;
-    }
-
-    /**
-     * 更新产品
-     *
-     * @param product 产品对象
-     * @return 更新后的产品对象
-     */
-    @PUT(value = "/", produces = "application/json", consumes = {"application/json", "application/xml"})
-    public Product update(@Body("product") Product product) {
+    @GET("/")
+    public ProductListResult list() {
         return null;
     }
 

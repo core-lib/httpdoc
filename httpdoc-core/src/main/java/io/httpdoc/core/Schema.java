@@ -100,7 +100,26 @@ public class Schema extends Definition {
                         this.component = Schema.valueOf(actualTypeArgument, cache, provider, interpreter);
                         cache.remove(type);
                     } else {
-                        throw new SchemaUnsupportedException(rawType);
+                        this.category = Category.OBJECT;
+                        this.name = clazz.getSimpleName();
+                        this.superclass = Schema.valueOf(clazz.getSuperclass(), cache, provider, interpreter);
+                        PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+                        for (PropertyDescriptor descriptor : descriptors) {
+                            String field = descriptor.getName();
+                            if (field.equals("class")) continue;
+                            Method getter = descriptor.getReadMethod();
+                            if (getter.getDeclaringClass() != clazz) continue;
+                            Type t = getter.getGenericReturnType();
+                            Schema schema = Schema.valueOf(t, cache, provider, interpreter);
+                            Interpretation interpretation = interpreter.interpret(descriptor);
+                            String description = interpretation != null ? interpretation.getContent() : null;
+                            Property property = new Property(schema, description);
+                            this.properties.put(field, property);
+                        }
+                        ClassInterpretation interpretation = interpreter.interpret(clazz);
+                        this.description = interpretation != null ? interpretation.getContent() : null;
+                        cache.remove(type);
+                        cache.put(clazz, this);
                     }
                 } else {
                     throw new SchemaUnsupportedException(type);
