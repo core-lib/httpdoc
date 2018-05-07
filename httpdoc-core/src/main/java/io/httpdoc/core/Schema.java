@@ -11,9 +11,7 @@ import io.httpdoc.core.type.HDType;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -107,6 +105,12 @@ public class Schema extends Definition {
                 } else {
                     throw new SchemaUnsupportedException(type);
                 }
+            } else if (type instanceof GenericArrayType) {
+                GenericArrayType genericArrayType = (GenericArrayType) type;
+                Type genericComponentType = genericArrayType.getGenericComponentType();
+                this.category = Category.ARRAY;
+                this.component = Schema.valueOf(genericComponentType, cache, provider, interpreter);
+                cache.remove(type);
             } else {
                 throw new SchemaUnsupportedException(type);
             }
@@ -134,6 +138,16 @@ public class Schema extends Definition {
     }
 
     private static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Interpreter interpreter) {
+        while (type instanceof TypeVariable<?> || type instanceof WildcardType) {
+            if (type instanceof TypeVariable<?>) {
+                TypeVariable<?> typeVariable = (TypeVariable<?>) type;
+                type = typeVariable.getBounds() != null && typeVariable.getBounds().length > 0 ? typeVariable.getBounds()[0] : Object.class;
+            }
+            if (type instanceof WildcardType) {
+                WildcardType wildcardType = (WildcardType) type;
+                type = wildcardType.getUpperBounds() != null && wildcardType.getUpperBounds().length > 0 ? wildcardType.getUpperBounds()[0] : Object.class;
+            }
+        }
         return cache.containsKey(type)
                 ? cache.get(type)
                 : provider.contains(type)

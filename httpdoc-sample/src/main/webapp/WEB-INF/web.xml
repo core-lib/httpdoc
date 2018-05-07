@@ -31,8 +31,8 @@
         <servlet-name>httpdoc</servlet-name>
         <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
         <init-param>
-            <param-name>interpreter</param-name>
-            <param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>
+            <param-name>contentType</param-name>
+            <param-value>text/plain</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -46,7 +46,7 @@
         <filter-name>jestful</filter-name>
         <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
         <init-param>
-            <param-name>view-suffix</param-name>
+            <param-name>view-prefix</param-name>
             <param-value>/WEB-INF/</param-value>
         </init-param>
         <init-param>
