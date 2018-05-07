@@ -3,7 +3,7 @@ package io.httpdoc.core.fragment;
 import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.annotation.HDAnnotation;
-import io.httpdoc.core.appender.ContinuousEnterIgnoredAppender;
+import io.httpdoc.core.appender.EnterMergedAppender;
 import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDClass;
@@ -86,7 +86,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
         appender.append("{");
 
-        ContinuousEnterIgnoredAppender indented = new ContinuousEnterIgnoredAppender(new IndentAppender(appender, preference.getIndent()), 2);
+        EnterMergedAppender indented = new EnterMergedAppender(new IndentAppender(appender, preference.getIndent()), 2);
         indented.enter();
 
         // 枚举常量
