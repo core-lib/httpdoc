@@ -78,10 +78,14 @@ public class HDAnnotation extends HDAnnotationConstant {
                 if (key instanceof HDAnnotationKey && ((HDAnnotationKey) key).isOriginal()) iterator.remove();
             }
         }
+
         for (CharSequence key : keys) {
             if (!first) appender.append(", ");
-            appender.append(key);
-            appender.append(" = ");
+            // 如果只有一个属性而且这个属性名叫value而且用户允许隐藏, 那么隐藏掉!
+            if (!preference.isAnnotationValueKeyHiddenIfUnnecessary() || keys.size() != 1 || !"value".equals(key.toString())) {
+                appender.append(key);
+                appender.append(" = ");
+            }
             HDAnnotationConstant[] constants = properties.get(key);
             if (constants == null || constants.length == 0) {
                 appender.append("{}");

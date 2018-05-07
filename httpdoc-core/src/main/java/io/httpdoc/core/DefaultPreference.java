@@ -11,4 +11,9 @@ public class DefaultPreference implements Preference {
     public boolean isAnnotationDefaultValueHidden() {
         return true;
     }
+
+    @Override
+    public boolean isAnnotationValueKeyHiddenIfUnnecessary() {
+        return true;
+    }
 }

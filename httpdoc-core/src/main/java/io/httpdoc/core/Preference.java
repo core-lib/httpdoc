@@ -12,4 +12,6 @@ public interface Preference {
 
     boolean isAnnotationDefaultValueHidden();
 
+    boolean isAnnotationValueKeyHiddenIfUnnecessary();
+
 }
