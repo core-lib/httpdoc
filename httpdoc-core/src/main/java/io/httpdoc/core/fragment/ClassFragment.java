@@ -87,13 +87,14 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
         IndentAppender indented = new IndentAppender(appender, preference.getIndent());
 
-        // 静态属性
+        // 枚举常量
         for (int i = 0; i < constantFragments.size(); i++) {
             ConstantFragment fragment = constantFragments.get(i);
             fragment.joinTo(indented, preference);
             if (i == constantFragments.size() - 1) indented.append(";").enter();
             else indented.append(", ").enter();
         }
+        indented.enter();
 
         // 静态属性
         for (FieldFragment fragment : fieldFragments) {
@@ -101,12 +102,14 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 静态代码块
         for (Fragment fragment : staticBlockFragments) {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 实例属性
         for (FieldFragment fragment : fieldFragments) {
@@ -114,30 +117,35 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 实例代码块
         for (Fragment fragment : instanceBlockFragments) {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 构造器
         for (Fragment constructor : constructorFragments) {
             constructor.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 方法
         for (Fragment fragment : methodFragments) {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         // 内部类
         for (Fragment fragment : classFragments) {
             fragment.joinTo(indented, preference);
             indented.enter();
         }
+        indented.enter();
 
         indented.close();
         appender.append("}");

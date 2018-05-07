@@ -39,7 +39,7 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
             appender.enter();
         }
         super.joinTo(appender, preference);
-        appender.append(type).append(" ").append(name).append(";").enter();
+        appender.append(type).append(" ").append(name).append(";");
     }
 
     @Override

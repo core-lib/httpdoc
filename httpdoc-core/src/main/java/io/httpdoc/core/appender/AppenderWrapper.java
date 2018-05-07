@@ -17,12 +17,14 @@ public abstract class AppenderWrapper<T extends AppenderWrapper<T>> extends Clos
 
     @Override
     public T append(CharSequence text) throws IOException {
+        validate();
         appender.append(text);
         return (T) this;
     }
 
     @Override
     public T append(CharSequence text, int start, int end) throws IOException {
+        validate();
         appender.append(text, start, end);
         return (T) this;
     }

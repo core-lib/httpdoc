@@ -16,6 +16,7 @@ public abstract class LineAppenderWrapper<T extends LineAppenderWrapper<T>> exte
 
     @Override
     public T enter() throws IOException {
+        validate();
         ((LineAppender<?>) appender).enter();
         return (T) this;
     }
