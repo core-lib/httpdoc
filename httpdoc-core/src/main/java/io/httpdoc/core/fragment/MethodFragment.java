@@ -42,7 +42,6 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
-        appender.enter();
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
             annotations.get(i).joinTo(appender, preference);

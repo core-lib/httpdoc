@@ -31,10 +31,7 @@ public class ConstantFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (commentFragment != null) {
-            commentFragment.joinTo(appender, preference);
-            appender.enter();
-        }
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.append(name);
     }
 

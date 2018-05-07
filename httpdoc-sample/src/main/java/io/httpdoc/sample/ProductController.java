@@ -31,7 +31,7 @@ public class ProductController {
     public static void main(String... args) throws IOException {
         Deserializer deserializer = new YamlDeserializer();
         Converter converter = new StandardConverter();
-        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (10).yaml"));
+        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (11).yaml"));
         Document document = converter.convert(doc);
         Generation generation = new Generation();
         generation.setDocument(document);

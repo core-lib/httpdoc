@@ -52,9 +52,9 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
 
         Set<String> imports = new TreeSet<>(this.imports());
         for (String dependency : imports) appender.append("import ").append(dependency).append(";").enter();
+        appender.enter();
 
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
-        appender.enter();
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
             annotations.get(i).joinTo(appender, preference);
