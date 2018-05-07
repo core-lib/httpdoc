@@ -1,6 +1,5 @@
 package io.httpdoc.core.annotation;
 
-import io.httpdoc.core.DefaultPreference;
 import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.Src;
@@ -43,7 +42,7 @@ public abstract class HDAnnotationConstant implements Src<Preference>, Importabl
         try {
             StringWriter writer = new StringWriter();
             AppendableAppender appender = new AppendableAppender(writer);
-            joinTo(appender, new DefaultPreference());
+            joinTo(appender, Preference.DEFAULT);
             appender.close();
             return writer.toString();
         } catch (IOException e) {

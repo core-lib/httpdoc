@@ -14,4 +14,21 @@ public interface Preference {
 
     boolean isAnnotationValueKeyHiddenIfUnnecessary();
 
+    Preference DEFAULT = new Preference() {
+        @Override
+        public int getIndent() {
+            return 4;
+        }
+
+        @Override
+        public boolean isAnnotationDefaultValueHidden() {
+            return true;
+        }
+
+        @Override
+        public boolean isAnnotationValueKeyHiddenIfUnnecessary() {
+            return true;
+        }
+    };
+
 }

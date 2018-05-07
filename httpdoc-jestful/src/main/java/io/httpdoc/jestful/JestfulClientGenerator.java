@@ -56,7 +56,7 @@ public class JestfulClientGenerator implements Generator {
             List<Operation> operations = controller.getOperations();
             if (operations != null) generate(pkg, provider, interfase, operations);
 
-            interfase.joinTo(appender, new DefaultPreference());
+            interfase.joinTo(appender, Preference.DEFAULT);
             appender.close();
         }
     }
@@ -207,7 +207,7 @@ public class JestfulClientGenerator implements Generator {
                     }
                     break;
             }
-            clazz.joinTo(appender, new DefaultPreference());
+            clazz.joinTo(appender, Preference.DEFAULT);
             appender.close();
         }
     }

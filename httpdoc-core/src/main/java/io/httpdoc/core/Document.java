@@ -1,7 +1,13 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.Format;
+import io.httpdoc.core.conversion.StandardConverter;
+import io.httpdoc.core.deserialization.Deserializer;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +35,55 @@ public class Document extends Definition {
     private String arrSuffix = Format.ARR_SUFFIX;
     private List<Controller> controllers = new ArrayList<>();
     private Map<String, Schema> schemas = new LinkedHashMap<>();
+
+    public static Document from(File file, Deserializer deserializer) throws IOException {
+        return from(file.toURI(), deserializer);
+    }
+
+    public static Document from(URI uri, Deserializer deserializer) throws IOException {
+        return from(uri.toURL(), deserializer);
+    }
+
+    public static Document from(URL url, Deserializer deserializer) throws IOException {
+        try (InputStream in = url.openStream()) {
+            return from(in, deserializer);
+        }
+    }
+
+    public static Document from(InputStream in, Deserializer deserializer) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            return from(reader, deserializer);
+        }
+    }
+
+    public static Document from(Reader reader, Deserializer deserializer) throws IOException {
+        return from(reader, deserializer, new StandardConverter());
+    }
+
+    public static Document from(File file, Deserializer deserializer, Converter converter) throws IOException {
+        return from(file.toURI(), deserializer, converter);
+    }
+
+    public static Document from(URI uri, Deserializer deserializer, Converter converter) throws IOException {
+        return from(uri.toURL(), deserializer, converter);
+    }
+
+    public static Document from(URL url, Deserializer deserializer, Converter converter) throws IOException {
+        try (InputStream in = url.openStream()) {
+            return from(in, deserializer, converter);
+        }
+    }
+
+    public static Document from(InputStream in, Deserializer deserializer, Converter converter) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            return from(reader, deserializer, converter);
+        }
+    }
+
+    public static Document from(Reader reader, Deserializer deserializer, Converter converter) throws IOException {
+        Map<String, Object> map = deserializer.deserialize(reader);
+        return converter.convert(map);
+    }
 
     public String getHttpdoc() {
         return httpdoc;
