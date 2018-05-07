@@ -33,7 +33,7 @@ public class ProductController {
     public static void main(String... args) throws IOException {
         Deserializer deserializer = new YamlDeserializer();
         Converter converter = new StandardConverter();
-        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (14).yaml"));
+        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (21).yaml"));
         Document document = converter.convert(doc);
         Generation generation = new Generation();
         generation.setDocument(document);
@@ -59,12 +59,11 @@ public class ProductController {
     /**
      * 更新产品
      *
-     * @param t
-     * @param <T>
-     * @return
+     * @param product 产品对象
+     * @return 更新后的产品对象
      */
     @PUT(value = "/", produces = "application/json", consumes = {"application/json", "application/xml"})
-    public <T> String update(T t) {
+    public Product update(@Body("product") Product product) {
         return null;
     }
 

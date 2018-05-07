@@ -169,19 +169,20 @@ public class SourceInterpreter implements Interpreter {
                     .append("(");
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (i > 0) builder.append(", ");
-                Class<?> cl = method.getParameterTypes()[i];
-                if (cl.isArray()) {
+                Class<?> type = method.getParameterTypes()[i];
+                String name = type.getPackage().equals(clazz.getPackage()) ? type.getSimpleName() : type.getName();
+                if (type.isArray()) {
                     int dimensions = 0;
-                    while (cl.isArray()) {
+                    while (type.isArray()) {
                         dimensions++;
-                        cl = cl.getComponentType();
+                        type = type.getComponentType();
                     }
                     StringBuilder sb = new StringBuilder();
-                    sb.append(cl.getName());
+                    sb.append(name);
                     for (int d = 0; d < dimensions; d++) sb.append("[]");
                     builder.append(sb);
                 } else {
-                    builder.append(cl.getName());
+                    builder.append(name);
                 }
             }
             builder.append(")");
