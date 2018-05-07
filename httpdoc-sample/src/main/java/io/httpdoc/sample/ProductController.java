@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 /**
+ * 产品管理器
+ *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 12:18
  **/
@@ -31,7 +33,7 @@ public class ProductController {
     public static void main(String... args) throws IOException {
         Deserializer deserializer = new YamlDeserializer();
         Converter converter = new StandardConverter();
-        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (11).yaml"));
+        Map<String, Object> doc = deserializer.deserialize(new FileInputStream("D:\\用户目录\\下载\\httpdoc (14).yaml"));
         Document document = converter.convert(doc);
         Generation generation = new Generation();
         generation.setDocument(document);
@@ -55,6 +57,8 @@ public class ProductController {
     }
 
     /**
+     * 更新产品
+     *
      * @param t
      * @param <T>
      * @return

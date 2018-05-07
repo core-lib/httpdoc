@@ -8,5 +8,16 @@ package io.httpdoc.sample;
  **/
 public enum ProductStatus {
 
-    A, B, C
+    /**
+     * A
+     */
+    A,
+    /**
+     * B
+     */
+    B,
+    /**
+     * C
+     */
+    C;
 }

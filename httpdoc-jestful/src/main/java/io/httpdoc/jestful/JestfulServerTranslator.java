@@ -2,8 +2,8 @@ package io.httpdoc.jestful;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.exception.DocumentTranslationException;
+import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.provider.Provider;
 import org.qfox.jestful.core.Mapping;
 import org.qfox.jestful.core.MediaType;
@@ -48,6 +48,8 @@ public class JestfulServerTranslator implements Translator {
                 controller.setName(clazz.getSimpleName());
                 Resource resource = mapping.getResource();
                 controller.setPath(resource.getExpression());
+                Interpretation interpretation = interpreter.interpret(clazz);
+                controller.setDescription(interpretation != null ? interpretation.getContent() : null);
                 controllers.put(clazz, controller);
             }
             Operation operation = new Operation();
@@ -89,7 +91,7 @@ public class JestfulServerTranslator implements Translator {
             Schema type = Schema.valueOf(mapping.getResult().getType(), provider, interpreter);
             result.setType(type);
             operation.setResult(result);
-            MethodInterpretation interpretation = interpreter.interpret(method);
+            Interpretation interpretation = interpreter.interpret(method);
             operation.setDescription(interpretation != null ? interpretation.getContent() : null);
             controller.getOperations().add(operation);
         }

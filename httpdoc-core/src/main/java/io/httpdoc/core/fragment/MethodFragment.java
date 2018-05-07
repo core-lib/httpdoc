@@ -72,7 +72,7 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
             appender.append(exceptions.get(i));
         }
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
-        else appender.append(";");
+        else appender.append(";").enter();
     }
 
     @Override
