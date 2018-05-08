@@ -8,6 +8,7 @@ import io.httpdoc.core.fragment.*;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
+import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.http.*;
 
 import java.io.IOException;
@@ -37,13 +38,13 @@ public class JestfulClientGenerator implements Generator {
         if (schemas != null) generate(directory, pkg, provider, schemas);
 
         List<Controller> controllers = document.getControllers();
-        if (controllers != null) generate(directory, pkg, provider, controllers);
+        if (controllers != null) generate(document, directory, pkg, provider, controllers);
     }
 
-    private void generate(String directory, String pkg, Provider provider, List<Controller> controllers) throws IOException {
+    private void generate(Document document, String directory, String pkg, Provider provider, List<Controller> controllers) throws IOException {
         for (Controller controller : controllers) {
             String name = controller.getName();
-            FileAppender appender = new FileAppender(directory + "/apis/" + name + ".java");
+            FileAppender appender = new FileAppender(directory + "/" + name + ".java");
             ClassFragment interfase = new ClassFragment();
             interfase.setPkg(pkg);
             interfase.setCommentFragment(new CommentFragment(controller.getDescription()));
@@ -52,6 +53,17 @@ public class JestfulClientGenerator implements Generator {
             HDAnnotation http = new HDAnnotation(HTTP.class);
             http.getProperties().put("value", HDAnnotationConstant.valuesOf(controller.getPath()));
             interfase.getAnnotations().add(http);
+
+            FieldFragment instance = new FieldFragment(0);
+            instance.setType(interfase.getClazz());
+            instance.setName("INSTANCE");
+            String sentence = "Client.builder()" + '\n' +
+                    "        .setProtocol(\"" + document.getProtocol() + "\")" + '\n' +
+                    "        .setHostname(\"" + document.getHostname() + "\")" + '\n' +
+                    "        .build()" + '\n' +
+                    "        .create(" + controller.getName() + ".class)";
+            instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singletonList(Client.class.getName())));
+            interfase.getFieldFragments().add(instance);
 
             List<Operation> operations = controller.getOperations();
             if (operations != null) generate(pkg, provider, interfase, operations);
@@ -173,7 +185,7 @@ public class JestfulClientGenerator implements Generator {
     private void generate(String directory, String pkg, Provider provider, Map<String, Schema> schemas) throws IOException {
         for (Schema schema : schemas.values()) {
             String name = schema.getName();
-            FileAppender appender = new FileAppender(directory + "/models/" + name + ".java");
+            FileAppender appender = new FileAppender(directory + "/" + name + ".java");
             ClassFragment clazz = new ClassFragment();
             clazz.setPkg(pkg);
             clazz.setCommentFragment(new CommentFragment(schema.getDescription()));

@@ -22,6 +22,7 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
     private List<HDAnnotation> annotations = new ArrayList<>();
     private HDType type;
     private String name;
+    private AssignmentFragment assignmentFragment;
 
     public FieldFragment() {
         this(Modifier.PRIVATE);
@@ -39,7 +40,9 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
             appender.enter();
         }
         super.joinTo(appender, preference);
-        appender.append(type).append(" ").append(name).append(";");
+        appender.append(type).append(" ").append(name);
+        if (assignmentFragment != null) assignmentFragment.joinTo(appender, preference);
+        appender.append(";");
     }
 
     @Override
@@ -48,6 +51,7 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
         if (type != null) imports.addAll(type.imports());
+        if (assignmentFragment != null) imports.addAll(assignmentFragment.imports());
         return imports;
     }
 
@@ -81,5 +85,13 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public AssignmentFragment getAssignmentFragment() {
+        return assignmentFragment;
+    }
+
+    public void setAssignmentFragment(AssignmentFragment assignmentFragment) {
+        this.assignmentFragment = assignmentFragment;
     }
 }

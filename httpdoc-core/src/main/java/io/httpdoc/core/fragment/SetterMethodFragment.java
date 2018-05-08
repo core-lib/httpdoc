@@ -15,7 +15,7 @@ public class SetterMethodFragment extends MethodFragment {
         this.name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
         ParameterFragment parameter = new ParameterFragment(type, name);
         this.parameterFragments.add(parameter);
-        this.blockFragment = new BlockFragment("this." + name + " = " + name);
+        this.blockFragment = new BlockFragment("this." + name + " = " + name + ";");
     }
 
 }
