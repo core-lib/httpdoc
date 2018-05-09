@@ -73,7 +73,7 @@ public class Schema extends Definition {
                         String field = descriptor.getName();
                         if (field.equals("class")) continue;
                         Method getter = descriptor.getReadMethod();
-                        if (getter.getDeclaringClass() != clazz) continue;
+                        if (getter == null || getter.getDeclaringClass() != clazz) continue;
                         Type t = getter.getGenericReturnType();
                         Schema schema = Schema.valueOf(t, cache, provider, interpreter);
                         Interpretation interpretation = interpreter.interpret(descriptor);
@@ -108,7 +108,7 @@ public class Schema extends Definition {
                             String field = descriptor.getName();
                             if (field.equals("class")) continue;
                             Method getter = descriptor.getReadMethod();
-                            if (getter.getDeclaringClass() != clazz) continue;
+                            if (getter == null || getter.getDeclaringClass() != clazz) continue;
                             Type t = getter.getGenericReturnType();
                             Schema schema = Schema.valueOf(t, cache, provider, interpreter);
                             Interpretation interpretation = interpreter.interpret(descriptor);

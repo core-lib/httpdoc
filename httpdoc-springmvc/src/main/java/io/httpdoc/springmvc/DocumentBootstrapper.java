@@ -5,17 +5,28 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -29,8 +40,28 @@ import java.util.*;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class DocumentBootstrapper implements ApplicationListener<ContextRefreshedEvent> {
+    /**
+     * 解析接口时需要忽略的参数列表
+     */
+    private static Set<Class<?>> ignoredParameters;
 
-    private List<ControllerInfoHolder> controllerInfoHolders = new ArrayList<>();
+    static {
+        ignoredParameters = new HashSet<>();
+        ignoredParameters.add(ServletRequest.class);
+        ignoredParameters.add(Class.class);
+        ignoredParameters.add(Void.class);
+        ignoredParameters.add(Void.TYPE);
+        ignoredParameters.add(ServletResponse.class);
+        ignoredParameters.add(HttpServletRequest.class);
+        ignoredParameters.add(HttpServletResponse.class);
+        ignoredParameters.add(HttpSession.class);
+        ignoredParameters.add(HttpHeaders.class);
+        ignoredParameters.add(BindingResult.class);
+        ignoredParameters.add(ServletContext.class);
+        ignoredParameters.add(UriComponentsBuilder.class);
+    }
+
+    private static final List<ControllerInfoHolder> controllerInfoHolders = new ArrayList<>();
 
     @Resource
     private List<RequestMappingHandlerMapping> requestMappingHandlerMappings;
@@ -38,8 +69,10 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     @Resource
     private List<RequestMappingInfoHandlerMapping> handlerMappings;
 
+    private SpringmvcDocument springmvcDocument = SpringmvcDocument.getInstance();
+
     @Resource
-    private SpringmvcDocument document;
+    private ParameterNameDiscoverer parameterNameDiscoverer;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -53,15 +86,17 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             buildControllers(handlerMethods);
         }
 
-        document.setDocument(translate());
+        springmvcDocument.setDocument(translate());
     }
 
     private Document translate() {
-        Document document = new Document();
+        Document document = springmvcDocument.getDocument();
+        document = document == null ? new Document() : document;
 
         Map<Class<?>, Controller> controllerMap = new LinkedHashMap<>();
 
-        List<Controller> controllers = new LinkedList<>();
+        List<Controller> controllers = document.getControllers();
+        controllers = controllers == null ? new LinkedList<Controller>() : controllers;
         document.setControllers(controllers);
         for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
             if (controllerInfoHolder.isHandled()) {
@@ -75,30 +110,23 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             if (controller == null) {
                 controller = new Controller();
                 controller.setName(beanType.getSimpleName());
+                controllerMap.put(beanType, controller);
+                controllers.add(controller);
             }
 
             RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
 
             List<Operation> operations = buildOperations(requestMappingInfo, handlerMethod);
-            controller.setOperations(operations);
+            controller.getOperations().addAll(operations);
+
         }
         return document;
     }
 
     private List<Operation> buildOperations(RequestMappingInfo requestMappingInfo, HandlerMethod handlerMethod) {
-        Type returnType = handlerMethod.getReturnType().getGenericParameterType();
+        List<Operation> operations = new ArrayList<>();
 
-        if (returnType != null && returnType instanceof ParameterizedType) {
-            // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
-            ParameterizedType parameterizedType = (ParameterizedType) returnType;
-            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
-            if (rawType.equals(ResponseEntity.class)) {
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                if (actualTypeArguments != null && actualTypeArguments.length > 0) {
-                    returnType = actualTypeArguments[0];
-                }
-            }
-        }
+        Type returnType = getReturnType(handlerMethod);
 
         Schema resultSchema = Schema.valueOf(returnType);
 
@@ -117,35 +145,58 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
                 operation.setName(handlerMethod.getMethod().getName());
                 operation.setMethod(requestMethod.name());
                 operation.setPath(pattern);
-                Set<MediaTypeExpression> expressions = consumesCondition.getExpressions();
                 operation.setConsumes(new ArrayList<String>());
-                for (MediaTypeExpression expression : expressions) {
+                for (MediaTypeExpression expression : consumesCondition.getExpressions()) {
                     operation.getConsumes().add(expression.getMediaType().toString());
                 }
                 operation.setProduces(new ArrayList<String>());
-                for (MediaTypeExpression expression : expressions) {
+                for (MediaTypeExpression expression : producesCondition.getExpressions()) {
                     operation.getProduces().add(expression.getMediaType().toString());
                 }
                 Result result = new Result();
                 result.setType(resultSchema);
+                operation.setResult(result);
 
                 List<Parameter> parameters = buildParameters(handlerMethod);
                 operation.setParameters(parameters);
+
+                operations.add(operation);
             }
         }
 
-
-        HandlerMethod resolvedFromHandlerMethod = handlerMethod.getResolvedFromHandlerMethod();
-        MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        return null;
+        return operations;
     }
 
     private List<Parameter> buildParameters(HandlerMethod handlerMethod) {
+        List<Parameter> parameters = new LinkedList<>();
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        for (MethodParameter methodParameter : methodParameters) {
-            String parameterName = methodParameter.getParameterName();
-            System.out.println(parameterName);
+        String[] parameterNames = parameterNameDiscoverer.getParameterNames(handlerMethod.getMethod());
+
+        for (int i = 0; i < methodParameters.length; i++) {
+            MethodParameter methodParameter = methodParameters[i];
+            Class<?> parameterType = methodParameter.getParameterType();
+            if (parameterType.isInterface() || ignoredParameters.contains(parameterType)) {
+                continue;
+            }
+            Parameter parameter = new Parameter();
+            parameter.setName(parameterNames[i]);
+            parameter.setType(Schema.valueOf(methodParameter.getParameterType()));
+            parameter.setScope(getScope(methodParameter));
+            parameters.add(parameter);
         }
+        return parameters;
+    }
+
+    /**
+     * 获取接口参数的http位置
+     *
+     * @param methodParameter 接口参数
+     * @return http位置
+     */
+    private String getScope(MethodParameter methodParameter) {
+        Annotation[] parameterAnnotations = methodParameter.getParameterAnnotations();
+        System.out.println(parameterAnnotations);
+        // TODO
         return null;
     }
 
@@ -163,5 +214,28 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             }
             controllerInfoHolders.add(controllerInfoHolder);
         }
+    }
+
+    /**
+     * 获取接口方法的返回值类型, 如果是ResponseEntity则取泛型内的类型
+     *
+     * @param handlerMethod 接口方法
+     * @return 返回值类型
+     */
+    private Type getReturnType(HandlerMethod handlerMethod) {
+        Type returnType = handlerMethod.getReturnType().getGenericParameterType();
+
+        if (returnType != null && returnType instanceof ParameterizedType) {
+            // 接口返回值包含泛型的Java类, 比如ResponseEntity<?>
+            ParameterizedType parameterizedType = (ParameterizedType) returnType;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            if (rawType.equals(ResponseEntity.class)) {
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                if (actualTypeArguments != null && actualTypeArguments.length > 0) {
+                    returnType = actualTypeArguments[0];
+                }
+            }
+        }
+        return returnType;
     }
 }

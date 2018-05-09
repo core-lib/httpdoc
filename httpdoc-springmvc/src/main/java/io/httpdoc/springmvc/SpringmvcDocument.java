@@ -1,7 +1,6 @@
 package io.httpdoc.springmvc;
 
 import io.httpdoc.core.Document;
-import org.springframework.stereotype.Component;
 
 /**
  * SpringMVC 接口文档封装
@@ -9,8 +8,26 @@ import org.springframework.stereotype.Component;
  * @author 钟宝林
  * @date 2018-04-27 21:34
  **/
-@Component
 public class SpringmvcDocument {
+
+    private SpringmvcDocument() {
+
+    }
+
+    private static volatile SpringmvcDocument instance;
+
+    public static SpringmvcDocument getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (SpringmvcDocument.class) {
+            if (instance != null) {
+                return instance;
+            }
+            instance = new SpringmvcDocument();
+        }
+        return instance;
+    }
 
     private Document document;
 
