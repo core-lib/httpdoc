@@ -125,7 +125,7 @@
                     <username>admin</username>
                     <password>admin</password>
                     <uriEncoding>UTF-8</uriEncoding>
-                    <path>/</path>
+                    <path>/httpdoc-sample</path>
                 </configuration>
             </plugin>
             <plugin>

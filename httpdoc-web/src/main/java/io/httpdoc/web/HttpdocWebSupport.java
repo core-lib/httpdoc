@@ -110,7 +110,7 @@ public abstract class HttpdocWebSupport {
             Translation translation = new Translation(container, provider, interpreter);
 
             translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
-            translation.setProtocol(protocol != null ? protocol : req.getProtocol());
+            translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
             translation.setHostname(hostname != null ? hostname : req.getServerName());
             translation.setContext(context != null ? context : req.getContextPath());
             translation.setVersion(version);
