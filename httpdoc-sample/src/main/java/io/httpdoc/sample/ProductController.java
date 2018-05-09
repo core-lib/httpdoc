@@ -28,7 +28,7 @@ public class ProductController {
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
         generation.setProvider(new SystemProvider());
         Generator generator = new JestfulClientGenerator();
         generator.generate(generation);
