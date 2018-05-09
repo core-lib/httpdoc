@@ -211,4 +211,12 @@ public class Schema extends Definition {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Schema{" +
+                "category=" + category +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
