@@ -24,7 +24,7 @@ import java.net.URL;
 public class ProductController {
 
     public static void main(String... args) throws IOException {
-        Document document = Document.from(new URL("http://localhost:8080/httpdoc.yaml"), new YamlDeserializer());
+        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
