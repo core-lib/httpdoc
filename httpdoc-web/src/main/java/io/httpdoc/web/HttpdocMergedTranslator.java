@@ -44,6 +44,11 @@ public class HttpdocMergedTranslator implements Translator {
     @Override
     public Document translate(Translation translation) throws DocumentTranslationException {
         Document document = new Document();
+        document.setHttpdoc(translation.getHttpdoc());
+        document.setProtocol(translation.getProtocol());
+        document.setHostname(translation.getHostname());
+        document.setContext(translation.getContext());
+        document.setVersion(translation.getVersion());
         for (Translator translator : translators) {
             Document doc = translator.translate(translation);
             document.getControllers().addAll(doc.getControllers());

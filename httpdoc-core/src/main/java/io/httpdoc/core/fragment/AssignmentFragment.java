@@ -9,24 +9,24 @@ import java.util.Collections;
 import java.util.List;
 
 public class AssignmentFragment implements Fragment {
-    private String sentence;
+    private CharSequence sentence;
     private List<String> imports = new ArrayList<>();
 
     public AssignmentFragment() {
     }
 
-    public AssignmentFragment(String sentence) {
+    public AssignmentFragment(CharSequence sentence) {
         this.sentence = sentence;
     }
 
-    public AssignmentFragment(String sentence, List<String> imports) {
+    public AssignmentFragment(CharSequence sentence, List<String> imports) {
         this.sentence = sentence;
         this.imports = imports;
     }
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (sentence != null && sentence.trim().length() > 0) appender.append(" = ").append(sentence);
+        if (sentence != null && sentence.length() > 0) appender.append(" = ").append(sentence);
     }
 
     @Override
@@ -34,11 +34,11 @@ public class AssignmentFragment implements Fragment {
         return imports != null ? imports : Collections.<String>emptyList();
     }
 
-    public String getSentence() {
+    public CharSequence getSentence() {
         return sentence;
     }
 
-    public void setSentence(String sentence) {
+    public void setSentence(CharSequence sentence) {
         this.sentence = sentence;
     }
 

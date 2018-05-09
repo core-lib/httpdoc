@@ -28,6 +28,11 @@ import java.util.Map;
  * @date 2018-04-23 16:26
  **/
 public abstract class HttpdocWebSupport {
+    private String httpdoc;
+    private String protocol;
+    private String hostname;
+    private String context;
+    private String version;
     private String charset = "UTF-8";
     private String contentType = null;
     private Translator translator = new HttpdocMergedTranslator();
@@ -38,6 +43,26 @@ public abstract class HttpdocWebSupport {
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
+            String httpdoc = config.getInitParameter("httpdoc");
+            if (httpdoc != null && httpdoc.trim().length() > 0) {
+                this.httpdoc = httpdoc;
+            }
+            String protocol = config.getInitParameter("protocol");
+            if (protocol != null && protocol.trim().length() > 0) {
+                this.protocol = protocol;
+            }
+            String hostname = config.getInitParameter("hostname");
+            if (hostname != null && hostname.trim().length() > 0) {
+                this.hostname = hostname;
+            }
+            String context = config.getInitParameter("context");
+            if (context != null && context.trim().length() > 0) {
+                this.context = context;
+            }
+            String version = config.getInitParameter("version");
+            if (version != null && version.trim().length() > 0) {
+                this.version = version;
+            }
             String charset = config.getInitParameter("charset");
             if (charset != null && charset.trim().length() > 0) {
                 this.charset = charset;
@@ -77,9 +102,19 @@ public abstract class HttpdocWebSupport {
 
     public void handle(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         try {
-            HttpdocThreadLocal.bind((HttpServletRequest) request, (HttpServletResponse) response);
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse res = (HttpServletResponse) response;
+            HttpdocThreadLocal.bind(req, res);
+
             Container container = new HttpdocWebContainer(request.getServletContext());
             Translation translation = new Translation(container, provider, interpreter);
+
+            translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
+            translation.setProtocol(protocol != null ? protocol : req.getProtocol());
+            translation.setHostname(hostname != null ? hostname : req.getServerName());
+            translation.setContext(context != null ? context : req.getContextPath());
+            translation.setVersion(version);
+
             Document document = translator.translate(translation);
             response.setCharacterEncoding(charset);
             response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);

@@ -1,7 +1,6 @@
 package io.httpdoc.jestful;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.provider.Provider;
@@ -25,8 +24,13 @@ import java.util.*;
 public class JestfulServerTranslator implements Translator {
 
     @Override
-    public Document translate(Translation translation) throws DocumentTranslationException {
+    public Document translate(Translation translation) {
         Document document = new Document();
+        document.setHttpdoc(translation.getHttpdoc());
+        document.setProtocol(translation.getProtocol());
+        document.setHostname(translation.getHostname());
+        document.setContext(translation.getContext());
+        document.setVersion(translation.getVersion());
 
         Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
 

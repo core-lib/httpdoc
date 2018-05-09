@@ -57,11 +57,8 @@ public class JestfulClientGenerator implements Generator {
             FieldFragment instance = new FieldFragment(0);
             instance.setType(interfase.getClazz());
             instance.setName("INSTANCE");
-            String sentence = "Client.builder()" + '\n' +
-                    "        .setProtocol(\"" + document.getProtocol() + "\")" + '\n' +
-                    "        .setHostname(\"" + document.getHostname() + "\")" + '\n' +
-                    "        .build()" + '\n' +
-                    "        .create(" + controller.getName() + ".class)";
+            StringBuilder sentence = new StringBuilder();
+
             instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singletonList(Client.class.getName())));
             interfase.getFieldFragments().add(instance);
 

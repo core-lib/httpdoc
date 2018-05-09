@@ -10,6 +10,11 @@ import io.httpdoc.core.provider.Provider;
  * @date 2018-04-19 16:35
  **/
 public class Translation {
+    private String httpdoc;
+    private String protocol;
+    private String hostname;
+    private String context;
+    private String version;
     private Container container;
     private Provider provider;
     private Interpreter interpreter;
@@ -21,6 +26,46 @@ public class Translation {
         this.container = container;
         this.provider = provider;
         this.interpreter = interpreter;
+    }
+
+    public String getHttpdoc() {
+        return httpdoc;
+    }
+
+    public void setHttpdoc(String httpdoc) {
+        this.httpdoc = httpdoc;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public Container getContainer() {

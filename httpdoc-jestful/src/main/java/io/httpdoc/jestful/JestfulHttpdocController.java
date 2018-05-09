@@ -31,6 +31,11 @@ import java.util.*;
  **/
 @HTTP("/jestful")
 public class JestfulHttpdocController {
+    private String httpdoc;
+    private String protocol;
+    private String hostname;
+    private String context;
+    private String version;
     private Translator translator = new JestfulServerTranslator();
     private Provider provider = new SystemProvider();
     private Interpreter interpreter = new DefaultInterpreter();
@@ -65,23 +70,30 @@ public class JestfulHttpdocController {
     public void render(
             @Query("charset") String charset,
             @Query("contentType") String contentType,
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest req,
+            HttpServletResponse res
     ) throws IOException, DocumentTranslationException {
-        Container container = new JestfulHttpdocContainer(request.getServletContext());
+        Container container = new JestfulHttpdocContainer(req.getServletContext());
         Translation translation = new Translation(container, provider, interpreter);
+
+        translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
+        translation.setProtocol(protocol != null ? protocol : req.getProtocol());
+        translation.setHostname(hostname != null ? hostname : req.getServerName());
+        translation.setContext(context != null ? context : req.getContextPath());
+        translation.setVersion(version);
+
         Document document = translator.translate(translation);
-        response.setCharacterEncoding(charset);
+        res.setCharacterEncoding(charset);
         if (serializers == null) {
-            response.sendError(404);
+            res.sendError(404);
             return;
         }
         Serializer serializer = serializers.values().iterator().next();
         charset = charset != null && charset.trim().length() > 0 ? charset : "UTF-8";
         contentType = contentType != null && charset.trim().length() > 0 ? contentType : serializer.getType();
-        response.setContentType(contentType + "; charset=" + charset);
+        res.setContentType(contentType + "; charset=" + charset);
         Map<String, Object> doc = converter.convert(document, format);
-        serializer.serialize(doc, response.getOutputStream());
+        serializer.serialize(doc, res.getOutputStream());
     }
 
     @GET("/httpdoc.{suffix:.*}")
@@ -89,23 +101,70 @@ public class JestfulHttpdocController {
             @Path("suffix") String suffix,
             @Query("charset") String charset,
             @Query("contentType") String contentType,
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest req,
+            HttpServletResponse res
     ) throws IOException, DocumentTranslationException {
-        Container container = new JestfulHttpdocContainer(request.getServletContext());
+        Container container = new JestfulHttpdocContainer(req.getServletContext());
         Translation translation = new Translation(container, provider, interpreter);
+
+        translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
+        translation.setProtocol(protocol != null ? protocol : req.getProtocol());
+        translation.setHostname(hostname != null ? hostname : req.getServerName());
+        translation.setContext(context != null ? context : req.getContextPath());
+        translation.setVersion(version);
+
         Document document = translator.translate(translation);
-        response.setCharacterEncoding(charset);
+        res.setCharacterEncoding(charset);
         Serializer serializer = serializers.get(suffix);
         if (serializer == null) {
-            response.sendError(404);
+            res.sendError(404);
             return;
         }
         charset = charset != null && charset.trim().length() > 0 ? charset : "UTF-8";
         contentType = contentType != null && charset.trim().length() > 0 ? contentType : serializer.getType();
-        response.setContentType(contentType + "; charset=" + charset);
+        res.setContentType(contentType + "; charset=" + charset);
         Map<String, Object> doc = converter.convert(document, format);
-        serializer.serialize(doc, response.getOutputStream());
+        serializer.serialize(doc, res.getOutputStream());
+    }
+
+    public String getHttpdoc() {
+        return httpdoc;
+    }
+
+    public void setHttpdoc(String httpdoc) {
+        this.httpdoc = httpdoc;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public Translator getTranslator() {
