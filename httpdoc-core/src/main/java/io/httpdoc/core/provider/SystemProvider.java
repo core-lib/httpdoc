@@ -47,6 +47,64 @@ public class SystemProvider implements Provider {
         return null;
     }
 
+    @Override
+    public boolean contains(Schema schema) {
+        return acquire(schema) != null;
+    }
+
+    @Override
+    public Type acquire(Schema schema) {
+        if (schema == null || schema.getCategory() != Category.BASIC) return null;
+        String name = schema.getName();
+        switch (name) {
+            case "boolean":
+                return boolean.class;
+            case "byte":
+                return byte.class;
+            case "short":
+                return short.class;
+            case "char":
+                return char.class;
+            case "int":
+                return int.class;
+            case "float":
+                return float.class;
+            case "long":
+                return long.class;
+            case "double":
+                return double.class;
+
+            case "Boolean":
+                return Boolean.class;
+            case "Byte":
+                return Byte.class;
+            case "Short":
+                return Short.class;
+            case "Character":
+                return Character.class;
+            case "Integer":
+                return Integer.class;
+            case "Float":
+                return Float.class;
+            case "Long":
+                return Long.class;
+            case "Double":
+                return Double.class;
+
+            case "String":
+                return String.class;
+            case "Number":
+                return Number.class;
+            case "Date":
+                return Date.class;
+            case "File":
+                return File.class;
+            case "Object":
+                return Object.class;
+        }
+        return null;
+    }
+
     private Schema build(String name) {
         Schema schema = new Schema();
         schema.setCategory(Category.BASIC);

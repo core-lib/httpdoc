@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 public interface Interpreter {
 
-    ClassInterpretation interpret(Class<?> clazz) throws Exception;
+    ClassInterpretation interpret(Class<?> clazz);
 
     MethodInterpretation interpret(Method method);
 

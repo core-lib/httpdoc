@@ -50,7 +50,22 @@
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-client</artifactId>
+            <version>v2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-charset</artifactId>
+            <version>v2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
+            <version>v2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-json</artifactId>
             <version>v2.0.2</version>
         </dependency>
         <dependency>

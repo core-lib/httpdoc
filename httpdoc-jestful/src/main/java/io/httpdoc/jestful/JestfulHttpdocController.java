@@ -7,8 +7,8 @@ import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
@@ -33,7 +33,7 @@ import java.util.*;
 public class JestfulHttpdocController {
     private Translator translator = new JestfulServerTranslator();
     private Provider provider = new SystemProvider();
-    private Interpreter interpreter = new SourceInterpreter();
+    private Interpreter interpreter = new DefaultInterpreter();
     private Converter converter = new StandardConverter();
     private Map<String, Serializer> serializers = new LinkedHashMap<>();
     private Format format = new DefaultFormat();

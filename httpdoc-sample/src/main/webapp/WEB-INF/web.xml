@@ -30,6 +30,10 @@
     <servlet>
         <servlet-name>httpdoc</servlet-name>
         <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+        <init-param>
+            <param-name>contentType</param-name>
+            <param-value>text/plain</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>httpdoc</servlet-name>

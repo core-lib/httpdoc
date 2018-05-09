@@ -1,14 +1,14 @@
 package io.httpdoc.sample;
 
-import org.qfox.jestful.core.http.Body;
+import org.qfox.jestful.core.http.GET;
 import org.qfox.jestful.core.http.HTTP;
-import org.qfox.jestful.core.http.POST;
-import org.qfox.jestful.core.http.PUT;
 import org.springframework.stereotype.Controller;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 
 /**
+ * 产品管理器
+ *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 12:18
  **/
@@ -16,25 +16,20 @@ import java.math.BigDecimal;
 @Controller
 public class ProductController {
 
-    /**
-     * 创建产品
-     *
-     * @param name  产品名称
-     * @param price 产品价格
-     * @return 创建后的产品对象
-     */
-    @POST(value = "/", produces = "application/json", consumes = "applicaiton/json")
-    public Product create(@Body("name") String name, @Body("price") BigDecimal price) {
-        return null;
+    public static void main(String... args) throws IOException {
+//        Document document = Document.from(new URL("http://localhost:8080/httpdoc.yaml"), new YamlDeserializer());
+//        Generation generation = new Generation();
+//        generation.setDocument(document);
+//        generation.setPkg("io.httpdoc.gen");
+//        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+//        generation.setProvider(new SystemProvider());
+//        Generator generator = new JestfulClientGenerator();
+//        generator.generate(generation);
+
     }
 
-    /**
-     * @param t
-     * @param <T>
-     * @return
-     */
-    @PUT(value = "/", produces = "application/json", consumes = {"application/json", "application/xml"})
-    public <T> String update(T t) {
+    @GET("/")
+    public ProductListResult list() {
         return null;
     }
 
