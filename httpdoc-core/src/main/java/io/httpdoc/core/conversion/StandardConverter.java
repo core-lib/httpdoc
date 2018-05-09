@@ -25,7 +25,7 @@ public class StandardConverter implements Converter {
         map.put("httpdoc", document.getHttpdoc());
         map.put("protocol", document.getProtocol());
         map.put("hostname", document.getHostname());
-        map.put("ctxtpath", document.getCtxtpath());
+        map.put("context", document.getContext());
         map.put("version", document.getVersion());
         if (!Format.REF_PREFIX.equals(format.getRefPrefix())) map.put("refPrefix", format.getRefPrefix());
         if (!Format.REF_SUFFIX.equals(format.getRefSuffix())) map.put("refSuffix", format.getRefSuffix());
@@ -257,7 +257,7 @@ public class StandardConverter implements Converter {
         document.setHttpdoc((String) dictionary.get("httpdoc"));
         document.setProtocol((String) dictionary.get("protocol"));
         document.setHostname((String) dictionary.get("hostname"));
-        document.setCtxtpath((String) dictionary.get("ctxtpath"));
+        document.setContext((String) dictionary.get("context"));
         document.setVersion((String) dictionary.get("version"));
 
         String refPrefix = (String) dictionary.get("refPrefix");

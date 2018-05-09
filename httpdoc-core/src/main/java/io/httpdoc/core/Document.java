@@ -25,7 +25,7 @@ public class Document extends Definition {
     private String httpdoc;
     private String protocol;
     private String hostname;
-    private String ctxtpath;
+    private String context;
     private String version;
     private String refPrefix = Format.REF_PREFIX;
     private String refSuffix = Format.REF_SUFFIX;
@@ -109,12 +109,12 @@ public class Document extends Definition {
         this.hostname = hostname;
     }
 
-    public String getCtxtpath() {
-        return ctxtpath;
+    public String getContext() {
+        return context;
     }
 
-    public void setCtxtpath(String ctxtpath) {
-        this.ctxtpath = ctxtpath;
+    public void setContext(String context) {
+        this.context = context;
     }
 
     public String getVersion() {
