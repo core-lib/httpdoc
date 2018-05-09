@@ -11,7 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -26,7 +26,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -61,6 +60,9 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
         ignoredParameters.add(UriComponentsBuilder.class);
     }
 
+    /**
+     * SpringMVC 接口信息持有
+     */
     private static final List<ControllerInfoHolder> controllerInfoHolders = new ArrayList<>();
 
     @Resource
@@ -78,12 +80,12 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         for (RequestMappingHandlerMapping requestMappingHandlerMapping : requestMappingHandlerMappings) {
             Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
-            buildControllers(map);
+            buildControllerInfo(map);
         }
 
         for (RequestMappingInfoHandlerMapping handlerMapping : handlerMappings) {
             Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
-            buildControllers(handlerMethods);
+            buildControllerInfo(handlerMethods);
         }
 
         springmvcDocument.setDocument(translate());
@@ -131,10 +133,10 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
         Schema resultSchema = Schema.valueOf(returnType);
 
         RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
-        ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
+        // ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition(); TODO 参数条件暂时不支持
         ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
         ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
-        HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
+        // HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition(); TODO 请求头条件暂时不支持
         PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
 
         Set<RequestMethod> methods = methodsCondition.getMethods();
@@ -157,7 +159,7 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
                 result.setType(resultSchema);
                 operation.setResult(result);
 
-                List<Parameter> parameters = buildParameters(handlerMethod);
+                List<Parameter> parameters = buildParameters(Operation.HttpMethod.resolve(operation.getMethod()), handlerMethod);
                 operation.setParameters(parameters);
 
                 operations.add(operation);
@@ -167,7 +169,14 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
         return operations;
     }
 
-    private List<Parameter> buildParameters(HandlerMethod handlerMethod) {
+    /**
+     * 根据一个接口方法封装接口文档的参数
+     *
+     * @param httpMethod    HTTP方法
+     * @param handlerMethod 接口方法
+     * @return 参数列表
+     */
+    private List<Parameter> buildParameters(Operation.HttpMethod httpMethod, HandlerMethod handlerMethod) {
         List<Parameter> parameters = new LinkedList<>();
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
         String[] parameterNames = parameterNameDiscoverer.getParameterNames(handlerMethod.getMethod());
@@ -181,7 +190,7 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             Parameter parameter = new Parameter();
             parameter.setName(parameterNames[i]);
             parameter.setType(Schema.valueOf(methodParameter.getParameterType()));
-            parameter.setScope(getScope(methodParameter));
+            parameter.setScope(getScope(httpMethod, methodParameter));
             parameters.add(parameter);
         }
         return parameters;
@@ -191,16 +200,35 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
      * 获取接口参数的http位置
      *
      * @param methodParameter 接口参数
+     * @param httpMethod      HTTP方法
      * @return http位置
      */
-    private String getScope(MethodParameter methodParameter) {
-        Annotation[] parameterAnnotations = methodParameter.getParameterAnnotations();
-        System.out.println(parameterAnnotations);
-        // TODO
-        return null;
+    private String getScope(Operation.HttpMethod httpMethod, MethodParameter methodParameter) {
+        // cookie < header < path < query < body
+        if (methodParameter.hasMethodAnnotation(CookieValue.class)) {
+            return Parameter.HTTP_PARAM_SCOPE_COOKIE;
+        }
+        if (methodParameter.hasMethodAnnotation(RequestHeader.class)) {
+            return Parameter.HTTP_PARAM_SCOPE_HEADER;
+        }
+        if (methodParameter.hasMethodAnnotation(PathVariable.class)) {
+            return Parameter.HTTP_PARAM_SCOPE_PATH;
+        }
+        if (methodParameter.hasMethodAnnotation(RequestParam.class)) {
+            return Parameter.HTTP_PARAM_SCOPE_QUERY;
+        }
+        if (methodParameter.hasMethodAnnotation(RequestBody.class)) {
+            return Parameter.HTTP_PARAM_SCOPE_QUERY;
+        }
+        return httpMethod.isRequiresRequestBody() ? Parameter.HTTP_PARAM_SCOPE_BODY : Parameter.HTTP_PARAM_SCOPE_QUERY;
     }
 
-    private void buildControllers(Map<RequestMappingInfo, HandlerMethod> map) {
+    /**
+     * 封装从 SpringMVC 取到的接口信息到{@link DocumentBootstrapper#controllerInfoHolders}
+     *
+     * @param map 接口信息
+     */
+    private void buildControllerInfo(Map<RequestMappingInfo, HandlerMethod> map) {
         for (Object o : map.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             RequestMappingInfo requestMappingInfo = (RequestMappingInfo) entry.getKey();

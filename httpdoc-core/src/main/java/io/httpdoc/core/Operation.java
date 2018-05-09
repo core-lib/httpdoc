@@ -1,7 +1,9 @@
 package io.httpdoc.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 资源操作符
@@ -74,6 +76,58 @@ public class Operation extends Definition {
 
     public void setResult(Result result) {
         this.result = result;
+    }
+
+    public enum HttpMethod {
+
+        GET(false, false),
+        HEAD(false, true),
+        POST(true, true),
+        PUT(true, true),
+        PATCH(true, true),
+        DELETE(true, false),
+        OPTIONS(true, false),
+        TRACE(false, false);
+
+        HttpMethod(boolean permitsRequestBody, boolean requiresRequestBody) {
+            this.permitsRequestBody = permitsRequestBody;
+            this.requiresRequestBody = requiresRequestBody;
+        }
+
+        private boolean permitsRequestBody;
+        private boolean requiresRequestBody;
+        private static final Map<String, HttpMethod> mappings = new HashMap<String, HttpMethod>(8);
+
+        static {
+            for (HttpMethod httpMethod : values()) {
+                mappings.put(httpMethod.name(), httpMethod);
+            }
+        }
+
+
+        public static HttpMethod resolve(String method) {
+            return (method != null ? mappings.get(method) : null);
+        }
+
+        public boolean matches(String method) {
+            return (this == resolve(method));
+        }
+
+        /**
+         * 是否允许有请求体
+         */
+        public boolean isPermitsRequestBody() {
+            return requiresRequestBody;
+        }
+
+        /**
+         * 是否要求有请求体
+         */
+        public boolean isRequiresRequestBody() {
+            return requiresRequestBody;
+        }
+
+
     }
 
 }
