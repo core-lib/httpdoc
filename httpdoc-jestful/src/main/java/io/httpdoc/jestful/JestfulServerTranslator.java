@@ -3,6 +3,8 @@ package io.httpdoc.jestful;
 import io.httpdoc.core.*;
 import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.MethodInterpretation;
+import io.httpdoc.core.interpretation.Note;
 import io.httpdoc.core.provider.Provider;
 import org.qfox.jestful.core.Mapping;
 import org.qfox.jestful.core.MediaType;
@@ -10,6 +12,8 @@ import org.qfox.jestful.core.Position;
 import org.qfox.jestful.core.Resource;
 import org.qfox.jestful.server.MappingRegistry;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.Method;
@@ -22,6 +26,7 @@ import java.util.*;
  * @date 2018-04-20 9:29
  **/
 public class JestfulServerTranslator implements Translator {
+    private final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 
     @Override
     public Document translate(Translation translation) {
@@ -63,6 +68,12 @@ public class JestfulServerTranslator implements Translator {
             for (MediaType produce : mapping.getConsumes()) operation.getConsumes().add(produce.toString());
             operation.setMethod(mapping.getRestful().getMethod());
 
+            Map<String, String> map = new HashMap<>();
+            MethodInterpretation interpretation = interpreter.interpret(method);
+            Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
+            for (int i = 0; notes != null && i < notes.length; i++) map.put(notes[i].getName(), notes[i].getText());
+            String[] names = discoverer.getParameterNames(method);
+
             loop:
             for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
                 Parameter parameter = new Parameter();
@@ -89,13 +100,19 @@ public class JestfulServerTranslator implements Translator {
                 }
                 Schema type = Schema.valueOf(param.getType(), provider, interpreter);
                 parameter.setType(type);
+
+                String name = names != null && names.length > param.getIndex() ? names[param.getIndex()] : param.getName();
+                String description = map.get(name);
+                parameter.setDescription(description);
+
                 operation.getParameters().add(parameter);
             }
             Result result = new Result();
             Schema type = Schema.valueOf(mapping.getResult().getType(), provider, interpreter);
             result.setType(type);
+            result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
             operation.setResult(result);
-            Interpretation interpretation = interpreter.interpret(method);
+
             operation.setDescription(interpretation != null ? interpretation.getContent() : null);
             controller.getOperations().add(operation);
         }
