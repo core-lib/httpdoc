@@ -8,6 +8,7 @@ import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.JestfulClientGenerator;
 import org.qfox.jestful.core.http.GET;
 import org.qfox.jestful.core.http.HTTP;
+import org.qfox.jestful.core.http.Path;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -28,14 +29,21 @@ public class ProductController {
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
         generation.setProvider(new SystemProvider());
         Generator generator = new JestfulClientGenerator();
         generator.generate(generation);
     }
 
-    @GET("/")
-    public ProductListResult list() {
+    /**
+     * 分页获取产品列表
+     *
+     * @param p 页码
+     * @param s 页面容量
+     * @return 产品列表结果
+     */
+    @GET("/{page}/{size}")
+    public ProductListResult list(@Path("page") int p, @Path("size") int s) {
         return null;
     }
 
