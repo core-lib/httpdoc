@@ -60,6 +60,7 @@ public class JestfulClientGenerator implements Generator {
             sentence.append("Client.builder()");
             if (document.getProtocol() != null) sentence.append(".setProtocol(\"").append(document.getProtocol()).append("\")");
             if (document.getHostname() != null) sentence.append(".setHostname(\"").append(document.getHostname()).append("\")");
+            if (document.getPort() != null) sentence.append(".setPort(\"").append(document.getPort()).append("\"");
             if (document.getContext() != null) sentence.append(".setRoute(\"").append(document.getContext()).append("\")");
             sentence.append(".build()");
             sentence.append(".create(").append(name).append(".class").append(")");
@@ -77,7 +78,6 @@ public class JestfulClientGenerator implements Generator {
     private void generate(String pkg, Provider provider, ClassFragment interfase, List<Operation> operations) {
         for (Operation operation : operations) {
             MethodFragment method = new MethodFragment(0);
-            method.setCommentFragment(new CommentFragment(operation.getDescription()));
             annotate(operation, method);
             Result result = operation.getResult();
             HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : HDType.valueOf(void.class);
@@ -85,6 +85,15 @@ public class JestfulClientGenerator implements Generator {
             method.setName(operation.getName());
             List<Parameter> parameters = operation.getParameters();
             if (parameters != null) generate(pkg, provider, method, parameters);
+
+            StringBuilder description = new StringBuilder(operation.getDescription() != null ? operation.getDescription() : "");
+            for (int i = 0; parameters != null && i < parameters.size(); i++) {
+                Parameter parameter = parameters.get(i);
+                if (parameter.getDescription() == null) continue;
+                description.append('\n').append("@param ").append(parameter.getName()).append(" ").append(parameter.getDescription());
+            }
+            method.setCommentFragment(new CommentFragment(description.toString()));
+
             interfase.getMethodFragments().add(method);
         }
     }

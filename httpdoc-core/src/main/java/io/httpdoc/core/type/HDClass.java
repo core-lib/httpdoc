@@ -1,5 +1,6 @@
 package io.httpdoc.core.type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import static io.httpdoc.core.type.HDClass.Category.*;
  * @date 2018-05-02 12:18
  **/
 public class HDClass extends HDType {
+    private static final List<String> PRIMARIES = Arrays.asList("boolean", "byte", "short", "char", "int", "float", "long", "double");
     private final Category category;
     private final String name;
     private final HDClass componentType;
@@ -53,7 +55,7 @@ public class HDClass extends HDType {
 
     @Override
     public List<String> imports() {
-        return componentType != null ? componentType.imports() : Collections.singletonList(name);
+        return componentType != null ? componentType.imports() : PRIMARIES.contains(name) ? Collections.<String>emptyList() : Collections.singletonList(name);
     }
 
     public String getSimpleName() {

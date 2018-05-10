@@ -34,6 +34,7 @@ public class JestfulHttpdocController {
     private String httpdoc;
     private String protocol;
     private String hostname;
+    private Integer port;
     private String context;
     private String version;
     private Translator translator = new JestfulServerTranslator();
@@ -79,6 +80,7 @@ public class JestfulHttpdocController {
         translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
         translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
         translation.setHostname(hostname != null ? hostname : req.getServerName());
+        translation.setPort(port != null ? port : req.getServerPort());
         translation.setContext(context != null ? context : req.getContextPath());
         translation.setVersion(version);
 
@@ -110,6 +112,7 @@ public class JestfulHttpdocController {
         translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
         translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
         translation.setHostname(hostname != null ? hostname : req.getServerName());
+        translation.setPort(port != null ? port : req.getServerPort());
         translation.setContext(context != null ? context : req.getContextPath());
         translation.setVersion(version);
 
@@ -149,6 +152,14 @@ public class JestfulHttpdocController {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public String getContext() {

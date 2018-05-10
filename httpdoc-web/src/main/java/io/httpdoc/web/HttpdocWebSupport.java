@@ -31,6 +31,7 @@ public abstract class HttpdocWebSupport {
     private String httpdoc;
     private String protocol;
     private String hostname;
+    private Integer port;
     private String context;
     private String version;
     private String charset = "UTF-8";
@@ -54,6 +55,10 @@ public abstract class HttpdocWebSupport {
             String hostname = config.getInitParameter("hostname");
             if (hostname != null && hostname.trim().length() > 0) {
                 this.hostname = hostname;
+            }
+            String port = config.getInitParameter("port");
+            if (port != null && port.trim().length() > 0 && port.matches("\\d+")) {
+                this.port = Integer.valueOf(port);
             }
             String context = config.getInitParameter("context");
             if (context != null && context.trim().length() > 0) {
@@ -112,6 +117,7 @@ public abstract class HttpdocWebSupport {
             translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
             translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
             translation.setHostname(hostname != null ? hostname : req.getServerName());
+            translation.setPort(port != null ? port : req.getServerPort());
             translation.setContext(context != null ? context : req.getContextPath());
             translation.setVersion(version);
 
