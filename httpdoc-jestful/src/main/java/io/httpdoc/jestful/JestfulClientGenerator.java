@@ -60,7 +60,7 @@ public class JestfulClientGenerator implements Generator {
             sentence.append("Client.builder()");
             if (document.getProtocol() != null) sentence.append(".setProtocol(\"").append(document.getProtocol()).append("\")");
             if (document.getHostname() != null) sentence.append(".setHostname(\"").append(document.getHostname()).append("\")");
-            if (document.getPort() != null) sentence.append(".setPort(\"").append(document.getPort()).append("\"");
+            if (document.getPort() != null) sentence.append(".setPort(").append(document.getPort()).append(")");
             if (document.getContext() != null) sentence.append(".setRoute(\"").append(document.getContext()).append("\")");
             sentence.append(".build()");
             sentence.append(".create(").append(name).append(".class").append(")");
