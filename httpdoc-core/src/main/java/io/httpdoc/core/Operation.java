@@ -81,7 +81,7 @@ public class Operation extends Definition {
     public enum HttpMethod {
 
         GET(false, false),
-        HEAD(false, true),
+        HEAD(false, false),
         POST(true, true),
         PUT(true, true),
         PATCH(true, true),
