@@ -33,7 +33,7 @@ public class CommentFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (content == null) return;
+        if (content == null || content.trim().isEmpty()) return;
         new CommentAppender(appender).append(content).close();
         appender.enter();
     }

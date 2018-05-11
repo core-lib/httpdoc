@@ -16,6 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <jestful.version>v2.0.4</jestful.version>
     </properties>
 
     <repositories>
@@ -39,13 +40,13 @@
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
-            <version>v2.0.2</version>
+            <version>${jestful.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-client</artifactId>
-            <version>v2.0.2</version>
+            <version>${jestful.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

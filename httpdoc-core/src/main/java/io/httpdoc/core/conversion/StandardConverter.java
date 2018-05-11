@@ -22,19 +22,20 @@ public class StandardConverter implements Converter {
     @Override
     public Map<String, Object> convert(Document document, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("httpdoc", document.getHttpdoc());
-        map.put("protocol", document.getProtocol());
-        map.put("hostname", document.getHostname());
-        map.put("context", document.getContext());
-        map.put("version", document.getVersion());
+        if (document.getHttpdoc() != null) map.put("httpdoc", document.getHttpdoc());
+        if (document.getProtocol() != null) map.put("protocol", document.getProtocol());
+        if (document.getHostname() != null) map.put("hostname", document.getHostname());
+        if (document.getPort() != null) map.put("port", document.getPort());
+        if (document.getContext() != null) map.put("context", document.getContext());
+        if (document.getVersion() != null) map.put("version", document.getVersion());
         if (!Format.REF_PREFIX.equals(format.getRefPrefix())) map.put("refPrefix", format.getRefPrefix());
         if (!Format.REF_SUFFIX.equals(format.getRefSuffix())) map.put("refSuffix", format.getRefSuffix());
         if (!Format.MAP_PREFIX.equals(format.getMapPrefix())) map.put("mapPrefix", format.getMapPrefix());
         if (!Format.MAP_SUFFIX.equals(format.getMapSuffix())) map.put("mapSuffix", format.getMapSuffix());
         if (!Format.ARR_PREFIX.equals(format.getArrPrefix())) map.put("arrPrefix", format.getArrPrefix());
         if (!Format.ARR_SUFFIX.equals(format.getArrSuffix())) map.put("arrSuffix", format.getArrSuffix());
-        map.put("controllers", doConvertControllers(document.getControllers(), format));
-        map.put("schemas", doConvertSchemas(document.getSchemas(), format));
+        if (document.getControllers() != null) map.put("controllers", doConvertControllers(document.getControllers(), format));
+        if (document.getSchemas() != null) map.put("schemas", doConvertSchemas(document.getSchemas(), format));
         return map;
     }
 
@@ -257,6 +258,7 @@ public class StandardConverter implements Converter {
         document.setHttpdoc((String) dictionary.get("httpdoc"));
         document.setProtocol((String) dictionary.get("protocol"));
         document.setHostname((String) dictionary.get("hostname"));
+        document.setPort(dictionary.containsKey("port") ? Integer.valueOf(dictionary.get("port").toString()) : null);
         document.setContext((String) dictionary.get("context"));
         document.setVersion((String) dictionary.get("version"));
 

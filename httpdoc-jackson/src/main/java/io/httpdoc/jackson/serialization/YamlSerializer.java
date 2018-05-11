@@ -26,7 +26,7 @@ public class YamlSerializer implements Serializer {
     public YamlSerializer(YAMLFactory factory) {
         this(new YAMLMapper(factory));
         this.mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false);
-        this.mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
+        this.mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, false);
     }
 
     public YamlSerializer(YAMLMapper mapper) {

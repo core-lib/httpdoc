@@ -13,6 +13,7 @@ public class Translation {
     private String httpdoc;
     private String protocol;
     private String hostname;
+    private Integer port;
     private String context;
     private String version;
     private Container container;
@@ -50,6 +51,14 @@ public class Translation {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public String getContext() {

@@ -34,6 +34,7 @@ public class JestfulServerTranslator implements Translator {
         document.setHttpdoc(translation.getHttpdoc());
         document.setProtocol(translation.getProtocol());
         document.setHostname(translation.getHostname());
+        document.setPort(translation.getPort());
         document.setContext(translation.getContext());
         document.setVersion(translation.getVersion());
 

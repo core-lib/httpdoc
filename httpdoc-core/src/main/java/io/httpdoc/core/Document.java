@@ -25,6 +25,7 @@ public class Document extends Definition {
     private String httpdoc;
     private String protocol;
     private String hostname;
+    private Integer port;
     private String context;
     private String version;
     private String refPrefix = Format.REF_PREFIX;
@@ -107,6 +108,14 @@ public class Document extends Definition {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public String getContext() {
