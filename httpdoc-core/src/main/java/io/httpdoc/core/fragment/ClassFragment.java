@@ -63,7 +63,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         }
 
         super.joinTo(appender, preference);
-        appender.append(clazz.getCategory().name).append(" ").append(clazz).append(" ");
+        appender.append(clazz.getCategory().name).append(" ").append(clazz);
 
         HDTypeVariable[] typeParameters = clazz.getTypeParameters();
         for (int i = 0; typeParameters != null && i < typeParameters.length; i++) {
@@ -74,17 +74,17 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         }
 
         if (superclass != null) {
-            appender.append("extends ");
+            appender.append(" extends ");
             appender.append(superclass);
         }
 
         for (int i = 0; interfaces != null && i < interfaces.size(); i++) {
-            if (i == 0) appender.append("implements ");
+            if (i == 0) appender.append(" implements ");
             else appender.append(", ");
             appender.append(interfaces.get(i));
         }
 
-        appender.append("{");
+        appender.append(" {");
 
         EnterMergedAppender indented = new EnterMergedAppender(new IndentAppender(appender, preference.getIndent()), 2);
         indented.enter();

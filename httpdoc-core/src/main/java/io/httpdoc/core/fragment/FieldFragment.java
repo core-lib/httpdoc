@@ -32,6 +32,32 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
         super(modifier);
     }
 
+    public FieldFragment(HDType type, String name) {
+        super(Modifier.PRIVATE);
+        this.type = type;
+        this.name = name;
+    }
+
+    public FieldFragment(HDType type, String name, CharSequence assignment) {
+        super(Modifier.PRIVATE);
+        this.type = type;
+        this.name = name;
+        this.assignmentFragment = new AssignmentFragment(assignment);
+    }
+
+    public FieldFragment(int modifier, HDType type, String name) {
+        super(modifier);
+        this.type = type;
+        this.name = name;
+    }
+
+    public FieldFragment(int modifier, HDType type, String name, CharSequence assignment) {
+        super(modifier);
+        this.type = type;
+        this.name = name;
+        this.assignmentFragment = new AssignmentFragment(assignment);
+    }
+
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);

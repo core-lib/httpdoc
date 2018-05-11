@@ -33,6 +33,9 @@ public class ProductController {
         generation.setProvider(new SystemProvider());
         Generator generator = new JestfulClientGenerator();
         generator.generate(generation);
+
+        io.httpdoc.gen.ProductController.INSTANCE.list(1, 20);
+
     }
 
     /**
