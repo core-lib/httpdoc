@@ -1,5 +1,7 @@
 package io.httpdoc.springmvc;
 
+import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.SourceInterpreter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,4 +19,8 @@ public class HttpdocSpringMvcConfiguration {
         return new DefaultParameterNameDiscoverer();
     }
 
+    @Bean
+    public Interpreter interpreter() {
+        return new SourceInterpreter();
+    }
 }
