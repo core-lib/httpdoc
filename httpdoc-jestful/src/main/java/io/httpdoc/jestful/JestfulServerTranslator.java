@@ -18,6 +18,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Jestful 翻译器
@@ -26,6 +28,7 @@ import java.util.*;
  * @date 2018-04-20 9:29
  **/
 public class JestfulServerTranslator implements Translator {
+    private final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
     private final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 
     @Override
@@ -57,14 +60,14 @@ public class JestfulServerTranslator implements Translator {
                 controller = new Controller();
                 controller.setName(clazz.getSimpleName());
                 Resource resource = mapping.getResource();
-                controller.setPath(resource.getExpression());
+                controller.setPath(normalize(resource.getExpression()));
                 Interpretation interpretation = interpreter.interpret(clazz);
                 controller.setDescription(interpretation != null ? interpretation.getContent() : null);
                 controllers.put(clazz, controller);
             }
             Operation operation = new Operation();
             operation.setName(method.getName());
-            operation.setPath(mapping.getExpression());
+            operation.setPath(normalize(mapping.getExpression()));
             for (MediaType produce : mapping.getProduces()) operation.getProduces().add(produce.toString());
             for (MediaType produce : mapping.getConsumes()) operation.getConsumes().add(produce.toString());
             operation.setMethod(mapping.getRestful().getMethod());
@@ -134,6 +137,16 @@ public class JestfulServerTranslator implements Translator {
         }
 
         return document;
+    }
+
+    @Override
+    public String normalize(String path) {
+        Matcher matcher = pattern.matcher(path);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            path = path.replace(matcher.group(), "{" + name + "}");
+        }
+        return path;
     }
 
 }

@@ -12,4 +12,6 @@ public interface Translator {
 
     Document translate(Translation translation) throws DocumentTranslationException;
 
+    String normalize(String path);
+
 }

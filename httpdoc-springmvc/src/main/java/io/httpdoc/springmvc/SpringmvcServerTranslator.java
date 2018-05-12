@@ -21,4 +21,10 @@ public class SpringmvcServerTranslator implements Translator {
         }
         return instance.getDocument();
     }
+
+    @Override
+    public String normalize(String path) {
+        return null;
+    }
+
 }

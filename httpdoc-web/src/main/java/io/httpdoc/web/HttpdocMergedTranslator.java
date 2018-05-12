@@ -58,4 +58,9 @@ public class HttpdocMergedTranslator implements Translator {
         return document;
     }
 
+    @Override
+    public String normalize(String path) {
+        return null;
+    }
+
 }
