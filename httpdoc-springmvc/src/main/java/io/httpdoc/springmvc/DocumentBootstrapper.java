@@ -57,7 +57,7 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             springmvcDocument.setDocument(document);
         }
         if (document.getControllers() == null) {
-            document.setControllers(new LinkedHashSet<>(controllers));
+            document.setControllers(controllers);
         } else {
             document.getControllers().addAll(controllers);
         }

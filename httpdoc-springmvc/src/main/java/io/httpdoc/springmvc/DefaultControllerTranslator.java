@@ -1,6 +1,9 @@
 package io.httpdoc.springmvc;
 
 import io.httpdoc.core.*;
+import io.httpdoc.core.interpretation.ClassInterpretation;
+import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.MethodInterpretation;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -54,15 +57,18 @@ public class DefaultControllerTranslator implements ControllerTranslator {
         ignoredParameters.add(UriComponentsBuilder.class);
     }
 
+    private Interpreter interpreter;
+
     private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     @Override
     public Set<Controller> translator(TranslateContext translateContext) {
         List<ControllerInfoHolder> controllerInfoHolders = translateContext.getControllerInfoHolders();
+        this.interpreter = translateContext.getInterpreter();
 
         Map<Class<?>, Controller> controllerMap = new LinkedHashMap<>();
 
-        Set<Controller> controllers = new HashSet<>();
+        Set<Controller> controllers = new LinkedHashSet<>();
         for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
             if (controllerInfoHolder.isHandled()) {
                 controllers.add(controllerInfoHolder.getController());
@@ -78,6 +84,10 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 controllerMap.put(beanType, controller);
                 controllerInfoHolder.setController(controller);
                 controllers.add(controller);
+                if (interpreter != null) {
+                    ClassInterpretation interpret = interpreter.interpret(beanType);
+                    controller.setDescription(interpret == null ? null : interpret.getText());
+                }
                 controllerInfoHolder.setHandled(true);
             }
 
@@ -85,7 +95,6 @@ public class DefaultControllerTranslator implements ControllerTranslator {
 
             List<Operation> operations = buildOperations(requestMappingInfo, handlerMethod);
             controller.getOperations().addAll(operations);
-
         }
         return controllers;
     }
@@ -117,6 +126,10 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 operation.setMethod(requestMethod.name());
                 operation.setPath(pattern);
                 operation.setConsumes(new ArrayList<String>());
+                if (interpreter != null) {
+                    MethodInterpretation interpret = interpreter.interpret(handlerMethod.getMethod());
+                    operation.setDescription(interpret == null ? null : interpret.getText());
+                }
                 for (MediaTypeExpression expression : consumesCondition.getExpressions()) {
                     operation.getConsumes().add(expression.getMediaType().toString());
                 }
