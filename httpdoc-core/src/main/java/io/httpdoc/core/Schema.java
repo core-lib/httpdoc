@@ -67,7 +67,7 @@ public class Schema extends Definition {
                 } else {
                     this.category = Category.OBJECT;
                     this.name = clazz.getSimpleName();
-                    this.superclass = Schema.valueOf(clazz.getSuperclass(), cache, provider, interpreter);
+                    this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                     for (PropertyDescriptor descriptor : descriptors) {
                         String field = descriptor.getName();
@@ -102,7 +102,7 @@ public class Schema extends Definition {
                     } else {
                         this.category = Category.OBJECT;
                         this.name = clazz.getSimpleName();
-                        this.superclass = Schema.valueOf(clazz.getSuperclass(), cache, provider, interpreter);
+                        this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                         for (PropertyDescriptor descriptor : descriptors) {
                             String field = descriptor.getName();

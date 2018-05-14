@@ -2,7 +2,6 @@ package io.httpdoc.springmvc;
 
 import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ public class SpringmvcTranslation {
     private String context;
     private String version;
     private Provider provider = new SystemProvider();
-    private Interpreter interpreter = new SourceInterpreter();
+    private Interpreter interpreter = new DefaultInterpreter();
 
     public SpringmvcTranslation() {
 

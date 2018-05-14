@@ -5,6 +5,7 @@ import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
+import io.httpdoc.core.kit.ParameterizedTypeImpl;
 import io.httpdoc.core.provider.Provider;
 import org.qfox.jestful.core.Mapping;
 import org.qfox.jestful.core.MediaType;
@@ -16,7 +17,9 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +81,6 @@ public class JestfulServerTranslator implements Translator {
             for (int i = 0; notes != null && i < notes.length; i++) map.put(notes[i].getName(), notes[i].getText());
             String[] names = discoverer.getParameterNames(method);
 
-            loop:
             for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
                 Parameter parameter = new Parameter();
                 parameter.setName(param.getName());
@@ -100,10 +102,24 @@ public class JestfulServerTranslator implements Translator {
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_COOKIE);
                         break;
                     default:
-                        continue loop;
+                        break;
                 }
-                Schema type = Schema.valueOf(param.getType(), provider, interpreter);
-                parameter.setType(type);
+
+                Type type = param.getType();
+                // 处理文件上传的定义
+                if (JestfulKit.isMultipartFile(type)) {
+                    parameter.setType(Schema.valueOf(File.class));
+                } else if (JestfulKit.isMultipartFiles(type)) {
+                    parameter.setType(Schema.valueOf(File[].class));
+                } else if (JestfulKit.isMultipartFileMap(type)) {
+                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
+                } else if (JestfulKit.isMultipartFileMaps(type)) {
+                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
+                } else if (parameter.getScope() != null) {
+                    parameter.setType(Schema.valueOf(type, provider, interpreter));
+                } else {
+                    continue;
+                }
 
                 String name = names != null && names.length > param.getIndex() ? names[param.getIndex()] : param.getName();
                 String description = map.get(name);

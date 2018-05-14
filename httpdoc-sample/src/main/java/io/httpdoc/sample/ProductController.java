@@ -7,11 +7,14 @@ import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.*;
 import org.qfox.jestful.core.http.*;
-import org.qfox.jestful.server.formatting.Multipart;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品管理器
@@ -28,7 +31,7 @@ public class ProductController {
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
         generation.setProvider(new SystemProvider());
         Generator generator = new JestfulClientMergedGenerator()
                 .include(JestfulClientFutureGenerator.class)
@@ -56,8 +59,33 @@ public class ProductController {
         return null;
     }
 
-    @POST("/pictures")
-    public String upload(@Body("file") Multipart file) {
+    @POST("/a")
+    public String a(@Body("file") MultipartFile file) {
+        return null;
+    }
+
+    @POST("/b")
+    public String b(@Body("files") MultipartFile[] files) {
+        return null;
+    }
+
+    @POST("/c")
+    public String c(@Body("files") List<MultipartFile> files) {
+        return null;
+    }
+
+    @POST("/d")
+    public String d(@Body("files") Map<String, MultipartFile> map) {
+        return null;
+    }
+
+    @POST("/e")
+    public String e(@Body("files") Map<String, MultipartFile[]> map) {
+        return null;
+    }
+
+    @POST("/f")
+    public String f(MultipartHttpServletRequest request) {
         return null;
     }
 
