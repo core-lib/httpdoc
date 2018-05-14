@@ -34,6 +34,9 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     @Resource
     private DefaultControllerTranslator springmvcDocumentTranslator;
 
+    @Resource
+    private SpringmvcTranslation springmvcTranslation;
+
     private SpringmvcDocument springmvcDocument = SpringmvcDocument.getInstance();
 
     @Override
@@ -50,10 +53,17 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
 
         TranslateContext translateContext = new TranslateContext();
         translateContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
+        translateContext.setInterpreter(springmvcTranslation.getInterpreter());
         Set<Controller> controllers = springmvcDocumentTranslator.translator(translateContext);
         Document document = springmvcDocument.getDocument();
         if (document == null) {
             document = new Document();
+            document.setHttpdoc(springmvcTranslation.getHttpdoc());
+            document.setVersion(springmvcTranslation.getVersion());
+            document.setContext(springmvcTranslation.getContext());
+            document.setProtocol(springmvcTranslation.getProtocol());
+            document.setPort(springmvcTranslation.getPort());
+            document.setHostname(springmvcTranslation.getHostname());
             springmvcDocument.setDocument(document);
         }
         if (document.getControllers() == null) {
