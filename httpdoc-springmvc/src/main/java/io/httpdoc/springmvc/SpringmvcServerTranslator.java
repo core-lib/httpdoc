@@ -49,7 +49,7 @@ public class SpringmvcServerTranslator implements Translator {
         translateContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
         translateContext.setInterpreter(translation.getInterpreter());
         Set<Controller> controllers = controllerTranslator.translator(translateContext);
-        document.setControllers(new ArrayList<>(controllers));
+        document.setControllers(new LinkedHashSet<>(controllers));
         document.buildSchemas();
         return document;
     }

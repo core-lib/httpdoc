@@ -39,9 +39,9 @@ public class StandardConverter implements Converter {
         return map;
     }
 
-    protected Object doConvertControllers(List<Controller> controllers, Format format) {
+    protected Object doConvertControllers(Set<Controller> controllers, Format format) {
         if (controllers.size() == 1) {
-            return doConvertController(controllers.get(0), format);
+            return doConvertController(controllers.iterator().next(), format);
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
             for (Controller controller : controllers) list.add(doConvertController(controller, format));

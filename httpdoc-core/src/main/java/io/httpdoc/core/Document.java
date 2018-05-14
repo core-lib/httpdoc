@@ -31,7 +31,7 @@ public class Document extends Definition {
     private String mapSuffix = Format.MAP_SUFFIX;
     private String arrPrefix = Format.ARR_PREFIX;
     private String arrSuffix = Format.ARR_SUFFIX;
-    private List<Controller> controllers = new ArrayList<>();
+    private Set<Controller> controllers = new LinkedHashSet<>();
     private Map<String, Schema> schemas = new LinkedHashMap<>();
 
     public static Document from(File file, Deserializer deserializer) throws IOException {
@@ -179,11 +179,11 @@ public class Document extends Definition {
         this.arrSuffix = arrSuffix;
     }
 
-    public List<Controller> getControllers() {
+    public Set<Controller> getControllers() {
         return controllers;
     }
 
-    public void setControllers(List<Controller> controllers) {
+    public void setControllers(Set<Controller> controllers) {
         this.controllers = controllers;
     }
 

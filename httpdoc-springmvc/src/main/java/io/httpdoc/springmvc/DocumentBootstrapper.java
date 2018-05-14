@@ -13,10 +13,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 文件启动加载器
@@ -60,7 +57,7 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             springmvcDocument.setDocument(document);
         }
         if (document.getControllers() == null) {
-            document.setControllers(new ArrayList<>(controllers));
+            document.setControllers(new LinkedHashSet<>(controllers));
         } else {
             document.getControllers().addAll(controllers);
         }

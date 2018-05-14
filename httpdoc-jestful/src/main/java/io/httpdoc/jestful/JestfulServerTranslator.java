@@ -121,7 +121,7 @@ public class JestfulServerTranslator implements Translator {
             controller.getOperations().add(operation);
         }
 
-        document.setControllers(new ArrayList<>(controllers.values()));
+        document.setControllers(new LinkedHashSet<>(controllers.values()));
 
         for (Controller controller : controllers.values()) {
             for (Operation operation : controller.getOperations()) {
