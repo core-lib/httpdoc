@@ -57,17 +57,17 @@ public class DefaultControllerTranslator implements ControllerTranslator {
     private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     @Override
-    public List<Controller> translator(TranslateContext translateContext) {
+    public Set<Controller> translator(TranslateContext translateContext) {
         List<ControllerInfoHolder> controllerInfoHolders = translateContext.getControllerInfoHolders();
 
         Map<Class<?>, Controller> controllerMap = new LinkedHashMap<>();
 
-        List<Controller> controllers = new LinkedList<>();
+        Set<Controller> controllers = new HashSet<>();
         for (ControllerInfoHolder controllerInfoHolder : controllerInfoHolders) {
             if (controllerInfoHolder.isHandled()) {
+                controllers.add(controllerInfoHolder.getController());
                 continue;
             }
-            controllerInfoHolder.setHandled(true);
             HandlerMethod handlerMethod = controllerInfoHolder.getHandlerMethod();
 
             Class<?> beanType = handlerMethod.getBeanType();
@@ -76,7 +76,9 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 controller = new Controller();
                 controller.setName(beanType.getSimpleName());
                 controllerMap.put(beanType, controller);
+                controllerInfoHolder.setController(controller);
                 controllers.add(controller);
+                controllerInfoHolder.setHandled(true);
             }
 
             RequestMappingInfo requestMappingInfo = controllerInfoHolder.getRequestMappingInfo();
@@ -103,6 +105,10 @@ public class DefaultControllerTranslator implements ControllerTranslator {
         PatternsRequestCondition patternsCondition = requestMappingInfo.getPatternsCondition();
 
         Set<RequestMethod> methods = methodsCondition.getMethods();
+        if (methods == null || methods.size() <= 0) {
+            // 如果没写请求方法, 默认为所有请求方法
+            methods = new HashSet<>(Arrays.asList(RequestMethod.values()));
+        }
         for (RequestMethod requestMethod : methods) {
             Set<String> patterns = patternsCondition.getPatterns();
             for (String pattern : patterns) {
