@@ -21,6 +21,19 @@ public class StandardConverter implements Converter {
 
     @Override
     public Map<String, Object> convert(Document document, Format format) {
+        for (Controller controller : document.getControllers()) {
+            for (Operation operation : controller.getOperations()) {
+                for (Parameter parameter : operation.getParameters()) {
+                    Schema type = parameter.getType();
+                    Collection<Schema> dependencies = type.getDependencies();
+                    for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
+                }
+                Schema type = operation.getResult().getType();
+                Collection<Schema> dependencies = type.getDependencies();
+                for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
+            }
+        }
+
         Map<String, Object> map = new LinkedHashMap<>();
         if (document.getHttpdoc() != null) map.put("httpdoc", document.getHttpdoc());
         if (document.getProtocol() != null) map.put("protocol", document.getProtocol());

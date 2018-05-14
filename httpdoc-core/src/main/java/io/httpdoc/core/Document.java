@@ -195,23 +195,4 @@ public class Document extends Definition {
         this.schemas = schemas;
     }
 
-    /**
-     * 从文档中的 {@link Controller} 构建文档的 Schema 列表, 注意本方法每次调用都是重新构建
-     */
-    public void buildSchemas() {
-        this.setSchemas(new LinkedHashMap<String, Schema>());
-        for (Controller controller : controllers) {
-            for (Operation operation : controller.getOperations()) {
-                for (Parameter parameter : operation.getParameters()) {
-                    Schema type = parameter.getType();
-                    Collection<Schema> dependencies = type.getDependencies();
-                    for (Schema schema : dependencies) this.getSchemas().put(schema.getName(), schema);
-                }
-                Schema type = operation.getResult().getType();
-                Collection<Schema> dependencies = type.getDependencies();
-                for (Schema schema : dependencies) this.getSchemas().put(schema.getName(), schema);
-            }
-        }
-    }
-
 }

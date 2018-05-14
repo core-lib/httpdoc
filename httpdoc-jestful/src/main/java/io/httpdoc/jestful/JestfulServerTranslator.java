@@ -123,19 +123,6 @@ public class JestfulServerTranslator implements Translator {
 
         document.setControllers(new LinkedHashSet<>(controllers.values()));
 
-        for (Controller controller : controllers.values()) {
-            for (Operation operation : controller.getOperations()) {
-                for (Parameter parameter : operation.getParameters()) {
-                    Schema type = parameter.getType();
-                    Collection<Schema> dependencies = type.getDependencies();
-                    for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
-                }
-                Schema type = operation.getResult().getType();
-                Collection<Schema> dependencies = type.getDependencies();
-                for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
-            }
-        }
-
         return document;
     }
 
