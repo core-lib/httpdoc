@@ -2,7 +2,7 @@ package io.httpdoc.springmvc;
 
 import io.httpdoc.core.Controller;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * SpringMVC {@link Controller} 翻译器
@@ -12,6 +12,6 @@ import java.util.List;
  **/
 public interface ControllerTranslator {
 
-    List<Controller> translator(TranslateContext translateContext);
+    Set<Controller> translator(TranslateContext translateContext);
 
 }

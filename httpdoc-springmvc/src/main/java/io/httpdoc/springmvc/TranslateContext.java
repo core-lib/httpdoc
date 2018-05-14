@@ -1,6 +1,7 @@
 package io.httpdoc.springmvc;
 
 import io.httpdoc.core.Controller;
+import io.httpdoc.core.interpretation.Interpreter;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class TranslateContext {
 
     private List<ControllerInfoHolder> controllerInfoHolders;
+    private Interpreter interpreter;
 
     public List<ControllerInfoHolder> getControllerInfoHolders() {
         return controllerInfoHolders;
@@ -20,5 +22,13 @@ public class TranslateContext {
 
     public void setControllerInfoHolders(List<ControllerInfoHolder> controllerInfoHolders) {
         this.controllerInfoHolders = controllerInfoHolders;
+    }
+
+    public Interpreter getInterpreter() {
+        return interpreter;
+    }
+
+    public void setInterpreter(Interpreter interpreter) {
+        this.interpreter = interpreter;
     }
 }
