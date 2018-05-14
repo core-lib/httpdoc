@@ -19,13 +19,13 @@ public class HDParameterizedType extends HDType {
     HDParameterizedType() {
     }
 
-    public HDParameterizedType(HDClass rawType, HDType ownerType, HDType[] actualTypeArguments) {
+    public HDParameterizedType(HDClass rawType, HDType ownerType, HDType... actualTypeArguments) {
         this.rawType = rawType;
         this.ownerType = ownerType;
         this.actualTypeArguments = actualTypeArguments;
     }
 
-    public HDParameterizedType(Class<?> rawType, Type ownerType, Type[] actualTypeArguments) {
+    public HDParameterizedType(Class<?> rawType, Type ownerType, Type... actualTypeArguments) {
         this.rawType = HDType.valueOf(rawType);
         this.ownerType = HDType.valueOf(ownerType);
         this.actualTypeArguments = HDType.valuesOf(actualTypeArguments);
