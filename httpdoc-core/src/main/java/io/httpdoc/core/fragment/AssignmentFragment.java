@@ -4,13 +4,11 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class AssignmentFragment implements Fragment {
     private CharSequence sentence;
-    private List<String> imports = new ArrayList<>();
+    private Set<String> imports = new LinkedHashSet<>();
 
     public AssignmentFragment() {
     }
@@ -19,7 +17,7 @@ public class AssignmentFragment implements Fragment {
         this.sentence = sentence;
     }
 
-    public AssignmentFragment(CharSequence sentence, List<String> imports) {
+    public AssignmentFragment(CharSequence sentence, Set<String> imports) {
         this.sentence = sentence;
         this.imports = imports;
     }
@@ -30,8 +28,8 @@ public class AssignmentFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        return imports != null ? imports : Collections.<String>emptyList();
+    public Set<String> imports() {
+        return imports != null ? imports : Collections.<String>emptySet();
     }
 
     public CharSequence getSentence() {
@@ -42,11 +40,11 @@ public class AssignmentFragment implements Fragment {
         this.sentence = sentence;
     }
 
-    public List<String> getImports() {
+    public Set<String> getImports() {
         return imports;
     }
 
-    public void setImports(List<String> imports) {
+    public void setImports(Set<String> imports) {
         this.imports = imports;
     }
 }

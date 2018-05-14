@@ -9,7 +9,9 @@ import io.httpdoc.core.type.HDType;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 字段碎片
@@ -72,8 +74,8 @@ public class FieldFragment extends ModifiedFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
         if (type != null) imports.addAll(type.imports());

@@ -6,6 +6,7 @@ import io.httpdoc.core.type.HDClass;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class HDAnnotationClass extends HDAnnotationConstant {
     private final HDClass clazz;
@@ -29,7 +30,7 @@ public class HDAnnotationClass extends HDAnnotationConstant {
     }
 
     @Override
-    public List<String> imports() {
+    public Set<String> imports() {
         return clazz.imports();
     }
 }

@@ -2,6 +2,7 @@ package io.httpdoc.core.type;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 类型变量
@@ -31,8 +32,8 @@ public class HDTypeVariable extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return bound != null ? bound.imports() : Collections.<String>emptyList();
+    public Set<String> imports() {
+        return bound != null ? bound.imports() : Collections.<String>emptySet();
     }
 
     public String getName() {

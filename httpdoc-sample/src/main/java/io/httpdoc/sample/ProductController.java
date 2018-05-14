@@ -6,9 +6,8 @@ import io.httpdoc.core.Generator;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.*;
-import org.qfox.jestful.core.http.GET;
-import org.qfox.jestful.core.http.HTTP;
-import org.qfox.jestful.core.http.Path;
+import org.qfox.jestful.core.http.*;
+import org.qfox.jestful.server.formatting.Multipart;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -54,6 +53,11 @@ public class ProductController {
      */
     @GET("/{page}/{size}")
     public ProductListResult list(@Path("page") int p, @Path("size") int s) {
+        return null;
+    }
+
+    @POST("/pictures")
+    public String upload(@Body("file") Multipart file) {
         return null;
     }
 

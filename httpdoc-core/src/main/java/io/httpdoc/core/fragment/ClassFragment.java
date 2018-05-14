@@ -12,10 +12,7 @@ import io.httpdoc.core.type.HDTypeVariable;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * 类型碎片
@@ -155,8 +152,8 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
         if (superclass != null) imports.addAll(superclass.imports());

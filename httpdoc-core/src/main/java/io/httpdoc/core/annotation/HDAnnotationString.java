@@ -6,6 +6,7 @@ import io.httpdoc.core.appender.LineAppender;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class HDAnnotationString extends HDAnnotationConstant {
     private final String string;
@@ -21,7 +22,7 @@ public class HDAnnotationString extends HDAnnotationConstant {
     }
 
     @Override
-    public List<String> imports() {
-        return Collections.emptyList();
+    public Set<String> imports() {
+        return Collections.emptySet();
     }
 }

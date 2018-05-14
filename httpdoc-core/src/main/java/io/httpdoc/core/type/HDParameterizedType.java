@@ -1,9 +1,7 @@
 package io.httpdoc.core.type;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 参数化类型
@@ -45,8 +43,8 @@ public class HDParameterizedType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         if (rawType != null) imports.addAll(rawType.imports());
         if (ownerType != null) imports.addAll(ownerType.imports());
         for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) imports.addAll(actualTypeArguments[i].imports());

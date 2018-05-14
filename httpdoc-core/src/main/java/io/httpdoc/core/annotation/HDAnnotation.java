@@ -105,8 +105,8 @@ public class HDAnnotation extends HDAnnotationConstant {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>(type.imports());
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>(type.imports());
         for (HDAnnotationConstant[] constants : properties.values()) for (HDAnnotationConstant constant : constants) imports.addAll(constant.imports());
         return imports;
     }

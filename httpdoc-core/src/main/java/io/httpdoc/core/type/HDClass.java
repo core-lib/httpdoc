@@ -3,6 +3,7 @@ package io.httpdoc.core.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static io.httpdoc.core.type.HDClass.Category.*;
 
@@ -54,8 +55,8 @@ public class HDClass extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return componentType != null ? componentType.imports() : PRIMARIES.contains(name) ? Collections.<String>emptyList() : Collections.singletonList(name);
+    public Set<String> imports() {
+        return componentType != null ? componentType.imports() : PRIMARIES.contains(name) ? Collections.<String>emptySet() : Collections.singleton(name);
     }
 
     public String getSimpleName() {

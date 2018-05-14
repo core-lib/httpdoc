@@ -11,7 +11,9 @@ import io.httpdoc.core.type.HDTypeVariable;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 方法碎片
@@ -76,8 +78,8 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
         for (Importable importable : typeVariables) imports.addAll(importable.imports());

@@ -95,7 +95,7 @@ public abstract class JestfulClientAbstractGenerator implements Generator {
             sentence.append("        .setRoute(CONTEXT)").append('\n');
             sentence.append("        .build()").append('\n');
             sentence.append("        .create(").append(name).append(".class").append(")");
-            instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singletonList(Client.class.getName())));
+            instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singleton(Client.class.getName())));
             interfase.getFieldFragments().add(instance);
 
             List<Operation> operations = controller.getOperations();

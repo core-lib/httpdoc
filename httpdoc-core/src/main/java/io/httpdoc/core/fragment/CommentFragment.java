@@ -5,9 +5,9 @@ import io.httpdoc.core.appender.CommentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 注释碎片
@@ -17,7 +17,7 @@ import java.util.List;
  **/
 public class CommentFragment implements Fragment {
     private String content;
-    private List<String> imports = new ArrayList<>();
+    private Set<String> imports = new LinkedHashSet<>();
 
     public CommentFragment() {
     }
@@ -26,7 +26,7 @@ public class CommentFragment implements Fragment {
         this.content = content;
     }
 
-    public CommentFragment(String content, List<String> imports) {
+    public CommentFragment(String content, Set<String> imports) {
         this.content = content;
         this.imports = imports;
     }
@@ -39,8 +39,8 @@ public class CommentFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        return imports != null ? imports : Collections.<String>emptyList();
+    public Set<String> imports() {
+        return imports != null ? imports : Collections.<String>emptySet();
     }
 
     public String getContent() {

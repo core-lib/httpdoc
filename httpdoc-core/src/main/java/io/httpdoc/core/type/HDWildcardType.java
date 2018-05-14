@@ -1,7 +1,9 @@
 package io.httpdoc.core.type;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 通配类型
@@ -31,8 +33,8 @@ public class HDWildcardType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         if (upperBound != null) imports.addAll(upperBound.imports());
         if (lowerBound != null) imports.addAll(lowerBound.imports());
         return imports;

@@ -6,6 +6,7 @@ import io.httpdoc.core.type.HDClass;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class HDAnnotationEnum extends HDAnnotationConstant {
     private final HDClass type;
@@ -28,7 +29,7 @@ public class HDAnnotationEnum extends HDAnnotationConstant {
     }
 
     @Override
-    public List<String> imports() {
+    public Set<String> imports() {
         return type.imports();
     }
 }

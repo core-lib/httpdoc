@@ -6,6 +6,7 @@ import io.httpdoc.core.appender.LineAppender;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 常量碎片
@@ -36,8 +37,8 @@ public class ConstantFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        return Collections.emptyList();
+    public Set<String> imports() {
+        return Collections.emptySet();
     }
 
     public CommentFragment getCommentFragment() {

@@ -2,6 +2,7 @@ package io.httpdoc.core.type;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 泛型数组类型
@@ -25,8 +26,8 @@ public class HDGenericArrayType extends HDType {
     }
 
     @Override
-    public List<String> imports() {
-        return genericComponentType != null ? genericComponentType.imports() : Collections.<String>emptyList();
+    public Set<String> imports() {
+        return genericComponentType != null ? genericComponentType.imports() : Collections.<String>emptySet();
     }
 
     public HDType getGenericComponentType() {

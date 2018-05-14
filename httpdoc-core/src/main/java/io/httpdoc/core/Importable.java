@@ -1,6 +1,6 @@
 package io.httpdoc.core;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * 可导入的
@@ -10,6 +10,6 @@ import java.util.List;
  **/
 public interface Importable {
 
-    List<String> imports();
+    Set<String> imports();
 
 }

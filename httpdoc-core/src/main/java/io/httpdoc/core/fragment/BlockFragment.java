@@ -5,10 +5,7 @@ import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * 代码块碎片
@@ -18,7 +15,7 @@ import java.util.List;
  **/
 public class BlockFragment implements Fragment {
     protected List<CharSequence> sentences = new ArrayList<>();
-    protected List<String> imports = new ArrayList<>();
+    protected Set<String> imports = new LinkedHashSet<>();
 
     public BlockFragment(CharSequence... sentences) {
         this(Arrays.asList(sentences));
@@ -38,8 +35,8 @@ public class BlockFragment implements Fragment {
     }
 
     @Override
-    public List<String> imports() {
-        return imports != null ? imports : Collections.<String>emptyList();
+    public Set<String> imports() {
+        return imports != null ? imports : Collections.<String>emptySet();
     }
 
     public List<CharSequence> getSentences() {
@@ -50,11 +47,11 @@ public class BlockFragment implements Fragment {
         this.sentences = sentences;
     }
 
-    public List<String> getImports() {
+    public Set<String> getImports() {
         return imports;
     }
 
-    public void setImports(List<String> imports) {
+    public void setImports(Set<String> imports) {
         this.imports = imports;
     }
 }

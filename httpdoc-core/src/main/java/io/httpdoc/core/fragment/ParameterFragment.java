@@ -8,7 +8,9 @@ import io.httpdoc.core.type.HDType;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 参数碎片
@@ -52,8 +54,8 @@ public class ParameterFragment extends ModifiedFragment {
     }
 
     @Override
-    public List<String> imports() {
-        List<String> imports = new ArrayList<>();
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
         for (Importable importable : annotations) imports.addAll(importable.imports());
         if (type != null) imports.addAll(type.imports());
         return imports;
