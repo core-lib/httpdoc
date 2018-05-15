@@ -7,11 +7,13 @@ import io.httpdoc.core.provider.SystemProvider;
 import org.springframework.stereotype.Component;
 
 /**
+ * SpringMVC 文档翻译配置
+ *
  * @author 钟宝林
  * @date 2018-05-13 10:50
  **/
 @Component
-public class SpringmvcTranslation {
+public class SpringmvcHttpdocConfig {
 
     private String httpdoc;
     private String protocol;
@@ -22,11 +24,11 @@ public class SpringmvcTranslation {
     private Provider provider = new SystemProvider();
     private Interpreter interpreter = new DefaultInterpreter();
 
-    public SpringmvcTranslation() {
+    public SpringmvcHttpdocConfig() {
 
     }
 
-    private SpringmvcTranslation(Builder builder) {
+    private SpringmvcHttpdocConfig(Builder builder) {
         httpdoc = builder.httpdoc;
         protocol = builder.protocol;
         hostname = builder.hostname;
@@ -119,8 +121,8 @@ public class SpringmvcTranslation {
             return this;
         }
 
-        public SpringmvcTranslation build() {
-            return new SpringmvcTranslation(this);
+        public SpringmvcHttpdocConfig build() {
+            return new SpringmvcHttpdocConfig(this);
         }
     }
 
