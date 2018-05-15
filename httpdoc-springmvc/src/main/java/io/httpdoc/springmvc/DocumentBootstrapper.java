@@ -35,7 +35,7 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     private DefaultControllerTranslator springmvcDocumentTranslator;
 
     @Resource
-    private SpringmvcTranslation springmvcTranslation;
+    private SpringmvcHttpdocConfig springmvcHttpdocConfig;
 
     private SpringmvcDocument springmvcDocument = SpringmvcDocument.getInstance();
 
@@ -53,17 +53,17 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
 
         TranslateContext translateContext = new TranslateContext();
         translateContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
-        translateContext.setInterpreter(springmvcTranslation.getInterpreter());
+        translateContext.setInterpreter(springmvcHttpdocConfig.getInterpreter());
         Set<Controller> controllers = springmvcDocumentTranslator.translator(translateContext);
         Document document = springmvcDocument.getDocument();
         if (document == null) {
             document = new Document();
-            document.setHttpdoc(springmvcTranslation.getHttpdoc());
-            document.setVersion(springmvcTranslation.getVersion());
-            document.setContext(springmvcTranslation.getContext());
-            document.setProtocol(springmvcTranslation.getProtocol());
-            document.setPort(springmvcTranslation.getPort());
-            document.setHostname(springmvcTranslation.getHostname());
+            document.setHttpdoc(springmvcHttpdocConfig.getHttpdoc());
+            document.setVersion(springmvcHttpdocConfig.getVersion());
+            document.setContext(springmvcHttpdocConfig.getContext());
+            document.setProtocol(springmvcHttpdocConfig.getProtocol());
+            document.setPort(springmvcHttpdocConfig.getPort());
+            document.setHostname(springmvcHttpdocConfig.getHostname());
             springmvcDocument.setDocument(document);
         }
         if (document.getControllers() == null) {
