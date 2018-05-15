@@ -5,8 +5,8 @@ import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
-import io.httpdoc.core.reflection.ParameterizedTypeImpl;
 import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.reflection.ParameterizedTypeImpl;
 import org.qfox.jestful.core.Mapping;
 import org.qfox.jestful.core.MediaType;
 import org.qfox.jestful.core.Position;
@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -83,7 +84,7 @@ public class JestfulServerTranslator implements Translator {
 
             for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
                 Parameter parameter = new Parameter();
-                parameter.setName(param.getName());
+                parameter.setName(param.getName().equals(String.valueOf(param.getIndex())) ? "" : param.getName());
                 int position = param.getPosition();
                 switch (position) {
                     case Position.HEADER:
@@ -107,13 +108,16 @@ public class JestfulServerTranslator implements Translator {
 
                 Type type = param.getType();
                 // 处理文件上传的定义
-                if (JestfulKit.isMultipartFile(type)) {
+                if (type instanceof Class<?> && MultipartRequest.class.isAssignableFrom((Class<?>) type)) {
+                    parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
+                } else if (parameter.getScope() != null && JestfulKit.isMultipartFile(type)) {
                     parameter.setType(Schema.valueOf(File.class));
-                } else if (JestfulKit.isMultipartFiles(type)) {
+                } else if (parameter.getScope() != null && JestfulKit.isMultipartFiles(type)) {
                     parameter.setType(Schema.valueOf(File[].class));
-                } else if (JestfulKit.isMultipartFileMap(type)) {
+                } else if (parameter.getScope() != null && JestfulKit.isMultipartFileMap(type)) {
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
-                } else if (JestfulKit.isMultipartFileMaps(type)) {
+                } else if (parameter.getScope() != null && JestfulKit.isMultipartFileMaps(type)) {
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
                 } else if (parameter.getScope() != null) {
                     parameter.setType(Schema.valueOf(type, provider, interpreter));

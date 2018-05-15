@@ -10,6 +10,7 @@ import org.qfox.jestful.core.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -88,7 +89,7 @@ public class ProductController {
     }
 
     @POST("/f")
-    public String f(@Body("name") String[] names, @Body("files") Set<Part> files) {
+    public String f(@Body("name") String[] names, MultipartRequest request) {
         return null;
     }
 

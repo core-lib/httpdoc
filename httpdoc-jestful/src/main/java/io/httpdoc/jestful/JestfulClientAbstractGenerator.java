@@ -9,6 +9,7 @@ import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.client.Client;
+import org.qfox.jestful.commons.StringKit;
 import org.qfox.jestful.core.http.*;
 
 import java.io.IOException;
@@ -128,9 +129,10 @@ public abstract class JestfulClientAbstractGenerator implements Generator {
     }
 
     protected void generate(String pkg, Provider provider, MethodFragment method, List<Parameter> parameters) {
-        for (Parameter param : parameters) {
+        for (int i = 0; parameters != null && i < parameters.size(); i++) {
+            Parameter param = parameters.get(i);
             ParameterFragment parameter = new ParameterFragment();
-            parameter.setName(param.getName());
+            parameter.setName(StringKit.isBlank(param.getName()) ? "arg" + i : param.getName());
             annotate(param, parameter);
             parameter.setType(param.getType().toType(pkg, provider));
             method.getParameterFragments().add(parameter);

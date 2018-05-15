@@ -3,6 +3,7 @@ package io.httpdoc.jestful;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.Part;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -11,7 +12,8 @@ import java.util.Map;
 public abstract class JestfulKit {
 
     public static boolean isMultipartFile(Type type) {
-        return type instanceof Class<?> && MultipartFile.class.isAssignableFrom((Class<?>) type);
+        return type instanceof Class<?>
+                && (MultipartFile.class.isAssignableFrom((Class<?>) type) || Part.class.isAssignableFrom((Class<?>) type));
     }
 
     public static boolean isMultipartFiles(Type type) {
