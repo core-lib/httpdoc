@@ -5,7 +5,7 @@ import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
-import io.httpdoc.core.kit.ParameterizedTypeImpl;
+import io.httpdoc.core.reflection.ParameterizedTypeImpl;
 import io.httpdoc.core.provider.Provider;
 import org.qfox.jestful.core.Mapping;
 import org.qfox.jestful.core.MediaType;

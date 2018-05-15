@@ -1,15 +1,19 @@
-package io.httpdoc.core.kit;
+package io.httpdoc.core.reflection;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
 public class ParameterizedTypeImpl implements ParameterizedType {
-    private final Type rawType;
-    private final Type ownerType;
+    private final Class<?> rawType;
+    private final Class<?> ownerType;
     private final Type[] actualTypeArguments;
 
-    public ParameterizedTypeImpl(Type rawType, Type ownerType, Type... actualTypeArguments) {
+    public ParameterizedTypeImpl(Class<?> rawType, Type... actualTypeArguments) {
+        this(rawType, null, actualTypeArguments);
+    }
+
+    public ParameterizedTypeImpl(Class<?> rawType, Class<?> ownerType, Type... actualTypeArguments) {
         if (rawType == null) throw new NullPointerException("raw type can not be null");
         if (actualTypeArguments == null || actualTypeArguments.length == 0) throw new IllegalArgumentException("actual type arguments is null or empty");
         this.rawType = rawType;
@@ -18,12 +22,12 @@ public class ParameterizedTypeImpl implements ParameterizedType {
     }
 
     @Override
-    public Type getRawType() {
+    public Class<?> getRawType() {
         return rawType;
     }
 
     @Override
-    public Type getOwnerType() {
+    public Class<?> getOwnerType() {
         return ownerType;
     }
 
