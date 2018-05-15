@@ -5,15 +5,15 @@ import io.httpdoc.core.Generation;
 import io.httpdoc.core.Generator;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.*;
+import io.httpdoc.retrofit.RetrofitCallGenerator;
+import io.httpdoc.retrofit.RetrofitMergedGenerator;
+import io.httpdoc.retrofit.RetrofitObservableGenerator;
 import org.qfox.jestful.core.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -31,24 +31,19 @@ import java.util.Set;
 public class ProductController {
 
     public static void main(String... args) throws IOException {
-        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
-        Generation generation = new Generation();
-        generation.setDocument(document);
-        generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
-        generation.setProvider(new SystemProvider());
-        Generator generator = new JestfulClientMergedGenerator().exclude(JestfulClientCallbackGenerator.class);
-//                .include(JestfulClientFutureGenerator.class)
-//                .include(JestfulClientMessageGenerator.class)
-//                .include(JestfulClientObservableGenerator.class)
-//                .include(JestfulClientLambdaGenerator.class);
+//        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
+//        Generation generation = new Generation();
+//        generation.setDocument(document);
+//        generation.setPkg("io.httpdoc.gen");
+//        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+//        generation.setProvider(new SystemProvider());
+//        Generator generator = new RetrofitMergedGenerator()
+//                .include(RetrofitCallGenerator.class)
+//                .include(RetrofitObservableGenerator.class);
+//
+//        generator.generate(generation);
 
-        generator.generate(generation);
-
-//        io.httpdoc.gen.ProductController.INSTANCE.list(1, 20);
-//        Translator translator = new JestfulServerTranslator();
-//        String path = translator.normalize("/products/{1:\\d+}/size-{2:\\d+}");
-//        System.out.println(path);
+        io.httpdoc.gen.ProductController.INSTANCE.a(new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
     }
 
     /**

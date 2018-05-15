@@ -23,7 +23,7 @@ public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator
         this(Arrays.asList(new JestfulClientStandardGenerator(), new JestfulClientCallbackGenerator()));
     }
 
-    public JestfulClientMergedGenerator(Collection<JestfulClientAbstractGenerator> generators) {
+    public JestfulClientMergedGenerator(Collection<? extends JestfulClientAbstractGenerator> generators) {
         if (generators == null) throw new NullPointerException();
         for (JestfulClientAbstractGenerator generator : generators) include(generator);
     }
