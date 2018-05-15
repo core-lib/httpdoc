@@ -17,7 +17,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <jestful.version>v2.0.4</jestful.version>
+        <jestful.group.id>com.github.core-lib.jestful</jestful.group.id>
+        <jestful.version>v2.0.5</jestful.version>
     </properties>
 
     <repositories>
@@ -50,22 +51,22 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
+            <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-client</artifactId>
             <version>${jestful.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
+            <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-charset</artifactId>
             <version>${jestful.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
+            <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-server</artifactId>
             <version>${jestful.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
+            <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-json</artifactId>
             <version>${jestful.version}</version>
         </dependency>
