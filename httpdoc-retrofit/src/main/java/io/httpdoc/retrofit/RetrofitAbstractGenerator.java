@@ -80,7 +80,6 @@ public abstract class RetrofitAbstractGenerator implements Generator {
             interfase.setPkg(pkg);
             interfase.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
             interfase.setClazz(new HDClass(HDClass.Category.INTERFACE, pkg + "." + name));
-            interfase.setSuperclass(new HDClass(HDClass.Category.INTERFACE, pkg + "." + "RetrofitAPI"));
 
             FieldFragment instance = new FieldFragment(0);
             instance.setType(interfase.getClazz());
@@ -90,7 +89,7 @@ public abstract class RetrofitAbstractGenerator implements Generator {
             sentence.append("        .baseUrl(PROTOCOL + \"://\" + HOSTNAME + (PORT != null ? \":\" + PORT : \"\") + (CONTEXT != null ? CONTEXT : \"\") + \"/\")").append('\n');
             sentence.append("        .build()").append('\n');
             sentence.append("        .create(").append(name).append(".class").append(")");
-            instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singleton(Retrofit.class.getName())));
+            instance.setAssignmentFragment(new AssignmentFragment(sentence, new LinkedHashSet<>(Arrays.asList(Retrofit.class.getName(), "static " + pkg + "." + "RetrofitAPI"))));
             interfase.getFieldFragments().add(instance);
 
             List<Operation> operations = controller.getOperations();
