@@ -66,7 +66,6 @@ public abstract class RetrofitAbstractGenerator implements Generator {
         interfase.getFieldFragments().add(new FieldFragment(0, HDType.valueOf(String.class), "PROTOCOL", "\"" + document.getProtocol() + "\""));
         interfase.getFieldFragments().add(new FieldFragment(0, HDType.valueOf(String.class), "HOSTNAME", "\"" + document.getHostname() + "\""));
         interfase.getFieldFragments().add(new FieldFragment(0, HDType.valueOf(Integer.class), "PORT", String.valueOf(document.getPort())));
-        interfase.getFieldFragments().add(new FieldFragment(0, HDType.valueOf(String.class), "CONTEXT", "\"" + document.getContext() + "\""));
         interfase.joinTo(appender, Preference.DEFAULT);
         appender.close();
     }
