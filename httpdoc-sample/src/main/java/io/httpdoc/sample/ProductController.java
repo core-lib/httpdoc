@@ -45,8 +45,8 @@ public class ProductController {
 //
 //        generator.generate(generation);
 
-        Call<io.httpdoc.gen.ProductListResult> call = io.httpdoc.gen.ProductController.INSTANCE.listForCall(1, 20);
-
+        Call<String> call = io.httpdoc.gen.ProductController.INSTANCE.aForCall("",new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
+        Response<String> execute = call.execute();
     }
 
     /**
