@@ -74,7 +74,7 @@ public class SpringmvcServerTranslator implements Translator {
 
     @Override
     public String normalize(String path) {
-        return null;
+        return new PathProcessor(path).process();
     }
 
 }

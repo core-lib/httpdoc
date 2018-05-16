@@ -124,7 +124,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 Operation operation = new Operation();
                 operation.setName(handlerMethod.getMethod().getName());
                 operation.setMethod(requestMethod.name());
-                operation.setPath(pattern);
+                operation.setPath(new PathProcessor(pattern).process());
                 operation.setConsumes(new ArrayList<String>());
                 if (interpreter != null) {
                     MethodInterpretation interpret = interpreter.interpret(handlerMethod.getMethod());
