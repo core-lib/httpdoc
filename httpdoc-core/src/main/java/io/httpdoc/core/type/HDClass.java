@@ -18,12 +18,14 @@ public class HDClass extends HDType {
     private final Category category;
     private final String name;
     private final HDClass componentType;
+    private final HDClass enclosingType;
     private HDTypeVariable[] typeParameters;
 
     public HDClass(String name) {
         if (name == null) throw new NullPointerException();
         this.name = name;
         this.componentType = name.endsWith("[]") ? new HDClass(name.substring(0, name.length() - 2)) : null;
+        this.enclosingType = null;
         this.category = this.componentType != null ? ARRAY : Category.CLASS;
     }
 
@@ -32,12 +34,14 @@ public class HDClass extends HDType {
         this.category = ARRAY;
         this.name = componentType.getName() + "[]";
         this.componentType = componentType;
+        this.enclosingType = null;
     }
 
     public HDClass(Category category, String name) {
         if (category == null || name == null) throw new NullPointerException();
         this.name = name;
         this.componentType = name.endsWith("[]") ? new HDClass(category, name.substring(0, name.length() - 2)) : null;
+        this.enclosingType = null;
         this.category = this.componentType != null ? ARRAY : category;
     }
 
@@ -49,7 +53,14 @@ public class HDClass extends HDType {
             name = (componentType = new HDClass(clazz.getComponentType())).getName() + "[]";
         } else {
             category = clazz.isInterface() ? INTERFACE : clazz.isAnnotation() ? ANNOTATION : clazz.isEnum() ? ENUM : CLASS;
-            name = clazz.getName();
+            Class<?> enclosingClass = clazz.getEnclosingClass();
+            if (enclosingClass == null) {
+                name = clazz.getName();
+                enclosingType = null;
+            } else {
+                name = clazz.getSimpleName();
+                enclosingType = new HDClass(enclosingClass);
+            }
             componentType = null;
         }
     }

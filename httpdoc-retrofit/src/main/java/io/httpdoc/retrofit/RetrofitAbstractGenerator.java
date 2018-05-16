@@ -141,7 +141,8 @@ public abstract class RetrofitAbstractGenerator implements Generator {
             ParameterFragment parameter = new ParameterFragment();
             parameter.setName(StringKit.isBlank(param.getName()) ? "arg" + i : param.getName());
             annotate(param, parameter);
-            parameter.setType(param.getType().toType(pkg, provider));
+            HDType type = param.getType().toType(pkg, provider);
+            parameter.setType(type);
             method.getParameterFragments().add(parameter);
         }
     }

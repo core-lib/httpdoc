@@ -5,6 +5,7 @@ import io.httpdoc.core.Generation;
 import io.httpdoc.core.Generator;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
+import io.httpdoc.jestful.JestfulClientMergedGenerator;
 import io.httpdoc.retrofit.RetrofitCallGenerator;
 import io.httpdoc.retrofit.RetrofitMergedGenerator;
 import io.httpdoc.retrofit.RetrofitObservableGenerator;
@@ -31,23 +32,6 @@ import java.util.Set;
 @HTTP("/products")
 @Controller
 public class ProductController {
-
-    public static void main(String... args) throws IOException {
-//        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
-//        Generation generation = new Generation();
-//        generation.setDocument(document);
-//        generation.setPkg("io.httpdoc.gen");
-//        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
-//        generation.setProvider(new SystemProvider());
-//        Generator generator = new RetrofitMergedGenerator()
-//                .include(RetrofitCallGenerator.class)
-//                .include(RetrofitObservableGenerator.class);
-//
-//        generator.generate(generation);
-
-        Call<String> call = io.httpdoc.gen.ProductController.INSTANCE.aForCall("",new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
-        Response<String> execute = call.execute();
-    }
 
     /**
      * 分页获取产品列表

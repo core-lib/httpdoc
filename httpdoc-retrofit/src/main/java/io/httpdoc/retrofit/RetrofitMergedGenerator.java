@@ -7,10 +7,7 @@ import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.provider.Provider;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Jestful Client 合并生成器
@@ -22,7 +19,7 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     private final Map<Class<? extends RetrofitAbstractGenerator>, RetrofitAbstractGenerator> generators = new LinkedHashMap<>();
 
     public RetrofitMergedGenerator() {
-        this(Collections.singleton(new RetrofitCallGenerator()));
+        this(Arrays.asList(new RetrofitCallGenerator(), new RetrofitCallbackGenerator()));
     }
 
     public RetrofitMergedGenerator(Collection<? extends RetrofitAbstractGenerator> generators) {
