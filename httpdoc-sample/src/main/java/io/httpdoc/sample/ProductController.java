@@ -28,7 +28,7 @@ public class ProductController {
      */
     @GET("/{page}/{size}")
     public ProductListResult list(@Path("page") int p, @Path("size") int s) {
-        return null;
+        return new ProductListResult();
     }
 
     @POST("/a")
