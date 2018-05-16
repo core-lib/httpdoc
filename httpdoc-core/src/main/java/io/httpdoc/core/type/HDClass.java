@@ -51,6 +51,7 @@ public class HDClass extends HDType {
         } else if (clazz.isArray()) {
             category = ARRAY;
             name = (componentType = new HDClass(clazz.getComponentType())).getName() + "[]";
+            enclosingType = null;
         } else {
             category = clazz.isInterface() ? INTERFACE : clazz.isAnnotation() ? ANNOTATION : clazz.isEnum() ? ENUM : CLASS;
             Class<?> enclosingClass = clazz.getEnclosingClass();
@@ -67,16 +68,12 @@ public class HDClass extends HDType {
 
     @Override
     public Set<String> imports() {
-        return componentType != null ? componentType.imports() : PRIMARIES.contains(name) ? Collections.<String>emptySet() : Collections.singleton(name);
-    }
-
-    public String getSimpleName() {
-        return name.contains(".") ? name.substring(name.lastIndexOf(".") + 1) : name;
+        return componentType != null ? componentType.imports() : enclosingType != null ? enclosingType.imports() : PRIMARIES.contains(name) ? Collections.<String>emptySet() : Collections.singleton(name);
     }
 
     @Override
     public CharSequence getFormatName() {
-        return componentType != null ? componentType.getFormatName() + "[]" : getSimpleName();
+        return componentType != null ? componentType.getFormatName() + "[]" : enclosingType != null ? enclosingType.getFormatName() + "." + name : name.substring(name.lastIndexOf('.') + 1);
     }
 
     @Override
@@ -104,6 +101,10 @@ public class HDClass extends HDType {
 
     public HDClass getComponentType() {
         return componentType;
+    }
+
+    public HDClass getEnclosingType() {
+        return enclosingType;
     }
 
     public HDTypeVariable[] getTypeParameters() {

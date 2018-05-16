@@ -8,9 +8,13 @@ import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.Set;
 
 /**
  * Jestful Client Future 生成器
@@ -26,6 +30,14 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitCallGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public RetrofitCallGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(converterFactories);
+    }
+
+    public RetrofitCallGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(prefix, suffix, converterFactories);
     }
 
     @Override
@@ -44,4 +56,8 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
         interfase.getMethodFragments().add(method);
     }
 
+    @Override
+    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
+        return Collections.emptySet();
+    }
 }

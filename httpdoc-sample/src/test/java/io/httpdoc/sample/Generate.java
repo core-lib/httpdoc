@@ -3,11 +3,12 @@ package io.httpdoc.sample;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Generation;
 import io.httpdoc.core.Generator;
-import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.JestfulClientMergedGenerator;
+import io.httpdoc.retrofit.RetrofitCallGenerator;
 import io.httpdoc.retrofit.RetrofitMergedGenerator;
 import io.httpdoc.retrofit.RetrofitProvider;
+import io.httpdoc.retrofit.RetrofitRxJavaGenerator;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,9 +24,12 @@ public class Generate {
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("D:\\gitpot\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
         generation.setProvider(new RetrofitProvider());
-        Generator generator = new RetrofitMergedGenerator();
+        Generator generator = new RetrofitMergedGenerator()
+                .include(RetrofitCallGenerator.class)
+                .include(RetrofitRxJavaGenerator.class)
+                .use(GsonConverterFactory.class);
 
         generator.generate(generation);
     }

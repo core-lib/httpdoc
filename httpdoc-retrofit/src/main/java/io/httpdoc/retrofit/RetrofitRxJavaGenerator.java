@@ -6,10 +6,16 @@ import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
+import io.reactivex.Observable;
 import okhttp3.ResponseBody;
-import rx.Observable;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Jestful Client Observable 生成器
@@ -17,14 +23,22 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
+public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
 
-    public RetrofitObservableGenerator() {
+    public RetrofitRxJavaGenerator() {
         this("", "ForObservable");
     }
 
-    public RetrofitObservableGenerator(String prefix, String suffix) {
+    public RetrofitRxJavaGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public RetrofitRxJavaGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(converterFactories);
+    }
+
+    public RetrofitRxJavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(prefix, suffix, converterFactories);
     }
 
     @Override
@@ -43,5 +57,9 @@ public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
         interfase.getMethodFragments().add(method);
     }
 
+    @Override
+    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
+        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJava2CallAdapterFactory.class);
+    }
 
 }

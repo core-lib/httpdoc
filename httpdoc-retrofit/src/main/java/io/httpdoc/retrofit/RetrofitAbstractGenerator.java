@@ -10,6 +10,8 @@ import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import okhttp3.HttpUrl;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.http.*;
 
@@ -28,15 +30,25 @@ import static io.httpdoc.core.Parameter.*;
 public abstract class RetrofitAbstractGenerator implements Generator {
     protected final String prefix;
     protected final String suffix;
+    protected final Set<Class<? extends Converter.Factory>> converterFactories = new LinkedHashSet<>();
 
     protected RetrofitAbstractGenerator() {
         this("", "");
     }
 
     protected RetrofitAbstractGenerator(String prefix, String suffix) {
-        if (prefix == null || suffix == null) throw new NullPointerException();
+        this(prefix, suffix, Collections.<Class<? extends Converter.Factory>>emptyList());
+    }
+
+    protected RetrofitAbstractGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+        this("", "", converterFactories);
+    }
+
+    protected RetrofitAbstractGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        if (prefix == null || suffix == null || converterFactories == null) throw new NullPointerException();
         this.prefix = prefix.trim();
         this.suffix = suffix.trim();
+        this.converterFactories.addAll(converterFactories);
     }
 
     @Override
@@ -100,9 +112,25 @@ public abstract class RetrofitAbstractGenerator implements Generator {
                 StringBuilder sentence = new StringBuilder();
                 sentence.append("new Retrofit.Builder()").append('\n');
                 sentence.append("        .baseUrl(URL)").append('\n');
+                Set<String> imports = new LinkedHashSet<>();
+                imports.add(Retrofit.class.getName());
+                for (Class<? extends Converter.Factory> converterFactory : converterFactories) {
+                    sentence.append("        .addConverterFactory(")
+                            .append(converterFactory.getSimpleName())
+                            .append(".create())")
+                            .append('\n');
+                    imports.add(converterFactory.getName());
+                }
+                for (Class<? extends CallAdapter.Factory> callAdapterFactory : getCallAdapterFactories()) {
+                    sentence.append("        .addCallAdapterFactory(")
+                            .append(callAdapterFactory.getSimpleName())
+                            .append(".create())")
+                            .append('\n');
+                    imports.add(callAdapterFactory.getName());
+                }
                 sentence.append("        .build()").append('\n');
                 sentence.append("        .create(").append(name).append(".class").append(")");
-                instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singleton(Retrofit.class.getName())));
+                instance.setAssignmentFragment(new AssignmentFragment(sentence, imports));
                 interfase.getFieldFragments().add(instance);
             }
 
@@ -119,6 +147,8 @@ public abstract class RetrofitAbstractGenerator implements Generator {
     }
 
     protected abstract void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation);
+
+    protected abstract Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories();
 
     protected String name(String name) {
         if (prefix.isEmpty()) return name + suffix;

@@ -42,6 +42,6 @@ public class RetrofitProvider implements Provider {
     @Override
     public Type acquire(Schema schema) {
         if ("File".equals(schema.getName())) return MultipartBody.Part.class;
-        return provider.acquire(schema);
+        else return provider.acquire(schema);
     }
 }

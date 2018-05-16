@@ -6,6 +6,8 @@ import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.provider.Provider;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 
 import java.util.*;
 
@@ -19,7 +21,7 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     private final Map<Class<? extends RetrofitAbstractGenerator>, RetrofitAbstractGenerator> generators = new LinkedHashMap<>();
 
     public RetrofitMergedGenerator() {
-        this(Arrays.asList(new RetrofitCallGenerator(), new RetrofitCallbackGenerator()));
+        this(Collections.singleton(new RetrofitCallGenerator()));
     }
 
     public RetrofitMergedGenerator(Collection<? extends RetrofitAbstractGenerator> generators) {
@@ -30,6 +32,13 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     @Override
     protected void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
         for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, provider, interfase, document, controller, operation);
+    }
+
+    @Override
+    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
+        Set<Class<? extends CallAdapter.Factory>> callAdapterFactories = new LinkedHashSet<>();
+        for (RetrofitAbstractGenerator generator : generators.values()) callAdapterFactories.addAll(generator.getCallAdapterFactories());
+        return callAdapterFactories;
     }
 
     public RetrofitMergedGenerator include(Class<? extends RetrofitAbstractGenerator> clazz) {
@@ -55,6 +64,11 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     public RetrofitMergedGenerator exclude(RetrofitAbstractGenerator generator) {
         if (generator == null) throw new NullPointerException();
         return exclude(generator.getClass());
+    }
+
+    public RetrofitMergedGenerator use(Class<? extends Converter.Factory> converterFactory) {
+        converterFactories.add(converterFactory);
+        return this;
     }
 
 }

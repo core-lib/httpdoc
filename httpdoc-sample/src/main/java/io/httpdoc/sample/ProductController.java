@@ -1,24 +1,10 @@
 package io.httpdoc.sample;
 
-import io.httpdoc.core.Document;
-import io.httpdoc.core.Generation;
-import io.httpdoc.core.Generator;
-import io.httpdoc.core.provider.SystemProvider;
-import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.JestfulClientMergedGenerator;
-import io.httpdoc.retrofit.RetrofitCallGenerator;
-import io.httpdoc.retrofit.RetrofitMergedGenerator;
-import io.httpdoc.retrofit.RetrofitObservableGenerator;
 import org.qfox.jestful.core.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartRequest;
-import retrofit2.Call;
-import retrofit2.Response;
 
 import javax.servlet.http.Part;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
