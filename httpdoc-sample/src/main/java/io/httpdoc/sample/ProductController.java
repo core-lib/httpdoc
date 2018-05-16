@@ -11,6 +11,8 @@ import io.httpdoc.retrofit.RetrofitObservableGenerator;
 import org.qfox.jestful.core.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartRequest;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import javax.servlet.http.Part;
 import java.io.File;
@@ -43,7 +45,8 @@ public class ProductController {
 //
 //        generator.generate(generation);
 
-        io.httpdoc.gen.ProductController.INSTANCE.a(new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
+        Call<io.httpdoc.gen.ProductListResult> call = io.httpdoc.gen.ProductController.INSTANCE.listForCall(1, 20);
+
     }
 
     /**

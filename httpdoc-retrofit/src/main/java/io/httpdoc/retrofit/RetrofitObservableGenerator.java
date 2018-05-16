@@ -1,8 +1,6 @@
 package io.httpdoc.retrofit;
 
-import io.httpdoc.core.Operation;
-import io.httpdoc.core.Parameter;
-import io.httpdoc.core.Result;
+import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.provider.Provider;
@@ -30,9 +28,9 @@ public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation) {
+    protected void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
         MethodFragment method = new MethodFragment(0);
-        annotate(operation, method);
+        annotate(document, controller, operation, method);
         Result result = operation.getResult();
         HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
         method.setType(new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class)));

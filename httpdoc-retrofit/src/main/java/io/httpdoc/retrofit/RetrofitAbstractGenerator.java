@@ -9,7 +9,7 @@ import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
-import okhttp3.Cookie;
+import okhttp3.HttpUrl;
 import retrofit2.Retrofit;
 import retrofit2.http.*;
 
@@ -80,31 +80,46 @@ public abstract class RetrofitAbstractGenerator implements Generator {
             interfase.setPkg(pkg);
             interfase.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
             interfase.setClazz(new HDClass(HDClass.Category.INTERFACE, pkg + "." + name));
+            {
+                FieldFragment url = new FieldFragment(0);
+                url.setType(HDType.valueOf(HttpUrl.class));
+                url.setName("URL");
+                StringBuilder sentence = new StringBuilder();
+                sentence.append("new HttpUrl.Builder()").append('\n');
+                if (document.getProtocol() != null) sentence.append("        .scheme(PROTOCOL)").append('\n');
+                if (document.getHostname() != null) sentence.append("        .host(HOSTNAME)").append('\n');
+                if (document.getPort() != null) sentence.append("        .port(PORT)").append('\n');
+                sentence.append("        .build()");
+                url.setAssignmentFragment(new AssignmentFragment(sentence, new LinkedHashSet<>(Arrays.asList(HttpUrl.class.getName(), "static " + pkg + "." + "RetrofitAPI.*"))));
+                interfase.getFieldFragments().add(url);
+            }
 
-            FieldFragment instance = new FieldFragment(0);
-            instance.setType(interfase.getClazz());
-            instance.setName("INSTANCE");
-            StringBuilder sentence = new StringBuilder();
-            sentence.append("new Retrofit.Builder()").append('\n');
-            sentence.append("        .baseUrl(PROTOCOL + \"://\" + HOSTNAME + (PORT != null ? \":\" + PORT : \"\") + (CONTEXT != null ? CONTEXT : \"\") + \"/\")").append('\n');
-            sentence.append("        .build()").append('\n');
-            sentence.append("        .create(").append(name).append(".class").append(")");
-            instance.setAssignmentFragment(new AssignmentFragment(sentence, new LinkedHashSet<>(Arrays.asList(Retrofit.class.getName(), "static " + pkg + "." + "RetrofitAPI"))));
-            interfase.getFieldFragments().add(instance);
+            {
+                FieldFragment instance = new FieldFragment(0);
+                instance.setType(interfase.getClazz());
+                instance.setName("INSTANCE");
+                StringBuilder sentence = new StringBuilder();
+                sentence.append("new Retrofit.Builder()").append('\n');
+                sentence.append("        .baseUrl(URL)").append('\n');
+                sentence.append("        .build()").append('\n');
+                sentence.append("        .create(").append(name).append(".class").append(")");
+                instance.setAssignmentFragment(new AssignmentFragment(sentence, Collections.singleton(Retrofit.class.getName())));
+                interfase.getFieldFragments().add(instance);
+            }
 
             List<Operation> operations = controller.getOperations();
-            if (operations != null) generate(pkg, provider, interfase, operations);
+            if (operations != null) generate(pkg, provider, interfase, document, controller, operations);
 
             interfase.joinTo(appender, Preference.DEFAULT);
             appender.close();
         }
     }
 
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, List<Operation> operations) {
-        for (Operation operation : operations) generate(pkg, provider, interfase, operation);
+    protected void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, List<Operation> operations) {
+        for (Operation operation : operations) generate(pkg, provider, interfase, document, controller, operation);
     }
 
-    protected abstract void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation);
+    protected abstract void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation);
 
     protected String name(String name) {
         if (prefix.isEmpty()) return name + suffix;
@@ -161,41 +176,51 @@ public abstract class RetrofitAbstractGenerator implements Generator {
         }
     }
 
-    protected void annotate(Operation operation, MethodFragment fragment) {
+    protected String path(String... segments) {
+        StringBuilder path = new StringBuilder();
+        for (String segment : segments) {
+            if (segment == null) continue;
+            path.append("/").append(segment);
+        }
+        return path.toString().replaceAll("/+", "/");
+    }
+
+    protected void annotate(Document document, Controller controller, Operation operation, MethodFragment fragment) {
+        String path = path(document.getContext(), controller.getPath(), operation.getPath());
         switch (operation.getMethod()) {
             case "HEAD": {
                 HDAnnotation get = new HDAnnotation(HEAD.class);
-                if (operation.getPath() != null) get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(get);
                 break;
             }
             case "OPTIONS": {
                 HDAnnotation get = new HDAnnotation(OPTIONS.class);
-                if (operation.getPath() != null) get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(get);
                 break;
             }
             case "GET": {
                 HDAnnotation get = new HDAnnotation(GET.class);
-                if (operation.getPath() != null) get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(get);
                 break;
             }
             case "POST": {
                 HDAnnotation post = new HDAnnotation(POST.class);
-                if (operation.getPath() != null) post.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                post.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(post);
                 break;
             }
             case "PUT": {
                 HDAnnotation put = new HDAnnotation(PUT.class);
-                if (operation.getPath() != null) put.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                put.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(put);
                 break;
             }
             case "DELETE": {
                 HDAnnotation get = new HDAnnotation(DELETE.class);
-                if (operation.getPath() != null) get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 fragment.getAnnotations().add(get);
                 break;
             }
