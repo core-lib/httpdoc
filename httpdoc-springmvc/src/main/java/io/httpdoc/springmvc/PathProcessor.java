@@ -121,9 +121,4 @@ public class PathProcessor {
         return returnPath;
     }
 
-    public static void main(String[] args) {
-        String process = new PathProcessor("/mapping/{id:\\w+}}.{b:\\w+}").process();
-        System.out.println(process);
-    }
-
 }
