@@ -4,9 +4,7 @@ import io.httpdoc.core.Document;
 import io.httpdoc.core.Generation;
 import io.httpdoc.core.Generator;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.retrofit.RetrofitCallGenerator;
-import io.httpdoc.retrofit.RetrofitMergedGenerator;
-import io.httpdoc.retrofit.RetrofitProvider;
+import io.httpdoc.retrofit.*;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
@@ -27,6 +25,9 @@ public class Generate {
         generation.setProvider(new RetrofitProvider());
         Generator generator = new RetrofitMergedGenerator()
                 .include(RetrofitCallGenerator.class)
+                .include(RetrofitRxJavaGenerator.class)
+                .include(RetrofitJava8Generator.class)
+                .include(RetrofitGuavaGenerator.class)
                 .use(GsonConverterFactory.class);
 
         generator.generate(generation);

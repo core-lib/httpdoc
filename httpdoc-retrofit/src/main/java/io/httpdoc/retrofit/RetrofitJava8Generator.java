@@ -1,16 +1,16 @@
 package io.httpdoc.retrofit;
 
 import io.httpdoc.core.*;
+import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
-import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.adapter.java8.Java8CallAdapterFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,36 +18,42 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Jestful Client Observable 生成器
+ * Retrofit Completable Future 生成器
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-05-14 13:39
+ * @date 2018-05-17 17:40
  **/
-public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
+public class RetrofitJava8Generator extends RetrofitAbstractGenerator {
 
-    public RetrofitRxJavaGenerator() {
-        this("", "ForRxJava");
+    public RetrofitJava8Generator() {
+        this("", "ForJava8");
     }
 
-    public RetrofitRxJavaGenerator(String prefix, String suffix) {
+    public RetrofitJava8Generator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitRxJavaGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitJava8Generator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitRxJavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitJava8Generator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
     @Override
     protected void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName("java.util.concurrent.CompletableFuture");
+        } catch (ClassNotFoundException e) {
+            throw new HttpdocRuntimeException("this generator can only used in jdk 8 or greater versions");
+        }
         MethodFragment method = new MethodFragment(0);
         annotate(document, controller, operation, method);
         Result result = operation.getResult();
         HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class)));
+        method.setType(new HDParameterizedType(HDType.valueOf(clazz), null, type != null ? type : HDType.valueOf(ResponseBody.class)));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);
@@ -59,7 +65,6 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
 
     @Override
     protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
-        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJava2CallAdapterFactory.class);
+        return Collections.<Class<? extends CallAdapter.Factory>>singleton(Java8CallAdapterFactory.class);
     }
-
 }

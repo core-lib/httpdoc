@@ -41,5 +41,23 @@
             <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-rxjava2</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-java8</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-guava</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -37,7 +37,7 @@ public class ProductControllerTest {
         product.setPrice(new BigDecimal(8888));
         product.setStatus(ProductStatus.B);
         RequestBody picture = RequestBody.create(MediaType.parse("application/jpeg"), new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
-        Response<ProductUpdateResult> response = ProductController.INSTANCE.updateForCall(1L, "Name", product, new RequestBody[]{picture, picture}).execute();
+        Response<ProductUpdateResult> response = ProductController.INSTANCE.updateForCall(1L, "Name", product, new RequestBody[]{picture, picture}, null).execute();
         ProductUpdateResult result = response.body();
         System.out.println(result);
     }
