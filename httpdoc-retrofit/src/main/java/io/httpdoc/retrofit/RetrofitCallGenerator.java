@@ -25,7 +25,7 @@ import java.util.Set;
 public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitCallGenerator() {
-        this("", "ForCall");
+        this("", "");
     }
 
     public RetrofitCallGenerator(String prefix, String suffix) {
