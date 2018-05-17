@@ -1,12 +1,9 @@
 package io.httpdoc.gen;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
-import retrofit2.Response;
 
-import java.io.File;
-import java.math.BigDecimal;
+import java.util.concurrent.Executors;
 
 /**
  * @author 杨昌沛 646742615@qq.com
@@ -16,30 +13,32 @@ public class ProductControllerTest {
 
     @Test
     public void testList() throws Exception {
-        ProductListResult result = ProductController.INSTANCE.listForCall(1, 20, ProductStatus.A).execute().body();
+        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A);
+        future.addListener(() -> System.out.println("OK"), Executors.newSingleThreadExecutor());
+        ProductListResult result = future.get();
         System.out.println(result);
     }
 
-    @Test
-    public void testCreate() throws Exception {
-        Product product = new Product();
-        product.setName("iPhone X");
-        product.setPrice(new BigDecimal(8888));
-        product.setStatus(ProductStatus.B);
-        ProductCreateResult result = ProductController.INSTANCE.createForCall(product).execute().body();
-        System.out.println(result);
-    }
-
-    @Test
-    public void testUpdate() throws Exception {
-        Product product = new Product();
-        product.setName("iPhone X");
-        product.setPrice(new BigDecimal(8888));
-        product.setStatus(ProductStatus.B);
-        RequestBody picture = RequestBody.create(MediaType.parse("application/jpeg"), new File("C:\\Users\\Administrator\\Desktop\\新建文本文档.txt"));
-        Response<ProductUpdateResult> response = ProductController.INSTANCE.updateForCall(1L, "Name", product, new RequestBody[]{picture, picture}, null).execute();
-        ProductUpdateResult result = response.body();
-        System.out.println(result);
-    }
+//    @Test
+//    public void testCreate() throws Exception {
+//        Product product = new Product();
+//        product.setName("iPhone X");
+//        product.setPrice(new BigDecimal(8888));
+//        product.setStatus(ProductStatus.B);
+//        ProductCreateResult result = ProductController.INSTANCE.create(product).execute().body();
+//        System.out.println(result);
+//    }
+//
+//    @Test
+//    public void testUpdate() throws Exception {
+//        Product product = new Product();
+//        product.setName("iPhone X");
+//        product.setPrice(new BigDecimal(8888));
+//        product.setStatus(ProductStatus.B);
+//        RequestBody picture = RequestBody.create(MediaType.parse("application/jpeg"), new File("E:\\DGSetup_1354E.exe"));
+//        Response<ProductUpdateResult> response = ProductController.INSTANCE.update(1L, "Name", product, new RequestBody[]{picture, picture}, new LinkedHashMap<>()).execute();
+//        ProductUpdateResult result = response.body();
+//        System.out.println(result);
+//    }
 
 }
