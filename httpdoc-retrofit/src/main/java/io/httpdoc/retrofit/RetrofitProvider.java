@@ -3,7 +3,7 @@ package io.httpdoc.retrofit;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
-import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import java.lang.reflect.Type;
 
@@ -41,7 +41,7 @@ public class RetrofitProvider implements Provider {
 
     @Override
     public Type acquire(Schema schema) {
-        if ("File".equals(schema.getName())) return MultipartBody.Part.class;
+        if ("File".equals(schema.getName())) return RequestBody.class;
         else return provider.acquire(schema);
     }
 }

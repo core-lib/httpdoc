@@ -1,7 +1,6 @@
 package io.httpdoc.jestful;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.Part;
 import java.lang.reflect.ParameterizedType;
@@ -48,9 +47,7 @@ public abstract class JestfulKit {
     }
 
     public static boolean isMultipartFileMaps(Type type) {
-        if (type instanceof Class<?> && MultipartHttpServletRequest.class.isAssignableFrom((Class<?>) type)) {
-            return true;
-        } else if (type instanceof ParameterizedType) {
+        if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type rawType = parameterizedType.getRawType();
             if (!Class.class.isInstance(rawType)) return false;

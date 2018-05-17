@@ -110,7 +110,7 @@ public class JestfulServerTranslator implements Translator {
                 // 处理文件上传的定义
                 if (type instanceof Class<?> && MultipartRequest.class.isAssignableFrom((Class<?>) type)) {
                     parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
-                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
+                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFile(type)) {
                     parameter.setType(Schema.valueOf(File.class));
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFiles(type)) {

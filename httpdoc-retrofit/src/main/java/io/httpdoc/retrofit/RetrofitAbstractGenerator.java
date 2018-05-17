@@ -215,6 +215,7 @@ public abstract class RetrofitAbstractGenerator implements Generator {
                         fragment.getAnnotations().add(map);
                     } else {
                         HDAnnotation part = new HDAnnotation(Part.class);
+                        if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
                         fragment.getAnnotations().add(part);
                     }
                 } else {
