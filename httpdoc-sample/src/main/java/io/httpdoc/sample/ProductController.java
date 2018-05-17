@@ -5,9 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartRequest;
 
 import javax.servlet.http.Part;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.Random;
 
 /**
  * 产品管理器
@@ -27,43 +26,37 @@ public class ProductController {
      * @return 产品列表结果
      */
     @GET("/{page}/{size}")
-    public ProductListResult list(@Path("page") int p, @Path("size") int s) {
-        return new ProductListResult();
+    public ProductListResult list(
+            @Path("page") int p,
+            @Path("size") int s,
+            @Query("status") ProductStatus status
+    ) {
+        ProductListResult result = new ProductListResult();
+        for (int i = (p - 1) * s; i < p * s; i++) {
+            Product product = new Product();
+            product.setId((long) i);
+            product.setName("name-" + i);
+            product.setPrice(new BigDecimal(i));
+            product.setStatus(status);
+            result.getProducts().add(product);
+        }
+        return result;
     }
 
     @POST("/")
-    public void create(@Body Product<Sample> product) {
-
+    public ProductCreateResult create(@Body Product product) {
+        ProductCreateResult result = new ProductCreateResult();
+        product.setId(new Random().nextLong());
+        result.setProduct(product);
+        return result;
     }
 
-    @POST("/a")
-    public String a(@Body("name") String name, @Body("sample") Sample sample, @Body("file") Part file) {
-        return null;
-    }
-
-    @POST("/b")
-    public String b(@Body("files") Part[] files) {
-        return null;
-    }
-
-    @POST("/c")
-    public String c(@Body("files") List<Part> files) {
-        return null;
-    }
-
-    @POST("/d")
-    public String d(@Body("files") Collection<Part> files) {
-        return null;
-    }
-
-    @POST("/e")
-    public String e(@Body("files") Set<Part> files) {
-        return null;
-    }
-
-    @POST("/f")
-    public String f(@Body("name") String[] names, MultipartRequest request) {
-        return null;
+    @PUT("/{id:\\d+}")
+    public ProductUpdateResult update(@Path("id") Long id, @Body("name") String name, @Body("product") Product product, @Body("picture") Part[] picture, MultipartRequest request) {
+        ProductUpdateResult result = new ProductUpdateResult();
+        product.setId(id);
+        result.setProduct(product);
+        return result;
     }
 
 }

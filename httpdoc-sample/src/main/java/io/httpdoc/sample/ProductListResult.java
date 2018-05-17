@@ -1,13 +1,16 @@
 package io.httpdoc.sample;
 
-public class ProductListResult {
-    private Product<Sample>[] products = new Product[10];
+import java.util.ArrayList;
+import java.util.List;
 
-    public Product<Sample>[] getProducts() {
+public class ProductListResult {
+    private List<Product> products = new ArrayList<>();
+
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(Product<Sample>[] products) {
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 }
