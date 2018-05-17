@@ -24,7 +24,7 @@ public class Generate {
         Generation generation = new Generation();
         generation.setDocument(document);
         generation.setPkg("io.httpdoc.gen");
-        generation.setDirectory("C:\\Users\\Chang\\IdeaProjects\\httpdoc\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
         generation.setProvider(new RetrofitProvider());
         Generator generator = new RetrofitMergedGenerator()
                 .include(RetrofitCallGenerator.class)

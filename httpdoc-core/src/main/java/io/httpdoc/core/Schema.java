@@ -174,6 +174,23 @@ public class Schema extends Definition {
                 : new Schema(type, cache, provider, interpreter);
     }
 
+    public boolean isFile() {
+        switch (category) {
+            case BASIC:
+                return "File".equals(name);
+            case DICTIONARY:
+                return component.isFile();
+            case ARRAY:
+                return component.isFile();
+            case ENUM:
+                return false;
+            case OBJECT:
+                return false;
+            default:
+                return false;
+        }
+    }
+
     public HDType toType(String pkg, Provider provider) {
         switch (category) {
             case BASIC:

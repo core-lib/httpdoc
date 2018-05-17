@@ -31,8 +31,13 @@ public class ProductController {
         return new ProductListResult();
     }
 
+    @POST("/")
+    public void create(@Body Product<Sample> product) {
+
+    }
+
     @POST("/a")
-    public String a(@Body("file") Part file) {
+    public String a(@Body("name") String name, @Body("sample") Sample sample, @Body("file") Part file) {
         return null;
     }
 

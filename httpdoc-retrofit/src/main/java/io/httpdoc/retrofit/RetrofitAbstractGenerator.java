@@ -166,18 +166,29 @@ public abstract class RetrofitAbstractGenerator implements Generator {
     }
 
     protected void generate(String pkg, Provider provider, MethodFragment method, List<Parameter> parameters) {
+        boolean multipart = false;
+        int bodies = 0;
+        for (int i = 0; parameters != null && i < parameters.size(); i++) {
+            Parameter param = parameters.get(i);
+            multipart = param.getType().isFile();
+            bodies += param.getScope().equals(HTTP_PARAM_SCOPE_BODY) ? 1 : 0;
+        }
+        if (multipart || bodies > 1) {
+            HDAnnotation header = new HDAnnotation(Multipart.class);
+            method.getAnnotations().add(header);
+        }
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter param = parameters.get(i);
             ParameterFragment parameter = new ParameterFragment();
             parameter.setName(StringKit.isBlank(param.getName()) ? "arg" + i : param.getName());
-            annotate(param, parameter);
+            annotate(param, parameter, multipart || bodies > 1);
             HDType type = param.getType().toType(pkg, provider);
             parameter.setType(type);
             method.getParameterFragments().add(parameter);
         }
     }
 
-    protected void annotate(Parameter parameter, ParameterFragment fragment) {
+    protected void annotate(Parameter parameter, ParameterFragment fragment, boolean multipart) {
         switch (parameter.getScope()) {
             case HTTP_PARAM_SCOPE_HEADER: {
                 HDAnnotation header = new HDAnnotation(Header.class);
@@ -198,9 +209,24 @@ public abstract class RetrofitAbstractGenerator implements Generator {
                 break;
             }
             case HTTP_PARAM_SCOPE_BODY: {
-                HDAnnotation body = new HDAnnotation(Part.class);
-                if (parameter.getName() != null) body.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                fragment.getAnnotations().add(body);
+                if (parameter.getType().isFile()) {
+                    if (parameter.getType().getCategory() == Category.DICTIONARY) {
+                        HDAnnotation map = new HDAnnotation(PartMap.class);
+                        fragment.getAnnotations().add(map);
+                    } else {
+                        HDAnnotation part = new HDAnnotation(Part.class);
+                        fragment.getAnnotations().add(part);
+                    }
+                } else {
+                    if (multipart) {
+                        HDAnnotation part = new HDAnnotation(Part.class);
+                        if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                        fragment.getAnnotations().add(part);
+                    } else {
+                        HDAnnotation body = new HDAnnotation(Body.class);
+                        fragment.getAnnotations().add(body);
+                    }
+                }
                 break;
             }
         }
