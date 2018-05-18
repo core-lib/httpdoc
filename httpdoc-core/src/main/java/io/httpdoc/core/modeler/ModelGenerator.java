@@ -7,6 +7,7 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.kit.IOKit;
 import io.httpdoc.core.provider.Provider;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +39,10 @@ public abstract class ModelGenerator implements Generator {
             OutputStream out = null;
             try {
                 String name = schema.getName();
-                out = new FileOutputStream(directory + "/" + name + ".java");
+                File file = new File(directory + "/" + name + ".java");
+                File folder = file.getParentFile();
+                if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
+                out = new FileOutputStream(file);
                 Archetype archetype = new Archetype(pkg, provider, schema);
                 Model model = modeler.design(archetype);
                 model.buildTo(out);
