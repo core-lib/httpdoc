@@ -3,7 +3,7 @@ package io.httpdoc.web;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
-import io.httpdoc.core.kit.Loader;
+import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
 
@@ -24,7 +24,7 @@ public class HttpdocMergedTranslator implements Translator {
 
     HttpdocMergedTranslator() {
         try {
-            Set<URL> urls = Loader.load(HttpdocMergedTranslator.class.getClassLoader());
+            Set<URL> urls = LoadKit.load(HttpdocMergedTranslator.class.getClassLoader());
             for (URL url : urls) {
                 if (!url.getFile().endsWith("/translator.properties")) continue;
                 Properties properties = new Properties();

@@ -9,7 +9,7 @@ import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.kit.Loader;
+import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
@@ -50,7 +50,7 @@ public class JestfulHttpdocController {
 
     {
         try {
-            Set<URL> urls = Loader.load(JestfulHttpdocController.class.getClassLoader());
+            Set<URL> urls = LoadKit.load(JestfulHttpdocController.class.getClassLoader());
             for (URL url : urls) {
                 if (url.getFile().endsWith("/serializer.properties")) {
                     Properties properties = new Properties();

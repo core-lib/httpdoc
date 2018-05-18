@@ -15,7 +15,7 @@ import java.util.jar.JarFile;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-24 13:55
  **/
-public class Loader {
+public class LoadKit {
 
     public static Set<URL> load(ClassLoader classLoader) throws IOException {
         Set<URL> urls = new LinkedHashSet<>();

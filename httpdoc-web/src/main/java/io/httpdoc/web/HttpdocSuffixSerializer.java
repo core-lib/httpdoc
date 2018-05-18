@@ -1,7 +1,7 @@
 package io.httpdoc.web;
 
 import io.httpdoc.core.exception.HttpdocRuntimeException;
-import io.httpdoc.core.kit.Loader;
+import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.serialization.Serializer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ public class HttpdocSuffixSerializer implements Serializer {
 
     HttpdocSuffixSerializer() {
         try {
-            Set<URL> urls = Loader.load(HttpdocSuffixSerializer.class.getClassLoader());
+            Set<URL> urls = LoadKit.load(HttpdocSuffixSerializer.class.getClassLoader());
             for (URL url : urls) {
                 if (!url.getFile().endsWith("/serializer.properties")) continue;
                 Properties properties = new Properties();
