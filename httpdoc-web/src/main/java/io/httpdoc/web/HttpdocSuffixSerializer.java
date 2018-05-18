@@ -1,7 +1,7 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Loader;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import io.httpdoc.core.kit.Loader;
 import io.httpdoc.core.serialization.Serializer;
 
 import javax.servlet.http.HttpServletRequest;

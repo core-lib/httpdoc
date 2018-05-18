@@ -1,9 +1,6 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Container;
 import io.httpdoc.core.Document;
-import io.httpdoc.core.Translation;
-import io.httpdoc.core.Translator;
 import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.exception.DocumentTranslationException;
@@ -12,6 +9,9 @@ import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
+import io.httpdoc.core.translation.Container;
+import io.httpdoc.core.translation.Translation;
+import io.httpdoc.core.translation.Translator;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;

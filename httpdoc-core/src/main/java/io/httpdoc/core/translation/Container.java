@@ -1,4 +1,4 @@
-package io.httpdoc.core;
+package io.httpdoc.core.translation;
 
 import java.util.Enumeration;
 
@@ -9,8 +9,6 @@ import java.util.Enumeration;
  * @date 2018-04-23 15:56
  **/
 public interface Container {
-
-
 
     Object get(String name);
 

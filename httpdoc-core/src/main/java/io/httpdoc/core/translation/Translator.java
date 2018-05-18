@@ -1,5 +1,6 @@
-package io.httpdoc.core;
+package io.httpdoc.core.translation;
 
+import io.httpdoc.core.Document;
 import io.httpdoc.core.exception.DocumentTranslationException;
 
 /**

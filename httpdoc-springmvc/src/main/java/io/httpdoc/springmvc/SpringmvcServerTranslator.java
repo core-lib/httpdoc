@@ -1,6 +1,10 @@
 package io.httpdoc.springmvc;
 
-import io.httpdoc.core.*;
+import io.httpdoc.core.Controller;
+import io.httpdoc.core.Document;
+import io.httpdoc.core.translation.Container;
+import io.httpdoc.core.translation.Translation;
+import io.httpdoc.core.translation.Translator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;

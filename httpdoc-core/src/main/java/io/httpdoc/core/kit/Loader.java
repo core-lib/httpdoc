@@ -1,4 +1,4 @@
-package io.httpdoc.core;
+package io.httpdoc.core.kit;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,23 +1,21 @@
 package io.httpdoc.gen;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.junit.Test;
-
-import java.util.concurrent.Executors;
-
 /**
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-15 18:35
  **/
 public class ProductControllerTest {
 
-    @Test
-    public void testList() throws Exception {
-        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A);
-        future.addListener(() -> System.out.println("OK"), Executors.newSingleThreadExecutor());
-        ProductListResult result = future.get();
-        System.out.println(result);
-    }
+//    @Test
+//    public void testList() throws Exception {
+//        Lock lock = new SimpleLock();
+//        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A);
+//        future.addListener(() -> {
+//            System.out.println("OK");
+//            lock.openAll();
+//        }, Executors.newSingleThreadExecutor());
+//        lock.lockOne();
+//    }
 
 //    @Test
 //    public void testCreate() throws Exception {

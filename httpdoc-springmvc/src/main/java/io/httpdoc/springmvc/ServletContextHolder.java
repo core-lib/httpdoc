@@ -1,6 +1,6 @@
 package io.httpdoc.springmvc;
 
-import io.httpdoc.core.Container;
+import io.httpdoc.core.translation.Container;
 
 import javax.servlet.ServletContext;
 import java.util.Enumeration;

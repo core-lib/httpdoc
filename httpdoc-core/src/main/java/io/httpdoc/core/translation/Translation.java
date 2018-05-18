@@ -1,4 +1,4 @@
-package io.httpdoc.core;
+package io.httpdoc.core.translation;
 
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.provider.Provider;
