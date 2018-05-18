@@ -189,7 +189,7 @@ public abstract class RetrofitAbstractGenerator extends ModelGenerator implement
         int bodies = 0;
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter param = parameters.get(i);
-            multipart = param.getType().isFile();
+            multipart = param.getType().isPart();
             bodies += param.getScope().equals(HTTP_PARAM_SCOPE_BODY) ? 1 : 0;
         }
         if (multipart || bodies > 1) {
@@ -228,7 +228,7 @@ public abstract class RetrofitAbstractGenerator extends ModelGenerator implement
                 break;
             }
             case HTTP_PARAM_SCOPE_BODY: {
-                if (parameter.getType().isFile()) {
+                if (parameter.getType().isPart()) {
                     if (parameter.getType().getCategory() == Category.DICTIONARY) {
                         HDAnnotation map = new HDAnnotation(PartMap.class);
                         fragment.getAnnotations().add(map);

@@ -174,14 +174,14 @@ public class Schema extends Definition {
                 : new Schema(type, cache, provider, interpreter);
     }
 
-    public boolean isFile() {
+    public boolean isPart() {
         switch (category) {
             case BASIC:
                 return "File".equals(name);
             case DICTIONARY:
-                return component.isFile();
+                return component.isPart();
             case ARRAY:
-                return component.isFile();
+                return component.isPart();
             case ENUM:
                 return false;
             case OBJECT:
