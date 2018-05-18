@@ -77,8 +77,13 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
         return exclude(generator.getClass());
     }
 
-    public RetrofitMergedGenerator use(Class<? extends Converter.Factory> converterFactory) {
+    public RetrofitMergedGenerator add(Class<? extends Converter.Factory> converterFactory) {
         converterFactories.add(converterFactory);
+        return this;
+    }
+
+    public RetrofitMergedGenerator remove(Class<? extends Converter.Factory> converterFactory) {
+        converterFactories.remove(converterFactory);
         return this;
     }
 
