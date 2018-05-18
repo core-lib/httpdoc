@@ -40,7 +40,7 @@ public class JestfulClientStandardGenerator extends JestfulClientAbstractGenerat
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : HDType.valueOf(void.class);
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : HDType.valueOf(void.class);
         method.setType(type);
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();

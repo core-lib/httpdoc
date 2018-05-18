@@ -191,6 +191,10 @@ public class Schema extends Definition {
         }
     }
 
+    public boolean isVoid() {
+        return category == Category.BASIC && "void".equals(name);
+    }
+
     public HDType toType(String pkg, Provider provider) {
         switch (category) {
             case BASIC:

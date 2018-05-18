@@ -48,7 +48,7 @@ public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerat
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);
 
-        HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
         ParameterFragment callback = new ParameterFragment();
         callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Void.class)));
         callback.setName("callback");

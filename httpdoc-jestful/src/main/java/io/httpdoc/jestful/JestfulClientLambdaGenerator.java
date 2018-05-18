@@ -50,7 +50,7 @@ public class JestfulClientLambdaGenerator extends JestfulClientAbstractGenerator
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);
 
-        HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
 
         {
             ParameterFragment onSuccess = new ParameterFragment();

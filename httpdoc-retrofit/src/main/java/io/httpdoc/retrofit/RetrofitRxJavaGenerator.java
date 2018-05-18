@@ -63,7 +63,7 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
         MethodFragment method = new MethodFragment(0);
         annotate(document, controller, operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
         method.setType(new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class)));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();

@@ -42,7 +42,7 @@ public class JestfulClientFutureGenerator extends JestfulClientAbstractGenerator
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().toType(pkg, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
         method.setType(new HDParameterizedType(HDType.valueOf(Future.class), null, type != null ? type : HDType.valueOf(Void.class)));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();

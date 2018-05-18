@@ -4,9 +4,8 @@ import io.httpdoc.core.Document;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.JestfulClientGuavaGenerator;
-import io.httpdoc.jestful.JestfulClientJava8Generator;
-import io.httpdoc.jestful.JestfulClientMergedGenerator;
+import io.httpdoc.jestful.*;
+import io.httpdoc.retrofit.RetrofitProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,9 +21,20 @@ public class Generate {
         Generation generation = new Generation(document);
         generation.setPkg("io.httpdoc.gen");
         generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");
+        generation.setProvider(new RetrofitProvider());
+//        Generator generator = new RetrofitMergedGenerator()
+//                .include(RetrofitCallGenerator.class)
+//                .include(RetrofitRxJavaGenerator.class)
+//                .include(RetrofitJava8Generator.class)
+//                .include(RetrofitGuavaGenerator.class);
+
         Generator generator = new JestfulClientMergedGenerator()
+                .include(JestfulClientLambdaGenerator.class)
+                .include(JestfulClientFutureGenerator.class)
+                .include(JestfulClientGuavaGenerator.class)
                 .include(JestfulClientJava8Generator.class)
-                .include(JestfulClientGuavaGenerator.class);
+                .include(JestfulClientMessageGenerator.class)
+                .include(JestfulClientObservableGenerator.class);
 
         generator.generate(generation);
     }

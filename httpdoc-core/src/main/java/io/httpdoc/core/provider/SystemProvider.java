@@ -74,6 +74,9 @@ public class SystemProvider implements Provider {
             case "double":
                 return double.class;
 
+            case "void":
+                return void.class;
+
             case "Boolean":
                 return Boolean.class;
             case "Byte":
