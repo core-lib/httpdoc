@@ -4,8 +4,8 @@ import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
-import io.httpdoc.core.fragment.CommentFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDType;
 
@@ -20,11 +20,19 @@ import java.util.List;
 public class JestfulClientStandardGenerator extends JestfulClientAbstractGenerator {
 
     public JestfulClientStandardGenerator() {
-        this("", "");
+        super("", "");
+    }
+
+    public JestfulClientStandardGenerator(Modeler modeler) {
+        super(modeler);
     }
 
     public JestfulClientStandardGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public JestfulClientStandardGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
     }
 
     @Override

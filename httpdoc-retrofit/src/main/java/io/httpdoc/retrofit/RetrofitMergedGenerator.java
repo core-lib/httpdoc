@@ -5,6 +5,8 @@ import io.httpdoc.core.Document;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
+import io.httpdoc.core.modeler.Modeler;
+import io.httpdoc.core.modeler.SimpleModeler;
 import io.httpdoc.core.provider.Provider;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -25,6 +27,15 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     }
 
     public RetrofitMergedGenerator(Collection<? extends RetrofitAbstractGenerator> generators) {
+        this(new SimpleModeler(), generators);
+    }
+
+    public RetrofitMergedGenerator(Modeler modeler) {
+        this(modeler, Collections.singleton(new RetrofitCallGenerator()));
+    }
+
+    public RetrofitMergedGenerator(Modeler modeler, Collection<? extends RetrofitAbstractGenerator> generators) {
+        super(modeler);
         if (generators == null) throw new NullPointerException();
         for (RetrofitAbstractGenerator generator : generators) include(generator);
     }

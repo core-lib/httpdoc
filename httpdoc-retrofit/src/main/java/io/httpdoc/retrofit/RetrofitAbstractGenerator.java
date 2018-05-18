@@ -7,8 +7,10 @@ import io.httpdoc.core.appender.FileAppender;
 import io.httpdoc.core.fragment.*;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
-import io.httpdoc.core.generation.SchemaGenerator;
 import io.httpdoc.core.kit.StringKit;
+import io.httpdoc.core.modeler.ModelGenerator;
+import io.httpdoc.core.modeler.Modeler;
+import io.httpdoc.core.modeler.SimpleModeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
@@ -30,7 +32,7 @@ import static io.httpdoc.core.Parameter.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 15:59
  **/
-public abstract class RetrofitAbstractGenerator extends SchemaGenerator implements Generator {
+public abstract class RetrofitAbstractGenerator extends ModelGenerator implements Generator {
     protected final String prefix;
     protected final String suffix;
     protected final Set<Class<? extends Converter.Factory>> converterFactories = new LinkedHashSet<>();
@@ -48,6 +50,23 @@ public abstract class RetrofitAbstractGenerator extends SchemaGenerator implemen
     }
 
     protected RetrofitAbstractGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        this(new SimpleModeler(), prefix, suffix, converterFactories);
+    }
+
+    protected RetrofitAbstractGenerator(Modeler modeler) {
+        this(modeler, "", "");
+    }
+
+    protected RetrofitAbstractGenerator(Modeler modeler, String prefix, String suffix) {
+        this(modeler, prefix, suffix, Collections.<Class<? extends Converter.Factory>>emptyList());
+    }
+
+    protected RetrofitAbstractGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        this(modeler, "", "", converterFactories);
+    }
+
+    protected RetrofitAbstractGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler);
         if (prefix == null || suffix == null || converterFactories == null) throw new NullPointerException();
         this.prefix = prefix.trim();
         this.suffix = suffix.trim();

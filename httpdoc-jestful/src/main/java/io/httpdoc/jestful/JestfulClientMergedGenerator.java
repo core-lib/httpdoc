@@ -3,6 +3,8 @@ package io.httpdoc.jestful;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
+import io.httpdoc.core.modeler.Modeler;
+import io.httpdoc.core.modeler.SimpleModeler;
 import io.httpdoc.core.provider.Provider;
 
 import java.util.Arrays;
@@ -24,6 +26,15 @@ public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator
     }
 
     public JestfulClientMergedGenerator(Collection<? extends JestfulClientAbstractGenerator> generators) {
+        this(new SimpleModeler(), generators);
+    }
+
+    public JestfulClientMergedGenerator(Modeler modeler) {
+        super(modeler);
+    }
+
+    public JestfulClientMergedGenerator(Modeler modeler, Collection<? extends JestfulClientAbstractGenerator> generators) {
+        super(modeler);
         if (generators == null) throw new NullPointerException();
         for (JestfulClientAbstractGenerator generator : generators) include(generator);
     }

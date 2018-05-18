@@ -5,6 +5,7 @@ import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -21,11 +22,19 @@ import java.util.concurrent.Future;
 public class JestfulClientFutureGenerator extends JestfulClientAbstractGenerator {
 
     public JestfulClientFutureGenerator() {
-        this("", "ForFuture");
+        super("", "ForFuture");
+    }
+
+    public JestfulClientFutureGenerator(Modeler modeler) {
+        super(modeler);
     }
 
     public JestfulClientFutureGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public JestfulClientFutureGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.httpdoc.retrofit;
 import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -26,7 +27,7 @@ import java.util.Set;
 public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitRxJavaGenerator() {
-        this("", "ForRxJava");
+        super("", "ForRxJava");
     }
 
     public RetrofitRxJavaGenerator(String prefix, String suffix) {
@@ -39,6 +40,22 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitRxJavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
+    }
+
+    public RetrofitRxJavaGenerator(Modeler modeler) {
+        super(modeler);
+    }
+
+    public RetrofitRxJavaGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
+    }
+
+    public RetrofitRxJavaGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, converterFactories);
+    }
+
+    public RetrofitRxJavaGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, prefix, suffix, converterFactories);
     }
 
     @Override

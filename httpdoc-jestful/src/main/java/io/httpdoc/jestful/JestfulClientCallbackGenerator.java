@@ -6,6 +6,7 @@ import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -22,11 +23,19 @@ import java.util.List;
 public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerator {
 
     public JestfulClientCallbackGenerator() {
-        this("", "");
+        super("", "");
+    }
+
+    public JestfulClientCallbackGenerator(Modeler modeler) {
+        super(modeler);
     }
 
     public JestfulClientCallbackGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public JestfulClientCallbackGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
     }
 
     @Override

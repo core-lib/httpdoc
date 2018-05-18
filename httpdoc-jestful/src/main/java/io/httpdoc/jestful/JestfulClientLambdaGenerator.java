@@ -6,6 +6,7 @@ import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -24,11 +25,19 @@ import java.util.List;
 public class JestfulClientLambdaGenerator extends JestfulClientAbstractGenerator {
 
     public JestfulClientLambdaGenerator() {
-        this("", "");
+        super("", "");
+    }
+
+    public JestfulClientLambdaGenerator(Modeler modeler) {
+        super(modeler);
     }
 
     public JestfulClientLambdaGenerator(String prefix, String suffix) {
         super(prefix, suffix);
+    }
+
+    public JestfulClientLambdaGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
     }
 
     @Override

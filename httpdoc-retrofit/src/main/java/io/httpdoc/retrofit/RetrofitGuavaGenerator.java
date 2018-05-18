@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -25,7 +26,7 @@ import java.util.Set;
  **/
 public class RetrofitGuavaGenerator extends RetrofitAbstractGenerator {
     public RetrofitGuavaGenerator() {
-        this("", "ForGuava");
+        super("", "ForGuava");
     }
 
     public RetrofitGuavaGenerator(String prefix, String suffix) {
@@ -38,6 +39,22 @@ public class RetrofitGuavaGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitGuavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
+    }
+
+    public RetrofitGuavaGenerator(Modeler modeler) {
+        super(modeler);
+    }
+
+    public RetrofitGuavaGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
+    }
+
+    public RetrofitGuavaGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, converterFactories);
+    }
+
+    public RetrofitGuavaGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, prefix, suffix, converterFactories);
     }
 
     @Override

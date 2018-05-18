@@ -3,6 +3,7 @@ package io.httpdoc.retrofit;
 import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -25,7 +26,7 @@ import java.util.Set;
 public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitCallGenerator() {
-        this("", "");
+        super("", "");
     }
 
     public RetrofitCallGenerator(String prefix, String suffix) {
@@ -38,6 +39,22 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
 
     public RetrofitCallGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
+    }
+
+    public RetrofitCallGenerator(Modeler modeler) {
+        super(modeler);
+    }
+
+    public RetrofitCallGenerator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
+    }
+
+    public RetrofitCallGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, converterFactories);
+    }
+
+    public RetrofitCallGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, prefix, suffix, converterFactories);
     }
 
     @Override

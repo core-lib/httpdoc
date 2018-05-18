@@ -4,6 +4,7 @@ import io.httpdoc.core.*;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -26,7 +27,7 @@ import java.util.Set;
 public class RetrofitJava8Generator extends RetrofitAbstractGenerator {
 
     public RetrofitJava8Generator() {
-        this("", "ForJava8");
+        super("", "ForJava8");
     }
 
     public RetrofitJava8Generator(String prefix, String suffix) {
@@ -39,6 +40,22 @@ public class RetrofitJava8Generator extends RetrofitAbstractGenerator {
 
     public RetrofitJava8Generator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
+    }
+
+    public RetrofitJava8Generator(Modeler modeler) {
+        super(modeler);
+    }
+
+    public RetrofitJava8Generator(Modeler modeler, String prefix, String suffix) {
+        super(modeler, prefix, suffix);
+    }
+
+    public RetrofitJava8Generator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, converterFactories);
+    }
+
+    public RetrofitJava8Generator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+        super(modeler, prefix, suffix, converterFactories);
     }
 
     @Override

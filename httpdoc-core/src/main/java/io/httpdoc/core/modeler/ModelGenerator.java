@@ -1,12 +1,10 @@
-package io.httpdoc.core.generation;
+package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Schema;
+import io.httpdoc.core.generation.Generation;
+import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.kit.IOKit;
-import io.httpdoc.core.modeler.Archetype;
-import io.httpdoc.core.modeler.Model;
-import io.httpdoc.core.modeler.Modeler;
-import io.httpdoc.core.modeler.SimpleModeler;
 import io.httpdoc.core.provider.Provider;
 
 import java.io.FileOutputStream;
@@ -20,14 +18,10 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-18 12:36
  **/
-public abstract class SchemaGenerator implements Generator {
+public abstract class ModelGenerator implements Generator {
     private final Modeler modeler;
 
-    protected SchemaGenerator() {
-        this(new SimpleModeler());
-    }
-
-    protected SchemaGenerator(Modeler modeler) {
+    protected ModelGenerator(Modeler modeler) {
         this.modeler = modeler;
     }
 
