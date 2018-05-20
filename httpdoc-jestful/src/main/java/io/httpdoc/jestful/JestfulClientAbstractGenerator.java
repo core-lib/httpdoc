@@ -146,7 +146,7 @@ public abstract class JestfulClientAbstractGenerator extends ModelGenerator impl
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter param = parameters.get(i);
             ParameterFragment parameter = new ParameterFragment();
-            parameter.setName(StringKit.isBlank(param.getName()) ? "arg" + i : param.getName());
+            parameter.setName(StringKit.isBlank(param.getName()) ? param.getType().toName() : param.getName());
             annotate(param, parameter);
             parameter.setType(param.getType().toType(pkg, provider));
             method.getParameterFragments().add(parameter);

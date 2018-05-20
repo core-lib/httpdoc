@@ -195,6 +195,29 @@ public class Schema extends Definition {
         return category == Category.BASIC && "void".equals(name);
     }
 
+    public String toName() {
+        switch (category) {
+            case BASIC:
+                return name.toLowerCase();
+            case DICTIONARY:
+                return "map";
+            case ARRAY:
+                return component.getCategory() != Category.ARRAY ? component.toName() + "s" : component.toName();
+            case ENUM: {
+                int index = 0;
+                for (int i = 0; i < name.length() && name.charAt(i) >= 'A' && name.charAt(i) <= 'Z'; i++) index++;
+                return name.substring(0, index > 1 ? index - 1 : index).toLowerCase() + name.substring(index > 1 ? index - 1 : index);
+            }
+            case OBJECT: {
+                int index = 0;
+                for (int i = 0; i < name.length() && name.charAt(i) >= 'A' && name.charAt(i) <= 'Z'; i++) index++;
+                return name.substring(0, index > 1 ? index - 1 : index).toLowerCase() + name.substring(index > 1 ? index - 1 : index);
+            }
+            default:
+                return null;
+        }
+    }
+
     public HDType toType(String pkg, Provider provider) {
         switch (category) {
             case BASIC:

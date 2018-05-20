@@ -40,7 +40,8 @@ public class ProductController {
             product.setStatus(status);
             result.getProducts().add(product);
         }
-        return result;
+//        return result;
+        throw new RuntimeException();
     }
 
     @POST("/")

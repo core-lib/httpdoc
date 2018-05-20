@@ -57,6 +57,11 @@
         </dependency>
         <dependency>
             <groupId>${jestful.group.id}</groupId>
+            <artifactId>jestful-client-nio</artifactId>
+            <version>${jestful.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-guava</artifactId>
             <version>${jestful.version}</version>
         </dependency>

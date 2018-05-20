@@ -1,9 +1,9 @@
 package io.httpdoc.gen;
 
 import org.junit.Test;
-import org.qfox.jestful.client.Message;
-import org.qfox.jestful.commons.Lock;
-import org.qfox.jestful.commons.SimpleLock;
+import org.qfox.jestful.client.Part;
+
+import java.math.BigDecimal;
 
 /**
  * @author 杨昌沛 646742615@qq.com
@@ -11,11 +11,20 @@ import org.qfox.jestful.commons.SimpleLock;
  **/
 public class ProductControllerTest {
 
+    public String toName(String name) {
+        int index = 0;
+        for (int i = 0; i < name.length() && name.charAt(i) >= 'A' && name.charAt(i) <= 'Z'; i++) index++;
+        return name.substring(0, index > 1 ? index - 1 : index).toLowerCase() + name.substring(index > 1 ? index - 1 : index);
+    }
+
     @Test
     public void testList() throws Exception {
-        Lock lock = new SimpleLock();
-        Message message = ProductController.INSTANCE.listForMessage(1, 20, ProductStatus.A);
-        System.out.println(message);
+        System.out.println(toName("InputStream"));
+//
+//        Lock lock = new SimpleLock();
+//        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A);
+//        ProductListResult entity = future.get();
+//        System.out.println(entity);
     }
 
 //    @Test
@@ -28,16 +37,13 @@ public class ProductControllerTest {
 //        System.out.println(result);
 //    }
 //
-//    @Test
-//    public void testUpdate() throws Exception {
-//        Product product = new Product();
-//        product.setName("iPhone X");
-//        product.setPrice(new BigDecimal(8888));
-//        product.setStatus(ProductStatus.B);
-//        RequestBody picture = RequestBody.create(MediaType.parse("application/jpeg"), new File("E:\\DGSetup_1354E.exe"));
-//        Response<ProductUpdateResult> response = ProductController.INSTANCE.update(1L, "Name", product, new RequestBody[]{picture, picture}, new LinkedHashMap<>()).execute();
-//        ProductUpdateResult result = response.body();
-//        System.out.println(result);
-//    }
+@Test
+public void testUpdate() throws Exception {
+    Product product = new Product();
+    product.setName("iPhone X");
+    product.setPrice(new BigDecimal(8888));
+    product.setStatus(ProductStatus.B);
+    ProductUpdateResult productUpdateResult = ProductController.INSTANCE.updateForFuture(12L, "", product, new Part[]{new FilePart("D:\\用户目录\\下载\\JestfulHttpdocController.java")}, null).get();
+}
 
 }
