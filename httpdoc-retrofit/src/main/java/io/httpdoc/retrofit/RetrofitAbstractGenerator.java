@@ -199,7 +199,18 @@ public abstract class RetrofitAbstractGenerator extends ModelGenerator implement
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter param = parameters.get(i);
             ParameterFragment parameter = new ParameterFragment();
-            parameter.setName(StringKit.isBlank(param.getName()) ? param.getType().toName() : param.getName());
+            String name = StringKit.isBlank(param.getName()) ? param.getType().toName() : param.getName();
+            loop:
+            while (true) {
+                for (ParameterFragment fragment : method.getParameterFragments()) {
+                    if (name.equals(fragment.getName())) {
+                        name = name.concat("_");
+                        continue loop;
+                    }
+                }
+                break;
+            }
+            parameter.setName(name);
             annotate(param, parameter, multipart || bodies > 1);
             HDType type = param.getType().toType(pkg, provider);
             parameter.setType(type);
