@@ -8,6 +8,7 @@ import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDType;
+import org.qfox.jestful.client.Message;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class JestfulClientStandardGenerator extends JestfulClientAbstractGenerat
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : HDType.valueOf(void.class);
-        method.setType(type);
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
+        method.setType(type != null ? type : HDType.valueOf(Message.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);

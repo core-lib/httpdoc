@@ -10,6 +10,7 @@ import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
+import org.qfox.jestful.client.Entity;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class JestfulClientGuavaGenerator extends JestfulClientAbstractGenerator 
         annotate(operation, method);
         Result result = operation.getResult();
         HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(ListenableFuture.class), null, type != null ? type : HDType.valueOf(Void.class)));
+        method.setType(new HDParameterizedType(HDType.valueOf(ListenableFuture.class), null, type != null ? type : HDType.valueOf(Entity.class)));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);

@@ -2,12 +2,10 @@ package io.httpdoc.jestful;
 
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
-import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.client.Message;
 
@@ -41,9 +39,7 @@ public class JestfulClientMessageGenerator extends JestfulClientAbstractGenerato
     protected void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
-        Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(Message.class), null, type != null ? type : HDType.valueOf(Void.class)));
+        method.setType(HDType.valueOf(Message.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, provider, method, parameters);

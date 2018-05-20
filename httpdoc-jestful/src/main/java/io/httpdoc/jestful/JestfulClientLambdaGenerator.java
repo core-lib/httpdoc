@@ -10,6 +10,7 @@ import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
+import org.qfox.jestful.client.Entity;
 import org.qfox.jestful.client.scheduler.OnCompleted;
 import org.qfox.jestful.client.scheduler.OnFail;
 import org.qfox.jestful.client.scheduler.OnSuccess;
@@ -54,7 +55,7 @@ public class JestfulClientLambdaGenerator extends JestfulClientAbstractGenerator
 
         {
             ParameterFragment onSuccess = new ParameterFragment();
-            onSuccess.setType(new HDParameterizedType(HDType.valueOf(OnSuccess.class), null, type != null ? type : HDType.valueOf(Void.class)));
+            onSuccess.setType(new HDParameterizedType(HDType.valueOf(OnSuccess.class), null, type != null ? type : HDType.valueOf(Entity.class)));
             onSuccess.setName("onSuccess");
             method.getParameterFragments().add(onSuccess);
         }
@@ -68,7 +69,7 @@ public class JestfulClientLambdaGenerator extends JestfulClientAbstractGenerator
 
         {
             ParameterFragment onCompleted = new ParameterFragment();
-            onCompleted.setType(new HDParameterizedType(HDType.valueOf(OnCompleted.class), null, type != null ? type : HDType.valueOf(Void.class)));
+            onCompleted.setType(new HDParameterizedType(HDType.valueOf(OnCompleted.class), null, type != null ? type : HDType.valueOf(Entity.class)));
             onCompleted.setName("onCompleted");
             method.getParameterFragments().add(onCompleted);
         }

@@ -1,21 +1,22 @@
 package io.httpdoc.gen;
 
+import org.junit.Test;
+import org.qfox.jestful.client.Message;
+import org.qfox.jestful.commons.Lock;
+import org.qfox.jestful.commons.SimpleLock;
+
 /**
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-15 18:35
  **/
 public class ProductControllerTest {
 
-//    @Test
-//    public void testList() throws Exception {
-//        Lock lock = new SimpleLock();
-//        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A);
-//        future.addListener(() -> {
-//            System.out.println("OK");
-//            lock.openAll();
-//        }, Executors.newSingleThreadExecutor());
-//        lock.lockOne();
-//    }
+    @Test
+    public void testList() throws Exception {
+        Lock lock = new SimpleLock();
+        Message message = ProductController.INSTANCE.listForMessage(1, 20, ProductStatus.A);
+        System.out.println(message);
+    }
 
 //    @Test
 //    public void testCreate() throws Exception {

@@ -10,6 +10,7 @@ import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
+import org.qfox.jestful.client.Entity;
 import org.qfox.jestful.client.scheduler.Callback;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerat
 
         HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
         ParameterFragment callback = new ParameterFragment();
-        callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Void.class)));
+        callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Entity.class)));
         callback.setName("callback");
         method.getParameterFragments().add(callback);
 
