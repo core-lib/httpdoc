@@ -204,7 +204,7 @@ public abstract class RetrofitAbstractGenerator extends ModelGenerator implement
             while (true) {
                 for (ParameterFragment fragment : method.getParameterFragments()) {
                     if (name.equals(fragment.getName())) {
-                        name = name.concat("_");
+                        name = String.format("_%s", name);
                         continue loop;
                     }
                 }
