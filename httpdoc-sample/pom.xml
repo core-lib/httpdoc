@@ -122,6 +122,18 @@
             <artifactId>httpdoc-web</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-nutz</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz</artifactId>
+            <version>1.r.65</version>
+        </dependency>
+
     </dependencies>
 
     <profiles>
@@ -235,7 +247,8 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib
+                            </outputDirectory>
                             <includeScope>system</includeScope>
                         </configuration>
                     </execution>

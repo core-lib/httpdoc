@@ -14,25 +14,6 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <servlet>
-        <servlet-name>httpdoc</servlet-name>
-        <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
-        <!--<init-param>-->
-        <!--<param-name>interpreter</param-name>-->
-        <!--<param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>-->
-        <!--</init-param>-->
-        <init-param>
-            <param-name>contentType</param-name>
-            <param-value>text/plain</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>httpdoc</servlet-name>
-        <url-pattern>/httpdoc</url-pattern>
-        <url-pattern>/httpdoc.json</url-pattern>
-        <url-pattern>/httpdoc.yaml</url-pattern>
-    </servlet-mapping>
-
     <filter>
         <filter-name>jestful</filter-name>
         <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
@@ -52,5 +33,40 @@
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+
+    <filter>
+        <filter-name>nutz</filter-name>
+        <filter-class>org.nutz.mvc.NutFilter</filter-class>
+        <init-param>
+            <param-name>modules</param-name>
+            <param-value>io.httpdoc.nutz.NutzModule</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>nutz</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>httpdoc</servlet-name>
+        <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+        <!--<init-param>-->
+        <!--<param-name>interpreter</param-name>-->
+        <!--<param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>-->
+        <!--</init-param>-->
+        <init-param>
+            <param-name>contentType</param-name>
+            <param-value>text/plain</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>httpdoc</servlet-name>
+        <url-pattern>/httpdoc</url-pattern>
+        <url-pattern>/httpdoc.json</url-pattern>
+        <url-pattern>/httpdoc.yaml</url-pattern>
+    </servlet-mapping>
 
 </web-app>

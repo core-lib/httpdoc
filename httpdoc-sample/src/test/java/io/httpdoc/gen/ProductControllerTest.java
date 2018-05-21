@@ -1,9 +1,6 @@
 package io.httpdoc.gen;
 
 import org.junit.Test;
-import org.qfox.jestful.client.Part;
-
-import java.math.BigDecimal;
 
 /**
  * @author 杨昌沛 646742615@qq.com
@@ -39,11 +36,11 @@ public class ProductControllerTest {
 //
 @Test
 public void testUpdate() throws Exception {
-    Product product = new Product();
-    product.setName("iPhone X");
-    product.setPrice(new BigDecimal(8888));
-    product.setStatus(ProductStatus.B);
-    ProductUpdateResult productUpdateResult = ProductController.INSTANCE.updateForFuture(12L, "", product, new Part[]{new FilePart("D:\\用户目录\\下载\\JestfulHttpdocController.java")}, null).get();
+//    Product product = new Product();
+//    product.setName("iPhone X");
+//    product.setPrice(new BigDecimal(8888));
+//    product.setStatus(ProductStatus.B);
+//    ProductUpdateResult productUpdateResult = ProductController.INSTANCE.updateForFuture(12L, "", product, new Part[]{new FilePart("D:\\用户目录\\下载\\JestfulHttpdocController.java")}, null).get();
 }
 
 }
