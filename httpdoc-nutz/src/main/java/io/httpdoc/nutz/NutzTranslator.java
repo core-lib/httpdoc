@@ -1,14 +1,33 @@
 package io.httpdoc.nutz;
 
-import io.httpdoc.core.Document;
+import io.httpdoc.core.*;
 import io.httpdoc.core.exception.DocumentTranslationException;
+import io.httpdoc.core.interpretation.Interpretation;
+import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.MethodInterpretation;
+import io.httpdoc.core.interpretation.Note;
+import io.httpdoc.core.kit.ReflectionKit;
+import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.reflection.ParameterizedTypeImpl;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
-import org.nutz.mvc.NutMvcContext;
-import org.nutz.mvc.config.AtMap;
+import org.nutz.lang.util.MethodParamNamesScaner;
+import org.nutz.mvc.*;
+import org.nutz.mvc.adaptor.ParamInjector;
+import org.nutz.mvc.adaptor.QueryStringNameInjector;
+import org.nutz.mvc.adaptor.injector.*;
+import org.nutz.mvc.impl.ActionInvoker;
+import org.nutz.mvc.impl.processor.AdaptorProcessor;
+import org.nutz.mvc.upload.injector.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Nutz Httpdoc 翻译器
@@ -17,6 +36,7 @@ import java.util.Map;
  * @date 2018-05-21 12:27
  **/
 public class NutzTranslator implements Translator {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Document translate(Translation translation) throws DocumentTranslationException {
@@ -29,16 +49,132 @@ public class NutzTranslator implements Translator {
         document.setVersion(translation.getVersion());
 
         Container container = translation.getContainer();
-        NutMvcContext nutMvcContext = (NutMvcContext) container.get("__nutz__mvc__ctx");
-        if (nutMvcContext == null) return document;
-        Map<String, AtMap> mapping = nutMvcContext.atMaps;
+        Provider provider = translation.getProvider();
+        Interpreter interpreter = translation.getInterpreter();
+        NutMvcContext context = (NutMvcContext) container.get("__nutz__mvc__ctx");
+        if (context == null) return document;
+        NutConfig config = context.getDefaultNutConfig();
+        UrlMapping mapping = config.getUrlMapping();
 
+        Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
+        try {
+            Map<String, ActionInvoker> map = ReflectionKit.getFieldValue(mapping, "map");
+            for (Map.Entry<String, ActionInvoker> entry : map.entrySet()) {
+                Method method = config.getAtMap().getMethodMapping().get(entry.getKey());
+                Class<?> clazz = method.getDeclaringClass();
+                Controller controller = controllers.get(clazz);
+                if (controller == null) {
+                    controller = new Controller();
+                    controller.setName(clazz.getSimpleName());
+                    controller.setPath("");
+                    Interpretation interpretation = interpreter.interpret(clazz);
+                    controller.setDescription(interpretation != null ? interpretation.getContent() : null);
+                    controllers.put(clazz, controller);
+                }
+
+                Operation operation = new Operation();
+                ActionInvoker invoker = entry.getValue();
+
+                Map<String, ActionChain> chains = ReflectionKit.getFieldValue(invoker, "chainMap");
+                if (chains.isEmpty()) continue;
+
+                Map.Entry<String, ActionChain> first = chains.entrySet().iterator().next();
+                operation.setMethod(first.getKey());
+
+                Map<String, String> m = new HashMap<>();
+                MethodInterpretation interpretation = interpreter.interpret(method);
+                Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
+                for (int i = 0; notes != null && i < notes.length; i++) m.put(notes[i].getName(), notes[i].getText());
+                List<String> names = MethodParamNamesScaner.getParamNames(method);
+
+                ActionChain chain = first.getValue();
+                Processor processor = ReflectionKit.getFieldValue(chain, "head");
+                while (processor != null && !(processor instanceof AdaptorProcessor)) processor = processor.getNext();
+                if (processor == null) continue;
+
+                String path = entry.getKey();
+                HttpAdaptor adaptor = ReflectionKit.getFieldValue(processor, "adaptor");
+                ParamInjector[] injectors = ReflectionKit.getFieldValue(adaptor, "injs");
+                for (int i = 0; injectors != null && i < injectors.length; i++) {
+                    ParamInjector injector = injectors[i];
+                    Parameter parameter = new Parameter();
+                    parameter.setType(Schema.valueOf(method.getParameterTypes()[i], provider, interpreter));
+                    if (injector == null) {
+                        continue;
+                    } else if (injector instanceof PathArgInjector) {
+                        parameter.setName(names.get(i));
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_PATH);
+                        path = path.replaceFirst("\\?", "{" + names.get(i) + "}");
+                        operation.getParameters().add(parameter);
+                    } else if (injector instanceof CookieInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        if ("_map".equals(name)) continue;
+                        parameter.setName(name);
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_COOKIE);
+                    } else if (injector instanceof ReqHeaderInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        if ("_map".equals(name)) continue;
+                        parameter.setName(name);
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_HEADER);
+                    } else if (injector instanceof QueryStringNameInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        if ("?".equals(name)) continue;
+                        parameter.setName(name);
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_QUERY);
+                    } else if (injector instanceof JsonInjector || injector instanceof XmlInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        parameter.setName(name);
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                    } else if (injector instanceof FileInjector
+                            || injector instanceof FileMetaInjector
+                            || injector instanceof TempFileInjector
+                            || injector instanceof InputStreamInjector
+                            || injector instanceof ReaderInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        parameter.setName(name);
+                        parameter.setType(Schema.valueOf(File.class));
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                    } else if (injector instanceof TempFileArrayInjector) {
+                        String name = ReflectionKit.getFieldValue(injector, "name");
+                        parameter.setName(name);
+                        parameter.setType(Schema.valueOf(File[].class));
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                    } else if (injector instanceof MapSelfInjector) {
+                        parameter.setName(names.get(i));
+                        parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                    } else {
+                        continue;
+                    }
+                    String description = m.get(names.get(i));
+                    parameter.setDescription(description);
+                    operation.getParameters().add(parameter);
+                }
+
+                Result result = new Result();
+                Schema type = Schema.valueOf(method.getGenericReturnType(), provider, interpreter);
+                result.setType(type);
+                result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
+                operation.setResult(result);
+
+                operation.setDescription(interpretation != null ? interpretation.getContent() : null);
+                controller.getOperations().add(operation);
+            }
+        } catch (Exception e) {
+            logger.warn("fail to translate nutz mappings", e);
+            return document;
+        }
+        document.setControllers(new LinkedHashSet<>(controllers.values()));
         return document;
     }
 
     @Override
     public String normalize(String path) {
-        return null;
+        Pattern pattern = Pattern.compile("[?]");
+        Matcher matcher = pattern.matcher(path);
+        int i = 0;
+        while (matcher.find()) path = path.replaceFirst("[?]", "{" + (i++) + "}");
+        return path;
     }
 
 }

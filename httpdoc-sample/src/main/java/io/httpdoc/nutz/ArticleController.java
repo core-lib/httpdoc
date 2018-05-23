@@ -1,8 +1,8 @@
 package io.httpdoc.nutz;
 
 import org.nutz.mvc.annotation.At;
-
-import javax.servlet.http.HttpServletRequest;
+import org.nutz.mvc.annotation.POST;
+import org.nutz.mvc.annotation.PUT;
 
 /**
  * 文章管理器
@@ -14,8 +14,17 @@ import javax.servlet.http.HttpServletRequest;
 public class ArticleController {
 
     @At("/?/?")
-    public ArticleListResult list(HttpServletRequest request, int page, int size) {
+    public ArticleListResult list(int page, int size) {
         ArticleListResult result = new ArticleListResult();
+
+        return result;
+    }
+
+    @At("/")
+    @PUT
+    @POST
+    public ArticleCreateResult create(Article article) {
+        ArticleCreateResult result = new ArticleCreateResult();
 
         return result;
     }
