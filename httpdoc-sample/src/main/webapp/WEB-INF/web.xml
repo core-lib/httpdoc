@@ -50,9 +50,9 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <servlet>
-        <servlet-name>httpdoc</servlet-name>
-        <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+    <filter>
+        <filter-name>httpdoc</filter-name>
+        <filter-class>io.httpdoc.web.HttpdocFilterSupport</filter-class>
         <!--<init-param>-->
         <!--<param-name>interpreter</param-name>-->
         <!--<param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>-->
@@ -61,12 +61,12 @@
             <param-name>contentType</param-name>
             <param-value>text/plain</param-value>
         </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>httpdoc</servlet-name>
+    </filter>
+    <filter-mapping>
+        <filter-name>httpdoc</filter-name>
         <url-pattern>/httpdoc</url-pattern>
         <url-pattern>/httpdoc.json</url-pattern>
         <url-pattern>/httpdoc.yaml</url-pattern>
-    </servlet-mapping>
+    </filter-mapping>
 
 </web-app>

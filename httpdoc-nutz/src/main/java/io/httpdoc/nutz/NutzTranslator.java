@@ -73,6 +73,7 @@ public class NutzTranslator implements Translator {
                 }
 
                 Operation operation = new Operation();
+                operation.setName(method.getName());
                 ActionInvoker invoker = entry.getValue();
 
                 Map<String, ActionChain> chains = ReflectionKit.getFieldValue(invoker, "chainMap");

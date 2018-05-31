@@ -1,8 +1,10 @@
 package io.httpdoc.nutz;
 
+import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.POST;
-import org.nutz.mvc.annotation.PUT;
+import org.nutz.mvc.annotation.Param;
 
 /**
  * 文章管理器
@@ -14,16 +16,16 @@ import org.nutz.mvc.annotation.PUT;
 public class ArticleController {
 
     @At("/?/?")
-    public ArticleListResult list(int page, int size) {
+    public ArticleListResult list(int page, int size, @Param("article") Article article) {
         ArticleListResult result = new ArticleListResult();
 
         return result;
     }
 
     @At("/")
-    @PUT
     @POST
-    public ArticleCreateResult create(Article article) {
+    @AdaptBy(type = JsonAdaptor.class)
+    public ArticleCreateResult create(@Param("..") Article article) {
         ArticleCreateResult result = new ArticleCreateResult();
 
         return result;

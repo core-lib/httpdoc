@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartRequest;
 
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -25,11 +26,13 @@ public class ProductController {
      * @param s 页面容量
      * @return 产品列表结果
      */
-    @GET("/{page}/{size}")
+    @GET("/{page}/{size}") // name=sdfsd&age=12
     public ProductListResult list(
             @Path("page") int p,
             @Path("size") int s,
-            @Query("status") ProductStatus status
+            @Query ProductStatus status,
+            @Query("arr") List<String> arr,
+            @Query("products") Product[] products
     ) {
         ProductListResult result = new ProductListResult();
         for (int i = (p - 1) * s; i < p * s; i++) {
@@ -40,8 +43,8 @@ public class ProductController {
             product.setStatus(status);
             result.getProducts().add(product);
         }
-//        return result;
-        throw new RuntimeException();
+        return result;
+//        throw new RuntimeException();
     }
 
     @POST("/")
