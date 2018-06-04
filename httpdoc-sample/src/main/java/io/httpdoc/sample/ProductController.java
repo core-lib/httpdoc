@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartRequest;
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -31,8 +32,9 @@ public class ProductController {
             @Path("page") int p,
             @Path("size") int s,
             @Query ProductStatus status,
-            @Query("arr") List<String> arr,
-            @Query("products") Product[] products
+            @Query List<String> arr,
+            @Query Product[] products,
+            @Query("map") Map<String, String[]> map
     ) {
         ProductListResult result = new ProductListResult();
         for (int i = (p - 1) * s; i < p * s; i++) {
