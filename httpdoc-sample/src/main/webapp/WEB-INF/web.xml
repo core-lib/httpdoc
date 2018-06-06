@@ -58,6 +58,10 @@
             <param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>
         </init-param>
         <init-param>
+            <param-name>src</param-name>
+            <param-value>/WEB-INF/src</param-value>
+        </init-param>
+        <init-param>
             <param-name>contentType</param-name>
             <param-value>text/plain</param-value>
         </init-param>
