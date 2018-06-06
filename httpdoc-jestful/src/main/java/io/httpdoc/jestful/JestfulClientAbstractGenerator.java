@@ -165,34 +165,41 @@ public abstract class JestfulClientAbstractGenerator extends ModelGenerator impl
     }
 
     protected void annotate(Parameter parameter, ParameterFragment fragment) {
+        String name = parameter.getName();
         switch (parameter.getScope()) {
             case HTTP_PARAM_SCOPE_HEADER: {
                 HDAnnotation header = new HDAnnotation(Header.class);
-                if (parameter.getName() != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 fragment.getAnnotations().add(header);
                 break;
             }
             case HTTP_PARAM_SCOPE_PATH: {
                 HDAnnotation path = new HDAnnotation(Path.class);
-                if (parameter.getName() != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 fragment.getAnnotations().add(path);
                 break;
             }
             case HTTP_PARAM_SCOPE_QUERY: {
                 HDAnnotation query = new HDAnnotation(Query.class);
-                if (parameter.getName() != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 fragment.getAnnotations().add(query);
                 break;
             }
             case HTTP_PARAM_SCOPE_BODY: {
                 HDAnnotation body = new HDAnnotation(Body.class);
-                if (parameter.getName() != null) body.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) body.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 fragment.getAnnotations().add(body);
                 break;
             }
             case HTTP_PARAM_SCOPE_COOKIE: {
                 HDAnnotation cookie = new HDAnnotation(Cookie.class);
-                if (parameter.getName() != null) cookie.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) cookie.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                fragment.getAnnotations().add(cookie);
+                break;
+            }
+            case HTTP_PARAM_SCOPE_FIELD: {
+                HDAnnotation cookie = new HDAnnotation(Query.class);
+                if (name != null) cookie.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 fragment.getAnnotations().add(cookie);
                 break;
             }

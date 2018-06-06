@@ -14,6 +14,7 @@ public class Parameter extends Definition {
     public static final String HTTP_PARAM_SCOPE_QUERY = "query";
     public static final String HTTP_PARAM_SCOPE_BODY = "body";
     public static final String HTTP_PARAM_SCOPE_COOKIE = "cookie";
+    public static final String HTTP_PARAM_SCOPE_FIELD = "field";
 
     private String name;
     private String scope;

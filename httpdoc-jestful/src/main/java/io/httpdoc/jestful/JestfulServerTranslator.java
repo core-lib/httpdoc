@@ -15,6 +15,7 @@ import org.qfox.jestful.core.MediaType;
 import org.qfox.jestful.core.Position;
 import org.qfox.jestful.core.Resource;
 import org.qfox.jestful.server.MappingRegistry;
+import org.qfox.jestful.server.annotation.Field;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -104,6 +105,9 @@ public class JestfulServerTranslator implements Translator {
                         break;
                     case Position.COOKIE:
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_COOKIE);
+                        break;
+                    case Field.POSITION:
+                        parameter.setScope(Parameter.HTTP_PARAM_SCOPE_FIELD);
                         break;
                     default:
                         break;

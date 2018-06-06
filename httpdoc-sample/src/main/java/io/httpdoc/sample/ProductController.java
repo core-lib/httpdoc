@@ -1,13 +1,14 @@
 package io.httpdoc.sample;
 
 import org.qfox.jestful.core.http.*;
+import org.qfox.jestful.server.annotation.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -27,14 +28,16 @@ public class ProductController {
      * @param s 页面容量
      * @return 产品列表结果
      */
-    @GET("/{page}/{size}") // name=sdfsd&age=12
+    @POST("/{page}/{size}") // name=sdfsd&age=12
     public ProductListResult list(
             @Path("page") int p,
             @Path("size") int s,
-            @Query ProductStatus status,
-            @Query List<String> arr,
-            @Query Product[] products,
-            @Query("map") Map<String, String[]> map
+            @Field ProductStatus status,
+            @Field List<String> arr,
+            @Field Product[] products,
+            @Body("file1") Part file1,
+            @Body("file2") Part file2,
+            HttpServletRequest request
     ) {
         ProductListResult result = new ProductListResult();
         for (int i = (p - 1) * s; i < p * s; i++) {

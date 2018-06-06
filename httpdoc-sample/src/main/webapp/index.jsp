@@ -11,6 +11,12 @@
     <title>Title</title>
 </head>
 <body>
-Hello HttpDoc
+<form action="/httpdoc-sample/products/1/20?status=A&products[2].id=123" method="post">
+    <label>arr: <input name="arr"></label>
+    <label>arr: <input name="arr"></label>
+    <label>arr: <input name="arr"></label>
+    <label>arr: <input name="arr"></label>
+    <button type="submit">提交</button>
+</form>
 </body>
 </html>

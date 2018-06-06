@@ -28,7 +28,7 @@ public class ProductControllerTest {
         Map<String, String[]> map = new HashMap<>();
         map.put("a", new String[]{"a", "a"});
         map.put("b", new String[]{"b", "b"});
-        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A, new String[][]{{"1", "2", "3"}, {"4", "5", "6"}}, map);
+        ListenableFuture<ProductListResult> future = ProductController.INSTANCE.listForGuava(1, 20, ProductStatus.A, new String[]{"4", "5", "6"}, null, map);
         ProductListResult entity = future.get();
         System.out.println(entity);
 
