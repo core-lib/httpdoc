@@ -91,14 +91,17 @@ public class SourceInterpreter implements Interpreter {
 
             String path = getProjectClassAbsolutePath(clazz);
             if (path == null) return null;
-            String classpath = System.getProperty("java.class.path");
+            String lib = System.getProperty("httpdoc.lib.path", System.getProperty("java.class.path"));
+            String src = System.getProperty("httpdoc.src.path", System.getProperty("user.dir"));
             Main.execute(new String[]{
                     "-doclet",
                     Javadoc.class.getName(),
                     "-encoding",
                     "utf-8",
                     "-classpath",
-                    classpath,
+                    lib,
+                    "-sourcepath",
+                    src,
                     path
             });
             ClassDoc doc = root == null ? null : root.classNamed(clazz.getName());

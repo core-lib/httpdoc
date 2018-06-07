@@ -58,8 +58,12 @@
             <param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>
         </init-param>
         <init-param>
-            <param-name>src</param-name>
+            <param-name>httpdoc.src.path</param-name>
             <param-value>/WEB-INF/src</param-value>
+        </init-param>
+        <init-param>
+            <param-name>httpdoc.lib.path</param-name>
+            <param-value>/WEB-INF/lib</param-value>
         </init-param>
         <init-param>
             <param-name>contentType</param-name>

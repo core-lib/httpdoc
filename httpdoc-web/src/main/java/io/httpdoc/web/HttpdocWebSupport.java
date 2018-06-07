@@ -18,6 +18,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -96,12 +97,48 @@ public abstract class HttpdocWebSupport {
             if (serializer != null && serializer.trim().length() > 0) {
                 this.serializer = Class.forName(serializer).asSubclass(Serializer.class).newInstance();
             }
-            String src = config.getInitParameter("src");
+            String src = config.getInitParameter("httpdoc.src.path");
             if (src != null && src.trim().length() > 0) {
                 System.setProperty("httpdoc.src.path", config.getServletContext().getRealPath(src));
             }
+            String lib = config.getInitParameter("httpdoc.lib.path");
+            if (lib != null && lib.trim().length() > 0) {
+                StringBuilder builder = new StringBuilder();
+                String[] roots = lib.split("\\s*;\\s*");
+                for (String root : roots) {
+                    String path = config.getServletContext().getRealPath(root);
+                    if (path == null) continue;
+                    String classpath = classpath(path);
+                    if (classpath == null) continue;
+                    if (builder.length() > 0) builder.append(";");
+                    builder.append(classpath);
+                }
+                System.setProperty("httpdoc.lib.path", builder.toString());
+            }
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+    }
+
+    private String classpath(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            return null;
+        } else if (file.isFile()) {
+            return path.endsWith(".jar") ? path : null;
+        } else if (file.isDirectory()) {
+            StringBuilder builder = new StringBuilder();
+            String[] subs = file.list();
+            for (int i = 0; subs != null && i < subs.length; i++) {
+                String sub = subs[i];
+                String classpath = classpath(path + File.separator + sub);
+                if (classpath == null) continue;
+                if (builder.length() > 0) builder.append(";");
+                builder.append(classpath);
+            }
+            return builder.toString();
+        } else {
+            return null;
         }
     }
 
