@@ -1,7 +1,9 @@
 package io.httpdoc.core.type;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 参数化类型
@@ -30,13 +32,26 @@ public class HDParameterizedType extends HDType {
     }
 
     @Override
-    public CharSequence getFormatName() {
+    public CharSequence getAbbrName() {
         StringBuilder builder = new StringBuilder();
-        builder.append(rawType.getFormatName());
+        builder.append(rawType.getAbbrName());
         for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) {
             if (i == 0) builder.append("<");
             else builder.append(", ");
-            builder.append(actualTypeArguments[i] instanceof HDTypeVariable ? ((HDTypeVariable) actualTypeArguments[i]).getName() : actualTypeArguments[i].getFormatName());
+            builder.append(actualTypeArguments[i] instanceof HDTypeVariable ? ((HDTypeVariable) actualTypeArguments[i]).getName() : actualTypeArguments[i].getAbbrName());
+            if (i == actualTypeArguments.length - 1) builder.append(">");
+        }
+        return builder;
+    }
+
+    @Override
+    public CharSequence getTypeName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(rawType.getTypeName());
+        for (int i = 0; actualTypeArguments != null && i < actualTypeArguments.length; i++) {
+            if (i == 0) builder.append("<");
+            else builder.append(", ");
+            builder.append(actualTypeArguments[i] instanceof HDTypeVariable ? ((HDTypeVariable) actualTypeArguments[i]).getName() : actualTypeArguments[i].getTypeName());
             if (i == actualTypeArguments.length - 1) builder.append(">");
         }
         return builder;

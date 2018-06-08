@@ -17,7 +17,7 @@ public class HDClass extends HDType {
     private static final List<String> PRIMARIES = Arrays.asList("boolean", "byte", "short", "char", "int", "float", "long", "double");
     private final Category category;
     private final String name;
-    private final HDClass componentType;
+    private final HDType componentType;
     private final HDClass enclosingType;
     private HDTypeVariable[] typeParameters;
 
@@ -29,10 +29,10 @@ public class HDClass extends HDType {
         this.category = this.componentType != null ? ARRAY : Category.CLASS;
     }
 
-    public HDClass(HDClass componentType) {
+    public HDClass(HDType componentType) {
         if (componentType == null) throw new NullPointerException();
         this.category = ARRAY;
-        this.name = componentType.getName() + "[]";
+        this.name = componentType.getTypeName() + "[]";
         this.componentType = componentType;
         this.enclosingType = null;
     }
@@ -50,7 +50,7 @@ public class HDClass extends HDType {
             throw new NullPointerException();
         } else if (clazz.isArray()) {
             category = ARRAY;
-            name = (componentType = new HDClass(clazz.getComponentType())).getName() + "[]";
+            name = (componentType = new HDClass(clazz.getComponentType())).getTypeName() + "[]";
             enclosingType = null;
         } else {
             category = clazz.isInterface() ? INTERFACE : clazz.isAnnotation() ? ANNOTATION : clazz.isEnum() ? ENUM : CLASS;
@@ -72,23 +72,28 @@ public class HDClass extends HDType {
     }
 
     @Override
-    public CharSequence getFormatName() {
-        return componentType != null ? componentType.getFormatName() + "[]" : enclosingType != null ? enclosingType.getFormatName() + "." + name : name.substring(name.lastIndexOf('.') + 1);
+    public CharSequence getAbbrName() {
+        return componentType != null ? componentType.getAbbrName() + "[]" : enclosingType != null ? enclosingType.getAbbrName() + "." + name : name.substring(name.lastIndexOf('.') + 1);
+    }
+
+    @Override
+    public CharSequence getTypeName() {
+        return componentType != null ? componentType.getAbbrName() + "[]" : enclosingType != null ? enclosingType.getAbbrName() + "." + name : name;
     }
 
     @Override
     public int length() {
-        return getFormatName().length();
+        return getAbbrName().length();
     }
 
     @Override
     public char charAt(int index) {
-        return getFormatName().charAt(index);
+        return getAbbrName().charAt(index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return getFormatName().subSequence(start, end);
+        return getAbbrName().subSequence(start, end);
     }
 
     public Category getCategory() {
@@ -99,7 +104,7 @@ public class HDClass extends HDType {
         return name;
     }
 
-    public HDClass getComponentType() {
+    public HDType getComponentType() {
         return componentType;
     }
 

@@ -66,7 +66,7 @@ public class ClassFragment extends ModifiedFragment implements Fragment {
         for (int i = 0; typeParameters != null && i < typeParameters.length; i++) {
             if (i == 0) appender.append("<");
             else appender.append(", ");
-            appender.append(typeParameters[i].getFormatName());
+            appender.append(typeParameters[i].getAbbrName());
             if (i == typeParameters.length - 1) appender.append(">");
         }
 

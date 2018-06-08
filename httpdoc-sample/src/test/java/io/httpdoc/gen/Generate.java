@@ -4,7 +4,9 @@ import io.httpdoc.core.Document;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.*;
+import io.httpdoc.jestful.JestfulClientCallbackGenerator;
+import io.httpdoc.jestful.JestfulClientMergedGenerator;
+import io.httpdoc.jestful.JestfulProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,14 +31,15 @@ public class Generate {
 
         generation.setProvider(new JestfulProvider());
         Generator generator = new JestfulClientMergedGenerator()
-                .include(JestfulClientLambdaGenerator.class)
-                .include(JestfulClientFutureGenerator.class)
-                .include(JestfulClientGuavaGenerator.class)
-                .include(JestfulClientJava8Generator.class)
-                .include(JestfulClientMessageGenerator.class)
-                .include(JestfulClientEntityGenerator.class)
-                .include(JestfulClientHeaderGenerator.class)
-                .include(JestfulClientObservableGenerator.class);
+                .exclude(JestfulClientCallbackGenerator.class);
+//                .include(JestfulClientLambdaGenerator.class)
+//                .include(JestfulClientFutureGenerator.class)
+//                .include(JestfulClientGuavaGenerator.class)
+//                .include(JestfulClientJava8Generator.class)
+//                .include(JestfulClientMessageGenerator.class)
+//                .include(JestfulClientEntityGenerator.class)
+//                .include(JestfulClientHeaderGenerator.class)
+//                .include(JestfulClientObservableGenerator.class);
 
         generator.generate(generation);
     }

@@ -15,8 +15,9 @@ import org.nutz.mvc.annotation.Param;
 @At("/articles")
 public class ArticleController {
 
+    @POST
     @At("/?/?")
-    public ArticleListResult list(int page, int size, @Param("article") Article article) {
+    public ArticleListResult list(int page, int size, @Param("article") String article, @Param("article2") String article2) {
         ArticleListResult result = new ArticleListResult();
 
         return result;

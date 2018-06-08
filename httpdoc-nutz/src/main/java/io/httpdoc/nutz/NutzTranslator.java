@@ -15,7 +15,6 @@ import io.httpdoc.core.translation.Translator;
 import org.nutz.lang.util.MethodParamNamesScaner;
 import org.nutz.mvc.*;
 import org.nutz.mvc.adaptor.ParamInjector;
-import org.nutz.mvc.adaptor.QueryStringNameInjector;
 import org.nutz.mvc.adaptor.injector.*;
 import org.nutz.mvc.impl.ActionInvoker;
 import org.nutz.mvc.impl.processor.AdaptorProcessor;
@@ -76,11 +75,18 @@ public class NutzTranslator implements Translator {
                 operation.setName(method.getName());
                 ActionInvoker invoker = entry.getValue();
 
+                String METHOD;
+                ActionChain chain;
                 Map<String, ActionChain> chains = ReflectionKit.getFieldValue(invoker, "chainMap");
-                if (chains.isEmpty()) continue;
-
-                Map.Entry<String, ActionChain> first = chains.entrySet().iterator().next();
-                operation.setMethod(first.getKey());
+                if (chains.isEmpty()) {
+                    METHOD = "POST";
+                    chain = ReflectionKit.getFieldValue(invoker, "defaultChain");
+                } else {
+                    Map.Entry<String, ActionChain> first = chains.entrySet().iterator().next();
+                    METHOD = first.getKey();
+                    chain = first.getValue();
+                }
+                operation.setMethod(METHOD);
 
                 Map<String, String> m = new HashMap<>();
                 MethodInterpretation interpretation = interpreter.interpret(method);
@@ -88,7 +94,7 @@ public class NutzTranslator implements Translator {
                 for (int i = 0; notes != null && i < notes.length; i++) m.put(notes[i].getName(), notes[i].getText());
                 List<String> names = MethodParamNamesScaner.getParamNames(method);
 
-                ActionChain chain = first.getValue();
+
                 Processor processor = ReflectionKit.getFieldValue(chain, "head");
                 while (processor != null && !(processor instanceof AdaptorProcessor)) processor = processor.getNext();
                 if (processor == null) continue;
@@ -96,17 +102,16 @@ public class NutzTranslator implements Translator {
                 String path = entry.getKey();
                 HttpAdaptor adaptor = ReflectionKit.getFieldValue(processor, "adaptor");
                 ParamInjector[] injectors = ReflectionKit.getFieldValue(adaptor, "injs");
-                for (int i = 0; injectors != null && i < injectors.length; i++) {
+                for (int i = 0; injectors != null && i < injectors.length && i < method.getParameterTypes().length; i++) {
                     ParamInjector injector = injectors[i];
                     Parameter parameter = new Parameter();
                     parameter.setType(Schema.valueOf(method.getParameterTypes()[i], provider, interpreter));
-                    if (injector == null) {
-                        continue;
-                    } else if (injector instanceof PathArgInjector) {
-                        parameter.setName(names.get(i));
+
+                    if (path.contains("?")) {
+                        String name = names.get(i);
+                        parameter.setName(name);
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_PATH);
-                        path = path.replaceFirst("\\?", "{" + names.get(i) + "}");
-                        operation.getParameters().add(parameter);
+                        path = path.replaceFirst("\\?", "{" + name + "}");
                     } else if (injector instanceof CookieInjector) {
                         String name = ReflectionKit.getFieldValue(injector, "name");
                         if ("_map".equals(name)) continue;
@@ -117,7 +122,7 @@ public class NutzTranslator implements Translator {
                         if ("_map".equals(name)) continue;
                         parameter.setName(name);
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_HEADER);
-                    } else if (injector instanceof QueryStringNameInjector) {
+                    } else if (injector instanceof NameInjector) {
                         String name = ReflectionKit.getFieldValue(injector, "name");
                         if ("?".equals(name)) continue;
                         parameter.setName(name);
@@ -141,16 +146,19 @@ public class NutzTranslator implements Translator {
                         parameter.setType(Schema.valueOf(File[].class));
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                     } else if (injector instanceof MapSelfInjector) {
-                        parameter.setName(names.get(i));
+                        String name = names.get(i);
+                        parameter.setName(name);
                         parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                     } else {
                         continue;
                     }
-                    String description = m.get(names.get(i));
+                    String key = names.get(i);
+                    String description = m.get(key);
                     parameter.setDescription(description);
                     operation.getParameters().add(parameter);
                 }
+                operation.setPath(path);
 
                 Result result = new Result();
                 Schema type = Schema.valueOf(method.getGenericReturnType(), provider, interpreter);

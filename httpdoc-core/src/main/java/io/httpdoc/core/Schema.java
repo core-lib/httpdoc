@@ -227,7 +227,10 @@ public class Schema extends Definition {
                 HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(pkg, provider)};
                 return new HDParameterizedType(rawType, null, actualTypeArguments);
             case ARRAY:
-                HDClass componentType = (HDClass) component.toType(pkg, provider);
+                HDType componentType = component.toType(pkg, provider);
+                if (!(componentType instanceof HDClass)) {
+                    System.out.println(componentType);
+                }
                 return new HDClass(componentType);
             case ENUM:
                 return new HDClass(HDClass.Category.ENUM, pkg + "." + name);

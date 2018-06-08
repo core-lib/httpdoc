@@ -96,26 +96,28 @@ public abstract class HDType implements CharSequence, Importable {
         return HDType != null ? (HDWildcardType) HDType : javaWildcardType;
     }
 
-    public abstract CharSequence getFormatName();
+    public abstract CharSequence getAbbrName();
+
+    public abstract CharSequence getTypeName();
 
     @Override
     public int length() {
-        return getFormatName().length();
+        return getAbbrName().length();
     }
 
     @Override
     public char charAt(int index) {
-        return getFormatName().charAt(index);
+        return getAbbrName().charAt(index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return getFormatName().subSequence(start, end);
+        return getAbbrName().subSequence(start, end);
     }
 
     @Override
     public String toString() {
-        return getFormatName().toString();
+        return getAbbrName().toString();
     }
 
 }

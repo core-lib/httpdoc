@@ -1,7 +1,6 @@
 package io.httpdoc.core.type;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,8 +20,13 @@ public class HDGenericArrayType extends HDType {
     }
 
     @Override
-    public CharSequence getFormatName() {
-        return genericComponentType.getFormatName() + "[]";
+    public CharSequence getAbbrName() {
+        return genericComponentType.getAbbrName() + "[]";
+    }
+
+    @Override
+    public CharSequence getTypeName() {
+        return genericComponentType.getTypeName() + "[]";
     }
 
     @Override

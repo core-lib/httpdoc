@@ -1,7 +1,6 @@
 package io.httpdoc.core.type;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,10 +23,18 @@ public class HDTypeVariable extends HDType {
     }
 
     @Override
-    public CharSequence getFormatName() {
+    public CharSequence getAbbrName() {
         StringBuilder builder = new StringBuilder();
         builder.append(name);
-        if (bound != null) builder.append(" extends ").append(bound.getFormatName());
+        if (bound != null) builder.append(" extends ").append(bound.getAbbrName());
+        return builder;
+    }
+
+    @Override
+    public CharSequence getTypeName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(name);
+        if (bound != null) builder.append(" extends ").append(bound.getTypeName());
         return builder;
     }
 

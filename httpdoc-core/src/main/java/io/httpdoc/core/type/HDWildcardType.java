@@ -1,8 +1,6 @@
 package io.httpdoc.core.type;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,11 +22,20 @@ public class HDWildcardType extends HDType {
     }
 
     @Override
-    public CharSequence getFormatName() {
+    public CharSequence getAbbrName() {
         StringBuilder builder = new StringBuilder();
         builder.append("?");
-        if (lowerBound != null) builder.append(" super ").append(lowerBound.getFormatName());
-        else if (upperBound != null) builder.append(" extends ").append(upperBound.getFormatName());
+        if (lowerBound != null) builder.append(" super ").append(lowerBound.getAbbrName());
+        else if (upperBound != null) builder.append(" extends ").append(upperBound.getAbbrName());
+        return builder;
+    }
+
+    @Override
+    public CharSequence getTypeName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("?");
+        if (lowerBound != null) builder.append(" super ").append(lowerBound.getTypeName());
+        else if (upperBound != null) builder.append(" extends ").append(upperBound.getTypeName());
         return builder;
     }
 
