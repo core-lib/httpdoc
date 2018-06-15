@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.0.1</version>
+        <version>v1.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
-            <version>v1.0.1</version>
+            <version>v1.0.2</version>
             <scope>system</scope>
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
