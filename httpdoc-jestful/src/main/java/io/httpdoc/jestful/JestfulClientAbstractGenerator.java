@@ -96,7 +96,7 @@ public abstract class JestfulClientAbstractGenerator extends ModelGenerator impl
             interfase.setSuperclass(new HDClass(HDClass.Category.INTERFACE, pkg + "." + "JestfulAPI"));
 
             HDAnnotation http = new HDAnnotation(HTTP.class);
-            http.getProperties().put("value", HDAnnotationConstant.valuesOf(controller.getPath()));
+            http.getProperties().put("value", HDAnnotationConstant.valuesOf(controller.getPath() != null ? controller.getPath() : ""));
             interfase.getAnnotations().add(http);
 
             FieldFragment instance = new FieldFragment(0);
