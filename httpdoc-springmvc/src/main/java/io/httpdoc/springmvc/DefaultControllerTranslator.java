@@ -1,9 +1,10 @@
 package io.httpdoc.springmvc;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.interpretation.ClassInterpretation;
+import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
+import io.httpdoc.core.interpretation.Note;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -23,6 +24,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -84,10 +86,8 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 controllerMap.put(beanType, controller);
                 controllerInfoHolder.setController(controller);
                 controllers.add(controller);
-                if (interpreter != null) {
-                    ClassInterpretation interpret = interpreter.interpret(beanType);
-                    controller.setDescription(interpret == null ? null : interpret.getText());
-                }
+                Interpretation interpretation = interpreter.interpret(beanType);
+                controller.setDescription(interpretation == null ? null : interpretation.getContent());
                 controllerInfoHolder.setHandled(true);
             }
 
@@ -104,7 +104,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
 
         Type returnType = getReturnType(handlerMethod);
 
-        Schema resultSchema = Schema.valueOf(returnType);
+        Schema resultSchema = Schema.valueOf(returnType, interpreter);
 
         RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
         // ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition(); TODO 参数条件暂时不支持
@@ -126,10 +126,8 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 operation.setMethod(requestMethod.name());
                 operation.setPath(new PathProcessor(pattern).process());
                 operation.setConsumes(new ArrayList<String>());
-                if (interpreter != null) {
-                    MethodInterpretation interpret = interpreter.interpret(handlerMethod.getMethod());
-                    operation.setDescription(interpret == null ? null : interpret.getText());
-                }
+                Interpretation interpretation = interpreter.interpret(handlerMethod.getMethod());
+                operation.setDescription(interpretation == null ? null : interpretation.getContent());
                 for (MediaTypeExpression expression : consumesCondition.getExpressions()) {
                     operation.getConsumes().add(expression.getMediaType().toString());
                 }
@@ -182,9 +180,15 @@ public class DefaultControllerTranslator implements ControllerTranslator {
      * @return 参数列表
      */
     private List<Parameter> buildParameters(Operation.HttpMethod httpMethod, HandlerMethod handlerMethod) {
+        Map<String, String> map = new HashMap<>();
+        Method method = handlerMethod.getMethod();
+        MethodInterpretation interpretation = interpreter.interpret(method);
+        Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
+        for (int i = 0; notes != null && i < notes.length; i++) map.put(notes[i].getName(), notes[i].getText());
+
         List<Parameter> parameters = new LinkedList<>();
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        String[] parameterNames = parameterNameDiscoverer.getParameterNames(handlerMethod.getMethod());
+        String[] parameterNames = parameterNameDiscoverer.getParameterNames(method);
 
         for (int i = 0; i < methodParameters.length; i++) {
             MethodParameter methodParameter = methodParameters[i];
@@ -194,8 +198,12 @@ public class DefaultControllerTranslator implements ControllerTranslator {
             }
             Parameter parameter = new Parameter();
             parameter.setName(parameterNames[i]);
-            parameter.setType(Schema.valueOf(methodParameter.getParameterType()));
+            parameter.setType(Schema.valueOf(methodParameter.getParameterType(), interpreter));
             parameter.setScope(getScope(httpMethod, methodParameter));
+
+            String description = map.get(parameterNames[i]);
+            parameter.setDescription(description);
+
             parameters.add(parameter);
         }
         return parameters;

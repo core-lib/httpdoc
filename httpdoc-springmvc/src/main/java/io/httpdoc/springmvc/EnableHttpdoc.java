@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Documented
-@Import(HttpdocSpringMvcConfiguration.class)
+@Import(HttpdocSpringmvcConfiguration.class)
 public @interface EnableHttpdoc {
 }

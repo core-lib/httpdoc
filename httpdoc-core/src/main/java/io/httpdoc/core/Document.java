@@ -8,7 +8,10 @@ import io.httpdoc.core.deserialization.Deserializer;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 文档
@@ -193,28 +196,6 @@ public class Document extends Definition {
 
     public void setSchemas(Map<String, Schema> schemas) {
         this.schemas = schemas;
-    }
-
-    /**
-     * 本方法会根据controllers构建Schemas, 注意每次调用本方法都是重新构建
-     */
-    public void buildSchemas() {
-        if (controllers == null || controllers.size() <= 0) {
-            return;
-        }
-        this.schemas = new LinkedHashMap<>();
-        for (Controller controller : controllers) {
-            for (Operation operation : controller.getOperations()) {
-                for (Parameter parameter : operation.getParameters()) {
-                    Schema type = parameter.getType();
-                    Collection<Schema> dependencies = type.getDependencies();
-                    for (Schema schema : dependencies) this.getSchemas().put(schema.getName(), schema);
-                }
-                Schema type = operation.getResult().getType();
-                Collection<Schema> dependencies = type.getDependencies();
-                for (Schema schema : dependencies) this.getSchemas().put(schema.getName(), schema);
-            }
-        }
     }
 
 }

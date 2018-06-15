@@ -7,6 +7,6 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = {
         "io.httpdoc.springmvc"
 })
-public class HttpdocSpringMvcConfiguration {
+public class HttpdocSpringmvcConfiguration {
 
 }
