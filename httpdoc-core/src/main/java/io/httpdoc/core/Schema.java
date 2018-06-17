@@ -195,6 +195,10 @@ public class Schema extends Definition {
         return category == Category.BASIC && "void".equals(name);
     }
 
+    public boolean isPrimitive() {
+        return category == Category.BASIC && name != null && name.matches("boolean|byte|short|char|int|float|long|double");
+    }
+
     public String toName() {
         switch (category) {
             case BASIC:
@@ -228,10 +232,7 @@ public class Schema extends Definition {
                 return new HDParameterizedType(rawType, null, actualTypeArguments);
             case ARRAY:
                 HDType componentType = component.toType(pkg, provider);
-                if (!(componentType instanceof HDClass)) {
-                    System.out.println(componentType);
-                }
-                return new HDClass(componentType);
+                return component.isPrimitive() ? new HDClass(componentType) : new HDParameterizedType(HDType.valueOf(List.class), null, componentType);
             case ENUM:
                 return new HDClass(HDClass.Category.ENUM, pkg + "." + name);
             case OBJECT:

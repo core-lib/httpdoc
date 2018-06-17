@@ -5,6 +5,7 @@ import io.httpdoc.core.Schema;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -97,7 +98,7 @@ public class SystemProvider implements Provider {
             case "String":
                 return String.class;
             case "Number":
-                return Number.class;
+                return BigDecimal.class;
             case "Date":
                 return Date.class;
             case "File":
