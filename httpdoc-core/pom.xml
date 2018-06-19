@@ -31,9 +31,9 @@
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
-            <version>from-jdk-8</version>
+            <version>from-jdk</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/tools.jar</systemPath>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
     </dependencies>
 
