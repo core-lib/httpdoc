@@ -196,8 +196,9 @@ public class DefaultControllerTranslator implements ControllerTranslator {
             if (parameterType.isInterface() || ignoredParameters.contains(parameterType)) {
                 continue;
             }
+            methodParameter.getParameterName();
             Parameter parameter = new Parameter();
-            parameter.setName(parameterNames[i]);
+            parameter.setName(getName(methodParameter));
             parameter.setType(Schema.valueOf(methodParameter.getParameterType(), interpreter));
             parameter.setScope(getScope(httpMethod, methodParameter));
 
@@ -209,6 +210,26 @@ public class DefaultControllerTranslator implements ControllerTranslator {
         return parameters;
     }
 
+    private String getName(MethodParameter methodParameter) {
+        // cookie < header < path < query < body
+        if (methodParameter.hasParameterAnnotation(RequestBody.class)) {
+            return "";
+        }
+        if (methodParameter.hasParameterAnnotation(RequestParam.class)) {
+            return methodParameter.getParameterAnnotation(RequestParam.class).value();
+        }
+        if (methodParameter.hasParameterAnnotation(PathVariable.class)) {
+            return methodParameter.getParameterAnnotation(PathVariable.class).value();
+        }
+        if (methodParameter.hasParameterAnnotation(RequestHeader.class)) {
+            return methodParameter.getParameterAnnotation(RequestHeader.class).value();
+        }
+        if (methodParameter.hasParameterAnnotation(CookieValue.class)) {
+            return methodParameter.getParameterAnnotation(CookieValue.class).value();
+        }
+        return "";
+    }
+
     /**
      * 获取接口参数的http位置
      *
@@ -218,19 +239,19 @@ public class DefaultControllerTranslator implements ControllerTranslator {
      */
     private String getScope(Operation.HttpMethod httpMethod, MethodParameter methodParameter) {
         // cookie < header < path < query < body
-        if (methodParameter.hasMethodAnnotation(RequestBody.class)) {
+        if (methodParameter.hasParameterAnnotation(RequestBody.class)) {
             return Parameter.HTTP_PARAM_SCOPE_BODY;
         }
-        if (methodParameter.hasMethodAnnotation(RequestParam.class)) {
+        if (methodParameter.hasParameterAnnotation(RequestParam.class)) {
             return Parameter.HTTP_PARAM_SCOPE_QUERY;
         }
-        if (methodParameter.hasMethodAnnotation(PathVariable.class)) {
+        if (methodParameter.hasParameterAnnotation(PathVariable.class)) {
             return Parameter.HTTP_PARAM_SCOPE_PATH;
         }
-        if (methodParameter.hasMethodAnnotation(RequestHeader.class)) {
+        if (methodParameter.hasParameterAnnotation(RequestHeader.class)) {
             return Parameter.HTTP_PARAM_SCOPE_HEADER;
         }
-        if (methodParameter.hasMethodAnnotation(CookieValue.class)) {
+        if (methodParameter.hasParameterAnnotation(CookieValue.class)) {
             return Parameter.HTTP_PARAM_SCOPE_COOKIE;
         }
         return httpMethod.isRequiresRequestBody() ? Parameter.HTTP_PARAM_SCOPE_BODY : Parameter.HTTP_PARAM_SCOPE_QUERY;
