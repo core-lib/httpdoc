@@ -6,7 +6,7 @@
 
     <groupId>io.httpdoc</groupId>
     <artifactId>httpdoc</artifactId>
-    <version>v1.1.0</version>
+    <version>v1.1.1</version>
     <modules>
         <module>httpdoc-core</module>
         <module>httpdoc-springmvc</module>
@@ -64,23 +64,6 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <attach>true</attach>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
