@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.1.5</version>
+        <version>v1.1.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -44,12 +44,12 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-jestful</artifactId>
-            <version>v1.1.5</version>
+            <version>v1.1.6</version>
         </dependency>
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-jackson</artifactId>
-            <version>v1.1.5</version>
+            <version>v1.1.6</version>
         </dependency>
         <dependency>
             <groupId>${jestful.group.id}</groupId>
@@ -111,7 +111,7 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-retrofit</artifactId>
-            <version>v1.1.5</version>
+            <version>v1.1.6</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
@@ -142,13 +142,13 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-web</artifactId>
-            <version>v1.1.5</version>
+            <version>v1.1.6</version>
         </dependency>
 
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-nutz</artifactId>
-            <version>v1.1.5</version>
+            <version>v1.1.6</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -244,6 +244,23 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-src</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../httpdoc-sample/src/main/webapp/WEB-INF/src</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/java</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
