@@ -242,10 +242,10 @@ public class Schema extends Definition {
                 HDType componentType = component.toType(pkg, pkgForced, provider);
                 return component.isPrimitive() ? new HDClass(componentType) : new HDParameterizedType(HDType.valueOf(List.class), null, componentType);
             case ENUM:
-                String enumPkg = pkgForced ? pkg : this.pkg;
+                String enumPkg = pkgForced || this.pkg == null ? pkg : this.pkg;
                 return new HDClass(HDClass.Category.ENUM, (enumPkg == null || enumPkg.isEmpty() ? "" : enumPkg + ".") + name);
             case OBJECT:
-                String classPkg = pkgForced ? pkg : this.pkg;
+                String classPkg = pkgForced || this.pkg == null ? pkg : this.pkg;
                 return new HDClass((classPkg == null || classPkg.isEmpty() ? "" : classPkg + ".") + name);
             default:
                 throw new IllegalStateException();

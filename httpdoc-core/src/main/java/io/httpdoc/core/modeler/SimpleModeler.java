@@ -36,7 +36,7 @@ public class SimpleModeler implements Modeler {
         final Provider provider = archetype.getProvider();
         final Schema schema = archetype.getSchema();
         final String pkgTranslated = schema.getPkg();
-        final String pkg = pkgForced ? pkgGenerated : pkgTranslated;
+        final String pkg = pkgForced || pkgTranslated == null ? pkgGenerated : pkgTranslated;
         final String name = schema.getName();
         final ClassFragment clazz = new ClassFragment();
         clazz.setPkg(pkg);
