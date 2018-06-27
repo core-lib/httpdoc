@@ -27,4 +27,6 @@ public interface Format {
 
     String getArrSuffix();
 
+    boolean isPkgIncluded();
+
 }

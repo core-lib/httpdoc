@@ -2,6 +2,8 @@ package io.httpdoc.web;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.Converter;
+import io.httpdoc.core.conversion.CustomFormat;
+import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.interpretation.DefaultInterpreter;
@@ -12,6 +14,8 @@ import io.httpdoc.core.serialization.Serializer;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
+import io.httpdoc.web.conversion.Conversion;
+import io.httpdoc.web.conversion.ConversionProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -20,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Map;
 
 /**
@@ -42,6 +47,8 @@ public abstract class HttpdocWebSupport {
     private Interpreter interpreter = new DefaultInterpreter();
     private Converter converter = new StandardConverter();
     private Serializer serializer = new HttpdocSuffixSerializer();
+    private ConversionProvider conversionProvider = new HttpdocConversionProvider();
+    private Format format = new CustomFormat();
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
@@ -91,7 +98,7 @@ public abstract class HttpdocWebSupport {
             }
             String converter = config.getInitParameter("converter");
             if (converter != null && converter.trim().length() > 0) {
-                this.converter = Class.forName(interpreter).asSubclass(Converter.class).newInstance();
+                this.converter = Class.forName(converter).asSubclass(Converter.class).newInstance();
             }
             String serializer = config.getInitParameter("serializer");
             if (serializer != null && serializer.trim().length() > 0) {
@@ -114,6 +121,20 @@ public abstract class HttpdocWebSupport {
                     builder.append(classpath);
                 }
                 System.setProperty("httpdoc.lib.path", builder.toString());
+            }
+            Enumeration<String> names = config.getInitParameterNames();
+            while (names.hasMoreElements()) {
+                String expression = names.nextElement();
+                if (!expression.startsWith("format.")) continue;
+                conversionProvider.convert(new Conversion(
+                        "format",
+                        format,
+                        CustomFormat.class,
+                        true,
+                        "UTF-8",
+                        expression,
+                        new String[]{config.getInitParameter(expression)}
+                ));
             }
         } catch (Exception e) {
             throw new ServletException(e);
@@ -161,7 +182,7 @@ public abstract class HttpdocWebSupport {
             Document document = translator.translate(translation);
             response.setCharacterEncoding(charset);
             response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);
-            Map<String, Object> doc = converter.convert(document);
+            Map<String, Object> doc = converter.convert(document, format);
             serializer.serialize(doc, response.getOutputStream());
         } catch (DocumentTranslationException e) {
             throw new ServletException(e);

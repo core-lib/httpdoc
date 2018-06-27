@@ -18,7 +18,7 @@ import java.net.URL;
 public class Generate {
 
     public static void main(String... args) throws IOException {
-        Document document = Document.from(new URL("http://localhost:8080/new-mf-fac/httpdoc.yaml"), new YamlDeserializer());
+        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
         Generation generation = new Generation(document);
         generation.setPkg("io.httpdoc.gen");
         generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\main\\java\\io\\httpdoc\\gen");

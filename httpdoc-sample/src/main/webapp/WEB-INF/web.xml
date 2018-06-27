@@ -69,6 +69,10 @@
             <param-name>contentType</param-name>
             <param-value>text/plain</param-value>
         </init-param>
+        <init-param>
+            <param-name>format.pkgIncluded</param-name>
+            <param-value>false</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>httpdoc</filter-name>

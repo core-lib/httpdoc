@@ -14,6 +14,7 @@ public class Generation {
     private Document document;
     private String directory = System.getProperty("tmp.dir") + "io/httpdoc/gen";
     private String pkg = "io.httpdoc.gen";
+    private boolean pkgForced = false;
     private Provider provider = new SystemProvider();
 
     public Generation(Document document) {
@@ -42,6 +43,14 @@ public class Generation {
 
     public void setPkg(String pkg) {
         this.pkg = pkg;
+    }
+
+    public boolean isPkgForced() {
+        return pkgForced;
+    }
+
+    public void setPkgForced(boolean pkgForced) {
+        this.pkgForced = pkgForced;
     }
 
     public Provider getProvider() {

@@ -16,6 +16,7 @@
         <module>httpdoc-gson</module>
         <module>httpdoc-nutz</module>
         <module>httpdoc-retrofit</module>
+        <module>httpdoc-sample</module>
     </modules>
     <packaging>pom</packaging>
 

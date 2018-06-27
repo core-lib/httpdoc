@@ -26,11 +26,11 @@ public class StandardConverter implements Converter {
                 for (Parameter parameter : operation.getParameters()) {
                     Schema type = parameter.getType();
                     Collection<Schema> dependencies = type.getDependencies();
-                    for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
+                    for (Schema schema : dependencies) document.getSchemas().put((format.isPkgIncluded() ? schema.getPkg() + "." : "") + schema.getName(), schema);
                 }
                 Schema type = operation.getResult().getType();
                 Collection<Schema> dependencies = type.getDependencies();
-                for (Schema schema : dependencies) document.getSchemas().put(schema.getName(), schema);
+                for (Schema schema : dependencies) document.getSchemas().put((format.isPkgIncluded() ? schema.getPkg() + "." : "") + schema.getName(), schema);
             }
         }
 
@@ -198,6 +198,7 @@ public class StandardConverter implements Converter {
     protected Map<String, Object> doConvertSchema(Schema schema, Format format) {
         Category category = schema.getCategory();
         Map<String, Object> map = new LinkedHashMap<>();
+        if (format.isPkgIncluded() && schema.getPkg() != null) map.put("pkg", schema.getPkg());
         switch (category) {
             case BASIC:
                 return null;
@@ -257,9 +258,9 @@ public class StandardConverter implements Converter {
             case ARRAY:
                 return format.getArrPrefix() + doConvertReference(schema.getComponent(), format) + format.getArrSuffix();
             case ENUM:
-                return format.getRefPrefix() + schema.getName() + format.getRefSuffix();
+                return format.getRefPrefix() + (format.isPkgIncluded() ? schema.getPkg() + "." : "") + schema.getName() + format.getRefSuffix();
             case OBJECT:
-                return format.getRefPrefix() + schema.getName() + format.getRefSuffix();
+                return format.getRefPrefix() + (format.isPkgIncluded() ? schema.getPkg() + "." : "") + schema.getName() + format.getRefSuffix();
             default:
                 return null;
         }
@@ -300,12 +301,13 @@ public class StandardConverter implements Converter {
         Map<?, ?> map = (Map<?, ?>) object;
         Map<String, SchemaDefinition> definitions = new LinkedHashMap<>();
         for (Map.Entry<?, ?> entry : map.entrySet()) {
-            String name = (String) entry.getKey();
+            String key = (String) entry.getKey();
             Map<?, ?> definition = (Map<?, ?>) entry.getValue();
             Schema schema = new Schema();
-            schema.setName(name);
-            document.getSchemas().put(name, schema);
-            definitions.put(name, new SchemaDefinition(schema, definition));
+            String[] names = key.split("\\.");
+            schema.setName(names[names.length - 1]);
+            document.getSchemas().put(key, schema);
+            definitions.put(key, new SchemaDefinition(schema, definition));
         }
         for (Map.Entry<String, SchemaDefinition> entry : definitions.entrySet()) {
             SchemaDefinition definition = entry.getValue();
@@ -318,6 +320,8 @@ public class StandardConverter implements Converter {
         Map<?, ?> definition = schemaDefinition.definition;
         schema.setCategory(Category.OBJECT);
 
+        String pkg = (String) definition.get("pkg");
+        schema.setPkg(pkg);
         String superclass = (String) definition.get("superclass");
         if (superclass != null) schema.setSuperclass(doConvertReference(document, superclass));
 

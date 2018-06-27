@@ -11,14 +11,16 @@ import io.httpdoc.core.provider.Provider;
  **/
 public class Archetype {
     private String pkg;
+    private boolean pkgForced;
     private Provider provider;
     private Schema schema;
 
     public Archetype() {
     }
 
-    public Archetype(String pkg, Provider provider, Schema schema) {
+    public Archetype(String pkg, boolean pkgForced, Provider provider, Schema schema) {
         this.pkg = pkg;
+        this.pkgForced = pkgForced;
         this.provider = provider;
         this.schema = schema;
     }
@@ -29,6 +31,14 @@ public class Archetype {
 
     public void setPkg(String pkg) {
         this.pkg = pkg;
+    }
+
+    public boolean isPkgForced() {
+        return pkgForced;
+    }
+
+    public void setPkgForced(boolean pkgForced) {
+        this.pkgForced = pkgForced;
     }
 
     public Provider getProvider() {

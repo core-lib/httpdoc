@@ -24,10 +24,12 @@ public class Schema extends Definition {
     private static final long serialVersionUID = 9146240988324413872L;
 
     private Category category;
+    private String pkg;
     private String name;
     private Schema superclass;
     private Map<String, Property> properties = new LinkedHashMap<>();
     private Schema component;
+    private Schema owner;
     private Set<Constant> constants = new LinkedHashSet<>();
     private Collection<Schema> dependencies = new ArrayList<>();
 
@@ -54,7 +56,9 @@ public class Schema extends Definition {
                 } else if (clazz.isEnum()) {
                     Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
                     this.category = Category.ENUM;
+                    this.pkg = clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
+                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
                     for (Enum<?> enumeration : enumerations) {
                         EnumInterpretation interpretation = interpreter.interpret(enumeration);
@@ -66,7 +70,9 @@ public class Schema extends Definition {
                     this.description = interpretation != null ? interpretation.getContent() : null;
                 } else {
                     this.category = Category.OBJECT;
+                    this.pkg = clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
+                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
                     this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                     for (PropertyDescriptor descriptor : descriptors) {
@@ -101,7 +107,9 @@ public class Schema extends Definition {
                         cache.remove(type);
                     } else {
                         this.category = Category.OBJECT;
+                        this.pkg = clazz.getPackage().getName();
                         this.name = clazz.getSimpleName();
+                        this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
                         this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                         for (PropertyDescriptor descriptor : descriptors) {
@@ -250,6 +258,14 @@ public class Schema extends Definition {
         this.category = category;
     }
 
+    public String getPkg() {
+        return pkg;
+    }
+
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
+    }
+
     public String getName() {
         return name;
     }
@@ -278,16 +294,24 @@ public class Schema extends Definition {
         return component;
     }
 
+    public void setComponent(Schema component) {
+        this.component = component;
+    }
+
+    public Schema getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Schema owner) {
+        this.owner = owner;
+    }
+
     public Set<Constant> getConstants() {
         return constants;
     }
 
     public void setConstants(Set<Constant> constants) {
         this.constants = constants;
-    }
-
-    public void setComponent(Schema component) {
-        this.component = component;
     }
 
     public Collection<Schema> getDependencies() {

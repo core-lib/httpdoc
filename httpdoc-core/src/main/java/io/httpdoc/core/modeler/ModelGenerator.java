@@ -34,6 +34,7 @@ public abstract class ModelGenerator implements Generator {
         if (schemas == null) return;
         String directory = generation.getDirectory();
         String pkg = generation.getPkg();
+        boolean pkgForced = generation.isPkgForced();
         Provider provider = generation.getProvider();
         for (Schema schema : schemas.values()) {
             OutputStream out = null;
@@ -43,7 +44,7 @@ public abstract class ModelGenerator implements Generator {
                 File folder = file.getParentFile();
                 if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
                 out = new FileOutputStream(file);
-                Archetype archetype = new Archetype(pkg, provider, schema);
+                Archetype archetype = new Archetype(pkg, pkgForced, provider, schema);
                 Model model = modeler.design(archetype);
                 model.buildTo(out);
             } finally {

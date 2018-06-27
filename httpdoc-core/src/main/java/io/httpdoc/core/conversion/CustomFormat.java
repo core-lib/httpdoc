@@ -6,13 +6,14 @@ package io.httpdoc.core.conversion;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-19 11:03
  **/
-public  class CustomFormat implements Format {
+public class CustomFormat implements Format {
     private String refPrefix = Format.REF_PREFIX;
     private String refSuffix = Format.REF_SUFFIX;
     private String mapPrefix = Format.MAP_PREFIX;
     private String mapSuffix = Format.MAP_SUFFIX;
     private String arrPrefix = Format.ARR_PREFIX;
     private String arrSuffix = Format.ARR_SUFFIX;
+    private boolean pkgIncluded = false;
 
     @Override
     public String getRefPrefix() {
@@ -66,5 +67,14 @@ public  class CustomFormat implements Format {
 
     public void setArrSuffix(String arrSuffix) {
         this.arrSuffix = arrSuffix;
+    }
+
+    @Override
+    public boolean isPkgIncluded() {
+        return pkgIncluded;
+    }
+
+    public void setPkgIncluded(boolean pkgIncluded) {
+        this.pkgIncluded = pkgIncluded;
     }
 }
