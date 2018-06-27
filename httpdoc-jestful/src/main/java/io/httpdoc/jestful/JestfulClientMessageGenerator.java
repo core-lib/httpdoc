@@ -36,13 +36,13 @@ public class JestfulClientMessageGenerator extends JestfulClientAbstractGenerato
     }
 
     @Override
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation) {
+    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         method.setType(HDType.valueOf(Message.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
-        if (parameters != null) generate(pkg, provider, method, parameters);
+        if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
 
         describe(operation, method, parameters);
 

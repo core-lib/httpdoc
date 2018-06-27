@@ -13,6 +13,13 @@ import java.io.Writer;
 public interface Model {
 
     /**
+     * 名称
+     *
+     * @return 名称
+     */
+    String name();
+
+    /**
      * 建造
      *
      * @param out 输出流

@@ -12,11 +12,20 @@ import java.util.List;
 public class Controller extends Definition {
     private static final long serialVersionUID = -8892526543537266934L;
 
+    private String pkg;
     private String name;
     private String path;
     private List<String> produces = new ArrayList<>();
     private List<String> consumes = new ArrayList<>();
     private List<Operation> operations = new ArrayList<>();
+
+    public String getPkg() {
+        return pkg;
+    }
+
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
+    }
 
     public String getName() {
         return name;

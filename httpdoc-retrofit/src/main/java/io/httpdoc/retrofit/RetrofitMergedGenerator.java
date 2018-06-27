@@ -41,8 +41,8 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
-        for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, provider, interfase, document, controller, operation);
+    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
+        for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, provider, interfase, document, controller, operation);
     }
 
     @Override

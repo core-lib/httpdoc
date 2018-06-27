@@ -39,13 +39,14 @@ public abstract class ModelGenerator implements Generator {
         for (Schema schema : schemas.values()) {
             OutputStream out = null;
             try {
-                String name = schema.getName();
-                File file = new File(directory + "/" + name + ".java");
+                Archetype archetype = new Archetype(pkg, pkgForced, provider, schema);
+                Model model = modeler.design(archetype);
+                String name = model.name();
+                String path = directory + File.separator + name.replace(".", File.separator) + ".java";
+                File file = new File(path);
                 File folder = file.getParentFile();
                 if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
                 out = new FileOutputStream(file);
-                Archetype archetype = new Archetype(pkg, pkgForced, provider, schema);
-                Model model = modeler.design(archetype);
                 model.buildTo(out);
             } finally {
                 IOKit.close(out);

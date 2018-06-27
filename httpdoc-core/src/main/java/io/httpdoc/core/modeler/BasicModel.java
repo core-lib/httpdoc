@@ -14,12 +14,19 @@ import java.io.Writer;
  * @date 2018-05-18 11:19
  **/
 public class BasicModel extends AbstractModel implements Model {
+    private final String name;
     private final Src<Preference> src;
     private final Preference preference;
 
-    public BasicModel(Src<Preference> src, Preference preference) {
+    public BasicModel(String name, Src<Preference> src, Preference preference) {
+        this.name = name;
         this.src = src;
         this.preference = preference;
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 
     @Override

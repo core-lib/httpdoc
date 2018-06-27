@@ -66,6 +66,7 @@ public class JestfulServerTranslator implements Translator {
             Controller controller = controllers.get(clazz);
             if (controller == null) {
                 controller = new Controller();
+                controller.setPkg(clazz.getPackage().getName());
                 controller.setName(clazz.getSimpleName());
                 Resource resource = mapping.getResource();
                 controller.setPath(normalize(resource.getExpression()));

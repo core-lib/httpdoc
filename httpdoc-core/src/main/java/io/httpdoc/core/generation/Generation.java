@@ -12,8 +12,8 @@ import io.httpdoc.core.provider.SystemProvider;
  **/
 public class Generation {
     private Document document;
-    private String directory = System.getProperty("tmp.dir") + "io/httpdoc/gen";
-    private String pkg = "io.httpdoc.gen";
+    private String directory = System.getProperty("user.dir");
+    private String pkg = "";
     private boolean pkgForced = false;
     private Provider provider = new SystemProvider();
 

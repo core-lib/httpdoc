@@ -64,6 +64,7 @@ public class NutzTranslator implements Translator {
                 Controller controller = controllers.get(clazz);
                 if (controller == null) {
                     controller = new Controller();
+                    controller.setPkg(clazz.getPackage().getName());
                     controller.setName(clazz.getSimpleName());
                     controller.setPath("");
                     Interpretation interpretation = interpreter.interpret(clazz);

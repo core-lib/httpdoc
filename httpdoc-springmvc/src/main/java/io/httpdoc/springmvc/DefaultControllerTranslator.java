@@ -82,6 +82,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
             Controller controller = controllerMap.get(beanType);
             if (controller == null) {
                 controller = new Controller();
+                controller.setPkg(beanType.getPackage().getName());
                 controller.setName(beanType.getSimpleName());
                 controllerMap.put(beanType, controller);
                 controllerInfoHolder.setController(controller);

@@ -40,16 +40,16 @@ public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerat
     }
 
     @Override
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation) {
+    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
         method.setType(HDType.valueOf(void.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
-        if (parameters != null) generate(pkg, provider, method, parameters);
+        if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
 
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, provider) : null;
         ParameterFragment callback = new ParameterFragment();
         callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Entity.class)));
         callback.setName("callback");

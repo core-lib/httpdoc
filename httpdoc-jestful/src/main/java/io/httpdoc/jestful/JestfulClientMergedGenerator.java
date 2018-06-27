@@ -40,8 +40,8 @@ public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator
     }
 
     @Override
-    protected void generate(String pkg, Provider provider, ClassFragment interfase, Operation operation) {
-        for (JestfulClientAbstractGenerator generator : generators.values()) generator.generate(pkg, provider, interfase, operation);
+    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Operation operation) {
+        for (JestfulClientAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, provider, interfase, operation);
     }
 
     public JestfulClientMergedGenerator include(Class<? extends JestfulClientAbstractGenerator> clazz) {

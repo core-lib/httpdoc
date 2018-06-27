@@ -65,6 +65,9 @@ public class StandardConverter implements Converter {
     protected Map<String, Object> doConvertController(Controller controller, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
 
+        String pkg = controller.getPkg();
+        if (pkg != null && format.isPkgIncluded()) map.put("pkg", pkg);
+
         String name = controller.getName();
         if (name != null) map.put("name", name);
 
@@ -198,7 +201,8 @@ public class StandardConverter implements Converter {
     protected Map<String, Object> doConvertSchema(Schema schema, Format format) {
         Category category = schema.getCategory();
         Map<String, Object> map = new LinkedHashMap<>();
-        if (format.isPkgIncluded() && schema.getPkg() != null) map.put("pkg", schema.getPkg());
+        String pkg = schema.getPkg();
+        if (pkg != null && format.isPkgIncluded()) map.put("pkg", pkg);
         switch (category) {
             case BASIC:
                 return null;
@@ -405,6 +409,7 @@ public class StandardConverter implements Converter {
     protected void doConvertController(Document document, Map<?, ?> map) {
         Controller controller = new Controller();
 
+        controller.setPkg((String) map.get("pkg"));
         controller.setName((String) map.get("name"));
         controller.setPath((String) map.get("path"));
 
