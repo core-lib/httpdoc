@@ -15,6 +15,7 @@ public class Generation {
     private String directory = System.getProperty("user.dir");
     private String pkg = "";
     private boolean pkgForced = false;
+    private boolean instanced = false;
     private Provider provider = new SystemProvider();
 
     public Generation(Document document) {
@@ -51,6 +52,14 @@ public class Generation {
 
     public void setPkgForced(boolean pkgForced) {
         this.pkgForced = pkgForced;
+    }
+
+    public boolean isInstanced() {
+        return instanced;
+    }
+
+    public void setInstanced(boolean instanced) {
+        this.instanced = instanced;
     }
 
     public Provider getProvider() {

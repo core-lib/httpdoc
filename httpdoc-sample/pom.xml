@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.1.6</version>
+        <version>v1.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,7 +18,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jestful.group.id>com.github.core-lib.jestful</jestful.group.id>
-        <jestful.version>v2.2.1</jestful.version>
+        <jestful.version>v2.2.6</jestful.version>
         <spring.version>4.3.9.RELEASE</spring.version>
     </properties>
 
@@ -44,12 +44,12 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-jestful</artifactId>
-            <version>v1.1.6</version>
+            <version>v1.2.0</version>
         </dependency>
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-jackson</artifactId>
-            <version>v1.1.6</version>
+            <version>v1.2.0</version>
         </dependency>
         <dependency>
             <groupId>${jestful.group.id}</groupId>
@@ -80,6 +80,12 @@
             <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-json</artifactId>
             <version>${jestful.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -111,7 +117,7 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-retrofit</artifactId>
-            <version>v1.1.6</version>
+            <version>v1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
@@ -142,13 +148,13 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-web</artifactId>
-            <version>v1.1.6</version>
+            <version>v1.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-nutz</artifactId>
-            <version>v1.1.6</version>
+            <version>v1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -156,6 +162,31 @@
             <version>1.r.65</version>
         </dependency>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.39</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.3.10.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.10</version>
+        </dependency>
     </dependencies>
 
     <profiles>

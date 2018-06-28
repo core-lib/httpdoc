@@ -2,7 +2,9 @@ package io.httpdoc.sample;
 
 import org.qfox.jestful.core.http.*;
 import org.qfox.jestful.server.annotation.Field;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,9 @@ import java.util.Random;
 @Controller
 public class ProductController {
 
+    @Autowired
+    private ProductAPI productAPI;
+
     /**
      * 分页获取产品列表
      *
@@ -28,7 +33,8 @@ public class ProductController {
      * @param s 页面容量
      * @return 产品列表结果
      */
-    @POST("/{page}/{size}") // name=sdfsd&age=12
+    @Transactional
+    @GET("/{page}/{size}") // name=sdfsd&age=12
     public ProductListResult list(
             @Path("page") int p,
             @Path("size") int s,

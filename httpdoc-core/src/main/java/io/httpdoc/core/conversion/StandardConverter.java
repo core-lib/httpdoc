@@ -65,11 +65,11 @@ public class StandardConverter implements Converter {
     protected Map<String, Object> doConvertController(Controller controller, Format format) {
         Map<String, Object> map = new LinkedHashMap<>();
 
-        String pkg = controller.getPkg();
-        if (pkg != null && format.isPkgIncluded()) map.put("pkg", pkg);
-
         String name = controller.getName();
         if (name != null) map.put("name", name);
+
+        String pkg = controller.getPkg();
+        if (pkg != null && format.isPkgIncluded()) map.put("pkg", pkg);
 
         String path = controller.getPath();
         if (path != null) map.put("path", path);
