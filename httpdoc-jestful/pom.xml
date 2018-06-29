@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.2.2</version>
+        <version>v1.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <jestful.group.id>com.github.core-lib.jestful</jestful.group.id>
         <jestful.version>v2.2.9</jestful.version>
     </properties>
 
@@ -36,22 +35,22 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-core</artifactId>
-            <version>v1.2.2</version>
+            <version>v1.2.3</version>
         </dependency>
         <dependency>
-            <groupId>${jestful.group.id}</groupId>
+            <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
             <version>${jestful.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${jestful.group.id}</groupId>
+            <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-client</artifactId>
             <version>${jestful.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${jestful.group.id}</groupId>
+            <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-guava</artifactId>
             <version>${jestful.version}</version>
             <scope>provided</scope>
