@@ -1,4 +1,4 @@
-package io.httpdoc.core.annotation;
+package io.httpdoc.core.fragment.annotation;
 
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;

@@ -2,8 +2,8 @@ package io.httpdoc.core.fragment;
 
 import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
-import io.httpdoc.core.annotation.HDAnnotation;
 import io.httpdoc.core.appender.LineAppender;
+import io.httpdoc.core.fragment.annotation.HDAnnotation;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;

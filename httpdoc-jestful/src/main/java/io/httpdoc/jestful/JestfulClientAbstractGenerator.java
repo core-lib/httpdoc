@@ -1,13 +1,13 @@
 package io.httpdoc.jestful;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.annotation.HDAnnotation;
-import io.httpdoc.core.annotation.HDAnnotationConstant;
 import io.httpdoc.core.appender.FileAppender;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.CommentFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
+import io.httpdoc.core.fragment.annotation.HDAnnotation;
+import io.httpdoc.core.fragment.annotation.HDAnnotationConstant;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.kit.StringKit;

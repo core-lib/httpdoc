@@ -1,15 +1,14 @@
-package io.httpdoc.core.annotation;
+package io.httpdoc.core.fragment.annotation;
 
-import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
-import io.httpdoc.core.Src;
 import io.httpdoc.core.appender.AppendableAppender;
+import io.httpdoc.core.fragment.Fragment;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 
-public abstract class HDAnnotationConstant implements Src<Preference>, Importable {
+public abstract class HDAnnotationConstant implements Fragment {
 
     public static HDAnnotationConstant[] valuesOf(Object... objects) {
         if (objects == null) throw new NullPointerException();

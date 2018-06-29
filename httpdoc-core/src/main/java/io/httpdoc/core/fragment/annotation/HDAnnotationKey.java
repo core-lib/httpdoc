@@ -1,4 +1,4 @@
-package io.httpdoc.core.annotation;
+package io.httpdoc.core.fragment.annotation;
 
 public class HDAnnotationKey implements CharSequence {
     private final String name;
