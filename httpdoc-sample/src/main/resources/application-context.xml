@@ -23,10 +23,17 @@
         <constructor-arg index="0" ref="bioClientBuilder"/>
     </bean>
 
-    <bean class="org.qfox.jestful.client.spring.JestfulSpringBeanProcessor">
-        <property name="basePackage" value="io.httpdoc.sample"/>
+    <bean class="org.qfox.jestful.client.spring.JestfulSpringBean">
         <property name="client" ref="bioClient"/>
+        <property name="interfase" value="io.httpdoc.sample.ProductAPI"/>
+        <property name="singleton" value="true"/>
     </bean>
+
+    <!--<bean class="org.qfox.jestful.client.spring.JestfulSpringBeanProcessor">-->
+    <!--<property name="packages" value="io.httpdoc.**"/>-->
+    <!--<property name="client" ref="bioClient"/>-->
+    <!--<property name="singleton" value="false"/>-->
+    <!--</bean>-->
 
     <context:property-placeholder location="classpath:*-config.properties"/>
     <!--数据源配置-->

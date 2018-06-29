@@ -18,7 +18,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jestful.group.id>com.github.core-lib.jestful</jestful.group.id>
-        <jestful.version>v2.2.6</jestful.version>
+        <jestful.version>v2.2.8</jestful.version>
         <spring.version>4.3.9.RELEASE</spring.version>
     </properties>
 
@@ -80,12 +80,6 @@
             <groupId>${jestful.group.id}</groupId>
             <artifactId>jestful-json</artifactId>
             <version>${jestful.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
