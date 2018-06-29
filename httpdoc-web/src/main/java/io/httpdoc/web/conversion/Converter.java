@@ -10,14 +10,14 @@ import java.util.Map;
  **/
 public interface Converter<T> {
 
-    boolean supports(Class<?> type);
-
-    Map<String, String[]> convert(String name, T value, ConversionProvider provider) throws Exception;
-
     /**
      * 为了递归的缺省键
      */
     String KEY = "KEY";
+
+    boolean supports(Class<?> type);
+
+    Map<String, String[]> convert(String name, T value, ConversionProvider provider) throws Exception;
 
     /**
      * 是否支持该转换动作

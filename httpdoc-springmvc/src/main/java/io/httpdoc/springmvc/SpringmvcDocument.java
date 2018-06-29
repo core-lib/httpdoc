@@ -10,11 +10,12 @@ import io.httpdoc.core.Document;
  **/
 public class SpringmvcDocument {
 
+    private static volatile SpringmvcDocument instance;
+    private Document document;
+
     private SpringmvcDocument() {
 
     }
-
-    private static volatile SpringmvcDocument instance;
 
     public static SpringmvcDocument getInstance() {
         if (instance != null) {
@@ -28,8 +29,6 @@ public class SpringmvcDocument {
         }
         return instance;
     }
-
-    private Document document;
 
     public boolean isInit() {
         return document != null;

@@ -5,7 +5,6 @@ import io.httpdoc.core.appender.LineAppender;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**

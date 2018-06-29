@@ -5,7 +5,6 @@ import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.type.HDClass;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 public class HDAnnotationEnum extends HDAnnotationConstant {

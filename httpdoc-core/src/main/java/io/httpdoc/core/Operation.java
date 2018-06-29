@@ -89,13 +89,6 @@ public class Operation extends Definition {
         OPTIONS(true, false),
         TRACE(false, false);
 
-        HttpMethod(boolean permitsRequestBody, boolean requiresRequestBody) {
-            this.permitsRequestBody = permitsRequestBody;
-            this.requiresRequestBody = requiresRequestBody;
-        }
-
-        private boolean permitsRequestBody;
-        private boolean requiresRequestBody;
         private static final Map<String, HttpMethod> mappings = new HashMap<String, HttpMethod>(8);
 
         static {
@@ -104,6 +97,13 @@ public class Operation extends Definition {
             }
         }
 
+        private boolean permitsRequestBody;
+        private boolean requiresRequestBody;
+
+        HttpMethod(boolean permitsRequestBody, boolean requiresRequestBody) {
+            this.permitsRequestBody = permitsRequestBody;
+            this.requiresRequestBody = requiresRequestBody;
+        }
 
         public static HttpMethod resolve(String method) {
             return (method != null ? mappings.get(method) : null);

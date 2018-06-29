@@ -27,14 +27,6 @@ public class PathProcessor {
 
     private final Map<String, String> replaceMapper = new HashMap<>();
 
-    public Map<String, String> getReplaceMapper() {
-        return replaceMapper;
-    }
-
-    public List<String> getVariableNames() {
-        return variableNames;
-    }
-
     PathProcessor(String pattern) {
         this(pattern, true);
     }
@@ -73,6 +65,14 @@ public class PathProcessor {
         patternBuilder.append(quote(pattern, end, pattern.length()));
         this.pattern = (caseSensitive ? Pattern.compile(patternBuilder.toString()) :
                 Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE));
+    }
+
+    public Map<String, String> getReplaceMapper() {
+        return replaceMapper;
+    }
+
+    public List<String> getVariableNames() {
+        return variableNames;
     }
 
     private String quote(String s, int start, int end) {

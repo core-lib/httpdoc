@@ -1,6 +1,5 @@
 package io.httpdoc.sample;
 
-import org.qfox.jestful.core.http.*;
 import org.qfox.jestful.server.annotation.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

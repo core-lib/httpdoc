@@ -8,12 +8,6 @@ package io.httpdoc.core;
  **/
 public interface Preference {
 
-    int getIndent();
-
-    boolean isAnnotationDefaultValueHidden();
-
-    boolean isAnnotationValueKeyHiddenIfUnnecessary();
-
     Preference DEFAULT = new Preference() {
         @Override
         public int getIndent() {
@@ -30,5 +24,11 @@ public interface Preference {
             return true;
         }
     };
+
+    int getIndent();
+
+    boolean isAnnotationDefaultValueHidden();
+
+    boolean isAnnotationValueKeyHiddenIfUnnecessary();
 
 }

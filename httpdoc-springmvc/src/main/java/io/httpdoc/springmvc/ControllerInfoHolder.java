@@ -31,6 +31,27 @@ public class ControllerInfoHolder {
      */
     private Controller controller;
 
+    /**
+     * 封装从 SpringMVC 取到的接口信息到{@link #controllerInfoHolders}
+     *
+     * @param map 接口信息
+     */
+    public static void buildControllerInfo(Map<RequestMappingInfo, HandlerMethod> map) {
+        for (Object o : map.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            RequestMappingInfo requestMappingInfo = (RequestMappingInfo) entry.getKey();
+            HandlerMethod handlerMethod = (HandlerMethod) entry.getValue();
+
+            ControllerInfoHolder controllerInfoHolder = new ControllerInfoHolder();
+            controllerInfoHolder.setHandlerMethod(handlerMethod);
+            controllerInfoHolder.setRequestMappingInfo(requestMappingInfo);
+            if (controllerInfoHolders.contains(controllerInfoHolder)) {
+                continue;
+            }
+            controllerInfoHolders.add(controllerInfoHolder);
+        }
+    }
+
     public RequestMappingInfo getRequestMappingInfo() {
         return requestMappingInfo;
     }
@@ -61,27 +82,6 @@ public class ControllerInfoHolder {
 
     public void setController(Controller controller) {
         this.controller = controller;
-    }
-
-    /**
-     * 封装从 SpringMVC 取到的接口信息到{@link #controllerInfoHolders}
-     *
-     * @param map 接口信息
-     */
-    public static void buildControllerInfo(Map<RequestMappingInfo, HandlerMethod> map) {
-        for (Object o : map.entrySet()) {
-            Map.Entry entry = (Map.Entry) o;
-            RequestMappingInfo requestMappingInfo = (RequestMappingInfo) entry.getKey();
-            HandlerMethod handlerMethod = (HandlerMethod) entry.getValue();
-
-            ControllerInfoHolder controllerInfoHolder = new ControllerInfoHolder();
-            controllerInfoHolder.setHandlerMethod(handlerMethod);
-            controllerInfoHolder.setRequestMappingInfo(requestMappingInfo);
-            if (controllerInfoHolders.contains(controllerInfoHolder)) {
-                continue;
-            }
-            controllerInfoHolders.add(controllerInfoHolder);
-        }
     }
 
     @Override

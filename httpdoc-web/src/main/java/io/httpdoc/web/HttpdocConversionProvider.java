@@ -1,10 +1,8 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.web.conversion.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Httpdoc配置类转换提供器

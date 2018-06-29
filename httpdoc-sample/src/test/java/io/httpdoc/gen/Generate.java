@@ -7,8 +7,6 @@ import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.JestfulClientCallbackGenerator;
 import io.httpdoc.jestful.JestfulClientMergedGenerator;
 import io.httpdoc.jestful.JestfulProvider;
-import io.httpdoc.retrofit.RetrofitMergedGenerator;
-import io.httpdoc.retrofit.RetrofitProvider;
 
 import java.io.IOException;
 import java.net.URL;

@@ -38,6 +38,7 @@ import java.util.*;
 @Component
 public class DefaultControllerTranslator implements ControllerTranslator {
 
+    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
     /**
      * 解析接口时需要忽略的参数列表
      */
@@ -60,8 +61,6 @@ public class DefaultControllerTranslator implements ControllerTranslator {
     }
 
     private Interpreter interpreter;
-
-    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     @Override
     public Set<Controller> translator(TranslateContext translateContext) {
