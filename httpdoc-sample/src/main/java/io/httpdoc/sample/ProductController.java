@@ -1,5 +1,6 @@
 package io.httpdoc.sample;
 
+import io.httpdoc.nutz.ArticleAPI;
 import org.qfox.jestful.core.http.*;
 import org.qfox.jestful.server.annotation.Field;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ProductController {
     private ProductAPI productAPI;
 
     @Autowired
-    private ProductAPI productAPI2;
+    private ArticleAPI articleAPI;
 
     /**
      * 分页获取产品列表
