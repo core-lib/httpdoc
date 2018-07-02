@@ -2,6 +2,7 @@ package io.httpdoc.jestful;
 
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
+import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
@@ -44,7 +45,8 @@ public class JestfulClientEntityGenerator extends JestfulClientAbstractGenerator
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
 
-        describe(operation, method, parameters);
+        Result result = operation.getResult();
+        describe(operation, method, parameters, result);
 
         interfase.getMethodFragments().add(method);
     }

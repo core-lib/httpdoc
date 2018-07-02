@@ -55,7 +55,7 @@ public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerat
         callback.setName("callback");
         method.getParameterFragments().add(callback);
 
-        describe(operation, method, parameters);
+        describe(operation, method, parameters, result);
 
         interfase.getMethodFragments().add(method);
     }

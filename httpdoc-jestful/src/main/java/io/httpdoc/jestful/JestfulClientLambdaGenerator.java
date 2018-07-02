@@ -74,7 +74,7 @@ public class JestfulClientLambdaGenerator extends JestfulClientAbstractGenerator
             method.getParameterFragments().add(onCompleted);
         }
 
-        describe(operation, method, parameters);
+        describe(operation, method, parameters, result);
 
         interfase.getMethodFragments().add(method);
     }

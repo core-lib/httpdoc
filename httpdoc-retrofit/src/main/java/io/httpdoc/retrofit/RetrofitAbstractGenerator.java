@@ -122,12 +122,18 @@ public abstract class RetrofitAbstractGenerator extends ModelGenerator implement
         else return prefix + name.substring(0, 1).toUpperCase() + name.substring(1) + suffix;
     }
 
-    protected void describe(Operation operation, MethodFragment method, List<Parameter> parameters) {
-        StringBuilder description = new StringBuilder(operation.getDescription() != null ? operation.getDescription() : "");
+    protected void describe(Operation operation, MethodFragment method, List<Parameter> parameters, Result result) {
+        StringBuilder description = new StringBuilder();
+        description.append(operation.getDescription() != null ? operation.getDescription() : "");
+        description.append('\n');
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
             if (parameter.getDescription() == null) continue;
-            description.append('\n').append("@param ").append(parameter.getName()).append(" ").append(parameter.getDescription());
+            ParameterFragment fragment = method.getParameterFragments().get(i);
+            description.append('\n').append("@param ").append(fragment.getName()).append(" ").append(parameter.getDescription());
+        }
+        if (result != null && result.getDescription() != null) {
+            description.append('\n').append("@return ").append(result.getDescription());
         }
         method.setCommentFragment(new CommentFragment(description.toString()));
     }

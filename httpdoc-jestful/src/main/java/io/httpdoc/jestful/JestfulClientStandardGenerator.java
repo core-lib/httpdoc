@@ -47,7 +47,7 @@ public class JestfulClientStandardGenerator extends JestfulClientAbstractGenerat
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
 
-        describe(operation, method, parameters);
+        describe(operation, method, parameters, result);
 
         interfase.getMethodFragments().add(method);
     }

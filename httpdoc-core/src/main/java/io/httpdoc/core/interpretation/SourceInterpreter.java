@@ -1,6 +1,7 @@
 package io.httpdoc.core.interpretation;
 
 import com.sun.javadoc.*;
+import com.sun.tools.javadoc.ClassDocImpl;
 import com.sun.tools.javadoc.Main;
 
 import java.beans.PropertyDescriptor;
@@ -164,34 +165,16 @@ public class SourceInterpreter implements Interpreter {
         private static MethodDoc of(Method method) {
             Class<?> clazz = method.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
-            if (doc == null) return null;
-            StringBuilder builder = new StringBuilder();
-            builder.append(method.getDeclaringClass().getName())
-                    .append(".")
-                    .append(method.getName())
-                    .append("(");
-            for (int i = 0; i < method.getParameterTypes().length; i++) {
-                if (i > 0) builder.append(", ");
-                Class<?> type = method.getParameterTypes()[i];
-                String name = type.getPackage() != null && type.getPackage().equals(clazz.getPackage()) ? type.getSimpleName() : type.getName();
-                if (type.isArray()) {
-                    int dimensions = 0;
-                    while (type.isArray()) {
-                        dimensions++;
-                        type = type.getComponentType();
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(name);
-                    for (int d = 0; d < dimensions; d++) sb.append("[]");
-                    builder.append(sb);
-                } else {
-                    builder.append(name);
-                }
+            if (doc == null || !(doc instanceof ClassDocImpl)) return null;
+            ClassDocImpl impl = (ClassDocImpl) doc;
+            String name = method.getName();
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            String[] types = new String[parameterTypes != null ? parameterTypes.length : 0];
+            for (int i = 0; parameterTypes != null && i < parameterTypes.length; i++) {
+                Class<?> type = parameterTypes[i];
+                types[i] = type.getName();
             }
-            builder.append(")");
-            String signature = builder.toString();
-            for (MethodDoc md : doc.methods()) if (signature.equals(md.toString())) return md;
-            return null;
+            return impl.findMethod(name, types);
         }
 
     }

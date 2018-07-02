@@ -126,7 +126,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 operation.setMethod(requestMethod.name());
                 operation.setPath(new PathProcessor(pattern).process());
                 operation.setConsumes(new ArrayList<String>());
-                Interpretation interpretation = interpreter.interpret(handlerMethod.getMethod());
+                MethodInterpretation interpretation = interpreter.interpret(handlerMethod.getMethod());
                 operation.setDescription(interpretation == null ? null : interpretation.getContent());
                 for (MediaTypeExpression expression : consumesCondition.getExpressions()) {
                     operation.getConsumes().add(expression.getMediaType().toString());
@@ -137,6 +137,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 }
                 Result result = new Result();
                 result.setType(resultSchema);
+                result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
                 operation.setResult(result);
 
                 List<Parameter> parameters = buildParameters(Operation.HttpMethod.resolve(operation.getMethod()), handlerMethod);
