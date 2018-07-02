@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.2.6</version>
+        <version>v1.2.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-core</artifactId>
-            <version>v1.2.6</version>
+            <version>v1.2.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
