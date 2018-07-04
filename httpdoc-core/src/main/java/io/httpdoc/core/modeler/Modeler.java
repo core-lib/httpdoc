@@ -1,7 +1,7 @@
 package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.exception.SchemaDesignException;
-import io.httpdoc.core.generation.Claxx;
+import io.httpdoc.core.strategy.Claxx;
 
 /**
  * 模型师

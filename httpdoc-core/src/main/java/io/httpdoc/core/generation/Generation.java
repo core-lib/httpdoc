@@ -1,6 +1,8 @@
 package io.httpdoc.core.generation;
 
 import io.httpdoc.core.Document;
+import io.httpdoc.core.strategy.OverrideStrategy;
+import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
 

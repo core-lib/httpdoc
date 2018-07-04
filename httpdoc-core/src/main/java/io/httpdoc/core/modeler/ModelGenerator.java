@@ -2,10 +2,10 @@ package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Schema;
-import io.httpdoc.core.generation.Claxx;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
-import io.httpdoc.core.generation.Strategy;
+import io.httpdoc.core.strategy.Claxx;
+import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.supplier.Supplier;
 
 import java.io.IOException;

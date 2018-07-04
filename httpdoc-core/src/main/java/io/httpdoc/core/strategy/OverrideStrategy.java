@@ -1,4 +1,4 @@
-package io.httpdoc.core.generation;
+package io.httpdoc.core.strategy;
 
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.WriterAppender;

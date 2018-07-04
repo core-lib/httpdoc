@@ -1,17 +1,17 @@
-package io.httpdoc.core.generation;
+package io.httpdoc.core.strategy;
 
 import java.io.IOException;
 
 /**
- * 追加策略
+ * 跳过已存在策略
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-07-04 20:34
+ * @date 2018-07-04 20:35
  **/
-public class AppendStrategy implements Strategy {
+public class SkipStrategy implements Strategy {
 
+    @Override
     public void reply(String directory, Claxx claxx) throws IOException {
 
     }
-
 }
