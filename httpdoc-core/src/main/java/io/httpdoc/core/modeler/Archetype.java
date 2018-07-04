@@ -1,7 +1,7 @@
 package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.Schema;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 
 /**
  * 结构
@@ -12,16 +12,16 @@ import io.httpdoc.core.provider.Provider;
 public class Archetype {
     private String pkg;
     private boolean pkgForced;
-    private Provider provider;
+    private Supplier supplier;
     private Schema schema;
 
     public Archetype() {
     }
 
-    public Archetype(String pkg, boolean pkgForced, Provider provider, Schema schema) {
+    public Archetype(String pkg, boolean pkgForced, Supplier supplier, Schema schema) {
         this.pkg = pkg;
         this.pkgForced = pkgForced;
-        this.provider = provider;
+        this.supplier = supplier;
         this.schema = schema;
     }
 
@@ -41,12 +41,12 @@ public class Archetype {
         this.pkgForced = pkgForced;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public Schema getSchema() {

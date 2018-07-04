@@ -7,6 +7,8 @@ package io.httpdoc.core.conversion;
  * @date 2018-04-19 11:03
  **/
 public class CustomFormat implements Format {
+    private static final long serialVersionUID = 6084957981476869704L;
+
     private String refPrefix = Format.REF_PREFIX;
     private String refSuffix = Format.REF_SUFFIX;
     private String mapPrefix = Format.MAP_PREFIX;

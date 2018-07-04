@@ -6,7 +6,7 @@ import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.client.Message;
 
@@ -37,15 +37,15 @@ public class JestfulClientStandardGenerator extends JestfulClientAbstractGenerat
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Operation operation) {
+    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
         method.setType(type != null ? type : HDType.valueOf(Message.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
-        if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
+        if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
 
         describe(operation, method, parameters, result);
 

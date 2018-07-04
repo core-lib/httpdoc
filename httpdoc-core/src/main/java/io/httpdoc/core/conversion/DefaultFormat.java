@@ -7,6 +7,7 @@ package io.httpdoc.core.conversion;
  * @date 2018-04-18 15:10
  **/
 public class DefaultFormat implements Format {
+    private static final long serialVersionUID = 2432350326973481952L;
 
     @Override
     public String getRefPrefix() {

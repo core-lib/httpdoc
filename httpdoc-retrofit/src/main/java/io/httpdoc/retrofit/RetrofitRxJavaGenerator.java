@@ -4,7 +4,7 @@ import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import io.reactivex.Observable;
@@ -59,15 +59,15 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
+    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Document document, Controller controller, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(document, controller, operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, provider) : null;
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
         method.setType(new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class)));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
-        if (parameters != null) generate(pkg, pkgForced, provider, method, parameters);
+        if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
 
         describe(operation, method, parameters, result);
 

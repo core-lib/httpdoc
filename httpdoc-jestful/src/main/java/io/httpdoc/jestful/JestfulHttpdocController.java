@@ -10,9 +10,9 @@ import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.kit.LoadKit;
-import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.provider.SystemProvider;
 import io.httpdoc.core.serialization.Serializer;
+import io.httpdoc.core.supplier.Supplier;
+import io.httpdoc.core.supplier.SystemSupplier;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
@@ -42,7 +42,7 @@ public class JestfulHttpdocController {
     private String context;
     private String version;
     private Translator translator = new JestfulServerTranslator();
-    private Provider provider = new SystemProvider();
+    private Supplier supplier = new SystemSupplier();
     private Interpreter interpreter = new DefaultInterpreter();
     private Converter converter = new StandardConverter();
     private Map<String, Serializer> serializers = new LinkedHashMap<>();
@@ -79,7 +79,7 @@ public class JestfulHttpdocController {
             HttpServletResponse res
     ) throws IOException, DocumentTranslationException {
         Container container = new JestfulHttpdocContainer(req.getServletContext());
-        Translation translation = new Translation(container, provider, interpreter);
+        Translation translation = new Translation(container, supplier, interpreter);
 
         translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
         translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
@@ -111,7 +111,7 @@ public class JestfulHttpdocController {
             HttpServletResponse res
     ) throws IOException, DocumentTranslationException {
         Container container = new JestfulHttpdocContainer(req.getServletContext());
-        Translation translation = new Translation(container, provider, interpreter);
+        Translation translation = new Translation(container, supplier, interpreter);
 
         translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
         translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
@@ -190,12 +190,12 @@ public class JestfulHttpdocController {
         this.translator = translator;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public Interpreter getInterpreter() {

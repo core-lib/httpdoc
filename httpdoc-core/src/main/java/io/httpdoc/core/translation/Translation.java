@@ -1,7 +1,7 @@
 package io.httpdoc.core.translation;
 
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 
 /**
  * 翻译对象
@@ -17,15 +17,15 @@ public class Translation {
     private String context;
     private String version;
     private Container container;
-    private Provider provider;
+    private Supplier supplier;
     private Interpreter interpreter;
 
     public Translation() {
     }
 
-    public Translation(Container container, Provider provider, Interpreter interpreter) {
+    public Translation(Container container, Supplier supplier, Interpreter interpreter) {
         this.container = container;
-        this.provider = provider;
+        this.supplier = supplier;
         this.interpreter = interpreter;
     }
 
@@ -85,12 +85,12 @@ public class Translation {
         this.container = container;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public Interpreter getInterpreter() {

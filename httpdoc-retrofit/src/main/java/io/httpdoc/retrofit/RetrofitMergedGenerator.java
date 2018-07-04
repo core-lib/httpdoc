@@ -7,7 +7,7 @@ import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
 
@@ -41,8 +41,8 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Document document, Controller controller, Operation operation) {
-        for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, provider, interfase, document, controller, operation);
+    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Document document, Controller controller, Operation operation) {
+        for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, document, controller, operation);
     }
 
     @Override

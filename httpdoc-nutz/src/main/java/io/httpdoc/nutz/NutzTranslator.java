@@ -7,8 +7,8 @@ import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
 import io.httpdoc.core.kit.ReflectionKit;
-import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.reflection.ParameterizedTypeImpl;
+import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
@@ -48,7 +48,7 @@ public class NutzTranslator implements Translator {
         document.setVersion(translation.getVersion());
 
         Container container = translation.getContainer();
-        Provider provider = translation.getProvider();
+        Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         NutMvcContext context = (NutMvcContext) container.get("__nutz__mvc__ctx");
         if (context == null) return document;
@@ -106,7 +106,7 @@ public class NutzTranslator implements Translator {
                 for (int i = 0; injectors != null && i < injectors.length && i < method.getParameterTypes().length; i++) {
                     ParamInjector injector = injectors[i];
                     Parameter parameter = new Parameter();
-                    parameter.setType(Schema.valueOf(method.getParameterTypes()[i], provider, interpreter));
+                    parameter.setType(Schema.valueOf(method.getParameterTypes()[i], supplier, interpreter));
 
                     if (path.contains("?")) {
                         String name = names.get(i);
@@ -162,7 +162,7 @@ public class NutzTranslator implements Translator {
                 operation.setPath(path);
 
                 Result result = new Result();
-                Schema type = Schema.valueOf(method.getGenericReturnType(), provider, interpreter);
+                Schema type = Schema.valueOf(method.getGenericReturnType(), supplier, interpreter);
                 result.setType(type);
                 result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
                 operation.setResult(result);

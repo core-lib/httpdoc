@@ -1,8 +1,8 @@
 package io.httpdoc.jestful;
 
 import io.httpdoc.core.Schema;
-import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.core.supplier.Supplier;
+import io.httpdoc.core.supplier.SystemSupplier;
 import org.qfox.jestful.client.Part;
 
 import java.lang.reflect.Type;
@@ -13,35 +13,35 @@ import java.lang.reflect.Type;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-16 13:39
  **/
-public class JestfulProvider implements Provider {
-    private final Provider provider;
+public class JestfulSupplier implements Supplier {
+    private final Supplier supplier;
 
-    public JestfulProvider() {
-        this(new SystemProvider());
+    public JestfulSupplier() {
+        this(new SystemSupplier());
     }
 
-    public JestfulProvider(Provider provider) {
-        this.provider = provider;
+    public JestfulSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     @Override
     public boolean contains(Type type) {
-        return provider.contains(type);
+        return supplier.contains(type);
     }
 
     @Override
     public Schema acquire(Type type) {
-        return provider.acquire(type);
+        return supplier.acquire(type);
     }
 
     @Override
     public boolean contains(Schema schema) {
-        return provider.contains(schema);
+        return supplier.contains(schema);
     }
 
     @Override
     public Type acquire(Schema schema) {
         if ("File".equals(schema.getName())) return Part.class;
-        return provider.acquire(schema);
+        return supplier.acquire(schema);
     }
 }

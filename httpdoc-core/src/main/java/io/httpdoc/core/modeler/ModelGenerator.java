@@ -2,15 +2,13 @@ package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Schema;
+import io.httpdoc.core.generation.Claxx;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
-import io.httpdoc.core.kit.IOKit;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.generation.Strategy;
+import io.httpdoc.core.supplier.Supplier;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -35,22 +33,12 @@ public abstract class ModelGenerator implements Generator {
         String directory = generation.getDirectory();
         String pkg = generation.getPkg();
         boolean pkgForced = generation.isPkgForced();
-        Provider provider = generation.getProvider();
+        Supplier supplier = generation.getSupplier();
+        Strategy strategy = generation.getStrategy();
         for (Schema schema : schemas.values()) {
-            OutputStream out = null;
-            try {
-                Archetype archetype = new Archetype(pkg, pkgForced, provider, schema);
-                Model model = modeler.design(archetype);
-                String name = model.name();
-                String path = directory + File.separator + name.replace(".", File.separator) + ".java";
-                File file = new File(path);
-                File folder = file.getParentFile();
-                if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
-                out = new FileOutputStream(file);
-                model.buildTo(out);
-            } finally {
-                IOKit.close(out);
-            }
+            Archetype archetype = new Archetype(pkg, pkgForced, supplier, schema);
+            Claxx model = modeler.design(archetype);
+            strategy.reply(directory, model);
         }
     }
 }

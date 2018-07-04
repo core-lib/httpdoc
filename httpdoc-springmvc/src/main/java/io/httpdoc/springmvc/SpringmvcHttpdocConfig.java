@@ -2,8 +2,8 @@ package io.httpdoc.springmvc;
 
 import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
-import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.core.supplier.Supplier;
+import io.httpdoc.core.supplier.SystemSupplier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,7 +21,7 @@ public class SpringmvcHttpdocConfig {
     private Integer port;
     private String context;
     private String version;
-    private Provider provider = new SystemProvider();
+    private Supplier supplier = new SystemSupplier();
     private Interpreter interpreter = new DefaultInterpreter();
 
     public SpringmvcHttpdocConfig() {
@@ -35,7 +35,7 @@ public class SpringmvcHttpdocConfig {
         port = builder.port;
         context = builder.context;
         version = builder.version;
-        provider = builder.provider;
+        supplier = builder.supplier;
         interpreter = builder.interpreter;
     }
 
@@ -63,8 +63,8 @@ public class SpringmvcHttpdocConfig {
         return version;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
     public Interpreter getInterpreter() {
@@ -78,7 +78,7 @@ public class SpringmvcHttpdocConfig {
         private Integer port;
         private String context;
         private String version;
-        private Provider provider = new SystemProvider();
+        private Supplier supplier = new SystemSupplier();
         private Interpreter interpreter = new DefaultInterpreter();
 
         public Builder httpDoc(String httpdoc) {
@@ -111,8 +111,8 @@ public class SpringmvcHttpdocConfig {
             return this;
         }
 
-        public Builder provider(Provider provider) {
-            this.provider = provider;
+        public Builder provider(Supplier supplier) {
+            this.supplier = supplier;
             return this;
         }
 

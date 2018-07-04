@@ -5,7 +5,7 @@ import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import io.httpdoc.core.provider.Provider;
+import io.httpdoc.core.supplier.Supplier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,8 +40,8 @@ public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Provider provider, ClassFragment interfase, Operation operation) {
-        for (JestfulClientAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, provider, interfase, operation);
+    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Operation operation) {
+        for (JestfulClientAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, operation);
     }
 
     public JestfulClientMergedGenerator include(Class<? extends JestfulClientAbstractGenerator> clazz) {

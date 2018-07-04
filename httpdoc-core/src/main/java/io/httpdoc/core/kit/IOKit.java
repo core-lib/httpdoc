@@ -1,7 +1,6 @@
 package io.httpdoc.core.kit;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.*;
 
 public abstract class IOKit {
 
@@ -19,6 +18,27 @@ public abstract class IOKit {
             closeable.close();
         } catch (IOException e) {
             if (!quietly) throw e;
+        }
+    }
+
+    public static <T extends Serializable> T clone(T source) throws IOException, ClassNotFoundException {
+        if (source == null) throw new NullPointerException();
+        ByteArrayOutputStream baos = null;
+        ObjectOutputStream oos = null;
+        ByteArrayInputStream bais = null;
+        ObjectInputStream ois = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(source);
+            bais = new ByteArrayInputStream(baos.toByteArray());
+            ois = new ObjectInputStream(bais);
+            return (T) ois.readObject();
+        } finally {
+            close(ois);
+            close(bais);
+            close(oos);
+            close(baos);
         }
     }
 

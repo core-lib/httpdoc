@@ -1,8 +1,8 @@
 package io.httpdoc.core.generation;
 
 import io.httpdoc.core.Document;
-import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.core.supplier.Supplier;
+import io.httpdoc.core.supplier.SystemSupplier;
 
 /**
  * 生成对象
@@ -15,7 +15,8 @@ public class Generation {
     private String directory = System.getProperty("user.dir");
     private String pkg = "";
     private boolean pkgForced = false;
-    private Provider provider = new SystemProvider();
+    private Supplier supplier = new SystemSupplier();
+    private Strategy strategy = new OverrideStrategy();
 
     public Generation(Document document) {
         this.document = document;
@@ -53,12 +54,19 @@ public class Generation {
         this.pkgForced = pkgForced;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
 }

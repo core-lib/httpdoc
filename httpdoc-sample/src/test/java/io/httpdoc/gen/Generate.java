@@ -6,7 +6,7 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.JestfulClientCallbackGenerator;
 import io.httpdoc.jestful.JestfulClientMergedGenerator;
-import io.httpdoc.jestful.JestfulProvider;
+import io.httpdoc.jestful.JestfulSupplier;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,14 +23,14 @@ public class Generate {
         generation.setDirectory("D:\\workspace\\git\\httpdoc\\httpdoc-sample\\src\\test\\java");
         generation.setPkg("io.httpdoc.gen");
         generation.setPkgForced(false);
-//        generation.setProvider(new RetrofitProvider());
+//        generation.setSupplier(new RetrofitSupplier());
 //        Generator generator = new RetrofitMergedGenerator();
 //                .include(RetrofitCallGenerator.class)
 //                .include(RetrofitRxJavaGenerator.class)
 //                .include(RetrofitJava8Generator.class)
 //                .include(RetrofitGuavaGenerator.class);
 
-        generation.setProvider(new JestfulProvider());
+        generation.setSupplier(new JestfulSupplier());
         Generator generator = new JestfulClientMergedGenerator()
                 .exclude(JestfulClientCallbackGenerator.class);
 //                .include(JestfulClientLambdaGenerator.class)

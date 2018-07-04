@@ -1,6 +1,7 @@
 package io.httpdoc.core.modeler;
 
 import io.httpdoc.core.exception.SchemaDesignException;
+import io.httpdoc.core.generation.Claxx;
 
 /**
  * 模型师
@@ -17,6 +18,6 @@ public interface Modeler {
      * @return 模型
      * @throws SchemaDesignException
      */
-    Model design(Archetype archetype) throws SchemaDesignException;
+    Claxx design(Archetype archetype) throws SchemaDesignException;
 
 }

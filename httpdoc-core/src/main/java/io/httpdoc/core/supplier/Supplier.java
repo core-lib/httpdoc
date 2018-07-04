@@ -1,4 +1,4 @@
-package io.httpdoc.core.provider;
+package io.httpdoc.core.supplier;
 
 import io.httpdoc.core.Schema;
 
@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-16 13:42
  **/
-public interface Provider {
+public interface Supplier {
 
     boolean contains(Type type);
 

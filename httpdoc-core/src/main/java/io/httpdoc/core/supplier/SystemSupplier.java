@@ -1,4 +1,4 @@
-package io.httpdoc.core.provider;
+package io.httpdoc.core.supplier;
 
 import io.httpdoc.core.Category;
 import io.httpdoc.core.Schema;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-16 13:45
  **/
-public class SystemProvider implements Provider {
+public class SystemSupplier implements Supplier {
 
     private final List<? extends Class<?>> wrappers = Arrays.asList(
             Boolean.class,

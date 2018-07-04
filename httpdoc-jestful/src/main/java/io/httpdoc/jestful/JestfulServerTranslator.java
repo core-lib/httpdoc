@@ -5,8 +5,8 @@ import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
-import io.httpdoc.core.provider.Provider;
 import io.httpdoc.core.reflection.ParameterizedTypeImpl;
+import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
@@ -52,7 +52,7 @@ public class JestfulServerTranslator implements Translator {
         Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
 
         Container container = translation.getContainer();
-        Provider provider = translation.getProvider();
+        Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         ApplicationContext application = (ApplicationContext) container.get(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         if (application == null) return document;
@@ -128,7 +128,7 @@ public class JestfulServerTranslator implements Translator {
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFileMaps(type)) {
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
                 } else if (parameter.getScope() != null) {
-                    parameter.setType(Schema.valueOf(type, provider, interpreter));
+                    parameter.setType(Schema.valueOf(type, supplier, interpreter));
                 } else {
                     continue;
                 }
@@ -140,7 +140,7 @@ public class JestfulServerTranslator implements Translator {
                 operation.getParameters().add(parameter);
             }
             Result result = new Result();
-            Schema type = Schema.valueOf(mapping.getResult().getType(), provider, interpreter);
+            Schema type = Schema.valueOf(mapping.getResult().getType(), supplier, interpreter);
             result.setType(type);
             result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
             operation.setResult(result);

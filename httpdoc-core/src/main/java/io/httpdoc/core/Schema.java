@@ -3,8 +3,8 @@ package io.httpdoc.core;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
-import io.httpdoc.core.provider.Provider;
-import io.httpdoc.core.provider.SystemProvider;
+import io.httpdoc.core.supplier.Supplier;
+import io.httpdoc.core.supplier.SystemSupplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
@@ -36,29 +36,29 @@ public class Schema extends Definition {
     public Schema() {
     }
 
-    private Schema(Type type, Map<Type, Schema> cache, Provider provider, Interpreter interpreter) {
+    private Schema(Type type, Map<Type, Schema> cache, Supplier supplier, Interpreter interpreter) {
         try {
             cache.put(type, this);
             if (type instanceof Class<?>) {
                 Class<?> clazz = (Class<?>) type;
                 if (clazz.isArray()) {
                     this.category = Category.ARRAY;
-                    this.component = Schema.valueOf(clazz.getComponentType(), cache, provider, interpreter);
+                    this.component = Schema.valueOf(clazz.getComponentType(), cache, supplier, interpreter);
                     cache.remove(type);
                 } else if (Collection.class.isAssignableFrom(clazz)) {
                     this.category = Category.ARRAY;
-                    this.component = Schema.valueOf(Object.class, cache, provider, interpreter);
+                    this.component = Schema.valueOf(Object.class, cache, supplier, interpreter);
                     cache.remove(type);
                 } else if (Map.class.isAssignableFrom(clazz)) {
                     this.category = Category.DICTIONARY;
-                    this.component = Schema.valueOf(Object.class, cache, provider, interpreter);
+                    this.component = Schema.valueOf(Object.class, cache, supplier, interpreter);
                     cache.remove(type);
                 } else if (clazz.isEnum()) {
                     Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
                     this.category = Category.ENUM;
                     this.pkg = clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
-                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
+                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
                     for (Enum<?> enumeration : enumerations) {
                         EnumInterpretation interpretation = interpreter.interpret(enumeration);
@@ -72,8 +72,8 @@ public class Schema extends Definition {
                     this.category = Category.OBJECT;
                     this.pkg = clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
-                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
-                    this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
+                    this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
+                    this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                     for (PropertyDescriptor descriptor : descriptors) {
                         String field = descriptor.getName();
@@ -81,7 +81,7 @@ public class Schema extends Definition {
                         Method getter = descriptor.getReadMethod();
                         if (getter == null || getter.getDeclaringClass() != clazz) continue;
                         Type t = getter.getGenericReturnType();
-                        Schema schema = Schema.valueOf(t, cache, provider, interpreter);
+                        Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                         Interpretation interpretation = interpreter.interpret(descriptor);
                         String description = interpretation != null ? interpretation.getContent() : null;
                         Property property = new Property(schema, description);
@@ -98,19 +98,19 @@ public class Schema extends Definition {
                     if (Collection.class.isAssignableFrom(clazz)) {
                         Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
                         this.category = Category.ARRAY;
-                        this.component = Schema.valueOf(actualTypeArgument, cache, provider, interpreter);
+                        this.component = Schema.valueOf(actualTypeArgument, cache, supplier, interpreter);
                         cache.remove(type);
                     } else if (Map.class.isAssignableFrom(clazz)) {
                         Type actualTypeArgument = parameterizedType.getActualTypeArguments()[1];
                         this.category = Category.DICTIONARY;
-                        this.component = Schema.valueOf(actualTypeArgument, cache, provider, interpreter);
+                        this.component = Schema.valueOf(actualTypeArgument, cache, supplier, interpreter);
                         cache.remove(type);
                     } else {
                         this.category = Category.OBJECT;
                         this.pkg = clazz.getPackage().getName();
                         this.name = clazz.getSimpleName();
-                        this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, provider, interpreter) : null;
-                        this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, provider, interpreter);
+                        this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
+                        this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                         for (PropertyDescriptor descriptor : descriptors) {
                             String field = descriptor.getName();
@@ -118,7 +118,7 @@ public class Schema extends Definition {
                             Method getter = descriptor.getReadMethod();
                             if (getter == null || getter.getDeclaringClass() != clazz) continue;
                             Type t = getter.getGenericReturnType();
-                            Schema schema = Schema.valueOf(t, cache, provider, interpreter);
+                            Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                             Interpretation interpretation = interpreter.interpret(descriptor);
                             String description = interpretation != null ? interpretation.getContent() : null;
                             Property property = new Property(schema, description);
@@ -136,7 +136,7 @@ public class Schema extends Definition {
                 GenericArrayType genericArrayType = (GenericArrayType) type;
                 Type genericComponentType = genericArrayType.getGenericComponentType();
                 this.category = Category.ARRAY;
-                this.component = Schema.valueOf(genericComponentType, cache, provider, interpreter);
+                this.component = Schema.valueOf(genericComponentType, cache, supplier, interpreter);
                 cache.remove(type);
             } else {
                 throw new SchemaUnsupportedException(type);
@@ -153,18 +153,18 @@ public class Schema extends Definition {
     }
 
     public static Schema valueOf(Type type, Interpreter interpreter) {
-        return valueOf(type, new SystemProvider(), interpreter);
+        return valueOf(type, new SystemSupplier(), interpreter);
     }
 
-    public static Schema valueOf(Type type, Provider provider) {
-        return valueOf(type, provider, new DefaultInterpreter());
+    public static Schema valueOf(Type type, Supplier supplier) {
+        return valueOf(type, supplier, new DefaultInterpreter());
     }
 
-    public static Schema valueOf(Type type, Provider provider, Interpreter interpreter) {
-        return valueOf(type, new HashMap<Type, Schema>(), provider, interpreter);
+    public static Schema valueOf(Type type, Supplier supplier, Interpreter interpreter) {
+        return valueOf(type, new HashMap<Type, Schema>(), supplier, interpreter);
     }
 
-    private static Schema valueOf(Type type, Map<Type, Schema> cache, Provider provider, Interpreter interpreter) {
+    private static Schema valueOf(Type type, Map<Type, Schema> cache, Supplier supplier, Interpreter interpreter) {
         while (type instanceof TypeVariable<?> || type instanceof WildcardType) {
             if (type instanceof TypeVariable<?>) {
                 TypeVariable<?> typeVariable = (TypeVariable<?>) type;
@@ -177,9 +177,9 @@ public class Schema extends Definition {
         }
         return cache.containsKey(type)
                 ? cache.get(type)
-                : provider.contains(type)
-                ? provider.acquire(type)
-                : new Schema(type, cache, provider, interpreter);
+                : supplier.contains(type)
+                ? supplier.acquire(type)
+                : new Schema(type, cache, supplier, interpreter);
     }
 
     public boolean isPart() {
@@ -230,16 +230,16 @@ public class Schema extends Definition {
         }
     }
 
-    public HDType toType(String pkg, boolean pkgForced, Provider provider) {
+    public HDType toType(String pkg, boolean pkgForced, Supplier supplier) {
         switch (category) {
             case BASIC:
-                return HDType.valueOf(provider.acquire(this));
+                return HDType.valueOf(supplier.acquire(this));
             case DICTIONARY:
                 HDClass rawType = new HDClass(Map.class);
-                HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(pkg, pkgForced, provider)};
+                HDType[] actualTypeArguments = new HDType[]{new HDClass(String.class), component.toType(pkg, pkgForced, supplier)};
                 return new HDParameterizedType(rawType, null, actualTypeArguments);
             case ARRAY:
-                HDType componentType = component.toType(pkg, pkgForced, provider);
+                HDType componentType = component.toType(pkg, pkgForced, supplier);
                 return component.isPrimitive() ? new HDClass(componentType) : new HDParameterizedType(HDType.valueOf(List.class), null, componentType);
             case ENUM:
                 String enumPkg = pkgForced || this.pkg == null ? pkg : this.pkg;
