@@ -28,7 +28,8 @@ public class OverrideStrategy implements Strategy {
             writer = new OutputStreamWriter(out);
             ClassFragment classFragment = claxx.getClassFragment();
             Preference preference = claxx.getPreference();
-            classFragment.joinTo(new WriterAppender(writer), preference);
+            WriterAppender appender = new WriterAppender(writer);
+            classFragment.joinTo(appender, preference);
             writer.flush();
             out.flush();
         } finally {
