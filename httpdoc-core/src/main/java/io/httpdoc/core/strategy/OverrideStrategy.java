@@ -29,6 +29,8 @@ public class OverrideStrategy implements Strategy {
             ClassFragment classFragment = claxx.getClassFragment();
             Preference preference = claxx.getPreference();
             classFragment.joinTo(new WriterAppender(writer), preference);
+            writer.flush();
+            out.flush();
         } finally {
             IOKit.close(writer);
             IOKit.close(out);

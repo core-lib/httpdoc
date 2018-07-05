@@ -20,7 +20,7 @@ public class Generate {
     public static void main(String... args) throws IOException {
         Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
         Generation generation = new Generation(document);
-        generation.setDirectory("D:\\workspace\\git\\httpdoc\\httpdoc-sample\\src\\test\\java");
+        generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\test\\java");
         generation.setPkg("io.httpdoc.gen");
         generation.setPkgForced(false);
 //        generation.setSupplier(new RetrofitSupplier());
