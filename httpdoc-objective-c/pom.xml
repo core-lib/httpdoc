@@ -24,6 +24,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-core</artifactId>
+            <version>v1.2.8</version>
+        </dependency>
     </dependencies>
 
     <build>
