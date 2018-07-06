@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Controller;
 
@@ -12,6 +12,6 @@ import java.util.Set;
  **/
 public interface ControllerTranslator {
 
-    Set<Controller> translator(TranslateContext translateContext);
+    Set<Controller> translate(TranslationContext translationContext);
 
 }

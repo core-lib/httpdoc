@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
  * @date 2018-05-13 10:50
  **/
 @Component
-public class SpringmvcHttpdocConfig {
-
+public class SpringMVCHttpdocConfig {
     private String httpdoc;
     private String protocol;
     private String hostname;
@@ -24,11 +23,11 @@ public class SpringmvcHttpdocConfig {
     private Supplier supplier = new SystemSupplier();
     private Interpreter interpreter = new DefaultInterpreter();
 
-    public SpringmvcHttpdocConfig() {
+    public SpringMVCHttpdocConfig() {
 
     }
 
-    private SpringmvcHttpdocConfig(Builder builder) {
+    private SpringMVCHttpdocConfig(Builder builder) {
         httpdoc = builder.httpdoc;
         protocol = builder.protocol;
         hostname = builder.hostname;
@@ -121,8 +120,8 @@ public class SpringmvcHttpdocConfig {
             return this;
         }
 
-        public SpringmvcHttpdocConfig build() {
-            return new SpringmvcHttpdocConfig(this);
+        public SpringMVCHttpdocConfig build() {
+            return new SpringMVCHttpdocConfig(this);
         }
     }
 

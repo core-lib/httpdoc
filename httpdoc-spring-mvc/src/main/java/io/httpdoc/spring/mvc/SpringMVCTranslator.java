@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.Document;
@@ -20,7 +20,7 @@ import java.util.*;
  * @author 钟宝林
  * @date 2018-04-27 21:20
  **/
-public class SpringmvcServerTranslator implements Translator {
+public class SpringMVCTranslator implements Translator {
 
     private static final ControllerTranslator controllerTranslator = new DefaultControllerTranslator();
 
@@ -49,10 +49,10 @@ public class SpringmvcServerTranslator implements Translator {
             }
         }
 
-        TranslateContext translateContext = new TranslateContext();
-        translateContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
-        translateContext.setInterpreter(translation.getInterpreter());
-        Set<Controller> controllers = controllerTranslator.translator(translateContext);
+        TranslationContext translationContext = new TranslationContext();
+        translationContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
+        translationContext.setInterpreter(translation.getInterpreter());
+        Set<Controller> controllers = controllerTranslator.translate(translationContext);
         document.setControllers(controllers);
         return document;
     }

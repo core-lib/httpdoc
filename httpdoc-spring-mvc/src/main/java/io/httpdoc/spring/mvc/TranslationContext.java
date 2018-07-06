@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.interpretation.Interpreter;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author 钟宝林
  * @date 2018-05-11 16:56
  **/
-public class TranslateContext {
+public class TranslationContext {
 
     private List<ControllerInfoHolder> controllerInfoHolders;
     private Interpreter interpreter;

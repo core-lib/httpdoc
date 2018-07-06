@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Document;
 
@@ -8,29 +8,29 @@ import io.httpdoc.core.Document;
  * @author 钟宝林
  * @date 2018-04-27 21:34
  **/
-public class SpringmvcDocument {
+public class SpringMVCDocument {
 
-    private static volatile SpringmvcDocument instance;
+    private static volatile SpringMVCDocument instance;
     private Document document;
 
-    private SpringmvcDocument() {
+    private SpringMVCDocument() {
 
     }
 
-    public static SpringmvcDocument getInstance() {
+    public static SpringMVCDocument getInstance() {
         if (instance != null) {
             return instance;
         }
-        synchronized (SpringmvcDocument.class) {
+        synchronized (SpringMVCDocument.class) {
             if (instance != null) {
                 return instance;
             }
-            instance = new SpringmvcDocument();
+            instance = new SpringMVCDocument();
         }
         return instance;
     }
 
-    public boolean isInit() {
+    public boolean isInitialized() {
         return document != null;
     }
 

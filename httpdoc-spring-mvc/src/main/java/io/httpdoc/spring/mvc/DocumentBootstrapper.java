@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.Document;
@@ -34,12 +34,12 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
     private List<RequestMappingInfoHandlerMapping> handlerMappings;
 
     @Resource
-    private DefaultControllerTranslator springmvcDocumentTranslator;
+    private ControllerTranslator controllerTranslator;
 
     @Resource
-    private SpringmvcHttpdocConfig springmvcHttpdocConfig;
+    private SpringMVCHttpdocConfig springMVCHttpdocConfig;
 
-    private SpringmvcDocument springmvcDocument = SpringmvcDocument.getInstance();
+    private SpringMVCDocument springMVCDocument = SpringMVCDocument.getInstance();
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -53,20 +53,20 @@ public class DocumentBootstrapper implements ApplicationListener<ContextRefreshe
             ControllerInfoHolder.buildControllerInfo(handlerMethods);
         }
 
-        TranslateContext translateContext = new TranslateContext();
-        translateContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
-        translateContext.setInterpreter(springmvcHttpdocConfig.getInterpreter());
-        Set<Controller> controllers = springmvcDocumentTranslator.translator(translateContext);
-        Document document = springmvcDocument.getDocument();
+        TranslationContext translationContext = new TranslationContext();
+        translationContext.setControllerInfoHolders(ControllerInfoHolder.controllerInfoHolders);
+        translationContext.setInterpreter(springMVCHttpdocConfig.getInterpreter());
+        Set<Controller> controllers = controllerTranslator.translate(translationContext);
+        Document document = springMVCDocument.getDocument();
         if (document == null) {
             document = new Document();
-            document.setHttpdoc(springmvcHttpdocConfig.getHttpdoc());
-            document.setVersion(springmvcHttpdocConfig.getVersion());
-            document.setContext(springmvcHttpdocConfig.getContext());
-            document.setProtocol(springmvcHttpdocConfig.getProtocol());
-            document.setPort(springmvcHttpdocConfig.getPort());
-            document.setHostname(springmvcHttpdocConfig.getHostname());
-            springmvcDocument.setDocument(document);
+            document.setHttpdoc(springMVCHttpdocConfig.getHttpdoc());
+            document.setVersion(springMVCHttpdocConfig.getVersion());
+            document.setContext(springMVCHttpdocConfig.getContext());
+            document.setProtocol(springMVCHttpdocConfig.getProtocol());
+            document.setPort(springMVCHttpdocConfig.getPort());
+            document.setHostname(springMVCHttpdocConfig.getHostname());
+            springMVCDocument.setDocument(document);
         }
         if (document.getControllers() == null) {
             document.setControllers(controllers);

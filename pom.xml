@@ -9,7 +9,7 @@
     <version>v1.2.8</version>
     <modules>
         <module>httpdoc-core</module>
-        <module>httpdoc-springmvc</module>
+        <module>httpdoc-spring-mvc</module>
         <module>httpdoc-web</module>
         <module>httpdoc-jestful</module>
         <module>httpdoc-jackson</module>
@@ -17,6 +17,7 @@
         <module>httpdoc-nutz</module>
         <module>httpdoc-retrofit</module>
         <module>httpdoc-sample</module>
+        <module>httpdoc-objective-c</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.interpretation.Interpretation;
@@ -63,9 +63,9 @@ public class DefaultControllerTranslator implements ControllerTranslator {
     private Interpreter interpreter;
 
     @Override
-    public Set<Controller> translator(TranslateContext translateContext) {
-        List<ControllerInfoHolder> controllerInfoHolders = translateContext.getControllerInfoHolders();
-        this.interpreter = translateContext.getInterpreter();
+    public Set<Controller> translate(TranslationContext translationContext) {
+        List<ControllerInfoHolder> controllerInfoHolders = translationContext.getControllerInfoHolders();
+        this.interpreter = translationContext.getInterpreter();
 
         Map<Class<?>, Controller> controllerMap = new LinkedHashMap<>();
 

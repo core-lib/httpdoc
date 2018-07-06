@@ -1,4 +1,4 @@
-package io.httpdoc.springmvc;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.StandardConverter;
@@ -18,10 +18,10 @@ import java.util.Map;
  * @author 钟宝林
  * @date 2018-05-09 18:00
  **/
-@RequestMapping("/springmvc")
+@RequestMapping("/spring-mvc")
 @Controller
-public class SpringmvcHttpdocController {
-    private static Translator translator = new SpringmvcServerTranslator();
+public class SpringMVCHttpdocController {
+    private static Translator translator = new SpringMVCTranslator();
 
     @RequestMapping(value = "httpdoc", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
