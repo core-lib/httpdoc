@@ -11,16 +11,15 @@ import java.util.Enumeration;
  * @author 钟宝林
  * @date 2018-05-14 11:20
  **/
-public class ServletContextHolder implements Container {
+public class ServletContextContainer implements Container {
+    private final ServletContext servletContext;
 
-    private ServletContext servletContext;
+    public ServletContextContainer(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
     public ServletContext getServletContext() {
         return servletContext;
-    }
-
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 
     @Override

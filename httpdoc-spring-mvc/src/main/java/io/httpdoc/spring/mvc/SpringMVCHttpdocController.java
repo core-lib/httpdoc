@@ -28,9 +28,8 @@ public class SpringMVCHttpdocController {
     public Map<String, Object> document(HttpServletRequest request) throws DocumentTranslationException {
         Translation translation = new Translation();
         ServletContext servletContext = request.getServletContext();
-        ServletContextHolder servletContextHolder = new ServletContextHolder();
-        servletContextHolder.setServletContext(servletContext);
-        translation.setContainer(servletContextHolder);
+        ServletContextContainer container = new ServletContextContainer(servletContext);
+        translation.setContainer(container);
         Document document = translator.translate(translation);
         return new StandardConverter().convert(document);
     }
