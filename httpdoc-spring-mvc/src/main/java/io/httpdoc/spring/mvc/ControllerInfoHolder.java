@@ -85,15 +85,6 @@ public class ControllerInfoHolder {
     }
 
     @Override
-    public String toString() {
-        return "ControllerInfoHolder{" +
-                "requestMappingInfo=" + requestMappingInfo +
-                ", handlerMethod=" + handlerMethod +
-                ", isHandled=" + isHandled +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -106,5 +97,14 @@ public class ControllerInfoHolder {
     @Override
     public int hashCode() {
         return requestMappingInfo != null ? requestMappingInfo.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ControllerInfoHolder{" +
+                "requestMappingInfo=" + requestMappingInfo +
+                ", handlerMethod=" + handlerMethod +
+                ", isHandled=" + isHandled +
+                '}';
     }
 }
