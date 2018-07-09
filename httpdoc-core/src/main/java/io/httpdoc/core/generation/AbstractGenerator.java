@@ -36,22 +36,23 @@ public abstract class AbstractGenerator implements Generator {
         Map<String, Schema> schemas = document.getSchemas();
         Set<Controller> controllers = document.getControllers();
         String directory = generation.getDirectory();
-        String pkg = generation.getPkg();
-        boolean pkgForced = generation.isPkgForced();
-        Supplier supplier = generation.getSupplier();
         Strategy strategy = generation.getStrategy();
         Collection<Claxx> classes = new LinkedHashSet<>();
-        if (schemas != null) for (Schema schema : schemas.values()) classes.add(generate(document, pkg, pkgForced, supplier, schema));
-        if (controllers != null) for (Controller controller : controllers) classes.add(generate(document, pkg, pkgForced, supplier, controller));
+        if (schemas != null) for (Schema schema : schemas.values()) classes.add(generate(generation, schema));
+        if (controllers != null) for (Controller controller : controllers) classes.add(generate(generation, controller));
         Task task = new Task(directory, classes);
         strategy.execute(task);
     }
 
-    protected Claxx generate(Document document, String pkg, boolean pkgForced, Supplier supplier, Schema schema) throws IOException {
+    protected Claxx generate(Generation generation, Schema schema) throws IOException {
+        Document document = generation.getDocument();
+        String pkg = generation.getPkg();
+        boolean pkgForced = generation.isPkgForced();
+        Supplier supplier = generation.getSupplier();
         Archetype archetype = new Archetype(document, pkg, pkgForced, supplier, schema);
         return modeler.design(archetype);
     }
 
-    protected abstract Claxx generate(Document document, String pkg, boolean pkgForced, Supplier supplier, Controller controller) throws IOException;
+    protected abstract Claxx generate(Generation generation, Controller controller) throws IOException;
 
 }
