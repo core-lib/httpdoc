@@ -74,8 +74,9 @@ public class SimpleModeler implements Modeler {
                 }
                 break;
         }
-        String path = File.separator + clazz.getClazz().getName().replace(".", File.separator) + ".java";
-        return new Claxx(path, clazz, preference);
+        String className = clazz.getClazz().getName();
+        String classPath = File.separator + className.replace(".", File.separator) + ".java";
+        return new Claxx(classPath, clazz, preference);
     }
 
 }

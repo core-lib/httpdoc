@@ -16,7 +16,7 @@ public interface Modeler {
      *
      * @param archetype 原型
      * @return 模型
-     * @throws SchemaDesignException
+     * @throws SchemaDesignException Schema 不可设计的异常
      */
     Claxx design(Archetype archetype) throws SchemaDesignException;
 
