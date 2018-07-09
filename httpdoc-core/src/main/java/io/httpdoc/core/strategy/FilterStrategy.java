@@ -16,8 +16,8 @@ public abstract class FilterStrategy implements Strategy {
     }
 
     @Override
-    public void reply(String directory, Claxx claxx) throws IOException {
-        strategy.reply(directory, claxx);
+    public void execute(Task task) throws IOException {
+        strategy.execute(task);
     }
 
 }

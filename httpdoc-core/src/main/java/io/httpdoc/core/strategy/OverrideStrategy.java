@@ -16,25 +16,28 @@ import java.io.*;
 public class OverrideStrategy implements Strategy {
 
     @Override
-    public void reply(String directory, Claxx claxx) throws IOException {
-        OutputStream out = null;
-        Writer writer = null;
-        try {
-            String path = directory + claxx.getPath();
-            File file = new File(path);
-            File folder = file.getParentFile();
-            if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
-            out = new FileOutputStream(file);
-            writer = new OutputStreamWriter(out);
-            ClassFragment classFragment = claxx.getClassFragment();
-            Preference preference = claxx.getPreference();
-            WriterAppender appender = new WriterAppender(writer);
-            classFragment.joinTo(appender, preference);
-            writer.flush();
-            out.flush();
-        } finally {
-            IOKit.close(writer);
-            IOKit.close(out);
+    public void execute(Task task) throws IOException {
+        String directory = task.getDirectory();
+        for (Claxx claxx : task) {
+            OutputStream out = null;
+            Writer writer = null;
+            try {
+                String path = directory + claxx.getPath();
+                File file = new File(path);
+                File folder = file.getParentFile();
+                if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
+                out = new FileOutputStream(file);
+                writer = new OutputStreamWriter(out);
+                ClassFragment classFragment = claxx.getClassFragment();
+                Preference preference = claxx.getPreference();
+                WriterAppender appender = new WriterAppender(writer);
+                classFragment.joinTo(appender, preference);
+                writer.flush();
+                out.flush();
+            } finally {
+                IOKit.close(writer);
+                IOKit.close(out);
+            }
         }
     }
 

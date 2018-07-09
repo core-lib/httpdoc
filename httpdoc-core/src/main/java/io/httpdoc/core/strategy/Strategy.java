@@ -13,10 +13,9 @@ public interface Strategy {
     /**
      * 生成
      *
-     * @param directory 文件夹
-     * @param claxx     待生成类
+     * @param task 生成任务
      * @throws IOException IO 异常
      */
-    void reply(String directory, Claxx claxx) throws IOException;
+    void execute(Task task) throws IOException;
 
 }

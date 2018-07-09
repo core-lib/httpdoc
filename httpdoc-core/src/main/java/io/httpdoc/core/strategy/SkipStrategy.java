@@ -20,11 +20,14 @@ public class SkipStrategy extends FilterStrategy implements Strategy {
     }
 
     @Override
-    public void reply(String directory, Claxx claxx) throws IOException {
-        String path = directory + claxx.getPath();
-        File file = new File(path);
-        if (file.exists()) return;
-        super.reply(directory, claxx);
+    public void execute(Task task) throws IOException {
+        String directory = task.getDirectory();
+        for (Claxx claxx : task) {
+            String path = directory + claxx.getPath();
+            File file = new File(path);
+            if (file.exists()) return;
+            super.execute(new Task(directory, claxx));
+        }
     }
 
 }

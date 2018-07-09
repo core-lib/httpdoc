@@ -32,16 +32,19 @@ public class BackupStrategy extends FilterStrategy implements Strategy {
     }
 
     @Override
-    public void reply(String directory, Claxx claxx) throws IOException {
-        String path = directory + claxx.getPath();
-        File file = new File(path);
-        if (file.exists() && file.isFile()) {
-            String dir = file.getParent();
-            String name = prefix + file.getName() + suffix;
-            File dest = new File(dir, name);
-            if (!file.renameTo(dest)) throw new IOException("can not rename file from [" + file + "] to [" + dest + "]");
+    public void execute(Task task) throws IOException {
+        String directory = task.getDirectory();
+        for (Claxx claxx : task) {
+            String path = directory + claxx.getPath();
+            File file = new File(path);
+            if (file.exists() && file.isFile()) {
+                String dir = file.getParent();
+                String name = prefix + file.getName() + suffix;
+                File dest = new File(dir, name);
+                if (!file.renameTo(dest)) throw new IOException("can not rename file from [" + file + "] to [" + dest + "]");
+            }
+            super.execute(new Task(directory, claxx));
         }
-        super.reply(directory, claxx);
     }
 
     public String getPrefix() {
