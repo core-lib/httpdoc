@@ -3,6 +3,7 @@ package io.httpdoc.gen;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
+import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.JestfulClientCallbackGenerator;
 import io.httpdoc.jestful.JestfulClientMergedGenerator;
@@ -23,6 +24,7 @@ public class Generate {
         generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\test\\java");
         generation.setPkg("io.httpdoc.gen");
         generation.setPkgForced(false);
+        generation.setStrategy(new OverrideStrategy());
 //        generation.setSupplier(new RetrofitSupplier());
 //        Generator generator = new RetrofitMergedGenerator();
 //                .include(RetrofitCallGenerator.class)

@@ -47,7 +47,7 @@ public abstract class AbstractGenerator implements Generator {
         strategy.execute(task);
     }
 
-    protected Claxx generate(Document document, String pkg, boolean pkgForced, Supplier supplier, Schema schema) {
+    protected Claxx generate(Document document, String pkg, boolean pkgForced, Supplier supplier, Schema schema) throws IOException {
         Archetype archetype = new Archetype(document, pkg, pkgForced, supplier, schema);
         return modeler.design(archetype);
     }

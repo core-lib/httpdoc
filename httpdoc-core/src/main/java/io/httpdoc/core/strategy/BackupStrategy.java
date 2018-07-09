@@ -41,6 +41,8 @@ public class BackupStrategy extends FilterStrategy implements Strategy {
                 String dir = file.getParent();
                 String name = prefix + file.getName() + suffix;
                 File dest = new File(dir, name);
+                int count = 0;
+                while (dest.exists()) dest = new File(dir, prefix + file.getName() + suffix + (++count));
                 if (!file.renameTo(dest)) throw new IOException("can not rename file from [" + file + "] to [" + dest + "]");
             }
             super.execute(new Task(directory, claxx));
