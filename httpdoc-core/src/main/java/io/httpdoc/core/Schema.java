@@ -207,6 +207,19 @@ public class Schema extends Definition {
         return category == Category.BASIC && name != null && name.matches("boolean|byte|short|char|int|float|long|double");
     }
 
+    public Schema toWrapper() {
+        if (!isPrimitive()) throw new IllegalStateException();
+        else if (name.equals("boolean")) return Schema.valueOf(Boolean.class);
+        else if (name.equals("byte")) return Schema.valueOf(Byte.class);
+        else if (name.equals("short")) return Schema.valueOf(Short.class);
+        else if (name.equals("char")) return Schema.valueOf(Character.class);
+        else if (name.equals("int")) return Schema.valueOf(Integer.class);
+        else if (name.equals("float")) return Schema.valueOf(Float.class);
+        else if (name.equals("long")) return Schema.valueOf(Long.class);
+        else if (name.equals("double")) return Schema.valueOf(Double.class);
+        else return null;
+    }
+
     public String toName() {
         switch (category) {
             case BASIC:

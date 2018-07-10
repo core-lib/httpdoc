@@ -41,7 +41,7 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        StringBuilder builder = new StringBuilder(comment != null ? comment : "");
+        StringBuilder builder = new StringBuilder(comment != null ? comment : "").append('\n');
         for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
             ParameterFragment fragment = parameterFragments.get(i);
             String name = fragment.getName();
@@ -57,7 +57,7 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         }
         if (resultFragment != null) {
             String comment = resultFragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(name).append(" ").append(comment);
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(" ").append(comment);
         }
         for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
             ExceptionFragment fragment = exceptionFragments.get(i);
