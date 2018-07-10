@@ -11,7 +11,8 @@
         <module>httpdoc-core</module>
         <module>httpdoc-spring-mvc</module>
         <module>httpdoc-web</module>
-        <module>httpdoc-jestful</module>
+        <module>httpdoc-jestful-client</module>
+        <module>httpdoc-jestful-server</module>
         <module>httpdoc-jackson</module>
         <module>httpdoc-gson</module>
         <module>httpdoc-nutz</module>

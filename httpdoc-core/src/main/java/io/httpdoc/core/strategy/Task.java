@@ -1,5 +1,7 @@
 package io.httpdoc.core.strategy;
 
+import io.httpdoc.core.Claxx;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;

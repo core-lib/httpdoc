@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.server;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.interpretation.Interpretation;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 9:29
  **/
-public class JestfulServerTranslator implements Translator {
+public class JestfulTranslator implements Translator {
     private final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
     private final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 

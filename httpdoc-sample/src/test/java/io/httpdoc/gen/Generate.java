@@ -5,9 +5,9 @@ import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.JestfulClientCallbackGenerator;
-import io.httpdoc.jestful.JestfulClientMergedGenerator;
-import io.httpdoc.jestful.JestfulSupplier;
+import io.httpdoc.jestful.server.JestfulClientCallbackGenerator;
+import io.httpdoc.jestful.server.JestfulClientMergedGenerator;
+import io.httpdoc.jestful.server.JestfulSupplier;
 
 import java.io.IOException;
 import java.net.URL;

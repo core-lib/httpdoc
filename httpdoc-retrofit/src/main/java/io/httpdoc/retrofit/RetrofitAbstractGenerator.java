@@ -13,7 +13,6 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import io.httpdoc.core.strategy.Claxx;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;

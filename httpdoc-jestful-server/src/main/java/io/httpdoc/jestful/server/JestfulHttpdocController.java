@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.server;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.Converter;
@@ -41,7 +41,7 @@ public class JestfulHttpdocController {
     private Integer port;
     private String context;
     private String version;
-    private Translator translator = new JestfulServerTranslator();
+    private Translator translator = new JestfulTranslator();
     private Supplier supplier = new SystemSupplier();
     private Interpreter interpreter = new DefaultInterpreter();
     private Converter converter = new StandardConverter();

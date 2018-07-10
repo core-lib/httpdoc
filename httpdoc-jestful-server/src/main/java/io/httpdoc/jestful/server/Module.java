@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.server;
 
 import io.httpdoc.core.Config;
 

@@ -3,7 +3,6 @@ package io.httpdoc.core.modeler;
 import io.httpdoc.core.*;
 import io.httpdoc.core.exception.SchemaDesignException;
 import io.httpdoc.core.fragment.*;
-import io.httpdoc.core.strategy.Claxx;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;

@@ -1,5 +1,7 @@
 package io.httpdoc.core.strategy;
 
+import io.httpdoc.core.Claxx;
+
 import java.io.File;
 import java.io.IOException;
 

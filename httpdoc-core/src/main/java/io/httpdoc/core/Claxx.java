@@ -1,7 +1,4 @@
-package io.httpdoc.core.strategy;
-
-import io.httpdoc.core.Preference;
-import io.httpdoc.core.fragment.ClassFragment;
+package io.httpdoc.core;
 
 /**
  * 待生成的类
@@ -11,12 +8,12 @@ import io.httpdoc.core.fragment.ClassFragment;
  **/
 public class Claxx {
     private String path;
-    private ClassFragment classFragment;
+    private Src<Preference> src;
     private Preference preference;
 
-    public Claxx(String path, ClassFragment classFragment, Preference preference) {
+    public Claxx(String path, Src<Preference> src, Preference preference) {
         this.path = path;
-        this.classFragment = classFragment;
+        this.src = src;
         this.preference = preference;
     }
 
@@ -28,12 +25,12 @@ public class Claxx {
         this.path = path;
     }
 
-    public ClassFragment getClassFragment() {
-        return classFragment;
+    public Src<Preference> getSrc() {
+        return src;
     }
 
-    public void setClassFragment(ClassFragment classFragment) {
-        this.classFragment = classFragment;
+    public void setSrc(Src<Preference> src) {
+        this.src = src;
     }
 
     public Preference getPreference() {

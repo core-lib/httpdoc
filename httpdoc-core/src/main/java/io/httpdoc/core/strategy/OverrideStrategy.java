@@ -1,8 +1,9 @@
 package io.httpdoc.core.strategy;
 
+import io.httpdoc.core.Claxx;
 import io.httpdoc.core.Preference;
+import io.httpdoc.core.Src;
 import io.httpdoc.core.appender.WriterAppender;
-import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.kit.IOKit;
 
 import java.io.*;
@@ -28,10 +29,10 @@ public class OverrideStrategy implements Strategy {
                 if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
                 out = new FileOutputStream(file);
                 writer = new OutputStreamWriter(out);
-                ClassFragment classFragment = claxx.getClassFragment();
+                Src<Preference> src = claxx.getSrc();
                 Preference preference = claxx.getPreference();
                 WriterAppender appender = new WriterAppender(writer);
-                classFragment.joinTo(appender, preference);
+                src.joinTo(appender, preference);
                 writer.flush();
                 out.flush();
             } finally {

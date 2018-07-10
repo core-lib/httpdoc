@@ -1,11 +1,11 @@
 package io.httpdoc.core.generation;
 
+import io.httpdoc.core.Claxx;
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.modeler.Archetype;
 import io.httpdoc.core.modeler.Modeler;
-import io.httpdoc.core.strategy.Claxx;
 import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.strategy.Task;
 import io.httpdoc.core.supplier.Supplier;
