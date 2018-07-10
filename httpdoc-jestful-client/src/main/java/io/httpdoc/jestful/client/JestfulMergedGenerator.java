@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.client;
 
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
@@ -18,33 +18,33 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:42
  **/
-public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator {
-    private final Map<Class<? extends JestfulClientAbstractGenerator>, JestfulClientAbstractGenerator> generators = new LinkedHashMap<>();
+public class JestfulMergedGenerator extends JestfulAbstractGenerator {
+    private final Map<Class<? extends JestfulAbstractGenerator>, JestfulAbstractGenerator> generators = new LinkedHashMap<>();
 
-    public JestfulClientMergedGenerator() {
-        this(Arrays.asList(new JestfulClientStandardGenerator(), new JestfulClientCallbackGenerator()));
+    public JestfulMergedGenerator() {
+        this(Arrays.asList(new JestfulStandardGenerator(), new JestfulCallbackGenerator()));
     }
 
-    public JestfulClientMergedGenerator(Collection<? extends JestfulClientAbstractGenerator> generators) {
+    public JestfulMergedGenerator(Collection<? extends JestfulAbstractGenerator> generators) {
         this(new SimpleModeler(), generators);
     }
 
-    public JestfulClientMergedGenerator(Modeler modeler) {
+    public JestfulMergedGenerator(Modeler modeler) {
         super(modeler);
     }
 
-    public JestfulClientMergedGenerator(Modeler modeler, Collection<? extends JestfulClientAbstractGenerator> generators) {
+    public JestfulMergedGenerator(Modeler modeler, Collection<? extends JestfulAbstractGenerator> generators) {
         super(modeler);
         if (generators == null) throw new NullPointerException();
-        for (JestfulClientAbstractGenerator generator : generators) include(generator);
+        for (JestfulAbstractGenerator generator : generators) include(generator);
     }
 
     @Override
     protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Operation operation) {
-        for (JestfulClientAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, operation);
+        for (JestfulAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, operation);
     }
 
-    public JestfulClientMergedGenerator include(Class<? extends JestfulClientAbstractGenerator> clazz) {
+    public JestfulMergedGenerator include(Class<? extends JestfulAbstractGenerator> clazz) {
         try {
             return include(clazz.newInstance());
         } catch (Exception e) {
@@ -52,19 +52,19 @@ public class JestfulClientMergedGenerator extends JestfulClientAbstractGenerator
         }
     }
 
-    public JestfulClientMergedGenerator include(JestfulClientAbstractGenerator generator) {
+    public JestfulMergedGenerator include(JestfulAbstractGenerator generator) {
         if (generator == null) throw new NullPointerException();
         generators.put(generator.getClass(), generator);
         return this;
     }
 
-    public JestfulClientMergedGenerator exclude(Class<? extends JestfulClientAbstractGenerator> clazz) {
+    public JestfulMergedGenerator exclude(Class<? extends JestfulAbstractGenerator> clazz) {
         if (clazz == null) throw new NullPointerException();
         generators.remove(clazz);
         return this;
     }
 
-    public JestfulClientMergedGenerator exclude(JestfulClientAbstractGenerator generator) {
+    public JestfulMergedGenerator exclude(JestfulAbstractGenerator generator) {
         if (generator == null) throw new NullPointerException();
         return exclude(generator.getClass());
     }

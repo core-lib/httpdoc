@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.client;
 
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
@@ -7,34 +7,32 @@ import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
-import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
-import org.qfox.jestful.client.Entity;
+import org.qfox.jestful.client.Header;
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 /**
- * Jestful Client Future 生成器
+ * Jestful Client 报头 生成器
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class JestfulClientFutureGenerator extends JestfulClientAbstractGenerator {
+public class JestfulHeaderGenerator extends JestfulAbstractGenerator {
 
-    public JestfulClientFutureGenerator() {
-        super("", "ForFuture");
+    public JestfulHeaderGenerator() {
+        super("", "ForHeader");
     }
 
-    public JestfulClientFutureGenerator(Modeler modeler) {
+    public JestfulHeaderGenerator(Modeler modeler) {
         super(modeler);
     }
 
-    public JestfulClientFutureGenerator(String prefix, String suffix) {
+    public JestfulHeaderGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public JestfulClientFutureGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulHeaderGenerator(Modeler modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
@@ -42,16 +40,14 @@ public class JestfulClientFutureGenerator extends JestfulClientAbstractGenerator
     protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Operation operation) {
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
-        Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(Future.class), null, type != null ? type : HDType.valueOf(Entity.class)));
+        method.setType(HDType.valueOf(Header.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
 
+        Result result = operation.getResult();
         describe(operation, method, parameters, result);
 
         interfase.getMethodFragments().add(method);
     }
-
 }

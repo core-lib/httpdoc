@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.client;
 
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.Supplier;

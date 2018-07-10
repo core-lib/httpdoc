@@ -1,40 +1,41 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.client;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.client.Entity;
+import org.qfox.jestful.client.scheduler.Callback;
 
 import java.util.List;
 
 /**
- * Retrofit Listenable Future 生成器
+ * Jestful Client 回调生成器
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-05-17 17:40
+ * @date 2018-05-14 13:32
  **/
-public class JestfulClientGuavaGenerator extends JestfulClientAbstractGenerator {
+public class JestfulCallbackGenerator extends JestfulAbstractGenerator {
 
-    public JestfulClientGuavaGenerator() {
-        super("", "ForGuava");
+    public JestfulCallbackGenerator() {
+        super("", "");
     }
 
-    public JestfulClientGuavaGenerator(Modeler modeler) {
+    public JestfulCallbackGenerator(Modeler modeler) {
         super(modeler);
     }
 
-    public JestfulClientGuavaGenerator(String prefix, String suffix) {
+    public JestfulCallbackGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public JestfulClientGuavaGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulCallbackGenerator(Modeler modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
@@ -43,11 +44,16 @@ public class JestfulClientGuavaGenerator extends JestfulClientAbstractGenerator 
         MethodFragment method = new MethodFragment(0);
         annotate(operation, method);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(ListenableFuture.class), null, type != null ? type : HDType.valueOf(Entity.class)));
+        method.setType(HDType.valueOf(void.class));
         method.setName(name(operation.getName()));
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
+
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
+        ParameterFragment callback = new ParameterFragment();
+        callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Entity.class)));
+        callback.setName("callback");
+        method.getParameterFragments().add(callback);
 
         describe(operation, method, parameters, result);
 

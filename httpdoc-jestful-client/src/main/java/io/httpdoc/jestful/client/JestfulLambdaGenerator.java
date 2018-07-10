@@ -1,4 +1,4 @@
-package io.httpdoc.jestful;
+package io.httpdoc.jestful.client;
 
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
@@ -11,7 +11,9 @@ import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import org.qfox.jestful.client.Entity;
-import org.qfox.jestful.client.scheduler.Callback;
+import org.qfox.jestful.client.scheduler.OnCompleted;
+import org.qfox.jestful.client.scheduler.OnFail;
+import org.qfox.jestful.client.scheduler.OnSuccess;
 
 import java.util.List;
 
@@ -21,21 +23,21 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:32
  **/
-public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerator {
+public class JestfulLambdaGenerator extends JestfulAbstractGenerator {
 
-    public JestfulClientCallbackGenerator() {
+    public JestfulLambdaGenerator() {
         super("", "");
     }
 
-    public JestfulClientCallbackGenerator(Modeler modeler) {
+    public JestfulLambdaGenerator(Modeler modeler) {
         super(modeler);
     }
 
-    public JestfulClientCallbackGenerator(String prefix, String suffix) {
+    public JestfulLambdaGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public JestfulClientCallbackGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulLambdaGenerator(Modeler modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
@@ -50,10 +52,27 @@ public class JestfulClientCallbackGenerator extends JestfulClientAbstractGenerat
         if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
 
         HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
-        ParameterFragment callback = new ParameterFragment();
-        callback.setType(new HDParameterizedType(HDType.valueOf(Callback.class), null, type != null ? type : HDType.valueOf(Entity.class)));
-        callback.setName("callback");
-        method.getParameterFragments().add(callback);
+
+        {
+            ParameterFragment onSuccess = new ParameterFragment();
+            onSuccess.setType(new HDParameterizedType(HDType.valueOf(OnSuccess.class), null, type != null ? type : HDType.valueOf(Entity.class)));
+            onSuccess.setName("onSuccess");
+            method.getParameterFragments().add(onSuccess);
+        }
+
+        {
+            ParameterFragment onFail = new ParameterFragment();
+            onFail.setType(HDType.valueOf(OnFail.class));
+            onFail.setName("onFail");
+            method.getParameterFragments().add(onFail);
+        }
+
+        {
+            ParameterFragment onCompleted = new ParameterFragment();
+            onCompleted.setType(new HDParameterizedType(HDType.valueOf(OnCompleted.class), null, type != null ? type : HDType.valueOf(Entity.class)));
+            onCompleted.setName("onCompleted");
+            method.getParameterFragments().add(onCompleted);
+        }
 
         describe(operation, method, parameters, result);
 
