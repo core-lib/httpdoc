@@ -21,19 +21,19 @@ import java.util.*;
  * @date 2018-04-27 16:31
  **/
 public class ClassFragment extends ModifiedFragment implements Fragment {
-    private String pkg;
-    private CommentFragment commentFragment;
-    private List<HDAnnotation> annotations = new ArrayList<>();
-    private HDClass clazz;
-    private HDType superclass;
-    private List<HDType> interfaces = new ArrayList<>();
-    private List<ConstantFragment> constantFragments = new ArrayList<>();
-    private List<FieldFragment> fieldFragments = new ArrayList<>();
-    private List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
-    private List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
-    private List<ConstructorFragment> constructorFragments = new ArrayList<>();
-    private List<MethodFragment> methodFragments = new ArrayList<>();
-    private List<ClassFragment> classFragments = new ArrayList<>();
+    protected String pkg;
+    protected CommentFragment commentFragment;
+    protected List<HDAnnotation> annotations = new ArrayList<>();
+    protected HDClass clazz;
+    protected HDType superclass;
+    protected List<HDType> interfaces = new ArrayList<>();
+    protected List<ConstantFragment> constantFragments = new ArrayList<>();
+    protected List<FieldFragment> fieldFragments = new ArrayList<>();
+    protected List<StaticBlockFragment> staticBlockFragments = new ArrayList<>();
+    protected List<InstanceBlockFragment> instanceBlockFragments = new ArrayList<>();
+    protected List<ConstructorFragment> constructorFragments = new ArrayList<>();
+    protected List<MethodFragment> methodFragments = new ArrayList<>();
+    protected List<ClassFragment> classFragments = new ArrayList<>();
 
     public ClassFragment() {
         this(Modifier.PUBLIC);

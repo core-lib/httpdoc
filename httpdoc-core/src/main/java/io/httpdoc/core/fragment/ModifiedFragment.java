@@ -13,7 +13,7 @@ import java.lang.reflect.Modifier;
  * @date 2018-04-27 16:45
  **/
 public abstract class ModifiedFragment implements Fragment {
-    protected int modifier;
+    public int modifier;
 
     protected ModifiedFragment(int modifier) {
         this.modifier = modifier;

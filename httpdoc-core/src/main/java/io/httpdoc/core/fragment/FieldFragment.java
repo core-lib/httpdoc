@@ -20,11 +20,11 @@ import java.util.Set;
  * @date 2018-04-27 16:32
  **/
 public class FieldFragment extends ModifiedFragment implements Fragment {
-    private CommentFragment commentFragment;
-    private List<HDAnnotation> annotations = new ArrayList<>();
-    private HDType type;
-    private String name;
-    private AssignmentFragment assignmentFragment;
+    protected CommentFragment commentFragment;
+    protected List<HDAnnotation> annotations = new ArrayList<>();
+    protected HDType type;
+    protected String name;
+    protected AssignmentFragment assignmentFragment;
 
     public FieldFragment() {
         this(Modifier.PRIVATE);
