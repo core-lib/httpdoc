@@ -78,7 +78,13 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
         Collection<HDAnnotation> annotations = annotate(document, controller, operation);
         method.getAnnotations().addAll(annotations);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
+        HDType type = result != null && result.getType() != null
+                ? result.getType().isVoid()
+                ? null
+                : result.getType().isPrimitive()
+                ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
+                : result.getType().toType(pkg, pkgForced, supplier)
+                : null;
         HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
         String comment = result != null ? result.getDescription() : null;
         method.setResultFragment(new ResultFragment(returnType, comment));

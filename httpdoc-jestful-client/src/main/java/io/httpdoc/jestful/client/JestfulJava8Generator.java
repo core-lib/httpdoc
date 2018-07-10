@@ -64,7 +64,13 @@ public class JestfulJava8Generator extends JestfulAbstractGenerator {
         Collection<HDAnnotation> annotations = annotate(operation);
         method.getAnnotations().addAll(annotations);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
+        HDType type = result != null && result.getType() != null
+                ? result.getType().isVoid()
+                ? null
+                : result.getType().isPrimitive()
+                ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
+                : result.getType().toType(pkg, pkgForced, supplier)
+                : null;
         HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(clazz), null, type != null ? type : HDType.valueOf(Entity.class));
         String comment = result != null ? result.getDescription() : null;
         method.setResultFragment(new ResultFragment(returnType, comment));

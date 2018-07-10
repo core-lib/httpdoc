@@ -68,7 +68,13 @@ public class JestfulLambdaGenerator extends JestfulAbstractGenerator {
         Collection<ParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
         method.getParameterFragments().addAll(fragments);
 
-        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
+        HDType type = result != null && result.getType() != null
+                ? result.getType().isVoid()
+                ? null
+                : result.getType().isPrimitive()
+                ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
+                : result.getType().toType(pkg, pkgForced, supplier)
+                : null;
 
         {
             ParameterFragment onSuccess = new ParameterFragment();
