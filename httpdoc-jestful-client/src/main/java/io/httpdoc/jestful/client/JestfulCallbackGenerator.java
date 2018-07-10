@@ -4,6 +4,7 @@ import io.httpdoc.core.Controller;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -34,7 +35,7 @@ public class JestfulCallbackGenerator extends JestfulAbstractGenerator {
         super("", "");
     }
 
-    public JestfulCallbackGenerator(Modeler modeler) {
+    public JestfulCallbackGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -42,7 +43,7 @@ public class JestfulCallbackGenerator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulCallbackGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulCallbackGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 

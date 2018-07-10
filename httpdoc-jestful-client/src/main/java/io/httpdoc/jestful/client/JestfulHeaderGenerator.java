@@ -4,6 +4,7 @@ import io.httpdoc.core.Controller;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -31,7 +32,7 @@ public class JestfulHeaderGenerator extends JestfulAbstractGenerator {
         super("", "ForHeader");
     }
 
-    public JestfulHeaderGenerator(Modeler modeler) {
+    public JestfulHeaderGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -39,7 +40,7 @@ public class JestfulHeaderGenerator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulHeaderGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulHeaderGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 

@@ -4,6 +4,7 @@ import io.httpdoc.core.Controller;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -31,7 +32,7 @@ public class JestfulMessageGenerator extends JestfulAbstractGenerator {
         super("", "ForMessage");
     }
 
-    public JestfulMessageGenerator(Modeler modeler) {
+    public JestfulMessageGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -39,7 +40,7 @@ public class JestfulMessageGenerator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulMessageGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulMessageGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 

@@ -49,19 +49,19 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         this(new SimpleModeler(), prefix, suffix, converterFactories);
     }
 
-    protected RetrofitAbstractGenerator(Modeler modeler) {
+    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler) {
         this(modeler, "", "");
     }
 
-    protected RetrofitAbstractGenerator(Modeler modeler, String prefix, String suffix) {
+    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         this(modeler, prefix, suffix, Collections.<Class<? extends Converter.Factory>>emptyList());
     }
 
-    protected RetrofitAbstractGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         this(modeler, "", "", converterFactories);
     }
 
-    protected RetrofitAbstractGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler);
         if (prefix == null || suffix == null || converterFactories == null) throw new NullPointerException();
         this.prefix = prefix.trim();
@@ -186,15 +186,6 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         }
     }
 
-    protected String path(String... segments) {
-        StringBuilder path = new StringBuilder();
-        for (String segment : segments) {
-            if (segment == null) continue;
-            path.append("/").append(segment);
-        }
-        return path.toString().replaceAll("/+", "/");
-    }
-
     protected Collection<HDAnnotation> annotate(Document document, Controller controller, Operation operation) {
         Collection<HDAnnotation> annotations = new LinkedHashSet<>();
         List<Parameter> parameters = operation.getParameters();
@@ -202,7 +193,13 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
             HDAnnotation annotation = new HDAnnotation(Multipart.class);
             annotations.add(annotation);
         }
-        String path = path(document.getContext(), controller.getPath(), operation.getPath());
+        StringBuilder builder = new StringBuilder();
+        List<String> segments = Arrays.asList(document.getContext(), controller.getPath(), operation.getPath());
+        for (String segment : segments) {
+            if (segment == null) continue;
+            builder.append("/").append(segment);
+        }
+        String path = builder.toString().replaceAll("/+", "/");
         switch (operation.getMethod()) {
             case "HEAD": {
                 HDAnnotation head = new HDAnnotation(HEAD.class);

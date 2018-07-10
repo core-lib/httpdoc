@@ -1,6 +1,7 @@
 package io.httpdoc.retrofit;
 
 import io.httpdoc.core.*;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -46,19 +47,19 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitCallGenerator(Modeler modeler) {
+    public RetrofitCallGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitCallGenerator(Modeler modeler, String prefix, String suffix) {
+    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitCallGenerator(Modeler modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitCallGenerator(Modeler modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 

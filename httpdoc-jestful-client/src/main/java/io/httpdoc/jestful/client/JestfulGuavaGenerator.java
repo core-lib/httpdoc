@@ -5,6 +5,7 @@ import io.httpdoc.core.Controller;
 import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -34,7 +35,7 @@ public class JestfulGuavaGenerator extends JestfulAbstractGenerator {
         super("", "ForGuava");
     }
 
-    public JestfulGuavaGenerator(Modeler modeler) {
+    public JestfulGuavaGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -42,7 +43,7 @@ public class JestfulGuavaGenerator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulGuavaGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulGuavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 

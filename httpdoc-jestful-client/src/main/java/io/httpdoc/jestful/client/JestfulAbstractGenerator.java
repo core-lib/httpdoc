@@ -38,7 +38,7 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
         this("", "");
     }
 
-    protected JestfulAbstractGenerator(Modeler modeler) {
+    protected JestfulAbstractGenerator(Modeler<ClassFragment> modeler) {
         this(modeler, "", "");
     }
 
@@ -46,7 +46,7 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
         this(new SimpleModeler(), prefix, suffix);
     }
 
-    protected JestfulAbstractGenerator(Modeler modeler, String prefix, String suffix) {
+    protected JestfulAbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler);
         if (prefix == null || suffix == null) throw new NullPointerException();
         this.prefix = prefix.trim();

@@ -35,7 +35,7 @@ public class JestfulObservableGenerator extends JestfulAbstractGenerator {
     }
 
 
-    public JestfulObservableGenerator(Modeler modeler) {
+    public JestfulObservableGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -43,7 +43,7 @@ public class JestfulObservableGenerator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulObservableGenerator(Modeler modeler, String prefix, String suffix) {
+    public JestfulObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 

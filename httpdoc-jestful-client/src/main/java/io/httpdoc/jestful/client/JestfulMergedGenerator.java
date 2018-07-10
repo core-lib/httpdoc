@@ -1,6 +1,7 @@
 package io.httpdoc.jestful.client;
 
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
@@ -25,11 +26,11 @@ public class JestfulMergedGenerator extends JestfulAbstractGenerator {
         this(new SimpleModeler(), generators);
     }
 
-    public JestfulMergedGenerator(Modeler modeler) {
+    public JestfulMergedGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public JestfulMergedGenerator(Modeler modeler, Collection<? extends JestfulAbstractGenerator> generators) {
+    public JestfulMergedGenerator(Modeler<ClassFragment> modeler, Collection<? extends JestfulAbstractGenerator> generators) {
         super(modeler);
         if (generators == null) throw new NullPointerException();
         for (JestfulAbstractGenerator generator : generators) include(generator);

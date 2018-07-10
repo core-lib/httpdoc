@@ -21,9 +21,9 @@ import java.util.*;
  * @date 2018-05-18 12:36
  **/
 public abstract class FragmentGenerator implements Generator {
-    private final Modeler modeler;
+    private final Modeler<ClassFragment> modeler;
 
-    protected FragmentGenerator(Modeler modeler) {
+    protected FragmentGenerator(Modeler<ClassFragment> modeler) {
         this.modeler = modeler;
     }
 
@@ -35,33 +35,28 @@ public abstract class FragmentGenerator implements Generator {
         Set<Controller> controllers = document.getControllers() != null ? document.getControllers() : Collections.<Controller>emptySet();
         String directory = generation.getDirectory();
         Strategy strategy = generation.getStrategy();
+        Collection<ClassFragment> fragments = new LinkedHashSet<>();
+        for (Schema schema : schemas.values()) fragments.addAll(generate(new SchemaGenerateContext(generation, schema)));
+        for (Controller controller : controllers) fragments.addAll(generate(new ControllerGenerateContext(generation, controller)));
         Collection<Claxx> classes = new LinkedHashSet<>();
-        for (Schema schema : schemas.values()) {
-            Collection<Claxx> claxxes = generate(new SchemaGenerateContext(generation, schema));
-            classes.addAll(claxxes);
-        }
-        for (Controller controller : controllers) {
-            Collection<ClassFragment> fragments = generate(new ControllerGenerateContext(generation, controller));
-            for (ClassFragment fragment : fragments) {
-                String className = fragment.getClazz().getName();
-                String classPath = File.separator + className.replace(".", File.separator) + ".java";
-                Claxx claxx = new Claxx(classPath, fragment, Preference.DEFAULT);
-                classes.add(claxx);
-            }
+        for (ClassFragment fragment : fragments) {
+            String className = fragment.getClazz().getName();
+            String classPath = File.separator + className.replace(".", File.separator) + ".java";
+            Claxx claxx = new Claxx(classPath, fragment, Preference.DEFAULT);
+            classes.add(claxx);
         }
         Task task = new Task(directory, classes);
         strategy.execute(task);
     }
 
-    protected Collection<Claxx> generate(SchemaGenerateContext context) {
+    protected Collection<ClassFragment> generate(SchemaGenerateContext context) {
         Document document = context.getDocument();
         String pkg = context.getPkg();
         boolean pkgForced = context.isPkgForced();
         Supplier supplier = context.getSupplier();
         Schema schema = context.getSchema();
         Archetype archetype = new Archetype(document, pkg, pkgForced, supplier, schema);
-        Claxx claxx = modeler.design(archetype);
-        return Collections.singleton(claxx);
+        return modeler.design(archetype);
     }
 
     protected abstract Collection<ClassFragment> generate(ControllerGenerateContext context);

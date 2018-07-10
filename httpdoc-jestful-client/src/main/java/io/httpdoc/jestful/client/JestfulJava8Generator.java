@@ -5,6 +5,7 @@ import io.httpdoc.core.Operation;
 import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Result;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
@@ -34,7 +35,7 @@ public class JestfulJava8Generator extends JestfulAbstractGenerator {
         super("", "ForJava8");
     }
 
-    public JestfulJava8Generator(Modeler modeler) {
+    public JestfulJava8Generator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
@@ -42,7 +43,7 @@ public class JestfulJava8Generator extends JestfulAbstractGenerator {
         super(prefix, suffix);
     }
 
-    public JestfulJava8Generator(Modeler modeler, String prefix, String suffix) {
+    public JestfulJava8Generator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
