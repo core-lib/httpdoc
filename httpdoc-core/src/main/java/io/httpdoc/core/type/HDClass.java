@@ -21,6 +21,10 @@ public class HDClass extends HDType {
     private final HDClass enclosingType;
     private HDTypeVariable[] typeParameters;
 
+    protected HDClass() {
+        this("");
+    }
+
     public HDClass(String name) {
         if (name == null) throw new NullPointerException();
         this.name = name;

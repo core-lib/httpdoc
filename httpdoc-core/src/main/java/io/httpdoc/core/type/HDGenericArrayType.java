@@ -12,7 +12,7 @@ import java.util.Set;
 public class HDGenericArrayType extends HDType {
     private HDType genericComponentType;
 
-    HDGenericArrayType() {
+    protected HDGenericArrayType() {
     }
 
     public HDGenericArrayType(HDType genericComponentType) {

@@ -13,7 +13,7 @@ public class HDWildcardType extends HDType {
     private HDType upperBound;
     private HDType lowerBound;
 
-    HDWildcardType() {
+    protected HDWildcardType() {
     }
 
     public HDWildcardType(HDType upperBound, HDType lowerBound) {

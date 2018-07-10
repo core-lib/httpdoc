@@ -13,7 +13,11 @@ public class HDTypeVariable extends HDType {
     private final String name;
     private HDType bound;
 
-    HDTypeVariable(String name) {
+    protected HDTypeVariable() {
+        this("");
+    }
+
+    protected HDTypeVariable(String name) {
         this.name = name;
     }
 

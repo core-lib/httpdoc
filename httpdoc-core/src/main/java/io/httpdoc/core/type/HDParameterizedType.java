@@ -16,7 +16,7 @@ public class HDParameterizedType extends HDType {
     private HDType ownerType;
     private HDType[] actualTypeArguments;
 
-    HDParameterizedType() {
+    protected HDParameterizedType() {
     }
 
     public HDParameterizedType(HDClass rawType, HDType ownerType, HDType... actualTypeArguments) {
