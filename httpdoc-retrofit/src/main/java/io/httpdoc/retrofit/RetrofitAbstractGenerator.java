@@ -84,7 +84,7 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         interfase.setClazz(new HDClass(HDClass.Category.INTERFACE, pkg + "." + name));
 
         List<Operation> operations = controller.getOperations() != null ? controller.getOperations() : Collections.<Operation>emptyList();
-        for (Operation operation : operations) generate(new OperationGenerateContext(generation, controller, operation));
+        for (Operation operation : operations) interfase.getMethodFragments().addAll(generate(new OperationGenerateContext(generation, controller, operation)));
 
         return Collections.singleton(interfase);
     }
