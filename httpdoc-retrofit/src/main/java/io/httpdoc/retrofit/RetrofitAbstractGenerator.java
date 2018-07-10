@@ -133,7 +133,8 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
             }
             parameter.setName(name);
             boolean multipart = multipart(parameters);
-            annotate(param, parameter, multipart);
+            Collection<HDAnnotation> annotations = annotate(param, multipart);
+            parameter.getAnnotations().addAll(annotations);
             HDType type = param.getType().toType(pkg, pkgForced, supplier);
             parameter.setType(type);
             fragments.add(parameter);
@@ -141,47 +142,46 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         return fragments;
     }
 
-    protected void annotate(Parameter parameter, ParameterFragment fragment, boolean multipart) {
+    protected Collection<HDAnnotation> annotate(Parameter parameter, boolean multipart) {
         switch (parameter.getScope()) {
             case HTTP_PARAM_SCOPE_HEADER: {
                 HDAnnotation header = new HDAnnotation(Header.class);
                 if (parameter.getName() != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                fragment.getAnnotations().add(header);
-                break;
+                return Collections.singleton(header);
             }
             case HTTP_PARAM_SCOPE_PATH: {
                 HDAnnotation path = new HDAnnotation(Path.class);
                 if (parameter.getName() != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                fragment.getAnnotations().add(path);
-                break;
+                return Collections.singleton(path);
             }
             case HTTP_PARAM_SCOPE_QUERY: {
                 HDAnnotation query = new HDAnnotation(Query.class);
                 if (parameter.getName() != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                fragment.getAnnotations().add(query);
-                break;
+                return Collections.singleton(query);
             }
             case HTTP_PARAM_SCOPE_BODY: {
                 if (parameter.getType().isPart()) {
                     if (parameter.getType().getCategory() == Category.DICTIONARY) {
                         HDAnnotation map = new HDAnnotation(PartMap.class);
-                        fragment.getAnnotations().add(map);
+                        return Collections.singleton(map);
                     } else {
                         HDAnnotation part = new HDAnnotation(Part.class);
                         if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                        fragment.getAnnotations().add(part);
+                        return Collections.singleton(part);
                     }
                 } else {
                     if (multipart) {
                         HDAnnotation part = new HDAnnotation(Part.class);
                         if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
-                        fragment.getAnnotations().add(part);
+                        return Collections.singleton(part);
                     } else {
                         HDAnnotation body = new HDAnnotation(Body.class);
-                        fragment.getAnnotations().add(body);
+                        return Collections.singleton(body);
                     }
                 }
-                break;
+            }
+            default: {
+                return Collections.emptyList();
             }
         }
     }
@@ -195,51 +195,56 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         return path.toString().replaceAll("/+", "/");
     }
 
-    protected void annotate(Document document, Controller controller, Operation operation, MethodFragment fragment) {
+    protected Collection<HDAnnotation> annotate(Document document, Controller controller, Operation operation) {
+        Collection<HDAnnotation> annotations = new LinkedHashSet<>();
         List<Parameter> parameters = operation.getParameters();
         if (multipart(parameters)) {
             HDAnnotation annotation = new HDAnnotation(Multipart.class);
-            fragment.getAnnotations().add(annotation);
+            annotations.add(annotation);
         }
         String path = path(document.getContext(), controller.getPath(), operation.getPath());
         switch (operation.getMethod()) {
             case "HEAD": {
-                HDAnnotation get = new HDAnnotation(HEAD.class);
-                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(get);
+                HDAnnotation head = new HDAnnotation(HEAD.class);
+                head.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
+                annotations.add(head);
                 break;
             }
             case "OPTIONS": {
-                HDAnnotation get = new HDAnnotation(OPTIONS.class);
-                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(get);
+                HDAnnotation options = new HDAnnotation(OPTIONS.class);
+                options.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
+                annotations.add(options);
                 break;
             }
             case "GET": {
                 HDAnnotation get = new HDAnnotation(GET.class);
                 get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(get);
+                annotations.add(get);
                 break;
             }
             case "POST": {
                 HDAnnotation post = new HDAnnotation(POST.class);
                 post.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(post);
+                annotations.add(post);
                 break;
             }
             case "PUT": {
                 HDAnnotation put = new HDAnnotation(PUT.class);
                 put.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(put);
+                annotations.add(put);
                 break;
             }
             case "DELETE": {
-                HDAnnotation get = new HDAnnotation(DELETE.class);
-                get.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
-                fragment.getAnnotations().add(get);
+                HDAnnotation delete = new HDAnnotation(DELETE.class);
+                delete.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
+                annotations.add(delete);
+                break;
+            }
+            default: {
                 break;
             }
         }
+        return annotations;
     }
 
 }

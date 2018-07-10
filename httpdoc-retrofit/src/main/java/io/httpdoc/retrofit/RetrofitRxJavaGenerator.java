@@ -4,6 +4,7 @@ import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
 import io.httpdoc.core.fragment.ResultFragment;
+import io.httpdoc.core.fragment.annotation.HDAnnotation;
 import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.generation.ParameterGenerateContext;
@@ -73,7 +74,8 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
         Operation operation = context.getOperation();
         MethodFragment method = new MethodFragment(0);
         method.setComment(operation.getDescription());
-        annotate(document, controller, operation, method);
+        Collection<HDAnnotation> annotations = annotate(document, controller, operation);
+        method.getAnnotations().addAll(annotations);
         Result result = operation.getResult();
         HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
         HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
