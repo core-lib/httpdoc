@@ -1,8 +1,12 @@
 package io.httpdoc.retrofit;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.fragment.ParameterFragment;
+import io.httpdoc.core.fragment.ResultFragment;
+import io.httpdoc.core.generation.Generation;
+import io.httpdoc.core.generation.OperationGenerateContext;
+import io.httpdoc.core.generation.ParameterGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDParameterizedType;
@@ -59,19 +63,27 @@ public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Document document, Controller controller, Operation operation) {
+    protected Collection<MethodFragment> generate(OperationGenerateContext context) {
+        Generation generation = context.getGeneration();
+        Controller controller = context.getController();
+        Document document = context.getDocument();
+        String pkg = context.getPkg();
+        boolean pkgForced = context.isPkgForced();
+        Supplier supplier = context.getSupplier();
+        Operation operation = context.getOperation();
         MethodFragment method = new MethodFragment(0);
+        method.setComment(operation.getDescription());
         annotate(document, controller, operation, method);
         Result result = operation.getResult();
         HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
-        method.setType(new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class)));
+        HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
+        String comment = result != null ? result.getDescription() : null;
+        method.setResultFragment(new ResultFragment(returnType, comment));
         method.setName(name(operation.getName()));
-        List<Parameter> parameters = operation.getParameters();
-        if (parameters != null) generate(pkg, pkgForced, supplier, method, parameters);
-
-        describe(operation, method, parameters, result);
-
-        interfase.getMethodFragments().add(method);
+        List<Parameter> parameters = operation.getParameters() != null ? operation.getParameters() : Collections.<Parameter>emptyList();
+        Collection<ParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
+        method.getParameterFragments().addAll(fragments);
+        return Collections.singleton(method);
     }
 
     @Override

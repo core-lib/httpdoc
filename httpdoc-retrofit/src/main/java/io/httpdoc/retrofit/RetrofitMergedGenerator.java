@@ -1,13 +1,10 @@
 package io.httpdoc.retrofit;
 
-import io.httpdoc.core.Controller;
-import io.httpdoc.core.Document;
-import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
-import io.httpdoc.core.fragment.ClassFragment;
+import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import io.httpdoc.core.supplier.Supplier;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
 
@@ -41,8 +38,10 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Document document, Controller controller, Operation operation) {
-        for (RetrofitAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, document, controller, operation);
+    protected Collection<MethodFragment> generate(OperationGenerateContext context) {
+        Collection<MethodFragment> fragments = new LinkedHashSet<>();
+        for (RetrofitAbstractGenerator generator : generators.values()) fragments.addAll(generator.generate(context));
+        return fragments;
     }
 
     @Override

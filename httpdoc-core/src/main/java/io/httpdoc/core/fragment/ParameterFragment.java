@@ -22,6 +22,7 @@ public class ParameterFragment extends ModifiedFragment {
     private List<HDAnnotation> annotations = new ArrayList<>();
     private HDType type;
     private String name;
+    private String comment;
 
     public ParameterFragment() {
         this(0);
@@ -83,5 +84,13 @@ public class ParameterFragment extends ModifiedFragment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

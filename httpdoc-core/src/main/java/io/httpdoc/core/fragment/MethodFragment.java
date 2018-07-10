@@ -4,8 +4,8 @@ import io.httpdoc.core.Importable;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.annotation.HDAnnotation;
+import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.type.HDClass;
-import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
 
 import java.io.IOException;
@@ -22,16 +22,14 @@ import java.util.Set;
  * @date 2018-04-27 16:31
  **/
 public class MethodFragment extends ModifiedFragment implements Fragment {
-    public static final HDClass VOID = HDType.valueOf(void.class);
-
-    protected CommentFragment commentFragment;
     protected List<HDAnnotation> annotations = new ArrayList<>();
-    protected List<HDTypeVariable> typeVariables = new ArrayList<>();
-    protected HDType type;
+    protected List<TypeVariableFragment> typeVariableFragments = new ArrayList<>();
+    protected ResultFragment resultFragment;
     protected String name;
     protected List<ParameterFragment> parameterFragments = new ArrayList<>();
-    protected List<HDClass> exceptions = new ArrayList<>();
+    protected List<ExceptionFragment> exceptionFragments = new ArrayList<>();
     protected BlockFragment blockFragment;
+    protected String comment;
 
     public MethodFragment() {
         this(Modifier.PUBLIC);
@@ -43,7 +41,33 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (commentFragment != null) commentFragment.joinTo(appender, preference);
+        StringBuilder builder = new StringBuilder(comment != null ? comment : "");
+        for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
+            ParameterFragment fragment = parameterFragments.get(i);
+            String name = fragment.getName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param ").append(name).append(" ").append(comment);
+        }
+        for (int i = 0; typeVariableFragments != null && i < typeVariableFragments.size(); i++) {
+            TypeVariableFragment fragment = typeVariableFragments.get(i);
+            HDTypeVariable typeVariable = fragment.getTypeVariable();
+            String name = typeVariable.getName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param <").append(name).append("> ").append(comment);
+        }
+        if (resultFragment != null) {
+            String comment = resultFragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(name).append(" ").append(comment);
+        }
+        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
+            ExceptionFragment fragment = exceptionFragments.get(i);
+            HDClass type = fragment.getType();
+            CharSequence name = type.getAbbrName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@throws ").append(name).append(" ").append(comment);
+        }
+        CommentFragment commentFragment = new CommentFragment(builder.toString());
+        commentFragment.joinTo(appender, preference);
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
             annotations.get(i).joinTo(appender, preference);
@@ -51,15 +75,15 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         }
         super.joinTo(appender, preference);
 
-        for (int i = 0; typeVariables != null && i < typeVariables.size(); i++) {
+        for (int i = 0; typeVariableFragments != null && i < typeVariableFragments.size(); i++) {
             if (i == 0) appender.append("<");
             else appender.append(", ");
-            appender.append(typeVariables.get(i));
-            if (i == typeVariables.size() - 1) appender.append("> ");
+            TypeVariableFragment fragment = typeVariableFragments.get(i);
+            fragment.joinTo(appender, preference);
+            if (i == typeVariableFragments.size() - 1) appender.append("> ");
         }
 
-        if (type != null) appender.append(type).append(" ");
-        else appender.append("void ");
+        if (resultFragment != null) resultFragment.joinTo(appender, preference);
         if (name != null) appender.append(name);
         appender.append("(");
         for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
@@ -68,10 +92,11 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
             fragment.joinTo(appender, preference);
         }
         appender.append(")");
-        for (int i = 0; exceptions != null && i < exceptions.size(); i++) {
+        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
             if (i == 0) appender.append("throws ");
             else appender.append(", ");
-            appender.append(exceptions.get(i));
+            ExceptionFragment fragment = exceptionFragments.get(i);
+            fragment.joinTo(appender, preference);
         }
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
         else appender.append(";").enter();
@@ -80,22 +105,13 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new LinkedHashSet<>();
-        if (commentFragment != null) imports.addAll(commentFragment.imports());
         for (Importable importable : annotations) imports.addAll(importable.imports());
-        for (Importable importable : typeVariables) imports.addAll(importable.imports());
-        if (type != null && !type.equals(VOID)) imports.addAll(type.imports());
+        for (Importable importable : typeVariableFragments) imports.addAll(importable.imports());
+        if (resultFragment != null) imports.addAll(resultFragment.imports());
         for (Importable importable : parameterFragments) imports.addAll(importable.imports());
-        for (Importable importable : exceptions) imports.addAll(importable.imports());
+        for (Importable importable : exceptionFragments) imports.addAll(importable.imports());
         if (blockFragment != null) imports.addAll(blockFragment.imports());
         return imports;
-    }
-
-    public CommentFragment getCommentFragment() {
-        return commentFragment;
-    }
-
-    public void setCommentFragment(CommentFragment commentFragment) {
-        this.commentFragment = commentFragment;
     }
 
     public List<HDAnnotation> getAnnotations() {
@@ -106,20 +122,20 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         this.annotations = annotations;
     }
 
-    public List<HDTypeVariable> getTypeVariables() {
-        return typeVariables;
+    public List<TypeVariableFragment> getTypeVariableFragments() {
+        return typeVariableFragments;
     }
 
-    public void setTypeVariables(List<HDTypeVariable> typeVariables) {
-        this.typeVariables = typeVariables;
+    public void setTypeVariableFragments(List<TypeVariableFragment> typeVariableFragments) {
+        this.typeVariableFragments = typeVariableFragments;
     }
 
-    public HDType getType() {
-        return type;
+    public ResultFragment getResultFragment() {
+        return resultFragment;
     }
 
-    public void setType(HDType type) {
-        this.type = type;
+    public void setResultFragment(ResultFragment resultFragment) {
+        this.resultFragment = resultFragment;
     }
 
     public String getName() {
@@ -138,12 +154,12 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         this.parameterFragments = parameterFragments;
     }
 
-    public List<HDClass> getExceptions() {
-        return exceptions;
+    public List<ExceptionFragment> getExceptionFragments() {
+        return exceptionFragments;
     }
 
-    public void setExceptions(List<HDClass> exceptions) {
-        this.exceptions = exceptions;
+    public void setExceptionFragments(List<ExceptionFragment> exceptionFragments) {
+        this.exceptionFragments = exceptionFragments;
     }
 
     public BlockFragment getBlockFragment() {
@@ -152,5 +168,13 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     public void setBlockFragment(BlockFragment blockFragment) {
         this.blockFragment = blockFragment;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

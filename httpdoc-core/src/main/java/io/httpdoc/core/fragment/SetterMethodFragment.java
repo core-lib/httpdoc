@@ -11,7 +11,7 @@ import io.httpdoc.core.type.HDType;
 public class SetterMethodFragment extends MethodFragment {
 
     public SetterMethodFragment(HDType type, String name) {
-        this.type = HDType.valueOf(void.class);
+        this.resultFragment = new ResultFragment(HDType.valueOf(void.class));
         this.name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
         ParameterFragment parameter = new ParameterFragment(type, name);
         this.parameterFragments.add(parameter);

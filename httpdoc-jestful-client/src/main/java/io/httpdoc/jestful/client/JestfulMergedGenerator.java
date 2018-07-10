@@ -1,16 +1,12 @@
 package io.httpdoc.jestful.client;
 
-import io.httpdoc.core.Operation;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
-import io.httpdoc.core.fragment.ClassFragment;
+import io.httpdoc.core.fragment.MethodFragment;
+import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import io.httpdoc.core.supplier.Supplier;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Jestful Client 合并生成器
@@ -40,8 +36,10 @@ public class JestfulMergedGenerator extends JestfulAbstractGenerator {
     }
 
     @Override
-    protected void generate(String pkg, boolean pkgForced, Supplier supplier, ClassFragment interfase, Operation operation) {
-        for (JestfulAbstractGenerator generator : generators.values()) generator.generate(pkg, pkgForced, supplier, interfase, operation);
+    protected Collection<MethodFragment> generate(OperationGenerateContext context) {
+        Collection<MethodFragment> methods = new LinkedHashSet<>();
+        for (JestfulAbstractGenerator generator : generators.values()) methods.addAll(generator.generate(context));
+        return methods;
     }
 
     public JestfulMergedGenerator include(Class<? extends JestfulAbstractGenerator> clazz) {
