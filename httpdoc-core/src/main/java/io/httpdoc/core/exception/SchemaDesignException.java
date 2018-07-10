@@ -38,7 +38,7 @@ public class SchemaDesignException extends HttpdocRuntimeException {
         this.schema = schema;
     }
 
-    public Modeler getModeler() {
+    public Modeler<?> getModeler() {
         return modeler;
     }
 
