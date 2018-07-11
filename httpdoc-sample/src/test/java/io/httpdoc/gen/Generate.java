@@ -5,9 +5,7 @@ import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.jestful.client.JestfulCallbackGenerator;
-import io.httpdoc.jestful.client.JestfulMergedGenerator;
-import io.httpdoc.jestful.client.JestfulSupplier;
+import io.httpdoc.objective.c.ObjCFragmentGenerator;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,9 +30,8 @@ public class Generate {
 //                .include(RetrofitJava8Generator.class)
 //                .include(RetrofitGuavaGenerator.class);
 
-        generation.setSupplier(new JestfulSupplier());
-        Generator generator = new JestfulMergedGenerator()
-                .exclude(JestfulCallbackGenerator.class);
+        Generator generator = new ObjCFragmentGenerator();
+//                .exclude(JestfulCallbackGenerator.class);
 //                .include(JestfulClientLambdaGenerator.class)
 //                .include(JestfulClientFutureGenerator.class)
 //                .include(JestfulClientGuavaGenerator.class)

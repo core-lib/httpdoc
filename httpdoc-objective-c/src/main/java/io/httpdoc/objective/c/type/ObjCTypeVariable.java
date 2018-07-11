@@ -5,11 +5,16 @@ import io.httpdoc.core.type.HDTypeVariable;
 
 import java.util.Set;
 
-public class ObjCTypeVariable extends HDTypeVariable {
+public class ObjCTypeVariable extends HDTypeVariable implements ObjC {
     private final HDTypeVariable typeVariable;
 
     public ObjCTypeVariable(HDTypeVariable typeVariable) {
         this.typeVariable = typeVariable;
+    }
+
+    @Override
+    public ObjCReferenceType getReferenceType() {
+        return ObjCReferenceType.STRONG;
     }
 
     @Override
@@ -39,18 +44,4 @@ public class ObjCTypeVariable extends HDTypeVariable {
         return ObjCType.valueOf(bound);
     }
 
-    @Override
-    public int length() {
-        return typeVariable.length();
-    }
-
-    @Override
-    public char charAt(int index) {
-        return typeVariable.charAt(index);
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return typeVariable.subSequence(start, end);
-    }
 }

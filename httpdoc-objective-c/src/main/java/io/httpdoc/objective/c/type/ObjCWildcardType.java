@@ -5,11 +5,16 @@ import io.httpdoc.core.type.HDWildcardType;
 
 import java.util.Set;
 
-public class ObjCWildcardType extends HDWildcardType {
+public class ObjCWildcardType extends HDWildcardType implements ObjC {
     private final HDWildcardType wildcardType;
 
     public ObjCWildcardType(HDWildcardType wildcardType) {
         this.wildcardType = wildcardType;
+    }
+
+    @Override
+    public ObjCReferenceType getReferenceType() {
+        return ObjCReferenceType.STRONG;
     }
 
     @Override
@@ -41,18 +46,4 @@ public class ObjCWildcardType extends HDWildcardType {
         return ObjCType.valueOf(lowerBound);
     }
 
-    @Override
-    public int length() {
-        return wildcardType.length();
-    }
-
-    @Override
-    public char charAt(int index) {
-        return wildcardType.charAt(index);
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return wildcardType.subSequence(start, end);
-    }
 }

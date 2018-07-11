@@ -5,11 +5,16 @@ import io.httpdoc.core.type.HDType;
 
 import java.util.Set;
 
-public class ObjCGenericArrayType extends HDGenericArrayType {
+public class ObjCGenericArrayType extends HDGenericArrayType implements ObjC {
     private final HDGenericArrayType genericArrayType;
 
     public ObjCGenericArrayType(HDGenericArrayType genericArrayType) {
         this.genericArrayType = genericArrayType;
+    }
+
+    @Override
+    public ObjCReferenceType getReferenceType() {
+        return ObjCReferenceType.COPY;
     }
 
     @Override
@@ -34,18 +39,4 @@ public class ObjCGenericArrayType extends HDGenericArrayType {
         return ObjCType.valueOf(genericComponentType);
     }
 
-    @Override
-    public int length() {
-        return genericArrayType.length();
-    }
-
-    @Override
-    public char charAt(int index) {
-        return genericArrayType.charAt(index);
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return genericArrayType.subSequence(start, end);
-    }
 }

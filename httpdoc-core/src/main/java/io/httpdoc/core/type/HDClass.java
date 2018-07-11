@@ -85,21 +85,6 @@ public class HDClass extends HDType {
         return componentType != null ? componentType.getAbbrName() + "[]" : enclosingType != null ? enclosingType.getAbbrName() + "." + name : name;
     }
 
-    @Override
-    public int length() {
-        return getAbbrName().length();
-    }
-
-    @Override
-    public char charAt(int index) {
-        return getAbbrName().charAt(index);
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return getAbbrName().subSequence(start, end);
-    }
-
     public Category getCategory() {
         return category;
     }

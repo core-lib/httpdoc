@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ObjCDocument extends Document {
+    private static final long serialVersionUID = -1120462878218884601L;
     private final Document document;
 
     public ObjCDocument(Document document) {

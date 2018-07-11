@@ -7,13 +7,13 @@ import io.httpdoc.core.Schema;
 import io.httpdoc.core.exception.SchemaDesignException;
 import io.httpdoc.core.fragment.CommentFragment;
 import io.httpdoc.core.fragment.ConstantFragment;
-import io.httpdoc.core.fragment.FieldFragment;
 import io.httpdoc.core.modeler.Archetype;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.objective.c.fragment.ObjCClassFragment;
+import io.httpdoc.objective.c.fragment.ObjCFieldFragment;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                     Property property = entry.getValue();
                     HDType type = property.getType().toType(pkgGenerated, pkgForced, supplier);
-                    FieldFragment field = new FieldFragment();
+                    ObjCFieldFragment field = new ObjCFieldFragment();
                     field.setName(entry.getKey());
                     field.setType(type);
                     field.setCommentFragment(new CommentFragment(property.getDescription()));

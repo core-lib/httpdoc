@@ -44,4 +44,5 @@ public class JestfulSupplier implements Supplier {
         if ("File".equals(schema.getName())) return Part.class;
         return supplier.acquire(schema);
     }
+
 }

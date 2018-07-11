@@ -87,7 +87,7 @@ public class ObjCClassFragment extends ClassFragment {
             default:
                 throw new IllegalStateException();
         }
-        appender.enter();
+        appender.enter().enter();
 
         // 类型开始
 
