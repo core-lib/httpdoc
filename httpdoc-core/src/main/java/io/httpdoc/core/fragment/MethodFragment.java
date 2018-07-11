@@ -41,32 +41,8 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        StringBuilder builder = new StringBuilder(comment != null ? comment : "").append('\n');
-        for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
-            ParameterFragment fragment = parameterFragments.get(i);
-            String name = fragment.getName();
-            String comment = fragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param ").append(name).append(" ").append(comment);
-        }
-        for (int i = 0; typeVariableFragments != null && i < typeVariableFragments.size(); i++) {
-            TypeVariableFragment fragment = typeVariableFragments.get(i);
-            HDTypeVariable typeVariable = fragment.getTypeVariable();
-            String name = typeVariable.getName();
-            String comment = fragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param <").append(name).append("> ").append(comment);
-        }
-        if (resultFragment != null) {
-            String comment = resultFragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(" ").append(comment);
-        }
-        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
-            ExceptionFragment fragment = exceptionFragments.get(i);
-            HDClass type = fragment.getType();
-            CharSequence name = type.getAbbrName();
-            String comment = fragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@throws ").append(name).append(" ").append(comment);
-        }
-        CommentFragment commentFragment = new CommentFragment(builder.toString());
+        String comment = comment();
+        CommentFragment commentFragment = new CommentFragment(comment);
         commentFragment.joinTo(appender, preference);
 
         for (int i = 0; annotations != null && i < annotations.size(); i++) {
@@ -100,6 +76,35 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         }
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
         else appender.append(";").enter();
+    }
+
+    protected String comment() {
+        StringBuilder builder = new StringBuilder(comment != null ? comment : "").append('\n');
+        for (int i = 0; parameterFragments != null && i < parameterFragments.size(); i++) {
+            ParameterFragment fragment = parameterFragments.get(i);
+            String name = fragment.getName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param ").append(name).append(" ").append(comment);
+        }
+        for (int i = 0; typeVariableFragments != null && i < typeVariableFragments.size(); i++) {
+            TypeVariableFragment fragment = typeVariableFragments.get(i);
+            HDTypeVariable typeVariable = fragment.getTypeVariable();
+            String name = typeVariable.getName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@param <").append(name).append("> ").append(comment);
+        }
+        if (resultFragment != null) {
+            String comment = resultFragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(" ").append(comment);
+        }
+        for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
+            ExceptionFragment fragment = exceptionFragments.get(i);
+            HDClass type = fragment.getType();
+            CharSequence name = type.getAbbrName();
+            String comment = fragment.getComment();
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@throws ").append(name).append(" ").append(comment);
+        }
+        return builder.toString();
     }
 
     @Override

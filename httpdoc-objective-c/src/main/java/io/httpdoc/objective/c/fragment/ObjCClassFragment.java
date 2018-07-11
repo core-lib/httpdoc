@@ -60,7 +60,7 @@ public class ObjCClassFragment extends ClassFragment {
                     if (i == typeParameters.length - 1) appender.append(">");
                 }
                 appender.append(" : ");
-                if (superclass != null) appender.append(superclass);
+                if (superclass != null) appender.append(((ObjCClass) superclass).getSimpleName());
                 else appender.append("NSObject");
                 for (int i = 0; interfaces != null && i < interfaces.size(); i++) {
                     if (i == 0) appender.append("<");
@@ -133,6 +133,10 @@ public class ObjCClassFragment extends ClassFragment {
             case INTERFACE:
                 imports.add(ObjC.FOUNDATION);
                 imports.addAll(super.imports());
+                if (superclass != null) {
+                    imports.remove(((ObjCClass) superclass).getSimpleName());
+                    imports.add("\"" + ((ObjCClass) superclass).getSimpleName() + ".h\"");
+                }
                 break;
             case ENUM:
                 imports.add(ObjC.FOUNDATION);

@@ -62,6 +62,12 @@ public class ProductController {
 //        throw new RuntimeException();
     }
 
+    /**
+     * 创建产品
+     *
+     * @param product 产品
+     * @return 产品创建结果
+     */
     @POST("/")
     public ProductCreateResult create(@Body Product product) {
         ProductCreateResult result = new ProductCreateResult();

@@ -1,6 +1,7 @@
 package io.httpdoc.objective.c;
 
 import io.httpdoc.core.*;
+import io.httpdoc.core.fragment.BlockFragment;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.CommentFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
@@ -106,7 +107,7 @@ public class ObjCFragmentGenerator implements Generator {
         for (Operation operation : operations) {
             Collection<ObjCMethodFragment> methods = generate(new OperationGenerateContext(generation, controller, operation));
             if (methods == null) continue;
-            interfase.getMethodFragments().addAll(methods);
+            for (ObjCMethodFragment method : methods) interfase.getMethodFragments().add(method.signature());
             implementation.getMethodFragments().addAll(methods);
         }
 
@@ -148,6 +149,8 @@ public class ObjCFragmentGenerator implements Generator {
         success.setType(callback);
         success.setName("callback");
         method.getParameterFragments().add(success);
+
+        method.setBlockFragment(new BlockFragment());
 
         return Collections.singleton(method);
     }

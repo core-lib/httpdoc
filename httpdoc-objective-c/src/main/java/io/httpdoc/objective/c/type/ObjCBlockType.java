@@ -25,7 +25,7 @@ public class ObjCBlockType extends HDType {
 
     @Override
     public CharSequence getAbbrName() {
-        StringBuilder builder = new StringBuilder("(^)");
+        StringBuilder builder = new StringBuilder("void (^)");
         builder.append("(");
         int count = 0;
         for (Map.Entry<String, HDType> entry : parameters.entrySet()) {
@@ -39,7 +39,7 @@ public class ObjCBlockType extends HDType {
 
     @Override
     public CharSequence getTypeName() {
-        StringBuilder builder = new StringBuilder("(^)");
+        StringBuilder builder = new StringBuilder("void (^)");
         builder.append("(");
         int count = 0;
         for (Map.Entry<String, HDType> entry : parameters.entrySet()) {

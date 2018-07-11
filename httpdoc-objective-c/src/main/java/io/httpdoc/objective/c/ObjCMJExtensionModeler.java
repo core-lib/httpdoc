@@ -81,7 +81,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
                 implementation.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.CLASS, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name)));
 
                 ObjCMethodFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(pkgForced, supplier, pkg, properties);
-                implementation.getMethodFragments().add(objectClassInArrayMethod);
+                if (objectClassInArrayMethod != null) implementation.getMethodFragments().add(objectClassInArrayMethod);
 
                 return Arrays.asList(interfase, implementation);
             default:
@@ -114,7 +114,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
         }
         objectClassInArrayBlock.getSentences().add("};");
         objectClassInArrayMethod.setBlockFragment(objectClassInArrayBlock);
-        return objectClassInArrayMethod;
+        return count > 0 ? objectClassInArrayMethod : null;
     }
 
 }
