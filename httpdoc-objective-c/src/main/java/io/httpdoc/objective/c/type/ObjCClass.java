@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjCClass extends HDClass implements ObjC {
-    private static final List<String> PRIMARIES = Arrays.asList("id", "bool", "short", "char", "int", "float", "long", "double");
+    public static final List<String> PRIMARIES = Arrays.asList("id", "bool", "short", "char", "int", "float", "long", "double");
     private final String prefix;
     private final HDClass clazz;
 
@@ -94,6 +94,64 @@ public class ObjCClass extends HDClass implements ObjC {
 
     public String getIntactName() {
         String name = clazz.getName();
+        switch (name) {
+            case "boolean":
+                return "bool";
+            case "byte":
+                return "int";
+            case "short":
+                return "short";
+            case "char":
+                return "char";
+            case "int":
+                return "int";
+            case "float":
+                return "float";
+            case "long":
+                return "long";
+            case "double":
+                return "double";
+
+            case "java.lang.Boolean":
+                return "NSNumber";
+            case "java.lang.Byte":
+                return "NSNumber";
+            case "java.lang.Short":
+                return "NSNumber";
+            case "java.lang.Character":
+                return "NSNumber";
+            case "java.lang.Integer":
+                return "NSNumber";
+            case "java.lang.Float":
+                return "NSNumber";
+            case "java.lang.Long":
+                return "NSNumber";
+            case "java.lang.Double":
+                return "NSNumber";
+
+            case "void":
+                return "void";
+
+            case "java.lang.String":
+                return "NSString";
+            case "java.math.BigDecimal":
+                return "NSNumber";
+            case "java.util.Date":
+                return "NSDate";
+            case "java.io.File":
+                return "NSData";
+            case "java.lang.Object":
+                return "NSObject";
+            case "java.util.List":
+                return "NSArray";
+            case "java.util.Map":
+                return "NSDictionary";
+
+            case "io.httpdoc.objective.c.ID":
+                return "id";
+            case "java.lang.Error":
+                return "NSError";
+        }
         String[] names = name.split("\\.");
         int index = names.length - 1;
         names[index] = prefix + names[index];
@@ -102,6 +160,64 @@ public class ObjCClass extends HDClass implements ObjC {
 
     public String getSimpleName() {
         String name = clazz.getName();
+        switch (name) {
+            case "boolean":
+                return "bool";
+            case "byte":
+                return "int";
+            case "short":
+                return "short";
+            case "char":
+                return "char";
+            case "int":
+                return "int";
+            case "float":
+                return "float";
+            case "long":
+                return "long";
+            case "double":
+                return "double";
+
+            case "java.lang.Boolean":
+                return "NSNumber";
+            case "java.lang.Byte":
+                return "NSNumber";
+            case "java.lang.Short":
+                return "NSNumber";
+            case "java.lang.Character":
+                return "NSNumber";
+            case "java.lang.Integer":
+                return "NSNumber";
+            case "java.lang.Float":
+                return "NSNumber";
+            case "java.lang.Long":
+                return "NSNumber";
+            case "java.lang.Double":
+                return "NSNumber";
+
+            case "void":
+                return "void";
+
+            case "java.lang.String":
+                return "NSString";
+            case "java.math.BigDecimal":
+                return "NSNumber";
+            case "java.util.Date":
+                return "NSDate";
+            case "java.io.File":
+                return "NSData";
+            case "java.lang.Object":
+                return "NSObject";
+            case "java.util.List":
+                return "NSArray";
+            case "java.util.Map":
+                return "NSDictionary";
+
+            case "io.httpdoc.objective.c.ID":
+                return "id";
+            case "java.lang.Error":
+                return "NSError";
+        }
         String[] names = name.split("\\.");
         int index = names.length - 1;
         return prefix + names[index];
@@ -238,7 +354,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.lang.Short":
                 return "NSNumber *";
             case "java.lang.Character":
-                return "NSNumber";
+                return "NSNumber *";
             case "java.lang.Integer":
                 return "NSNumber *";
             case "java.lang.Float":
@@ -258,7 +374,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Date":
                 return "NSDate *";
             case "java.io.File":
-                return "NSDate *";
+                return "NSData *";
             case "java.lang.Object":
                 return "NSObject *";
             case "java.util.List":

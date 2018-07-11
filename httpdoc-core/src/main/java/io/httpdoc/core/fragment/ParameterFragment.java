@@ -19,10 +19,10 @@ import java.util.Set;
  * @date 2018-04-28 17:44
  **/
 public class ParameterFragment extends ModifiedFragment {
-    private List<HDAnnotation> annotations = new ArrayList<>();
-    private HDType type;
-    private String name;
-    private String comment;
+    protected List<HDAnnotation> annotations = new ArrayList<>();
+    protected HDType type;
+    protected String name;
+    protected String comment;
 
     public ParameterFragment() {
         this(0);

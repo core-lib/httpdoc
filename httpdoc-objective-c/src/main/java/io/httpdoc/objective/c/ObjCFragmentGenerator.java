@@ -4,7 +4,6 @@ import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
 import io.httpdoc.core.fragment.CommentFragment;
 import io.httpdoc.core.fragment.ParameterFragment;
-import io.httpdoc.core.fragment.ResultFragment;
 import io.httpdoc.core.generation.*;
 import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.modeler.Archetype;
@@ -18,6 +17,7 @@ import io.httpdoc.objective.c.core.ObjCDocument;
 import io.httpdoc.objective.c.fragment.ObjCClassFragment;
 import io.httpdoc.objective.c.fragment.ObjCMethodFragment;
 import io.httpdoc.objective.c.fragment.ObjCParameterFragment;
+import io.httpdoc.objective.c.fragment.ObjCResultFragment;
 import io.httpdoc.objective.c.type.ObjCBlockType;
 import io.httpdoc.objective.c.type.ObjCClass;
 import io.httpdoc.objective.c.type.ObjCType;
@@ -36,7 +36,7 @@ public class ObjCFragmentGenerator implements Generator {
     }
 
     public ObjCFragmentGenerator(String prefix) {
-        this(prefix, new ObjCSimpleModeler(prefix));
+        this(prefix, new ObjCMJExtensionModeler(prefix));
     }
 
     public ObjCFragmentGenerator(Modeler<ObjCClassFragment> modeler) {
@@ -119,7 +119,7 @@ public class ObjCFragmentGenerator implements Generator {
         method.setComment(operation.getDescription());
         Result result = operation.getResult();
         String comment = result != null ? result.getDescription() : null;
-        method.setResultFragment(new ResultFragment(null, comment));
+        method.setResultFragment(new ObjCResultFragment(null, comment));
         method.setName(operation.getName());
         Generation generation = context.getGeneration();
         Controller controller = context.getController();

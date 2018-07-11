@@ -16,9 +16,9 @@ import java.util.Set;
  * @date 2018-07-10 13:12
  **/
 public class ResultFragment implements Fragment {
-    public static final HDClass VOID = HDType.valueOf(void.class);
-    private HDType type;
-    private String comment;
+    protected static final HDClass VOID = HDType.valueOf(void.class);
+    protected HDType type;
+    protected String comment;
 
     public ResultFragment() {
     }

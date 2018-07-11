@@ -14,8 +14,8 @@ import java.util.Set;
  * @date 2018-05-07 13:59
  **/
 public class ConstantFragment implements Fragment {
-    private CommentFragment commentFragment;
-    private String name;
+    protected CommentFragment commentFragment;
+    protected String name;
 
     public ConstantFragment() {
     }

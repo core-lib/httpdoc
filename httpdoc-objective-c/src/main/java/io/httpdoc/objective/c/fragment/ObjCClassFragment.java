@@ -70,7 +70,6 @@ public class ObjCClassFragment extends ClassFragment {
                 }
                 break;
             case CLASS:
-                appender.append("#import \"").append(((ObjCClass) clazz).getSimpleName()).append(".h\"").enter();
                 appender.append("@interface ").append(((ObjCClass) clazz).getSimpleName()).append(" ()").enter();
                 appender.enter();
                 appender.append("@end").enter();
@@ -86,7 +85,7 @@ public class ObjCClassFragment extends ClassFragment {
                     ConstantFragment fragment = constantFragments.get(i);
                     fragment.joinTo(indented, preference);
                     indented.append(" = ").append(String.valueOf(i));
-                    if (i == constantFragments.size() - 1) indented.append(";").enter();
+                    if (i == constantFragments.size() - 1) indented.enter();
                     else indented.append(",").enter();
                 }
                 appender.append("};");
@@ -127,8 +126,19 @@ public class ObjCClassFragment extends ClassFragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new LinkedHashSet<>();
-        imports.add(ObjC.FOUNDATION);
-        imports.addAll(super.imports());
+        switch (clazz.getCategory()) {
+            case CLASS:
+                imports.add("\"" + ((ObjCClass) clazz).getSimpleName() + ".h\"");
+                break;
+            case INTERFACE:
+                imports.add(ObjC.FOUNDATION);
+                imports.addAll(super.imports());
+                break;
+            case ENUM:
+                imports.add(ObjC.FOUNDATION);
+                break;
+        }
+
         return imports;
     }
 

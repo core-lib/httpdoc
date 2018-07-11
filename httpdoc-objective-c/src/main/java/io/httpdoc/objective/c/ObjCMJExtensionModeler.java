@@ -5,17 +5,19 @@ import io.httpdoc.core.Constant;
 import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.exception.SchemaDesignException;
+import io.httpdoc.core.fragment.BlockFragment;
 import io.httpdoc.core.fragment.CommentFragment;
-import io.httpdoc.core.fragment.ConstantFragment;
 import io.httpdoc.core.modeler.Archetype;
 import io.httpdoc.core.modeler.Modeler;
+import io.httpdoc.core.reflection.ParameterizedTypeImpl;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
-import io.httpdoc.objective.c.fragment.ObjCClassFragment;
-import io.httpdoc.objective.c.fragment.ObjCFieldFragment;
+import io.httpdoc.objective.c.fragment.*;
 import io.httpdoc.objective.c.type.ObjCClass;
+import io.httpdoc.objective.c.type.ObjCType;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -24,10 +26,10 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-18 11:15
  **/
-public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
+public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
     private final String prefix;
 
-    public ObjCSimpleModeler(String prefix) {
+    public ObjCMJExtensionModeler(String prefix) {
         this.prefix = prefix;
     }
 
@@ -47,10 +49,11 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 enumeration.setPkg(pkg);
                 enumeration.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 HDClass clazz = new HDClass(HDClass.Category.ENUM, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
-                enumeration.setClazz(new ObjCClass(prefix, clazz));
+                ObjCClass objCClass = new ObjCClass(prefix, clazz);
+                enumeration.setClazz(objCClass);
                 Set<Constant> constants = schema.getConstants();
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
-                    ConstantFragment con = new ConstantFragment(new CommentFragment(constant.getDescription()), constant.getName());
+                    ObjCConstantFragment con = new ObjCConstantFragment(new CommentFragment(constant.getDescription()), constant.getName(), objCClass);
                     enumeration.getConstantFragments().add(con);
                 }
                 return Collections.singleton(enumeration);
@@ -77,10 +80,41 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 implementation.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 implementation.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.CLASS, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name)));
 
+                ObjCMethodFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(pkgForced, supplier, pkg, properties);
+                implementation.getMethodFragments().add(objectClassInArrayMethod);
+
                 return Arrays.asList(interfase, implementation);
             default:
                 return Collections.emptySet();
         }
+    }
+
+    private ObjCMethodFragment getObjectClassInArrayMethodFragment(boolean pkgForced, Supplier supplier, String pkg, Map<String, Property> properties) {
+        ObjCMethodFragment objectClassInArrayMethod = new ObjCMethodFragment(Modifier.STATIC);
+        objectClassInArrayMethod.setName("mj_objectClassInArray");
+        ObjCResultFragment objectClassInArrayResult = new ObjCResultFragment();
+        objectClassInArrayResult.setType(ObjCType.valueOf(prefix, HDType.valueOf(new ParameterizedTypeImpl(Map.class, new Class<?>[]{String.class, String.class}))));
+        objectClassInArrayMethod.setResultFragment(objectClassInArrayResult);
+        BlockFragment objectClassInArrayBlock = new BlockFragment();
+        objectClassInArrayBlock.getSentences().add("return @{");
+        int count = 0;
+        for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
+            Property property = entry.getValue();
+            Schema type = property.getType();
+            Category category = type.getCategory();
+            Schema component = type.getComponent();
+            if (category == Category.ARRAY) {
+                while (component.getCategory() == Category.ARRAY) component = component.getComponent();
+                ObjCClass componentType = (ObjCClass) component.toType(pkg, pkgForced, supplier);
+                CharSequence className = componentType.getSimpleName();
+                className = ObjCClass.PRIMARIES.contains(String.valueOf(className)) ? "NSNumber" : className;
+                String sentence = "    @\"" + entry.getKey() + "\": @\"" + className + "\"" + (count++ > 0 ? "," : "");
+                objectClassInArrayBlock.getSentences().add(1, sentence);
+            }
+        }
+        objectClassInArrayBlock.getSentences().add("};");
+        objectClassInArrayMethod.setBlockFragment(objectClassInArrayBlock);
+        return objectClassInArrayMethod;
     }
 
 }
