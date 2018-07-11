@@ -6,9 +6,11 @@ import io.httpdoc.core.type.HDWildcardType;
 import java.util.Set;
 
 public class ObjCWildcardType extends HDWildcardType implements ObjC {
+    private final String prefix;
     private final HDWildcardType wildcardType;
 
-    public ObjCWildcardType(HDWildcardType wildcardType) {
+    public ObjCWildcardType(String prefix, HDWildcardType wildcardType) {
+        this.prefix = prefix;
         this.wildcardType = wildcardType;
     }
 
@@ -36,14 +38,14 @@ public class ObjCWildcardType extends HDWildcardType implements ObjC {
     public HDType getUpperBound() {
         HDType upperBound = wildcardType.getUpperBound();
         if (upperBound == null) return null;
-        return ObjCType.valueOf(upperBound);
+        return ObjCType.valueOf(prefix, upperBound);
     }
 
     @Override
     public HDType getLowerBound() {
         HDType lowerBound = wildcardType.getLowerBound();
         if (lowerBound == null) return null;
-        return ObjCType.valueOf(lowerBound);
+        return ObjCType.valueOf(prefix, lowerBound);
     }
 
 }

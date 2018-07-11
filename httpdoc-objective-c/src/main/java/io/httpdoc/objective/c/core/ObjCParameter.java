@@ -4,9 +4,11 @@ import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Schema;
 
 public class ObjCParameter extends Parameter {
+    private final String prefix;
     private final Parameter parameter;
 
-    public ObjCParameter(Parameter parameter) {
+    public ObjCParameter(String prefix, Parameter parameter) {
+        this.prefix = prefix;
         this.parameter = parameter;
     }
 
@@ -34,7 +36,7 @@ public class ObjCParameter extends Parameter {
     public Schema getType() {
         Schema type = parameter.getType();
         if (type == null) return null;
-        return new ObjCSchema(type);
+        return new ObjCSchema(prefix, type);
     }
 
     @Override

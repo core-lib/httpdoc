@@ -9,9 +9,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ObjCParameterizedType extends HDParameterizedType implements ObjC {
+    private final String prefix;
     private final HDParameterizedType parameterizedType;
 
-    public ObjCParameterizedType(HDParameterizedType parameterizedType) {
+    public ObjCParameterizedType(String prefix, HDParameterizedType parameterizedType) {
+        this.prefix = prefix;
         this.parameterizedType = parameterizedType;
     }
 
@@ -71,14 +73,14 @@ public class ObjCParameterizedType extends HDParameterizedType implements ObjC {
     public HDClass getRawType() {
         HDClass rawType = parameterizedType.getRawType();
         if (rawType == null) return null;
-        return new ObjCClass(rawType);
+        return new ObjCClass(prefix, rawType);
     }
 
     @Override
     public HDType getOwnerType() {
         HDType ownerType = parameterizedType.getOwnerType();
         if (ownerType == null) return null;
-        return ObjCType.valueOf(ownerType);
+        return ObjCType.valueOf(prefix, ownerType);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class ObjCParameterizedType extends HDParameterizedType implements ObjC {
         HDType[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         if (actualTypeArguments == null) return null;
         HDType[] array = new HDType[actualTypeArguments.length];
-        for (int i = 0; i < actualTypeArguments.length; i++) array[i] = ObjCType.valueOf(actualTypeArguments[i]);
+        for (int i = 0; i < actualTypeArguments.length; i++) array[i] = ObjCType.valueOf(prefix, actualTypeArguments[i]);
         return array;
     }
 

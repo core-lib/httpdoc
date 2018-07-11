@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjCController extends Controller {
+    private final String prefix;
     private final Controller controller;
 
-    public ObjCController(Controller controller) {
+    public ObjCController(String prefix, Controller controller) {
+        this.prefix = prefix;
         this.controller = controller;
     }
 
@@ -68,7 +70,7 @@ public class ObjCController extends Controller {
         List<Operation> operations = controller.getOperations();
         if (operations == null) return null;
         List<Operation> list = new ArrayList<>();
-        for (Operation operation : operations) list.add(new ObjCOperation(operation));
+        for (Operation operation : operations) list.add(new ObjCOperation(prefix, operation));
         return list;
     }
 

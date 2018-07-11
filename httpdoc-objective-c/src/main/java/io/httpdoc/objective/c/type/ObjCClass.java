@@ -1,5 +1,6 @@
 package io.httpdoc.objective.c.type;
 
+import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
@@ -10,10 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjCClass extends HDClass implements ObjC {
-    private static final List<String> PRIMARIES = Arrays.asList("bool", "short", "char", "int", "float", "long", "double");
+    private static final List<String> PRIMARIES = Arrays.asList("id", "bool", "short", "char", "int", "float", "long", "double");
+    private final String prefix;
     private final HDClass clazz;
 
-    public ObjCClass(HDClass clazz) {
+    public ObjCClass(String prefix, HDClass clazz) {
+        this.prefix = prefix;
         this.clazz = clazz;
     }
 
@@ -75,6 +78,8 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.ID":
                 return ObjCReferenceType.STRONG;
+            case "java.lang.Error":
+                return ObjCReferenceType.STRONG;
         }
 
         switch (clazz.getCategory()) {
@@ -87,15 +92,95 @@ public class ObjCClass extends HDClass implements ObjC {
         }
     }
 
+    public String getIntactName() {
+        String name = clazz.getName();
+        String[] names = name.split("\\.");
+        int index = names.length - 1;
+        names[index] = prefix + names[index];
+        return StringKit.join('.', names);
+    }
+
+    public String getSimpleName() {
+        String name = clazz.getName();
+        String[] names = name.split("\\.");
+        int index = names.length - 1;
+        return prefix + names[index];
+    }
+
     @Override
     public Set<String> imports() {
-        return getComponentType() != null
-                ? getComponentType().imports()
-                : getEnclosingType() != null
-                ? getEnclosingType().imports()
-                : PRIMARIES.contains(getName())
-                ? Collections.<String>emptySet()
-                : Collections.singleton(getName());
+        String name = clazz.getName();
+        switch (name) {
+            case "boolean":
+                return Collections.emptySet();
+            case "byte":
+                return Collections.emptySet();
+            case "short":
+                return Collections.emptySet();
+            case "char":
+                return Collections.emptySet();
+            case "int":
+                return Collections.emptySet();
+            case "float":
+                return Collections.emptySet();
+            case "long":
+                return Collections.emptySet();
+            case "double":
+                return Collections.emptySet();
+
+            case "java.lang.Boolean":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Byte":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Short":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Character":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Integer":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Float":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Long":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Double":
+                return Collections.singleton(ObjC.FOUNDATION);
+
+            case "void":
+                return Collections.emptySet();
+
+            case "java.lang.String":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.math.BigDecimal":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.util.Date":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.io.File":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.lang.Object":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.util.List":
+                return Collections.singleton(ObjC.FOUNDATION);
+            case "java.util.Map":
+                return Collections.singleton(ObjC.FOUNDATION);
+
+            case "io.httpdoc.objective.c.ID":
+                return Collections.emptySet();
+            case "java.lang.Error":
+                return Collections.singleton(ObjC.FOUNDATION);
+        }
+
+        switch (clazz.getCategory()) {
+            case INTERFACE:// 接口类型
+                return Collections.singleton(getSimpleName());
+            case CLASS: // 实现类型
+                return Collections.singleton(getSimpleName());
+            case ENUM: // 枚举类型
+                return Collections.singleton("\"" + getSimpleName() + ".h\"");
+            case ARRAY:// 数组类型
+                return getComponentType().imports();
+            default:// 不支持类型
+                throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -183,13 +268,19 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.ID":
                 return "id";
+            case "java.lang.Error":
+                return "NSError *";
         }
 
         switch (clazz.getCategory()) {
-            case CLASS:
-                return name + " *";
-            default:
-                return name;
+            case INTERFACE:// 接口类型
+                return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
+            case CLASS: // 实现类型
+                return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
+            case ENUM: // 枚举类型
+                return prefix + (name.substring(name.lastIndexOf('.') + 1));
+            default:// 不支持类型
+                throw new IllegalStateException();
         }
     }
 
@@ -197,7 +288,7 @@ public class ObjCClass extends HDClass implements ObjC {
     public HDType getComponentType() {
         HDType componentType = clazz.getComponentType();
         if (componentType == null) return null;
-        return ObjCType.valueOf(componentType);
+        return ObjCType.valueOf(prefix, componentType);
     }
 
     @Override
@@ -212,7 +303,7 @@ public class ObjCClass extends HDClass implements ObjC {
         HDTypeVariable[] typeParameters = clazz.getTypeParameters();
         if (typeParameters == null) return null;
         HDTypeVariable[] array = new HDTypeVariable[typeParameters.length];
-        for (int i = 0; i < typeParameters.length; i++) array[i] = new ObjCTypeVariable(typeParameters[i]);
+        for (int i = 0; i < typeParameters.length; i++) array[i] = new ObjCTypeVariable(prefix, typeParameters[i]);
         return array;
     }
 

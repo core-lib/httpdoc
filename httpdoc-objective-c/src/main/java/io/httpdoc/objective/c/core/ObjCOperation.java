@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjCOperation extends Operation {
+    private final String prefix;
     private final Operation operation;
 
-    public ObjCOperation(Operation operation) {
+    public ObjCOperation(String prefix, Operation operation) {
+        this.prefix = prefix;
         this.operation = operation;
     }
 
@@ -69,7 +71,7 @@ public class ObjCOperation extends Operation {
         List<Parameter> parameters = operation.getParameters();
         if (parameters == null) return null;
         List<Parameter> list = new ArrayList<>();
-        for (Parameter parameter : parameters) list.add(new ObjCParameter(parameter));
+        for (Parameter parameter : parameters) list.add(new ObjCParameter(prefix, parameter));
         return list;
     }
 
@@ -82,7 +84,7 @@ public class ObjCOperation extends Operation {
     public Result getResult() {
         Result result = operation.getResult();
         if (result == null) return null;
-        return new ObjCResult(result);
+        return new ObjCResult(prefix, result);
     }
 
     @Override

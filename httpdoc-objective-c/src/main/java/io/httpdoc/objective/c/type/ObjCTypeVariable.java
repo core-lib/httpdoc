@@ -6,9 +6,11 @@ import io.httpdoc.core.type.HDTypeVariable;
 import java.util.Set;
 
 public class ObjCTypeVariable extends HDTypeVariable implements ObjC {
+    private final String prefix;
     private final HDTypeVariable typeVariable;
 
-    public ObjCTypeVariable(HDTypeVariable typeVariable) {
+    public ObjCTypeVariable(String prefix, HDTypeVariable typeVariable) {
+        this.prefix = prefix;
         this.typeVariable = typeVariable;
     }
 
@@ -41,7 +43,7 @@ public class ObjCTypeVariable extends HDTypeVariable implements ObjC {
     public HDType getBound() {
         HDType bound = typeVariable.getBound();
         if (bound == null) return null;
-        return ObjCType.valueOf(bound);
+        return ObjCType.valueOf(prefix, bound);
     }
 
 }

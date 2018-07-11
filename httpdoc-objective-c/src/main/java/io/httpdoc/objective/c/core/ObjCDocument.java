@@ -11,9 +11,11 @@ import java.util.Set;
 
 public class ObjCDocument extends Document {
     private static final long serialVersionUID = -1120462878218884601L;
+    private final String prefix;
     private final Document document;
 
-    public ObjCDocument(Document document) {
+    public ObjCDocument(String prefix, Document document) {
+        this.prefix = prefix;
         this.document = document;
     }
 
@@ -142,7 +144,7 @@ public class ObjCDocument extends Document {
         Set<Controller> controllers = document.getControllers();
         if (controllers == null) return null;
         Set<Controller> set = new LinkedHashSet<>();
-        for (Controller controller : controllers) set.add(new ObjCController(controller));
+        for (Controller controller : controllers) set.add(new ObjCController(prefix, controller));
         return set;
     }
 
@@ -156,7 +158,7 @@ public class ObjCDocument extends Document {
         Map<String, Schema> schemas = document.getSchemas();
         if (schemas == null) return null;
         Map<String, Schema> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Schema> entry : schemas.entrySet()) map.put(entry.getKey(), new ObjCSchema(entry.getValue()));
+        for (Map.Entry<String, Schema> entry : schemas.entrySet()) map.put(entry.getKey(), new ObjCSchema(prefix, entry.getValue()));
         return map;
     }
 

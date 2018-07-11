@@ -11,9 +11,11 @@ import io.httpdoc.objective.c.type.ObjCType;
 import java.util.*;
 
 public class ObjCSchema extends Schema {
+    private final String prefix;
     private final Schema schema;
 
-    public ObjCSchema(Schema schema) {
+    public ObjCSchema(String prefix, Schema schema) {
+        this.prefix = prefix;
         this.schema = schema;
     }
 
@@ -46,7 +48,7 @@ public class ObjCSchema extends Schema {
     @Override
     public HDType toType(String pkg, boolean pkgForced, Supplier supplier) {
         HDType type = schema.toType(pkg, pkgForced, supplier);
-        return ObjCType.valueOf(type);
+        return ObjCType.valueOf(prefix, type);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class ObjCSchema extends Schema {
     public Schema getSuperclass() {
         Schema superclass = schema.getSuperclass();
         if (superclass == null) return null;
-        return new ObjCSchema(superclass);
+        return new ObjCSchema(prefix, superclass);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class ObjCSchema extends Schema {
         Map<String, Property> properties = schema.getProperties();
         if (properties == null) return null;
         Map<String, Property> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Property> entry : properties.entrySet()) map.put(entry.getKey(), new ObjCProperty(entry.getValue()));
+        for (Map.Entry<String, Property> entry : properties.entrySet()) map.put(entry.getKey(), new ObjCProperty(prefix, entry.getValue()));
         return map;
     }
 
@@ -109,7 +111,7 @@ public class ObjCSchema extends Schema {
     public Schema getComponent() {
         Schema component = schema.getComponent();
         if (component == null) return null;
-        return new ObjCSchema(component);
+        return new ObjCSchema(prefix, component);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class ObjCSchema extends Schema {
     public Schema getOwner() {
         Schema owner = schema.getOwner();
         if (owner == null) return null;
-        return new ObjCSchema(owner);
+        return new ObjCSchema(prefix, owner);
     }
 
     @Override
@@ -144,7 +146,7 @@ public class ObjCSchema extends Schema {
         Collection<Schema> dependencies = schema.getDependencies();
         if (dependencies == null) return null;
         Collection<Schema> collection = new LinkedHashSet<>();
-        for (Schema dependency : dependencies) collection.add(new ObjCSchema(dependency));
+        for (Schema dependency : dependencies) collection.add(new ObjCSchema(prefix, dependency));
         return collection;
     }
 

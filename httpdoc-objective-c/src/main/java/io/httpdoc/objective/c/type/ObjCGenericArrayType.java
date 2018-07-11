@@ -6,9 +6,11 @@ import io.httpdoc.core.type.HDType;
 import java.util.Set;
 
 public class ObjCGenericArrayType extends HDGenericArrayType implements ObjC {
+    private final String prefix;
     private final HDGenericArrayType genericArrayType;
 
-    public ObjCGenericArrayType(HDGenericArrayType genericArrayType) {
+    public ObjCGenericArrayType(String prefix, HDGenericArrayType genericArrayType) {
+        this.prefix = prefix;
         this.genericArrayType = genericArrayType;
     }
 
@@ -36,7 +38,7 @@ public class ObjCGenericArrayType extends HDGenericArrayType implements ObjC {
     public HDType getGenericComponentType() {
         HDType genericComponentType = genericArrayType.getGenericComponentType();
         if (genericComponentType == null) return null;
-        return ObjCType.valueOf(genericComponentType);
+        return ObjCType.valueOf(prefix, genericComponentType);
     }
 
 }

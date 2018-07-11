@@ -19,6 +19,7 @@ import io.httpdoc.objective.c.fragment.ObjCClassFragment;
 import io.httpdoc.objective.c.fragment.ObjCMethodFragment;
 import io.httpdoc.objective.c.fragment.ObjCParameterFragment;
 import io.httpdoc.objective.c.type.ObjCBlockType;
+import io.httpdoc.objective.c.type.ObjCClass;
 import io.httpdoc.objective.c.type.ObjCType;
 
 import java.io.File;
@@ -26,19 +27,30 @@ import java.io.IOException;
 import java.util.*;
 
 public class ObjCFragmentGenerator implements Generator {
+    private final static String DEFAULT_PREFIX = "HD";
+    private final String prefix;
     private final Modeler<ObjCClassFragment> modeler;
 
     public ObjCFragmentGenerator() {
-        this(new ObjCSimpleModeler());
+        this(DEFAULT_PREFIX);
+    }
+
+    public ObjCFragmentGenerator(String prefix) {
+        this(prefix, new ObjCSimpleModeler(prefix));
     }
 
     public ObjCFragmentGenerator(Modeler<ObjCClassFragment> modeler) {
+        this(DEFAULT_PREFIX, modeler);
+    }
+
+    public ObjCFragmentGenerator(String prefix, Modeler<ObjCClassFragment> modeler) {
+        this.prefix = prefix;
         this.modeler = modeler;
     }
 
     @Override
     public void generate(Generation generation) throws IOException {
-        Document document = generation.getDocument() != null ? new ObjCDocument(generation.getDocument()) : null;
+        Document document = generation.getDocument() != null ? new ObjCDocument(prefix, generation.getDocument()) : null;
         if (document == null) return;
         Map<String, Schema> schemas = document.getSchemas() != null ? document.getSchemas() : Collections.<String, Schema>emptyMap();
         Set<Controller> controllers = document.getControllers() != null ? document.getControllers() : Collections.<Controller>emptySet();
@@ -49,8 +61,8 @@ public class ObjCFragmentGenerator implements Generator {
         for (Controller controller : controllers) fragments.addAll(generate(new ControllerGenerateContext(generation, controller)));
         Collection<Claxx> classes = new LinkedHashSet<>();
         for (ClassFragment fragment : fragments) {
-            HDClass clazz = fragment.getClazz();
-            String className = clazz.getName();
+            ObjCClass clazz = (ObjCClass) fragment.getClazz();
+            String className = clazz.getIntactName();
             String extension = clazz.getCategory() == HDClass.Category.CLASS ? ".m" : ".h";
             String classPath = File.separator + className.replace(".", File.separator) + extension;
             Claxx claxx = new Claxx(classPath, fragment, Preference.DEFAULT);
@@ -83,12 +95,12 @@ public class ObjCFragmentGenerator implements Generator {
         ObjCClassFragment interfase = new ObjCClassFragment();
         interfase.setPkg(pkg);
         interfase.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
-        interfase.setClazz(new HDClass(HDClass.Category.INTERFACE, pkg + "." + name));
+        interfase.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.INTERFACE, pkg + "." + name)));
 
         ObjCClassFragment implementation = new ObjCClassFragment();
         implementation.setPkg(pkg);
         implementation.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
-        implementation.setClazz(new HDClass(HDClass.Category.CLASS, pkg + "." + name));
+        implementation.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.CLASS, pkg + "." + name)));
 
         List<Operation> operations = controller.getOperations() != null ? controller.getOperations() : Collections.<Operation>emptyList();
         for (Operation operation : operations) {
@@ -125,12 +137,12 @@ public class ObjCFragmentGenerator implements Generator {
                 ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
                 : result.getType().toType(pkg, pkgForced, supplier)
                 : null;
-        HDType returnType = type != null ? type : ObjCType.valueOf(HDType.valueOf(ID.class));
+        HDType returnType = type != null ? type : ObjCType.valueOf(prefix, HDType.valueOf(ID.class));
 
         Map<String, HDType> map = new LinkedHashMap<>();
-        map.put("success", ObjCType.valueOf(HDType.valueOf(boolean.class)));
+        map.put("success", ObjCType.valueOf(prefix, HDType.valueOf(boolean.class)));
         map.put("result", returnType);
-        map.put("error", ObjCType.valueOf(HDType.valueOf(Error.class)));
+        map.put("error", ObjCType.valueOf(prefix, HDType.valueOf(Error.class)));
         ObjCBlockType callback = new ObjCBlockType(map);
         ObjCParameterFragment success = new ObjCParameterFragment();
         success.setType(callback);

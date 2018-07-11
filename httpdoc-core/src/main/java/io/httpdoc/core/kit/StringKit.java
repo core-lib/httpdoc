@@ -10,4 +10,13 @@ public class StringKit {
         return value == null || value.trim().length() == 0;
     }
 
+    public static String join(char c, String... values) {
+        StringBuilder builder = new StringBuilder();
+        for (String value : values) {
+            if (builder.length() > 0) builder.append(c);
+            builder.append(value);
+        }
+        return builder.toString();
+    }
+
 }

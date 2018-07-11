@@ -9,6 +9,8 @@ import io.httpdoc.core.fragment.ConstantFragment;
 import io.httpdoc.core.fragment.FieldFragment;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.core.type.HDTypeVariable;
+import io.httpdoc.objective.c.type.ObjC;
+import io.httpdoc.objective.c.type.ObjCClass;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -31,7 +33,11 @@ public class ObjCClassFragment extends ClassFragment {
 
         // 导入
         Set<String> imports = new TreeSet<>(this.imports());
-        for (String dependency : imports) appender.append("#import ").append(dependency).enter();
+        for (String dependency : imports) {
+            if (dependency.startsWith("<") && dependency.endsWith(">")) appender.append("#import ").append(dependency).enter();
+            else if (dependency.endsWith("\"") && dependency.endsWith("\"")) appender.append("#import ").append(dependency).enter();
+            else appender.append("@class ").append(dependency).append(";").enter();
+        }
         appender.enter();
 
         // 静态属性
@@ -45,7 +51,7 @@ public class ObjCClassFragment extends ClassFragment {
         // 声明
         switch (clazz.getCategory()) {
             case INTERFACE:
-                appender.append("@interface ").append(clazz);
+                appender.append("@interface ").append(((ObjCClass) clazz).getSimpleName());
                 HDTypeVariable[] typeParameters = clazz.getTypeParameters();
                 for (int i = 0; typeParameters != null && i < typeParameters.length; i++) {
                     if (i == 0) appender.append("<");
@@ -64,14 +70,15 @@ public class ObjCClassFragment extends ClassFragment {
                 }
                 break;
             case CLASS:
-                appender.append("@interface ").append(clazz).append(" ()").enter();
+                appender.append("#import \"").append(((ObjCClass) clazz).getSimpleName()).append(".h\"").enter();
+                appender.append("@interface ").append(((ObjCClass) clazz).getSimpleName()).append(" ()").enter();
                 appender.enter();
                 appender.append("@end").enter();
                 appender.enter();
-                appender.append("@implementation ").append(clazz);
+                appender.append("@implementation ").append(((ObjCClass) clazz).getSimpleName());
                 break;
             case ENUM:
-                appender.append("typedef NS_ENUM(NSInteger, ").append(clazz).append("){");
+                appender.append("typedef NS_ENUM(NSInteger, ").append(((ObjCClass) clazz).getSimpleName()).append("){");
                 EnterMergedAppender indented = new EnterMergedAppender(new IndentAppender(appender, preference.getIndent()), 2);
                 // 枚举常量
                 for (int i = 0; i < constantFragments.size(); i++) {
@@ -120,7 +127,7 @@ public class ObjCClassFragment extends ClassFragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new LinkedHashSet<>();
-        imports.add("<Foundation/Foundation.h>");
+        imports.add(ObjC.FOUNDATION);
         imports.addAll(super.imports());
         return imports;
     }

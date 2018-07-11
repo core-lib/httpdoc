@@ -4,9 +4,11 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 
 public class ObjCProperty extends Property {
+    private final String prefix;
     private final Property property;
 
-    public ObjCProperty(Property property) {
+    public ObjCProperty(String prefix, Property property) {
+        this.prefix = prefix;
         this.property = property;
     }
 
@@ -14,7 +16,7 @@ public class ObjCProperty extends Property {
     public Schema getType() {
         Schema type = property.getType();
         if (type == null) return null;
-        return new ObjCSchema(type);
+        return new ObjCSchema(prefix, type);
     }
 
     @Override

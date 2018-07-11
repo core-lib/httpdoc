@@ -14,6 +14,7 @@ import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.objective.c.fragment.ObjCClassFragment;
 import io.httpdoc.objective.c.fragment.ObjCFieldFragment;
+import io.httpdoc.objective.c.type.ObjCClass;
 
 import java.util.*;
 
@@ -24,6 +25,11 @@ import java.util.*;
  * @date 2018-05-18 11:15
  **/
 public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
+    private final String prefix;
+
+    public ObjCSimpleModeler(String prefix) {
+        this.prefix = prefix;
+    }
 
     @Override
     public Collection<ObjCClassFragment> design(Archetype archetype) throws SchemaDesignException {
@@ -40,7 +46,8 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 ObjCClassFragment enumeration = new ObjCClassFragment();
                 enumeration.setPkg(pkg);
                 enumeration.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
-                enumeration.setClazz(new HDClass(HDClass.Category.ENUM, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name));
+                HDClass clazz = new HDClass(HDClass.Category.ENUM, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
+                enumeration.setClazz(new ObjCClass(prefix, clazz));
                 Set<Constant> constants = schema.getConstants();
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
                     ConstantFragment con = new ConstantFragment(new CommentFragment(constant.getDescription()), constant.getName());
@@ -51,7 +58,7 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 ObjCClassFragment interfase = new ObjCClassFragment();
                 interfase.setPkg(pkg);
                 interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
-                interfase.setClazz(new HDClass(HDClass.Category.INTERFACE, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name));
+                interfase.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.INTERFACE, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name)));
                 Schema superclass = schema.getSuperclass();
                 interfase.setSuperclass(superclass != null && superclass.getCategory() == Category.OBJECT ? superclass.toType(pkgGenerated, pkgForced, supplier) : null);
                 Map<String, Property> properties = schema.getProperties();
@@ -68,7 +75,7 @@ public class ObjCSimpleModeler implements Modeler<ObjCClassFragment> {
                 ObjCClassFragment implementation = new ObjCClassFragment();
                 implementation.setPkg(pkg);
                 implementation.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
-                implementation.setClazz(new HDClass(HDClass.Category.CLASS, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name));
+                implementation.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.CLASS, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name)));
 
                 return Arrays.asList(interfase, implementation);
             default:
