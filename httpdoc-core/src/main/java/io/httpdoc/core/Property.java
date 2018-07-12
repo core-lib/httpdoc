@@ -9,6 +9,7 @@ package io.httpdoc.core;
 public class Property extends Definition {
     private static final long serialVersionUID = 5280642997370612295L;
 
+    private String alias;
     private Schema type;
 
     public Property() {
@@ -17,6 +18,14 @@ public class Property extends Definition {
     Property(Schema type, String description) {
         this.type = type;
         this.description = description;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public Schema getType() {

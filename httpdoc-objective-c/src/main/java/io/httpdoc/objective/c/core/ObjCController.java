@@ -80,6 +80,16 @@ public class ObjCController extends Controller {
     }
 
     @Override
+    public List<String> getTags() {
+        return controller.getTags();
+    }
+
+    @Override
+    public void setTags(List<String> tags) {
+        controller.setTags(tags);
+    }
+
+    @Override
     public String getDescription() {
         return controller.getDescription();
     }

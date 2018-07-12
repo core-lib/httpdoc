@@ -13,6 +13,16 @@ public class ObjCProperty extends Property {
     }
 
     @Override
+    public String getAlias() {
+        return property.getAlias();
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        property.setAlias(alias);
+    }
+
+    @Override
     public Schema getType() {
         Schema type = property.getType();
         if (type == null) return null;

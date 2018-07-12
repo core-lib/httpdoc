@@ -93,6 +93,16 @@ public class ObjCOperation extends Operation {
     }
 
     @Override
+    public List<String> getTags() {
+        return operation.getTags();
+    }
+
+    @Override
+    public void setTags(List<String> tags) {
+        operation.setTags(tags);
+    }
+
+    @Override
     public String getDescription() {
         return operation.getDescription();
     }

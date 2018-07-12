@@ -8,6 +8,6 @@ package io.httpdoc.objective.c;
  **/
 public enum ObjCEnumKind {
 
-    INTEGER, STRING;
+    INTEGER, STRING
 
 }

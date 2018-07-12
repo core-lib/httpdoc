@@ -15,6 +15,7 @@ public class Parameter extends Definition {
     public static final String HTTP_PARAM_SCOPE_FIELD = "field";
     private static final long serialVersionUID = 8199679343694443326L;
     private String name;
+    private String alias;
     private String scope;
     private Schema type;
 
@@ -24,6 +25,14 @@ public class Parameter extends Definition {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getScope() {

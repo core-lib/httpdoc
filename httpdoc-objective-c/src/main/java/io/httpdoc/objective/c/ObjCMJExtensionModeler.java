@@ -31,7 +31,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
     private final ObjCEnumKind enumKind;
 
     public ObjCMJExtensionModeler(String prefix) {
-        this(prefix, ObjCEnumKind.INTEGER);
+        this(prefix, ObjCEnumKind.STRING);
     }
 
     public ObjCMJExtensionModeler(String prefix, ObjCEnumKind enumKind) {

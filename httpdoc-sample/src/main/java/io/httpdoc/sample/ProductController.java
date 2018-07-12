@@ -1,5 +1,7 @@
 package io.httpdoc.sample;
 
+import io.httpdoc.core.annotation.*;
+import io.httpdoc.core.annotation.Package;
 import io.httpdoc.nutz.ArticleAPI;
 import org.qfox.jestful.core.http.*;
 import org.qfox.jestful.server.annotation.Field;
@@ -22,6 +24,9 @@ import java.util.Random;
  **/
 @HTTP("/products")
 @Controller
+@Package("io.httpdoc.test")
+@Name("ProductAPI")
+@Tag(value = "product")
 public class ProductController {
 
     @Autowired
@@ -40,13 +45,13 @@ public class ProductController {
     @Transactional
     @GET("/{page}/{size}") // name=sdfsd&age=12
     public ProductListResult list(
-            @Path("page") int p,
-            @Path("size") int s,
+            @Alias("p") @Path("page") int p,
+            @Alias("s") @Path("size") int s,
             @Field ProductStatus status,
-            @Field List<String> arr,
-            @Field Product[] products,
-            @Body("file1") Part file1,
-            @Body("file2") Part file2,
+            @Ignore @Alias("strings") @Field List<String> arr,
+            @Ignore @Field Product[] products,
+            @Ignore @Body("file1") Part file1,
+            @Ignore @Body("file2") Part file2,
             HttpServletRequest request
     ) {
         ProductListResult result = new ProductListResult();
@@ -76,6 +81,7 @@ public class ProductController {
         return result;
     }
 
+    @Ignore
     @PUT("/{Id:\\d+}")
     public ProductUpdateResult update(@Path("Id") Long id, @Body("map") String map, @Body("product") Product product, @Body("picture") Part[] picture, MultipartRequest request) {
         ProductUpdateResult result = new ProductUpdateResult();

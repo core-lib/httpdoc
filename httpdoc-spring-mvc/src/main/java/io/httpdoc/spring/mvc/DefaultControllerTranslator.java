@@ -140,7 +140,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
                 operation.setResult(result);
 
-                List<Parameter> parameters = buildParameters(Operation.HttpMethod.resolve(operation.getMethod()), handlerMethod);
+                List<Parameter> parameters = buildParameters(HttpMethod.resolve(operation.getMethod()), handlerMethod);
                 operation.setParameters(parameters);
 
                 operations.add(operation);
@@ -180,7 +180,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
      * @param handlerMethod 接口方法
      * @return 参数列表
      */
-    private List<Parameter> buildParameters(Operation.HttpMethod httpMethod, HandlerMethod handlerMethod) {
+    private List<Parameter> buildParameters(HttpMethod httpMethod, HandlerMethod handlerMethod) {
         Map<String, String> map = new HashMap<>();
         Method method = handlerMethod.getMethod();
         MethodInterpretation interpretation = interpreter.interpret(method);
@@ -238,7 +238,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
      * @param httpMethod      HTTP方法
      * @return http位置
      */
-    private String getScope(Operation.HttpMethod httpMethod, MethodParameter methodParameter) {
+    private String getScope(HttpMethod httpMethod, MethodParameter methodParameter) {
         // cookie < header < path < query < body
         if (methodParameter.hasParameterAnnotation(RequestBody.class)) {
             return Parameter.HTTP_PARAM_SCOPE_BODY;

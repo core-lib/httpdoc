@@ -23,6 +23,16 @@ public class ObjCParameter extends Parameter {
     }
 
     @Override
+    public String getAlias() {
+        return parameter.getAlias();
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        parameter.setAlias(alias);
+    }
+
+    @Override
     public String getScope() {
         return parameter.getScope();
     }

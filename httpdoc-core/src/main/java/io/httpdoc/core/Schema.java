@@ -1,5 +1,8 @@
 package io.httpdoc.core;
 
+import io.httpdoc.core.annotation.Alias;
+import io.httpdoc.core.annotation.Ignore;
+import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
@@ -56,7 +59,7 @@ public class Schema extends Definition {
                 } else if (clazz.isEnum()) {
                     Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
                     this.category = Category.ENUM;
-                    this.pkg = clazz.getPackage().getName();
+                    this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
@@ -70,22 +73,29 @@ public class Schema extends Definition {
                     this.description = interpretation != null ? interpretation.getContent() : null;
                 } else {
                     this.category = Category.OBJECT;
-                    this.pkg = clazz.getPackage().getName();
+                    this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
                     this.name = clazz.getSimpleName();
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                     for (PropertyDescriptor descriptor : descriptors) {
-                        String field = descriptor.getName();
-                        if (field.equals("class")) continue;
+                        String name = descriptor.getName();
+                        if (name.equals("class")) continue;
                         Method getter = descriptor.getReadMethod();
+                        Method setter = descriptor.getWriteMethod();
                         if (getter == null || getter.getDeclaringClass() != clazz) continue;
                         Type t = getter.getGenericReturnType();
                         Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                         Interpretation interpretation = interpreter.interpret(descriptor);
                         String description = interpretation != null ? interpretation.getContent() : null;
                         Property property = new Property(schema, description);
-                        this.properties.put(field, property);
+                        Alias alias = getter.isAnnotationPresent(Alias.class)
+                                ? getter.getAnnotation(Alias.class)
+                                : setter != null && setter.isAnnotationPresent(Alias.class)
+                                ? setter.getAnnotation(Alias.class)
+                                : null;
+                        property.setAlias(alias != null ? alias.value() : name);
+                        this.properties.put(name, property);
                     }
                     ClassInterpretation interpretation = interpreter.interpret(clazz);
                     this.description = interpretation != null ? interpretation.getContent() : null;
@@ -107,7 +117,7 @@ public class Schema extends Definition {
                         cache.remove(type);
                     } else {
                         this.category = Category.OBJECT;
-                        this.pkg = clazz.getPackage().getName();
+                        this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
                         this.name = clazz.getSimpleName();
                         this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                         this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
@@ -116,12 +126,20 @@ public class Schema extends Definition {
                             String field = descriptor.getName();
                             if (field.equals("class")) continue;
                             Method getter = descriptor.getReadMethod();
+                            Method setter = descriptor.getWriteMethod();
                             if (getter == null || getter.getDeclaringClass() != clazz) continue;
+                            if (getter.isAnnotationPresent(Ignore.class) || (setter != null && setter.isAnnotationPresent(Ignore.class))) continue;
                             Type t = getter.getGenericReturnType();
                             Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                             Interpretation interpretation = interpreter.interpret(descriptor);
                             String description = interpretation != null ? interpretation.getContent() : null;
                             Property property = new Property(schema, description);
+                            Alias alias = getter.isAnnotationPresent(Alias.class)
+                                    ? getter.getAnnotation(Alias.class)
+                                    : setter != null && setter.isAnnotationPresent(Alias.class)
+                                    ? setter.getAnnotation(Alias.class)
+                                    : null;
+                            property.setAlias(alias != null ? alias.value() : name);
                             this.properties.put(field, property);
                         }
                         ClassInterpretation interpretation = interpreter.interpret(clazz);

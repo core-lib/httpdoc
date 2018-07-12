@@ -18,6 +18,7 @@ public class Controller extends Definition {
     private List<String> produces = new ArrayList<>();
     private List<String> consumes = new ArrayList<>();
     private List<Operation> operations = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 
     public String getPkg() {
         return pkg;
@@ -65,6 +66,14 @@ public class Controller extends Definition {
 
     public void setOperations(List<Operation> operations) {
         this.operations = operations;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     @Override

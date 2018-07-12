@@ -83,6 +83,9 @@ public class StandardConverter implements Converter {
         List<Operation> operations = controller.getOperations();
         if (operations != null && !operations.isEmpty()) map.put("operations", doConvertOperations(operations, format));
 
+        List<String> tags = controller.getTags();
+        if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
+
         String description = controller.getDescription();
         if (description != null) map.put("description", description);
 
@@ -138,10 +141,24 @@ public class StandardConverter implements Converter {
         Result result = operation.getResult();
         if (result != null) map.put("result", doConvertResult(result, format));
 
+        List<String> tags = operation.getTags();
+        if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
+
         String description = operation.getDescription();
         if (description != null) map.put("description", description);
 
         return map;
+    }
+
+    protected Object doConvertTags(List<String> tags, Format format) {
+        if (tags.size() == 1) return tags.get(0);
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < tags.size(); i++) {
+            if (i > 0) builder.append(", ");
+            builder.append(tags.get(i));
+        }
+        return builder.toString();
     }
 
     protected Object doConvertParameters(List<Parameter> parameters, Format format) {
@@ -158,6 +175,9 @@ public class StandardConverter implements Converter {
         Map<String, Object> map = new LinkedHashMap<>();
         String name = parameter.getName();
         if (name != null) map.put("name", name);
+
+        String alias = parameter.getAlias();
+        if (alias != null) map.put("alias", alias);
 
         String scope = parameter.getScope();
         if (scope != null) map.put("scope", scope);
@@ -232,11 +252,13 @@ public class StandardConverter implements Converter {
                 for (Map.Entry<String, Property> entry : properties.entrySet()) {
                     String name = entry.getKey();
                     Property property = entry.getValue();
+                    String alias = property.getAlias();
                     Schema type = property.getType();
                     String description = property.getDescription();
                     String reference = doConvertReference(type, format);
                     if (description != null) {
                         Map<String, Object> p = new LinkedHashMap<>();
+                        p.put("alias", alias);
                         p.put("type", reference);
                         p.put("description", description);
                         m.put(name, p);

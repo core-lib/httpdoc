@@ -1,5 +1,8 @@
 package io.httpdoc.sample;
 
+import io.httpdoc.core.annotation.Alias;
+import io.httpdoc.core.annotation.Package;
+
 import java.math.BigDecimal;
 
 /**
@@ -8,6 +11,7 @@ import java.math.BigDecimal;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 12:19
  **/
+@Package("io.httpdoc.test2")
 public class Product {
     private boolean yon;
     private byte b;
@@ -102,6 +106,7 @@ public class Product {
         this.d = d;
     }
 
+    @Alias("ID")
     public Long getId() {
         return id;
     }

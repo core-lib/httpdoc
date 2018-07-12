@@ -1,6 +1,8 @@
 package io.httpdoc.jestful.server;
 
 import io.httpdoc.core.*;
+import io.httpdoc.core.annotation.*;
+import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.interpretation.Interpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
@@ -63,23 +65,34 @@ public class JestfulTranslator implements Translator {
             Mapping mapping = mappings.nextElement();
             Method method = mapping.getMethod();
             Class<?> clazz = method.getDeclaringClass();
+            // 是否忽略
+            if (clazz.isAnnotationPresent(Ignore.class) || method.isAnnotationPresent(Ignore.class)) continue;
             Controller controller = controllers.get(clazz);
             if (controller == null) {
                 controller = new Controller();
-                controller.setPkg(clazz.getPackage().getName());
-                controller.setName(clazz.getSimpleName());
+                // 重定义包名
+                controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
+                controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
                 Resource resource = mapping.getResource();
                 controller.setPath(normalize(resource.getExpression()));
                 Interpretation interpretation = interpreter.interpret(clazz);
                 controller.setDescription(interpretation != null ? interpretation.getContent() : null);
+                Tag tag = clazz.getAnnotation(Tag.class);
+                if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
+                if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
                 controllers.put(clazz, controller);
             }
             Operation operation = new Operation();
-            operation.setName(method.getName());
+            // 重定义方法名
+            operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
             operation.setPath(normalize(mapping.getExpression()));
             for (MediaType produce : mapping.getProduces()) operation.getProduces().add(produce.toString());
             for (MediaType produce : mapping.getConsumes()) operation.getConsumes().add(produce.toString());
             operation.setMethod(mapping.getRestful().getMethod());
+
+            Tag tag = method.getAnnotation(Tag.class);
+            if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
+            if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
 
             Map<String, String> map = new HashMap<>();
             MethodInterpretation interpretation = interpreter.interpret(method);
@@ -88,8 +101,12 @@ public class JestfulTranslator implements Translator {
             String[] names = discoverer.getParameterNames(method);
 
             for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
+                // 忽略
+                if (param.isAnnotationPresent(Ignore.class)) continue;
+
                 Parameter parameter = new Parameter();
                 parameter.setName(param.getName().equals(String.valueOf(param.getIndex())) ? "" : param.getName());
+                parameter.setAlias(param.isAnnotationPresent(Alias.class) ? param.getAnnotation(Alias.class).value() : parameter.getName());
                 int position = param.getPosition();
                 switch (position) {
                     case Position.HEADER:

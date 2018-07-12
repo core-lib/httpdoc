@@ -1,9 +1,7 @@
 package io.httpdoc.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 资源操作符
@@ -21,6 +19,7 @@ public class Operation extends Definition {
     private List<String> consumes = new ArrayList<>();
     private List<Parameter> parameters = new ArrayList<>();
     private Result result;
+    private List<String> tags = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -78,56 +77,12 @@ public class Operation extends Definition {
         this.result = result;
     }
 
-    public enum HttpMethod {
+    public List<String> getTags() {
+        return tags;
+    }
 
-        GET(false, false),
-        HEAD(false, false),
-        POST(true, true),
-        PUT(true, true),
-        PATCH(true, true),
-        DELETE(true, false),
-        OPTIONS(true, false),
-        TRACE(false, false);
-
-        private static final Map<String, HttpMethod> mappings = new HashMap<String, HttpMethod>(8);
-
-        static {
-            for (HttpMethod httpMethod : values()) {
-                mappings.put(httpMethod.name(), httpMethod);
-            }
-        }
-
-        private boolean permitsRequestBody;
-        private boolean requiresRequestBody;
-
-        HttpMethod(boolean permitsRequestBody, boolean requiresRequestBody) {
-            this.permitsRequestBody = permitsRequestBody;
-            this.requiresRequestBody = requiresRequestBody;
-        }
-
-        public static HttpMethod resolve(String method) {
-            return (method != null ? mappings.get(method) : null);
-        }
-
-        public boolean matches(String method) {
-            return (this == resolve(method));
-        }
-
-        /**
-         * 是否允许有请求体
-         */
-        public boolean isPermitsRequestBody() {
-            return requiresRequestBody;
-        }
-
-        /**
-         * 是否要求有请求体
-         */
-        public boolean isRequiresRequestBody() {
-            return requiresRequestBody;
-        }
-
-
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
 }
