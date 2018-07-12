@@ -2,6 +2,7 @@ package io.httpdoc.core;
 
 import io.httpdoc.core.annotation.Alias;
 import io.httpdoc.core.annotation.Ignore;
+import io.httpdoc.core.annotation.Name;
 import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
@@ -60,7 +61,7 @@ public class Schema extends Definition {
                     Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
                     this.category = Category.ENUM;
                     this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                    this.name = clazz.getSimpleName();
+                    this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
                     for (Enum<?> enumeration : enumerations) {
@@ -74,7 +75,7 @@ public class Schema extends Definition {
                 } else {
                     this.category = Category.OBJECT;
                     this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                    this.name = clazz.getSimpleName();
+                    this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
@@ -118,7 +119,7 @@ public class Schema extends Definition {
                     } else {
                         this.category = Category.OBJECT;
                         this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                        this.name = clazz.getSimpleName();
+                        this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
                         this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                         this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
