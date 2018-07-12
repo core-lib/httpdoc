@@ -365,8 +365,10 @@ public class StandardConverter implements Converter {
                     property.setType(doConvertReference(document, reference));
                 } else if (value instanceof Map<?, ?>) {
                     Map<?, ?> m = (Map<?, ?>) value;
+                    String alias = (String) m.get("alias");
                     String type = (String) m.get("type");
                     String description = (String) m.get("description");
+                    property.setAlias(alias);
                     property.setType(doConvertReference(document, type));
                     property.setDescription(description);
                 } else {
@@ -444,6 +446,9 @@ public class StandardConverter implements Converter {
         Object operations = map.get("operations");
         controller.setOperations(doConvertOperations(document, operations));
 
+        Object tags = map.get("tags");
+        controller.setTags(doConvertTags(document, tags));
+
         controller.setDescription((String) map.get("description"));
 
         document.getControllers().add(controller);
@@ -518,9 +523,35 @@ public class StandardConverter implements Converter {
         Object result = map.get("result");
         operation.setResult(doConvertResult(document, result));
 
+        Object tags = map.get("tags");
+        operation.setTags(doConvertTags(document, tags));
+
         operation.setDescription((String) map.get("description"));
 
         return operation;
+    }
+
+    protected List<String> doConvertTags(Document document, Object object) {
+        List<String> list = new ArrayList<>();
+        if (object == null) {
+            list = null;
+        } else if (object instanceof String) {
+            String string = (String) object;
+            string = string.trim();
+            if (string.startsWith("[") && string.endsWith("]")) string = string.substring(1, string.length() - 1);
+            else if (string.startsWith("{") && string.endsWith("}")) string = string.substring(1, string.length() - 1);
+            String[] tags = string.split("\\s*,\\s*");
+            for (String tag : tags) if (!tag.equals("")) list.add(tag);
+        } else if (object instanceof Collection<?>) {
+            Collection<?> collection = (Collection<?>) object;
+            for (Object tag : collection) list.add((String) tag);
+        } else if (object.getClass().isArray()) {
+            int length = Array.getLength(object);
+            for (int i = 0; i < length; i++) list.add((String) Array.get(object, i));
+        } else {
+            list = null;
+        }
+        return list;
     }
 
     protected List<Parameter> doConvertParameters(Document document, Object object) {
@@ -550,6 +581,7 @@ public class StandardConverter implements Converter {
         Parameter parameter = new Parameter();
 
         parameter.setName((String) map.get("name"));
+        parameter.setAlias((String) map.get("alias"));
         parameter.setScope((String) map.get("scope"));
 
         String reference = (String) map.get("type");
