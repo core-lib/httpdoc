@@ -107,6 +107,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
                     HDType type = property.getType().toType(pkgGenerated, pkgForced, supplier);
                     ObjCFieldFragment field = new ObjCFieldFragment();
                     field.setName(entry.getKey());
+                    field.setAlias(property.getAlias());
                     field.setType(type);
                     field.setCommentFragment(new CommentFragment(property.getDescription()));
                     interfase.getFieldFragments().add(field);
@@ -120,6 +121,9 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
                 ObjCMethodFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(pkgForced, supplier, pkg, properties);
                 if (objectClassInArrayMethod != null) implementation.getMethodFragments().add(objectClassInArrayMethod);
 
+                ObjCMethodFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(pkgForced, supplier, pkg, properties);
+                if (replacedKeyFromPropertyNameMethod != null) implementation.getMethodFragments().add(replacedKeyFromPropertyNameMethod);
+
                 return Arrays.asList(interfase, implementation);
             }
             default:
@@ -127,14 +131,36 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
         }
     }
 
-    private ObjCMethodFragment getObjectClassInArrayMethodFragment(boolean pkgForced, Supplier supplier, String pkg, Map<String, Property> properties) {
-        ObjCMethodFragment objectClassInArrayMethod = new ObjCMethodFragment(Modifier.STATIC);
-        objectClassInArrayMethod.setName("mj_objectClassInArray");
+    private ObjCMethodFragment getReplacedKeyFromPropertyNameMethodFragment(boolean pkgForced, Supplier supplier, String pkg, Map<String, Property> properties) {
+        ObjCMethodFragment method = new ObjCMethodFragment(Modifier.STATIC);
+        method.setName("mj_replacedKeyFromPropertyName");
         ObjCResultFragment objectClassInArrayResult = new ObjCResultFragment();
         objectClassInArrayResult.setType(ObjCType.valueOf(prefix, HDType.valueOf(new ParameterizedTypeImpl(Map.class, new Class<?>[]{String.class, String.class}))));
-        objectClassInArrayMethod.setResultFragment(objectClassInArrayResult);
-        BlockFragment objectClassInArrayBlock = new BlockFragment();
-        objectClassInArrayBlock.getSentences().add("return @{");
+        method.setResultFragment(objectClassInArrayResult);
+        BlockFragment block = new BlockFragment();
+        block.getSentences().add("return @{");
+        int count = 0;
+        for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
+            Property property = entry.getValue();
+            String name = entry.getKey();
+            String alias = property.getAlias();
+            if (alias == null || alias.equals(name)) continue;
+            String sentence = "    @\"" + alias + "\": @\"" + name + "\"" + (count++ > 0 ? "," : "");
+            block.getSentences().add(1, sentence);
+        }
+        block.getSentences().add("};");
+        method.setBlockFragment(block);
+        return count > 0 ? method : null;
+    }
+
+    private ObjCMethodFragment getObjectClassInArrayMethodFragment(boolean pkgForced, Supplier supplier, String pkg, Map<String, Property> properties) {
+        ObjCMethodFragment method = new ObjCMethodFragment(Modifier.STATIC);
+        method.setName("mj_objectClassInArray");
+        ObjCResultFragment objectClassInArrayResult = new ObjCResultFragment();
+        objectClassInArrayResult.setType(ObjCType.valueOf(prefix, HDType.valueOf(new ParameterizedTypeImpl(Map.class, new Class<?>[]{String.class, String.class}))));
+        method.setResultFragment(objectClassInArrayResult);
+        BlockFragment block = new BlockFragment();
+        block.getSentences().add("return @{");
         int count = 0;
         for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
             Property property = entry.getValue();
@@ -147,12 +173,12 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
                 CharSequence className = componentType.getSimpleName();
                 className = ObjCClass.PRIMARIES.contains(String.valueOf(className)) ? "NSNumber" : className;
                 String sentence = "    @\"" + entry.getKey() + "\": @\"" + className + "\"" + (count++ > 0 ? "," : "");
-                objectClassInArrayBlock.getSentences().add(1, sentence);
+                block.getSentences().add(1, sentence);
             }
         }
-        objectClassInArrayBlock.getSentences().add("};");
-        objectClassInArrayMethod.setBlockFragment(objectClassInArrayBlock);
-        return count > 0 ? objectClassInArrayMethod : null;
+        block.getSentences().add("};");
+        method.setBlockFragment(block);
+        return count > 0 ? method : null;
     }
 
 }
