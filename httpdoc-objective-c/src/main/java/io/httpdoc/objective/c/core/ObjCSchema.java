@@ -36,7 +36,9 @@ public class ObjCSchema extends Schema {
 
     @Override
     public Schema toWrapper() {
-        return schema.toWrapper();
+        Schema wrapper = this.schema.toWrapper();
+        if (wrapper == null) return null;
+        return new ObjCSchema(prefix, wrapper);
     }
 
     @Override

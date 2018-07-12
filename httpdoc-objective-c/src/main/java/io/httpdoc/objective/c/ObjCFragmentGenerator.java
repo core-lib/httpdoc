@@ -139,6 +139,9 @@ public class ObjCFragmentGenerator implements Generator {
                 : result.getType().toType(pkg, pkgForced, supplier)
                 : null;
         HDType returnType = type != null ? type : ObjCType.valueOf(prefix, HDType.valueOf(ID.class));
+        if (returnType.getAbbrName().equals("Integer")) {
+            System.out.println(returnType);
+        }
 
         Map<String, HDType> map = new LinkedHashMap<>();
         map.put("success", ObjCType.valueOf(prefix, HDType.valueOf(boolean.class)));
