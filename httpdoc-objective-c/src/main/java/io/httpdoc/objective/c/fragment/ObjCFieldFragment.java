@@ -3,7 +3,7 @@ package io.httpdoc.objective.c.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.FieldFragment;
-import io.httpdoc.objective.c.type.ObjC;
+import io.httpdoc.objective.c.ObjC;
 
 import java.io.IOException;
 

@@ -2,6 +2,7 @@ package io.httpdoc.objective.c.type;
 
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDWildcardType;
+import io.httpdoc.objective.c.ObjC;
 
 import java.util.Set;
 

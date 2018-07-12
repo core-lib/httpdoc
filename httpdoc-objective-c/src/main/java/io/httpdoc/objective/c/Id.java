@@ -6,9 +6,9 @@ package io.httpdoc.objective.c;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-11 10:33
  **/
-public final class ID {
+public final class Id {
 
-    private ID() {
+    private Id() {
     }
 
 }

@@ -4,6 +4,7 @@ import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
+import io.httpdoc.objective.c.ObjC;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

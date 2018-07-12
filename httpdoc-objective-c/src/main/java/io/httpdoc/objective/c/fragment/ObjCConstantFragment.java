@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Set;
 
 public class ObjCConstantFragment extends ConstantFragment {
-    private final ObjCClass clazz;
+    protected final ObjCClass clazz;
 
     public ObjCConstantFragment(ObjCClass clazz) {
         this.clazz = clazz;

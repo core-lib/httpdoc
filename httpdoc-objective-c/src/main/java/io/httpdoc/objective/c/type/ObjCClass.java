@@ -4,6 +4,7 @@ import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
+import io.httpdoc.objective.c.ObjC;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Map":
                 return ObjCReferenceType.COPY;
 
-            case "io.httpdoc.objective.c.ID":
+            case "io.httpdoc.objective.c.Id":
                 return ObjCReferenceType.STRONG;
             case "java.lang.Error":
                 return ObjCReferenceType.STRONG;
@@ -147,7 +148,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Map":
                 return "NSDictionary";
 
-            case "io.httpdoc.objective.c.ID":
+            case "io.httpdoc.objective.c.Id":
                 return "id";
             case "java.lang.Error":
                 return "NSError";
@@ -213,7 +214,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Map":
                 return "NSDictionary";
 
-            case "io.httpdoc.objective.c.ID":
+            case "io.httpdoc.objective.c.Id":
                 return "id";
             case "java.lang.Error":
                 return "NSError";
@@ -279,7 +280,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Map":
                 return Collections.singleton(ObjC.FOUNDATION);
 
-            case "io.httpdoc.objective.c.ID":
+            case "io.httpdoc.objective.c.Id":
                 return Collections.emptySet();
             case "java.lang.Error":
                 return Collections.singleton(ObjC.FOUNDATION);
@@ -382,7 +383,7 @@ public class ObjCClass extends HDClass implements ObjC {
             case "java.util.Map":
                 return "NSDictionary";
 
-            case "io.httpdoc.objective.c.ID":
+            case "io.httpdoc.objective.c.Id":
                 return "id";
             case "java.lang.Error":
                 return "NSError *";

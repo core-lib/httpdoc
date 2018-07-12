@@ -28,9 +28,15 @@ import java.util.*;
  **/
 public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
     private final String prefix;
+    private final ObjCEnumKind enumKind;
 
     public ObjCMJExtensionModeler(String prefix) {
+        this(prefix, ObjCEnumKind.INTEGER);
+    }
+
+    public ObjCMJExtensionModeler(String prefix, ObjCEnumKind enumKind) {
         this.prefix = prefix;
+        this.enumKind = enumKind;
     }
 
     @Override
@@ -44,20 +50,51 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
         final String pkg = pkgForced || pkgTranslated == null ? pkgGenerated : pkgTranslated;
         final String name = schema.getName();
         switch (schema.getCategory()) {
-            case ENUM:
-                ObjCClassFragment enumeration = new ObjCClassFragment();
-                enumeration.setPkg(pkg);
-                enumeration.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
-                HDClass clazz = new HDClass(HDClass.Category.ENUM, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
-                ObjCClass objCClass = new ObjCClass(prefix, clazz);
-                enumeration.setClazz(objCClass);
+            case ENUM: {
                 Set<Constant> constants = schema.getConstants();
-                for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
-                    ObjCConstantFragment con = new ObjCConstantFragment(new CommentFragment(constant.getDescription()), constant.getName(), objCClass);
-                    enumeration.getConstantFragments().add(con);
+                switch (enumKind) {
+                    case INTEGER: {
+                        ObjCClassFragment interfase = new ObjCEnumFragment();
+                        interfase.setPkg(pkg);
+                        interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                        HDClass clazz = new HDClass(HDClass.Category.ENUM, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
+                        ObjCClass objCClass = new ObjCClass(prefix, clazz);
+                        interfase.setClazz(objCClass);
+                        for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
+                            ObjCConstantFragment con = new ObjCConstantFragment(new CommentFragment(constant.getDescription()), constant.getName(), objCClass);
+                            interfase.getConstantFragments().add(con);
+                        }
+                        return Collections.singleton(interfase);
+                    }
+                    case STRING: {
+                        ObjCClassFragment define = new ObjCEnumFragment();
+                        define.setPkg(pkg);
+                        define.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                        HDClass interfase = new HDClass(HDClass.Category.INTERFACE, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
+                        ObjCClass intrClass = new ObjCClass(prefix, interfase);
+                        define.setClazz(intrClass);
+
+                        for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
+                            ObjCConstantFragment fragment = new ObjCConstantDefineFragment(new CommentFragment(constant.getDescription()), constant.getName(), intrClass);
+                            define.getConstantFragments().add(fragment);
+                        }
+
+                        ObjCClassFragment assign = new ObjCEnumFragment();
+                        assign.setPkg(pkg);
+                        assign.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                        HDClass implementation = new HDClass(HDClass.Category.CLASS, (pkg == null || pkg.isEmpty() ? "" : pkg + ".") + name);
+                        ObjCClass implClass = new ObjCClass(prefix, implementation);
+                        assign.setClazz(implClass);
+                        for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
+                            ObjCConstantFragment fragment = new ObjCConstantAssignFragment(new CommentFragment(constant.getDescription()), constant.getName(), implClass);
+                            assign.getConstantFragments().add(fragment);
+                        }
+
+                        return Arrays.asList(define, assign);
+                    }
                 }
-                return Collections.singleton(enumeration);
-            case OBJECT:
+            }
+            case OBJECT: {
                 ObjCClassFragment interfase = new ObjCClassFragment();
                 interfase.setPkg(pkg);
                 interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
@@ -84,6 +121,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCClassFragment> {
                 if (objectClassInArrayMethod != null) implementation.getMethodFragments().add(objectClassInArrayMethod);
 
                 return Arrays.asList(interfase, implementation);
+            }
             default:
                 return Collections.emptySet();
         }

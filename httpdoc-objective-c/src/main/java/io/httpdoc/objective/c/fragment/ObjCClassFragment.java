@@ -1,15 +1,12 @@
 package io.httpdoc.objective.c.fragment;
 
 import io.httpdoc.core.Preference;
-import io.httpdoc.core.appender.EnterMergedAppender;
-import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.ClassFragment;
-import io.httpdoc.core.fragment.ConstantFragment;
 import io.httpdoc.core.fragment.FieldFragment;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.core.type.HDTypeVariable;
-import io.httpdoc.objective.c.type.ObjC;
+import io.httpdoc.objective.c.ObjC;
 import io.httpdoc.objective.c.type.ObjCClass;
 
 import java.io.IOException;
@@ -76,20 +73,6 @@ public class ObjCClassFragment extends ClassFragment {
                 appender.enter();
                 appender.append("@implementation ").append(((ObjCClass) clazz).getSimpleName());
                 break;
-            case ENUM:
-                appender.append("typedef NS_ENUM(NSInteger, ").append(((ObjCClass) clazz).getSimpleName()).append("){");
-                EnterMergedAppender indented = new EnterMergedAppender(new IndentAppender(appender, preference.getIndent()), 2);
-                // 枚举常量
-                for (int i = 0; i < constantFragments.size(); i++) {
-                    if (i == 0) indented.enter();
-                    ConstantFragment fragment = constantFragments.get(i);
-                    fragment.joinTo(indented, preference);
-                    indented.append(" = ").append(String.valueOf(i));
-                    if (i == constantFragments.size() - 1) indented.enter();
-                    else indented.append(",").enter();
-                }
-                appender.append("};");
-                return;
             default:
                 throw new IllegalStateException();
         }
