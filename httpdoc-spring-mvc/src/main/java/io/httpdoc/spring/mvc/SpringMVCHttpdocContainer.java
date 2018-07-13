@@ -11,15 +11,11 @@ import java.util.Enumeration;
  * @author 钟宝林
  * @date 2018-05-14 11:20
  **/
-public class ServletContextContainer implements Container {
+public class SpringMVCHttpdocContainer implements Container {
     private final ServletContext servletContext;
 
-    public ServletContextContainer(ServletContext servletContext) {
+    SpringMVCHttpdocContainer(ServletContext servletContext) {
         this.servletContext = servletContext;
-    }
-
-    public ServletContext getServletContext() {
-        return servletContext;
     }
 
     @Override

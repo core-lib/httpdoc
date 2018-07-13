@@ -12,29 +12,29 @@ import java.util.Enumeration;
  * @date 2018-04-23 16:14
  **/
 public class HttpdocWebContainer implements Container {
-    private final ServletContext context;
+    private final ServletContext servletContext;
 
-    HttpdocWebContainer(ServletContext context) {
-        this.context = context;
+    HttpdocWebContainer(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Override
     public Object get(String name) {
-        return context.getAttribute(name);
+        return servletContext.getAttribute(name);
     }
 
     @Override
     public Enumeration<String> names() {
-        return context.getAttributeNames();
+        return servletContext.getAttributeNames();
     }
 
     @Override
     public void remove(String name) {
-        context.removeAttribute(name);
+        servletContext.removeAttribute(name);
     }
 
     @Override
     public void set(String name, Object value) {
-        context.setAttribute(name, value);
+        servletContext.setAttribute(name, value);
     }
 }
