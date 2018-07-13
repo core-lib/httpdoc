@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  **/
 public class PathProcessor {
 
-    private static final Pattern GLOB_PATTERN = Pattern.compile("\\?|\\*|\\{((?:\\{[^/]+? \\}|[^/{}]|\\\\[{}])+?)\\}");
+    private static final Pattern GLOB_PATTERN = Pattern.compile("\\?|\\*|\\{((?:\\{[^/]+? }|[^/{}]|\\\\[{}])+?)}");
 
     private static final String DEFAULT_VARIABLE_PATTERN = "(.*)";
 
@@ -63,8 +63,7 @@ public class PathProcessor {
             end = matcher.end();
         }
         patternBuilder.append(quote(pattern, end, pattern.length()));
-        this.pattern = (caseSensitive ? Pattern.compile(patternBuilder.toString()) :
-                Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE));
+        this.pattern = (caseSensitive ? Pattern.compile(patternBuilder.toString()) : Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE));
     }
 
     public Map<String, String> getReplaceMapper() {
