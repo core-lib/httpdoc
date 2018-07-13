@@ -87,7 +87,7 @@ public class JestfulTranslator implements Translator {
             operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
             operation.setPath(normalize(mapping.getExpression()));
             for (MediaType produce : mapping.getProduces()) operation.getProduces().add(produce.toString());
-            for (MediaType produce : mapping.getConsumes()) operation.getConsumes().add(produce.toString());
+            for (MediaType consume : mapping.getConsumes()) operation.getConsumes().add(consume.toString());
             operation.setMethod(mapping.getRestful().getMethod());
 
             Tag tag = method.getAnnotation(Tag.class);
@@ -166,7 +166,7 @@ public class JestfulTranslator implements Translator {
             controller.getOperations().add(operation);
         }
 
-        document.setControllers(new LinkedHashSet<>(controllers.values()));
+        document.getControllers().addAll(controllers.values());
 
         return document;
     }

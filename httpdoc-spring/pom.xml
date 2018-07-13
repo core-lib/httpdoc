@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>httpdoc-spring-mvc</artifactId>
-    <name>httpdoc-spring-mvc</name>
+    <artifactId>httpdoc-spring</artifactId>
+    <name>httpdoc-spring</name>
 
     <repositories>
         <repository>

@@ -1,5 +1,6 @@
 package io.httpdoc.spring.mvc;
 
+import io.httpdoc.core.translation.AbstractContainer;
 import io.httpdoc.core.translation.Container;
 
 import javax.servlet.ServletContext;
@@ -11,7 +12,7 @@ import java.util.Enumeration;
  * @author 钟宝林
  * @date 2018-05-14 11:20
  **/
-public class SpringMVCHttpdocContainer implements Container {
+public class SpringMVCHttpdocContainer extends AbstractContainer implements Container {
     private final ServletContext servletContext;
 
     SpringMVCHttpdocContainer(ServletContext servletContext) {

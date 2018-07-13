@@ -170,6 +170,7 @@ public class DefaultControllerTranslator implements ControllerTranslator {
                 }
             }
         }
+
         return returnType;
     }
 

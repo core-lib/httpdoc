@@ -1,6 +1,7 @@
 package io.httpdoc.core.translation;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * 应用容器
@@ -11,6 +12,8 @@ import java.util.Enumeration;
 public interface Container {
 
     Object get(String name);
+
+    <T> Map<String, T> get(Class<T> type);
 
     Enumeration<String> names();
 

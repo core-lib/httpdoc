@@ -19,6 +19,7 @@
         <module>httpdoc-retrofit</module>
         <module>httpdoc-sample</module>
         <module>httpdoc-objective-c</module>
+        <module>httpdoc-spring</module>
     </modules>
     <packaging>pom</packaging>
 
