@@ -25,6 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -38,6 +39,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -114,8 +116,172 @@ public class SpringMVCTranslator implements Translator {
             java.sql.Timestamp.class
     );
 
-    private final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
-    private final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+    private static final Pattern PATTERN = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
+    private static final ParameterNameDiscoverer DISCOVERER = new DefaultParameterNameDiscoverer();
+
+    /**
+     * 获取多请求体的该参数部分的绑定名称， 缺省情况下采用参数变量名， 如果有@RequestPart 和 @RequestParam 则 @RequestParam 要优先于 @RequestPart
+     *
+     * @param parameter 参数
+     * @return 多请求体情况下的该参数部分的绑定名称
+     */
+    private static String getPartName(MethodParameter parameter) {
+        Method method = parameter.getMethod();
+        int index = parameter.getParameterIndex();
+        String[] names = DISCOVERER.getParameterNames(method);
+        String bindName = names[index];
+
+        RequestPart part = parameter.getParameterAnnotation(RequestPart.class);
+        String partValue = part != null ? part.value() : EMPTY;
+        String partName = part != null ? part.name() : EMPTY;
+        bindName = partValue.isEmpty() ? partName.isEmpty() ? bindName : partName : partValue;
+
+        RequestParam param = parameter.getParameterAnnotation(RequestParam.class);
+        String paramValue = param != null ? param.value() : EMPTY;
+        String paramName = param != null ? param.name() : EMPTY;
+        bindName = paramValue.isEmpty() ? paramName.isEmpty() ? bindName : paramName : paramValue;
+
+        return bindName;
+    }
+
+    /**
+     * 获取方法的返回值结果类型， 如果是 ResponseEntity<T> 则采用类型参数的实际类型
+     *
+     * @param handler 处理器方法
+     * @return 方法的返回值结果类型
+     */
+    private static Type getReturnType(HandlerMethod handler) {
+        Type returnType = handler.getReturnType().getGenericParameterType();
+        if (returnType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) returnType;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType == ResponseEntity.class) return parameterizedType.getActualTypeArguments()[0];
+        }
+        return returnType;
+    }
+
+    /**
+     * 是否为简单类型
+     *
+     * @param type 类型
+     * @return 是否为简单类型
+     */
+    private static boolean isSimpleType(Type type) {
+        // 普通类
+        if (type instanceof Class<?>) {
+            Class<?> clazz = (Class<?>) type;
+            // 数组类型则看数组最底层是否是基本类型
+            if (clazz.isArray()) return isSimpleType(clazz.getComponentType());
+            // 枚举类型
+            if (clazz.isEnum()) return true;
+            // 基本类型
+            if (PRIMITIVE_TYPES.contains(clazz)) return true;
+            // 基本类型的封装类型
+            if (WRAPPER_TYPES.contains(clazz)) return true;
+            // 数字类型
+            if (NUMBER_TYPES.contains(clazz)) return true;
+            // 字符串类型
+            if (STRING_TYPES.contains(clazz)) return true;
+            // 日期类型
+            if (DATE_TYPES.contains(clazz)) return true;
+            // 否则都不是简单类型
+            return false;
+        }
+        // 泛型类
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            // 未知类型
+            if (!Class.class.isInstance(rawType)) return false;
+            Class<?> clazz = (Class<?>) rawType;
+            // 集合类型 则看元素类型是否是简单类型
+            if (Collection.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]);
+            // Map类型 则看Key 和 Value的类型是否为简单类型
+            if (Map.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]) && isSimpleType(parameterizedType.getActualTypeArguments()[1]);
+            // 否则都不是简单类型
+            return false;
+        }
+        // 其他的都统一认为是非简单类型
+        return false;
+    }
+
+    private static boolean isMultipartFile(Type type) {
+        return type instanceof Class<?>
+                && (MultipartFile.class.isAssignableFrom((Class<?>) type) || Part.class.isAssignableFrom((Class<?>) type));
+    }
+
+    private static boolean isMultipartFiles(Type type) {
+        if (type instanceof Class<?>) {
+            Class<?> clazz = (Class<?>) type;
+            return clazz.isArray() && isMultipartFile(clazz.getComponentType());
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            if (!(rawType instanceof Class<?>)) return false;
+            Class<?> clazz = (Class<?>) rawType;
+            if (!Collection.class.isAssignableFrom(clazz)) return false;
+            Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
+            return isMultipartFile(actualTypeArgument);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取参数的绑定域
+     * 如果存在多个指定绑定域的注解则优先级按cookie < header < path < query < body
+     * 如果没有指定绑定域的注解被声明则返回{@code null}调用者需要额外处理， 可能是文件上传
+     *
+     * @param parameter 参数
+     * @return 绑定域
+     */
+    private static String getBindScope(MethodParameter parameter) {
+        if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
+        if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
+        if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
+        if (parameter.hasParameterAnnotation(RequestHeader.class)) return Parameter.HTTP_PARAM_SCOPE_HEADER;
+        if (parameter.hasParameterAnnotation(CookieValue.class)) return Parameter.HTTP_PARAM_SCOPE_COOKIE;
+        return null;
+    }
+
+    /**
+     * 获取参数的绑定名称
+     * 如果同时存在多个同类注解则优先级按cookie < header < path < query < body
+     * 如果存在符合要求的注解但没有指定 value 和 name 则采用参数的变量名
+     *
+     * @param parameter 参数
+     * @return 参数名
+     */
+    private static String getBindName(MethodParameter parameter) {
+        Method method = parameter.getMethod();
+        int index = parameter.getParameterIndex();
+        String[] names = DISCOVERER.getParameterNames(method);
+        if (parameter.hasParameterAnnotation(RequestBody.class)) {
+            return EMPTY;
+        }
+        if (parameter.hasParameterAnnotation(RequestPart.class)) {
+            return getPartName(parameter);
+        }
+        if (parameter.hasParameterAnnotation(PathVariable.class)) {
+            PathVariable variable = parameter.getParameterAnnotation(PathVariable.class);
+            String value = variable.value();
+            String name = variable.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        if (parameter.hasParameterAnnotation(RequestHeader.class)) {
+            RequestHeader header = parameter.getParameterAnnotation(RequestHeader.class);
+            String value = header.value();
+            String name = header.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        if (parameter.hasParameterAnnotation(CookieValue.class)) {
+            CookieValue cookie = parameter.getParameterAnnotation(CookieValue.class);
+            String value = cookie.value();
+            String name = cookie.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        return EMPTY;
+    }
 
     @Override
     public Document translate(Translation translation) throws DocumentTranslationException {
@@ -126,6 +292,14 @@ public class SpringMVCTranslator implements Translator {
         document.setPort(translation.getPort());
         document.setContext(translation.getContext());
         document.setVersion(translation.getVersion());
+
+        translate(new ControllerTranslation(translation, document));
+
+        return document;
+    }
+
+    private void translate(ControllerTranslation translation) {
+        Document document = translation.getDocument();
 
         Map<RequestMappingInfo, HandlerMethod> map = new LinkedHashMap<>();
         Container container = translation.getContainer();
@@ -164,8 +338,6 @@ public class SpringMVCTranslator implements Translator {
         }
 
         document.getControllers().addAll(controllers.values());
-
-        return document;
     }
 
     private void translate(OperationTranslation translation) {
@@ -204,6 +376,7 @@ public class SpringMVCTranslator implements Translator {
         result.setType(schema);
         result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
         operation.setResult(result);
+
         translate(new ParameterTranslation(translation, mapping, handler, method, controller, operation));
 
         controller.getOperations().add(operation);
@@ -220,7 +393,7 @@ public class SpringMVCTranslator implements Translator {
         MethodInterpretation interpretation = interpreter.interpret(method);
         Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
         for (int i = 0; notes != null && i < notes.length; i++) descriptions.put(notes[i].getName(), notes[i].getText());
-        String[] names = discoverer.getParameterNames(method);
+        String[] names = DISCOVERER.getParameterNames(method);
 
         MethodParameter[] params = handler.getMethodParameters();
         for (int i = 0; i < params.length; i++) {
@@ -250,7 +423,7 @@ public class SpringMVCTranslator implements Translator {
                 upload = true;
             }
             // 2. 如果是MultipartFile或者Part的子类 则也是文件上传 同时参数的名称优先采用 @RequestParam 注解的名称 其次采用参数的变量名
-            else if (MultipartKit.isMultipartFile(paramType)) {
+            else if (isMultipartFile(paramType)) {
                 parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                 parameter.setType(Schema.valueOf(File.class));
                 String paramName = getPartName(param);
@@ -259,7 +432,7 @@ public class SpringMVCTranslator implements Translator {
                 upload = true;
             }
             // 3. 如果是MultipartFile或者Part的数组 则也是文件上传 同时参数的名称优先采用 @RequestParam 注解的名称 其次采用参数的变量名
-            else if (MultipartKit.isMultipartFiles(paramType)) {
+            else if (isMultipartFiles(paramType)) {
                 parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                 parameter.setType(Schema.valueOf(File[].class));
                 String paramName = getPartName(param);
@@ -304,151 +477,9 @@ public class SpringMVCTranslator implements Translator {
         }
     }
 
-    /**
-     * 获取多请求体的该参数部分的绑定名称， 缺省情况下采用参数变量名， 如果有@RequestPart 和 @RequestParam 则 @RequestParam 要优先于 @RequestPart
-     *
-     * @param parameter 参数
-     * @return 多请求体情况下的该参数部分的绑定名称
-     */
-    private String getPartName(MethodParameter parameter) {
-        Method method = parameter.getMethod();
-        int index = parameter.getParameterIndex();
-        String[] names = discoverer.getParameterNames(method);
-        String bindName = names[index];
-
-        RequestPart part = parameter.getParameterAnnotation(RequestPart.class);
-        String partValue = part != null ? part.value() : EMPTY;
-        String partName = part != null ? part.name() : EMPTY;
-        bindName = partValue.isEmpty() ? partName.isEmpty() ? bindName : partName : partValue;
-
-        RequestParam param = parameter.getParameterAnnotation(RequestParam.class);
-        String paramValue = param != null ? param.value() : EMPTY;
-        String paramName = param != null ? param.name() : EMPTY;
-        bindName = paramValue.isEmpty() ? paramName.isEmpty() ? bindName : paramName : paramValue;
-
-        return bindName;
-    }
-
-    /**
-     * 获取方法的返回值结果类型， 如果是 ResponseEntity<T> 则采用类型参数的实际类型
-     *
-     * @param handler 处理器方法
-     * @return 方法的返回值结果类型
-     */
-    private Type getReturnType(HandlerMethod handler) {
-        Type returnType = handler.getReturnType().getGenericParameterType();
-        if (returnType instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) returnType;
-            Type rawType = parameterizedType.getRawType();
-            if (rawType == ResponseEntity.class) return parameterizedType.getActualTypeArguments()[0];
-        }
-        return returnType;
-    }
-
-    /**
-     * 是否为简单类型
-     *
-     * @param type 类型
-     * @return 是否为简单类型
-     */
-    private boolean isSimpleType(Type type) {
-        // 普通类
-        if (type instanceof Class<?>) {
-            Class<?> clazz = (Class<?>) type;
-            // 数组类型则看数组最底层是否是基本类型
-            if (clazz.isArray()) return isSimpleType(clazz.getComponentType());
-            // 枚举类型
-            if (clazz.isEnum()) return true;
-            // 基本类型
-            if (PRIMITIVE_TYPES.contains(clazz)) return true;
-            // 基本类型的封装类型
-            if (WRAPPER_TYPES.contains(clazz)) return true;
-            // 数字类型
-            if (NUMBER_TYPES.contains(clazz)) return true;
-            // 字符串类型
-            if (STRING_TYPES.contains(clazz)) return true;
-            // 日期类型
-            if (DATE_TYPES.contains(clazz)) return true;
-            // 否则都不是简单类型
-            return false;
-        }
-        // 泛型类
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type rawType = parameterizedType.getRawType();
-            // 未知类型
-            if (!Class.class.isInstance(rawType)) return false;
-            Class<?> clazz = (Class<?>) rawType;
-            // 集合类型 则看元素类型是否是简单类型
-            if (Collection.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]);
-            // Map类型 则看Key 和 Value的类型是否为简单类型
-            if (Map.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]) && isSimpleType(parameterizedType.getActualTypeArguments()[1]);
-            // 否则都不是简单类型
-            return false;
-        }
-        // 其他的都统一认为是非简单类型
-        return false;
-    }
-
-    /**
-     * 获取参数的绑定域
-     * 如果存在多个指定绑定域的注解则优先级按cookie < header < path < query < body
-     * 如果没有指定绑定域的注解被声明则返回{@code null}调用者需要额外处理， 可能是文件上传
-     *
-     * @param parameter 参数
-     * @return 绑定域
-     */
-    private String getBindScope(MethodParameter parameter) {
-        if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
-        if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
-        if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
-        if (parameter.hasParameterAnnotation(RequestHeader.class)) return Parameter.HTTP_PARAM_SCOPE_HEADER;
-        if (parameter.hasParameterAnnotation(CookieValue.class)) return Parameter.HTTP_PARAM_SCOPE_COOKIE;
-        return null;
-    }
-
-    /**
-     * 获取参数的绑定名称
-     * 如果同时存在多个同类注解则优先级按cookie < header < path < query < body
-     * 如果存在符合要求的注解但没有指定 value 和 name 则采用参数的变量名
-     *
-     * @param parameter 参数
-     * @return 参数名
-     */
-    private String getBindName(MethodParameter parameter) {
-        Method method = parameter.getMethod();
-        int index = parameter.getParameterIndex();
-        String[] names = discoverer.getParameterNames(method);
-        if (parameter.hasParameterAnnotation(RequestBody.class)) {
-            return EMPTY;
-        }
-        if (parameter.hasParameterAnnotation(RequestPart.class)) {
-            return getPartName(parameter);
-        }
-        if (parameter.hasParameterAnnotation(PathVariable.class)) {
-            PathVariable variable = parameter.getParameterAnnotation(PathVariable.class);
-            String value = variable.value();
-            String name = variable.name();
-            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
-        }
-        if (parameter.hasParameterAnnotation(RequestHeader.class)) {
-            RequestHeader header = parameter.getParameterAnnotation(RequestHeader.class);
-            String value = header.value();
-            String name = header.name();
-            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
-        }
-        if (parameter.hasParameterAnnotation(CookieValue.class)) {
-            CookieValue cookie = parameter.getParameterAnnotation(CookieValue.class);
-            String value = cookie.value();
-            String name = cookie.name();
-            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
-        }
-        return EMPTY;
-    }
-
     @Override
     public String normalize(String path) {
-        Matcher matcher = pattern.matcher(path);
+        Matcher matcher = PATTERN.matcher(path);
         while (matcher.find()) {
             String name = matcher.group(1);
             path = path.replace(matcher.group(), "{" + name + "}");
