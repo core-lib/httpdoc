@@ -9,7 +9,7 @@
     <version>v1.3.0</version>
     <modules>
         <module>httpdoc-core</module>
-        <module>httpdoc-spring-mvc</module>
+        <module>httpdoc-springmvc</module>
         <module>httpdoc-web</module>
         <module>httpdoc-jestful-client</module>
         <module>httpdoc-jestful-server</module>

@@ -1,4 +1,4 @@
-package io.httpdoc.spring.mvc;
+package io.httpdoc.springmvc;
 
 import java.util.HashMap;
 import java.util.Map;

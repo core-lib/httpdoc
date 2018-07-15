@@ -6,7 +6,7 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.objective.c.ObjCFragmentGenerator;
-import io.httpdoc.spring.mvc.User;
+import io.httpdoc.springmvc.User;
 import org.junit.Test;
 import org.qfox.jestful.client.Client;
 import org.qfox.jestful.client.Message;

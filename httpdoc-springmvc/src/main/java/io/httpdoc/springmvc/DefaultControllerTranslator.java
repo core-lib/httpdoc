@@ -1,4 +1,4 @@
-package io.httpdoc.spring.mvc;
+package io.httpdoc.springmvc;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.interpretation.Interpretation;

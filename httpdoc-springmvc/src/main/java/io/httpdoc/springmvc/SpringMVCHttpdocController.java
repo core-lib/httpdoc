@@ -1,4 +1,4 @@
-package io.httpdoc.spring.mvc;
+package io.httpdoc.springmvc;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.conversion.StandardConverter;

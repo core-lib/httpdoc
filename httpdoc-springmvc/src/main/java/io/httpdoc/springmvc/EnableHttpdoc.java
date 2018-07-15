@@ -1,4 +1,4 @@
-package io.httpdoc.spring.mvc;
+package io.httpdoc.springmvc;
 
 import org.springframework.context.annotation.Import;
 

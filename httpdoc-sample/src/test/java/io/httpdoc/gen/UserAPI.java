@@ -1,6 +1,6 @@
 package io.httpdoc.gen;
 
-import io.httpdoc.spring.mvc.User;
+import io.httpdoc.springmvc.User;
 import org.qfox.jestful.client.Message;
 import org.qfox.jestful.core.http.GET;
 import org.qfox.jestful.core.http.HTTP;
