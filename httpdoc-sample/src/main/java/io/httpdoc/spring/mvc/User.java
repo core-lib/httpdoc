@@ -3,6 +3,7 @@ package io.httpdoc.spring.mvc;
 import java.util.List;
 
 /**
+ * 用户
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-06-01 14:18
  **/
@@ -10,6 +11,14 @@ public class User {
     private String id;
     private String name;
     private List<List<User>> friends;
+
+    public User() {
+    }
+
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public String getId() {
         return id;

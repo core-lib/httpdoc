@@ -6,6 +6,10 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.objective.c.ObjCFragmentGenerator;
+import io.httpdoc.spring.mvc.User;
+import org.junit.Test;
+import org.qfox.jestful.client.Client;
+import org.qfox.jestful.client.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -42,6 +46,17 @@ public class Generate {
 //                .include(JestfulClientObservableGenerator.class);
 
         generator.generate(generation);
+    }
+
+    @Test
+    public void test() throws Exception {
+        UserAPI userAPI = Client.builder().setEndpoint(new URL("http://localhost:8080/httpdoc-sample")).build().create(UserAPI.class);
+        Message result = userAPI.test(
+                "id",
+                new User("12333", "Payne"),
+                "dateCreated"
+        );
+        System.out.println(result);
     }
 
 }

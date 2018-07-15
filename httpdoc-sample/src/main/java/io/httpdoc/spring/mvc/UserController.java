@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author 杨昌沛 646742615@qq.com
@@ -14,9 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/users")
 public class UserController {
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public String get(@PathVariable("id") String id, User user) {
+    public String test(
+            @PathVariable String id,
+            User user,
+            String dateCreated,
+            MultipartFile file
+    ) {
 
         return "OK";
     }

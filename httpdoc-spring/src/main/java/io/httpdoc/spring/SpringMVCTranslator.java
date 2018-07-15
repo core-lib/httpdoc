@@ -19,6 +19,9 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
@@ -39,11 +42,17 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SpringMVCTranslator implements Translator {
+
+    private static final String EMPTY = "";
 
     private static final Collection<Class<?>> IGNORED_PARAMETER_TYPES = Arrays.asList(
             Void.TYPE,
@@ -57,7 +66,52 @@ public class SpringMVCTranslator implements Translator {
             HttpSession.class,
             HttpHeaders.class,
             BindingResult.class,
-            UriComponentsBuilder.class
+            UriComponentsBuilder.class,
+            Model.class,
+            ModelMap.class,
+            ExtendedModelMap.class
+    );
+
+    private static final Collection<Class<?>> PRIMITIVE_TYPES = Arrays.<Class<?>>asList(
+            boolean.class,
+            byte.class,
+            short.class,
+            char.class,
+            int.class,
+            float.class,
+            long.class,
+            double.class
+    );
+
+    private static final Collection<Class<?>> WRAPPER_TYPES = Arrays.<Class<?>>asList(
+            Boolean.class,
+            Byte.class,
+            Short.class,
+            Character.class,
+            Integer.class,
+            Float.class,
+            Long.class,
+            Double.class
+    );
+
+    private static final Collection<Class<?>> NUMBER_TYPES = Arrays.<Class<?>>asList(
+            BigInteger.class,
+            BigDecimal.class,
+            AtomicInteger.class,
+            AtomicLong.class
+    );
+
+    private static final Collection<Class<?>> STRING_TYPES = Arrays.<Class<?>>asList(
+            String.class,
+            StringBuilder.class,
+            StringBuffer.class
+    );
+
+    private static final Collection<Class<?>> DATE_TYPES = Arrays.<Class<?>>asList(
+            java.util.Date.class,
+            java.sql.Date.class,
+            java.sql.Time.class,
+            java.sql.Timestamp.class
     );
 
     private final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
@@ -106,82 +160,7 @@ public class SpringMVCTranslator implements Translator {
                 if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
                 controllers.put(clazz, controller);
             }
-
-            // 方法解析 只取第一个
-            String expression = mapping.getPatternsCondition().getPatterns().iterator().next();
-            Operation operation = new Operation();
-            // 重定义方法名
-            operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
-            operation.setPath(normalize(expression));
-            // produces
-            Set<MediaTypeExpression> produces = mapping.getProducesCondition().getExpressions();
-            for (MediaTypeExpression produce : produces) operation.getProduces().add(produce.getMediaType().toString());
-            Set<MediaTypeExpression> consumes = mapping.getConsumesCondition().getExpressions();
-            for (MediaTypeExpression consume : consumes) operation.getConsumes().add(consume.getMediaType().toString());
-            // 请求方法 只取第一个 缺省情况下采用POST 更加通用
-            Set<RequestMethod> methods = mapping.getMethodsCondition().getMethods();
-            operation.setMethod(methods.isEmpty() ? RequestMethod.POST.name() : methods.iterator().next().name());
-
-            MethodInterpretation interpretation = interpreter.interpret(method);
-            operation.setDescription(interpretation == null ? null : interpretation.getContent());
-
-            Tag tag = method.getAnnotation(Tag.class);
-            if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
-            if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
-
-            // 返回值解析
-            Supplier supplier = translation.getSupplier();
-            Result result = new Result();
-            Type type = getReturnType(handler);
-            Schema schema = Schema.valueOf(type, supplier, interpreter);
-            result.setType(schema);
-            result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
-            operation.setResult(result);
-
-            // 参数解析
-            Map<String, String> descriptions = new HashMap<>();
-            Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
-            for (int i = 0; notes != null && i < notes.length; i++) descriptions.put(notes[i].getName(), notes[i].getText());
-            String[] names = discoverer.getParameterNames(method);
-
-            MethodParameter[] params = handler.getMethodParameters();
-            HttpMethod httpMethod = HttpMethod.constantOf(operation.getMethod());
-            for (int i = 0; i < params.length; i++) {
-                MethodParameter param = params[i];
-                // 忽略
-                if (param.hasParameterAnnotation(Ignore.class)) continue;
-                Type paramType = param.getGenericParameterType();
-                if (paramType instanceof Class<?> && IGNORED_PARAMETER_TYPES.contains(paramType)) continue;
-
-                Parameter parameter = new Parameter();
-                parameter.setName(getName(param));
-                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
-                parameter.setScope(getScope(param));
-                parameter.setDescription(descriptions.get(names[i]));
-
-                // 处理文件上传的定义
-                if (paramType instanceof Class<?> && MultipartRequest.class.isAssignableFrom((Class<?>) paramType)) {
-                    parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
-                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
-                } else if (parameter.getScope() != null && MultipartKit.isMultipartFile(paramType)) {
-                    parameter.setType(Schema.valueOf(File.class));
-                } else if (parameter.getScope() != null && MultipartKit.isMultipartFiles(paramType)) {
-                    parameter.setType(Schema.valueOf(File[].class));
-                } else if (parameter.getScope() != null && MultipartKit.isMultipartFileMap(paramType)) {
-                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
-                } else if (parameter.getScope() != null && MultipartKit.isMultipartFileMaps(paramType)) {
-                    parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
-                } else if (parameter.getScope() != null) {
-                    parameter.setType(Schema.valueOf(paramType, supplier, interpreter));
-                } else {
-                    parameter.setScope(httpMethod.acceptBody ? Parameter.HTTP_PARAM_SCOPE_BODY : Parameter.HTTP_PARAM_SCOPE_QUERY);
-                    parameter.setType(Schema.valueOf(paramType, supplier, interpreter));
-                }
-
-                operation.getParameters().add(parameter);
-            }
-
-            controller.getOperations().add(operation);
+            translate(new OperationTranslation(translation, mapping, handler, method, controller));
         }
 
         document.getControllers().addAll(controllers.values());
@@ -189,6 +168,173 @@ public class SpringMVCTranslator implements Translator {
         return document;
     }
 
+    private void translate(OperationTranslation translation) {
+        Supplier supplier = translation.getSupplier();
+        Interpreter interpreter = translation.getInterpreter();
+        RequestMappingInfo mapping = translation.getMapping();
+        HandlerMethod handler = translation.getHandler();
+        Method method = translation.getMethod();
+        Controller controller = translation.getController();
+        // 方法解析 只取第一个
+        String expression = mapping.getPatternsCondition().getPatterns().iterator().next();
+        Operation operation = new Operation();
+        // 重定义方法名
+        operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
+        operation.setPath(normalize(expression));
+        // produces
+        Set<MediaTypeExpression> produces = mapping.getProducesCondition().getExpressions();
+        for (MediaTypeExpression produce : produces) operation.getProduces().add(produce.getMediaType().toString());
+        Set<MediaTypeExpression> consumes = mapping.getConsumesCondition().getExpressions();
+        for (MediaTypeExpression consume : consumes) operation.getConsumes().add(consume.getMediaType().toString());
+        // 请求方法 只取第一个 缺省情况下采用POST 更加通用
+        Set<RequestMethod> methods = mapping.getMethodsCondition().getMethods();
+        operation.setMethod(methods.isEmpty() ? RequestMethod.POST.name() : methods.iterator().next().name());
+
+        MethodInterpretation interpretation = interpreter.interpret(method);
+        operation.setDescription(interpretation == null ? null : interpretation.getContent());
+
+        Tag tag = method.getAnnotation(Tag.class);
+        if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
+        if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
+
+        // 返回值解析
+        Result result = new Result();
+        Type resultType = getReturnType(handler);
+        Schema schema = Schema.valueOf(resultType, supplier, interpreter);
+        result.setType(schema);
+        result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
+        operation.setResult(result);
+        translate(new ParameterTranslation(translation, mapping, handler, method, controller, operation));
+
+        controller.getOperations().add(operation);
+    }
+
+    private void translate(ParameterTranslation translation) {
+        Supplier supplier = translation.getSupplier();
+        Interpreter interpreter = translation.getInterpreter();
+        HandlerMethod handler = translation.getHandler();
+        Method method = translation.getMethod();
+        Operation operation = translation.getOperation();
+        // 参数解析
+        Map<String, String> descriptions = new HashMap<>();
+        MethodInterpretation interpretation = interpreter.interpret(method);
+        Note[] notes = interpretation != null ? interpretation.getParamNotes() : null;
+        for (int i = 0; notes != null && i < notes.length; i++) descriptions.put(notes[i].getName(), notes[i].getText());
+        String[] names = discoverer.getParameterNames(method);
+
+        MethodParameter[] params = handler.getMethodParameters();
+        for (int i = 0; i < params.length; i++) {
+            MethodParameter param = params[i];
+            // 忽略
+            if (param.hasParameterAnnotation(Ignore.class)) continue;
+            Type paramType = param.getGenericParameterType();
+            if (paramType instanceof Class<?> && IGNORED_PARAMETER_TYPES.contains(paramType)) continue;
+
+            int bodies = 0;
+            Parameter parameter = new Parameter();
+            String name = getBindName(param);
+            parameter.setName(name);
+            parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+            String scope = getBindScope(param);
+            bodies = bodies + (Parameter.HTTP_PARAM_SCOPE_BODY.equals(scope) ? 1 : 0);
+            parameter.setScope(scope);
+            parameter.setDescription(descriptions.get(names[i]));
+
+            // 上面已经处理了明确的参数来源域 下面处理文件上传的参数和没有声明注解的参数
+
+            boolean upload = false;
+            // 1. 如果是文件上传的请求
+            if (paramType instanceof Class<?> && MultipartRequest.class.isAssignableFrom((Class<?>) paramType)) {
+                parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
+                upload = true;
+            }
+            // 2. 如果是MultipartFile或者Part的子类 则也是文件上传 同时参数的名称优先采用 @RequestParam 注解的名称 其次采用参数的变量名
+            else if (MultipartKit.isMultipartFile(paramType)) {
+                parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                parameter.setType(Schema.valueOf(File.class));
+                String paramName = getPartName(param);
+                parameter.setName(paramName);
+                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                upload = true;
+            }
+            // 3. 如果是MultipartFile或者Part的数组 则也是文件上传 同时参数的名称优先采用 @RequestParam 注解的名称 其次采用参数的变量名
+            else if (MultipartKit.isMultipartFiles(paramType)) {
+                parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                parameter.setType(Schema.valueOf(File[].class));
+                String paramName = getPartName(param);
+                parameter.setName(paramName);
+                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                upload = true;
+            }
+            // 4. 如果绑定域不是空的话 则表明用户明确指定过参数绑定域 框架也默认用户声明这个参数来源于客户端 框架不予忽略
+            else if (scope == null) {
+                // 没有指定绑定域的参数统一当作参数绑定域来自于 Query 主要考虑更加通用
+                parameter.setScope(Parameter.HTTP_PARAM_SCOPE_QUERY);
+                parameter.setType(Schema.valueOf(paramType, supplier, interpreter));
+
+                // 4-1. 如果指定了 @RequestParam 注解而且指定了 value 或 name 的任意一个 则采用注解的声明名称
+                RequestParam annotation = param.getParameterAnnotation(RequestParam.class);
+                String annoValue = annotation != null ? annotation.value() : EMPTY;
+                String annoName = annotation != null ? annotation.name() : EMPTY;
+                if (!annoValue.isEmpty() || !annoName.isEmpty()) {
+                    parameter.setName(annoValue.isEmpty() ? annoName : annoValue);
+                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                }
+                // 4-2. 如果没有指定那么还会分两种情况
+                // 1. 简单类型-采用参数变量名称
+                else if (isSimpleType(paramType)) {
+                    int index = param.getParameterIndex();
+                    parameter.setName(names[index]);
+                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                }
+                //  2. 自定义类型则无名称
+                else {
+                    parameter.setName(EMPTY);
+                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                }
+            }
+            // 5. 绑定域不为空 则参数名也不会为空 只需要指定参数类型即可
+            else {
+                parameter.setType(Schema.valueOf(paramType, supplier, interpreter));
+            }
+
+            operation.setMultipart(bodies > 1 || upload);
+            operation.getParameters().add(parameter);
+        }
+    }
+
+    /**
+     * 获取多请求体的该参数部分的绑定名称， 缺省情况下采用参数变量名， 如果有@RequestPart 和 @RequestParam 则 @RequestParam 要优先于 @RequestPart
+     *
+     * @param parameter 参数
+     * @return 多请求体情况下的该参数部分的绑定名称
+     */
+    private String getPartName(MethodParameter parameter) {
+        Method method = parameter.getMethod();
+        int index = parameter.getParameterIndex();
+        String[] names = discoverer.getParameterNames(method);
+        String bindName = names[index];
+
+        RequestPart part = parameter.getParameterAnnotation(RequestPart.class);
+        String partValue = part != null ? part.value() : EMPTY;
+        String partName = part != null ? part.name() : EMPTY;
+        bindName = partValue.isEmpty() ? partName.isEmpty() ? bindName : partName : partValue;
+
+        RequestParam param = parameter.getParameterAnnotation(RequestParam.class);
+        String paramValue = param != null ? param.value() : EMPTY;
+        String paramName = param != null ? param.name() : EMPTY;
+        bindName = paramValue.isEmpty() ? paramName.isEmpty() ? bindName : paramName : paramValue;
+
+        return bindName;
+    }
+
+    /**
+     * 获取方法的返回值结果类型， 如果是 ResponseEntity<T> 则采用类型参数的实际类型
+     *
+     * @param handler 处理器方法
+     * @return 方法的返回值结果类型
+     */
     private Type getReturnType(HandlerMethod handler) {
         Type returnType = handler.getReturnType().getGenericParameterType();
         if (returnType instanceof ParameterizedType) {
@@ -199,24 +345,105 @@ public class SpringMVCTranslator implements Translator {
         return returnType;
     }
 
-    //cookie < header < path < query < body
-    private String getScope(MethodParameter parameter) {
+    /**
+     * 是否为简单类型
+     *
+     * @param type 类型
+     * @return 是否为简单类型
+     */
+    private boolean isSimpleType(Type type) {
+        // 普通类
+        if (type instanceof Class<?>) {
+            Class<?> clazz = (Class<?>) type;
+            // 数组类型则看数组最底层是否是基本类型
+            if (clazz.isArray()) return isSimpleType(clazz.getComponentType());
+            // 枚举类型
+            if (clazz.isEnum()) return true;
+            // 基本类型
+            if (PRIMITIVE_TYPES.contains(clazz)) return true;
+            // 基本类型的封装类型
+            if (WRAPPER_TYPES.contains(clazz)) return true;
+            // 数字类型
+            if (NUMBER_TYPES.contains(clazz)) return true;
+            // 字符串类型
+            if (STRING_TYPES.contains(clazz)) return true;
+            // 日期类型
+            if (DATE_TYPES.contains(clazz)) return true;
+            // 否则都不是简单类型
+            return false;
+        }
+        // 泛型类
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            // 未知类型
+            if (!Class.class.isInstance(rawType)) return false;
+            Class<?> clazz = (Class<?>) rawType;
+            // 集合类型 则看元素类型是否是简单类型
+            if (Collection.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]);
+            // Map类型 则看Key 和 Value的类型是否为简单类型
+            if (Map.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]) && isSimpleType(parameterizedType.getActualTypeArguments()[1]);
+            // 否则都不是简单类型
+            return false;
+        }
+        // 其他的都统一认为是非简单类型
+        return false;
+    }
+
+    /**
+     * 获取参数的绑定域
+     * 如果存在多个指定绑定域的注解则优先级按cookie < header < path < query < body
+     * 如果没有指定绑定域的注解被声明则返回{@code null}调用者需要额外处理， 可能是文件上传
+     *
+     * @param parameter 参数
+     * @return 绑定域
+     */
+    private String getBindScope(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
-        if (parameter.hasParameterAnnotation(RequestParam.class)) return Parameter.HTTP_PARAM_SCOPE_QUERY;
+        if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
         if (parameter.hasParameterAnnotation(RequestHeader.class)) return Parameter.HTTP_PARAM_SCOPE_HEADER;
         if (parameter.hasParameterAnnotation(CookieValue.class)) return Parameter.HTTP_PARAM_SCOPE_COOKIE;
         return null;
     }
 
-    // cookie < header < path < query < body
-    private String getName(MethodParameter parameter) {
-        if (parameter.hasParameterAnnotation(RequestBody.class)) return "";
-        if (parameter.hasParameterAnnotation(RequestParam.class)) return parameter.getParameterAnnotation(RequestParam.class).value();
-        if (parameter.hasParameterAnnotation(PathVariable.class)) return parameter.getParameterAnnotation(PathVariable.class).value();
-        if (parameter.hasParameterAnnotation(RequestHeader.class)) return parameter.getParameterAnnotation(RequestHeader.class).value();
-        if (parameter.hasParameterAnnotation(CookieValue.class)) return parameter.getParameterAnnotation(CookieValue.class).value();
-        return "";
+    /**
+     * 获取参数的绑定名称
+     * 如果同时存在多个同类注解则优先级按cookie < header < path < query < body
+     * 如果存在符合要求的注解但没有指定 value 和 name 则采用参数的变量名
+     *
+     * @param parameter 参数
+     * @return 参数名
+     */
+    private String getBindName(MethodParameter parameter) {
+        Method method = parameter.getMethod();
+        int index = parameter.getParameterIndex();
+        String[] names = discoverer.getParameterNames(method);
+        if (parameter.hasParameterAnnotation(RequestBody.class)) {
+            return EMPTY;
+        }
+        if (parameter.hasParameterAnnotation(RequestPart.class)) {
+            return getPartName(parameter);
+        }
+        if (parameter.hasParameterAnnotation(PathVariable.class)) {
+            PathVariable variable = parameter.getParameterAnnotation(PathVariable.class);
+            String value = variable.value();
+            String name = variable.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        if (parameter.hasParameterAnnotation(RequestHeader.class)) {
+            RequestHeader header = parameter.getParameterAnnotation(RequestHeader.class);
+            String value = header.value();
+            String name = header.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        if (parameter.hasParameterAnnotation(CookieValue.class)) {
+            CookieValue cookie = parameter.getParameterAnnotation(CookieValue.class);
+            String value = cookie.value();
+            String name = cookie.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        return EMPTY;
     }
 
     @Override

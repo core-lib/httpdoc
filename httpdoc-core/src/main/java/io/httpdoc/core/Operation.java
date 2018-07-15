@@ -20,6 +20,7 @@ public class Operation extends Definition {
     private List<Parameter> parameters = new ArrayList<>();
     private Result result;
     private List<String> tags = new ArrayList<>();
+    private boolean multipart;
 
     public String getName() {
         return name;
@@ -85,4 +86,11 @@ public class Operation extends Definition {
         this.tags = tags;
     }
 
+    public boolean isMultipart() {
+        return multipart;
+    }
+
+    public void setMultipart(boolean multipart) {
+        this.multipart = multipart;
+    }
 }

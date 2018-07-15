@@ -107,6 +107,7 @@ public class JestfulTranslator implements Translator {
                 Parameter parameter = new Parameter();
                 parameter.setName(param.getName().equals(String.valueOf(param.getIndex())) ? "" : param.getName());
                 parameter.setAlias(param.isAnnotationPresent(Alias.class) ? param.getAnnotation(Alias.class).value() : parameter.getName());
+                int bodies = 0;
                 int position = param.getPosition();
                 switch (position) {
                     case Position.HEADER:
@@ -120,6 +121,7 @@ public class JestfulTranslator implements Translator {
                         break;
                     case Position.BODY:
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
+                        bodies++;
                         break;
                     case Position.COOKIE:
                         parameter.setScope(Parameter.HTTP_PARAM_SCOPE_COOKIE);
@@ -131,24 +133,32 @@ public class JestfulTranslator implements Translator {
                         break;
                 }
 
+                boolean upload = false;
                 Type type = param.getType();
                 // 处理文件上传的定义
                 if (type instanceof Class<?> && MultipartRequest.class.isAssignableFrom((Class<?>) type)) {
                     parameter.setScope(Parameter.HTTP_PARAM_SCOPE_BODY);
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
+                    upload = true;
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFile(type)) {
                     parameter.setType(Schema.valueOf(File.class));
+                    upload = true;
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFiles(type)) {
                     parameter.setType(Schema.valueOf(File[].class));
+                    upload = true;
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFileMap(type)) {
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File.class)));
+                    upload = true;
                 } else if (parameter.getScope() != null && JestfulKit.isMultipartFileMaps(type)) {
                     parameter.setType(Schema.valueOf(new ParameterizedTypeImpl(Map.class, null, String.class, File[].class)));
+                    upload = true;
                 } else if (parameter.getScope() != null) {
                     parameter.setType(Schema.valueOf(type, supplier, interpreter));
                 } else {
                     continue;
                 }
+                // 如果来源于请求体的参数数量大于 1 个 或者有上传文件的参数 则为 multipart 方法
+                operation.setMultipart(bodies > 1 || upload);
 
                 String name = names != null && names.length > param.getIndex() ? names[param.getIndex()] : param.getName();
                 String description = map.get(name);

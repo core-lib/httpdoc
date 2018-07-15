@@ -129,6 +129,9 @@ public class StandardConverter implements Converter {
         String method = operation.getMethod();
         if (method != null) map.put("method", method);
 
+        boolean multipart = operation.isMultipart();
+        if (multipart) map.put("multipart", true);
+
         List<String> produces = operation.getProduces();
         if (produces != null && !produces.isEmpty()) map.put("produces", doConvertProduces(produces, format));
 
@@ -510,6 +513,7 @@ public class StandardConverter implements Converter {
         operation.setName((String) map.get("name"));
         operation.setPath((String) map.get("path"));
         operation.setMethod((String) map.get("method"));
+        operation.setMultipart(map.containsKey("multipart") && Boolean.valueOf((String) map.get("multipart")));
 
         Object produces = map.get("produces");
         operation.setProduces(doConvertProduces(document, produces));
