@@ -1,4 +1,4 @@
-package io.httpdoc.spring;
+package io.httpdoc.spring.mvc;
 
 import org.springframework.web.multipart.MultipartFile;
 

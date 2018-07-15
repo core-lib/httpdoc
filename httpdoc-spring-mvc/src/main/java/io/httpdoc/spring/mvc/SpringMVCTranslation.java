@@ -1,4 +1,4 @@
-package io.httpdoc.spring;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.supplier.Supplier;

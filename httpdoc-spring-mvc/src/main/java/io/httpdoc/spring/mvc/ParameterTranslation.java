@@ -1,4 +1,4 @@
-package io.httpdoc.spring;
+package io.httpdoc.spring.mvc;
 
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.Operation;
