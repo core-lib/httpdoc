@@ -81,7 +81,7 @@ public class ProductController {
         return result;
     }
 
-    @PUT("/{Id:\\d+}")
+    @PUT("/{Id}")
     public ProductUpdateResult update(
             @Path("Id") Long id,
             @Matrix(value = "name", path = "Id") String name,

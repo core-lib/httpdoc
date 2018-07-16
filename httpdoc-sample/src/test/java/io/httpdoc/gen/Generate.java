@@ -5,11 +5,10 @@ import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.objective.c.ObjCFragmentGenerator;
-import io.httpdoc.springmvc.User;
+import io.httpdoc.jestful.client.JestfulMergedGenerator;
+import io.httpdoc.test.ProductAPI;
 import org.junit.Test;
 import org.qfox.jestful.client.Client;
-import org.qfox.jestful.client.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +20,7 @@ import java.net.URL;
 public class Generate {
 
     public static void main(String... args) throws IOException {
-        Document document = Document.from(new URL("http://localhost:8080/httpdoc.yaml"), new YamlDeserializer());
+        Document document = Document.from(new URL("http://localhost:8080/httpdoc-sample/httpdoc.yaml"), new YamlDeserializer());
         Generation generation = new Generation(document);
         generation.setDirectory(System.getProperty("user.dir") + "\\httpdoc-sample\\src\\test\\java");
         generation.setPkg("io.httpdoc.gen");
@@ -34,7 +33,7 @@ public class Generate {
 //                .include(RetrofitJava8Generator.class)
 //                .include(RetrofitGuavaGenerator.class);
 
-        Generator generator = new ObjCFragmentGenerator();
+        Generator generator = new JestfulMergedGenerator();
 //                .exclude(JestfulCallbackGenerator.class);
 //                .include(JestfulClientLambdaGenerator.class)
 //                .include(JestfulClientFutureGenerator.class)
@@ -50,13 +49,12 @@ public class Generate {
 
     @Test
     public void test() throws Exception {
-        UserAPI userAPI = Client.builder().setEndpoint(new URL("http://localhost:8080/httpdoc-sample")).build().create(UserAPI.class);
-        Message result = userAPI.test(
-                "id",
-                new User("12333", "Payne"),
-                "dateCreated"
+        ProductAPI productAPI = Client.builder().setEndpoint(new URL("http://localhost:8080/httpdoc-sample")).build().create(ProductAPI.class);
+        productAPI.update(
+                12L,
+                "sdf",
+                null
         );
-        System.out.println(result);
     }
 
 }

@@ -418,7 +418,8 @@ public class SpringMVCTranslator implements Translator {
             String scope = getBindScope(param);
             bodies = bodies + (Parameter.HTTP_PARAM_SCOPE_BODY.equals(scope) ? 1 : 0);
             parameter.setScope(scope);
-            parameter.setPath(param.hasParameterAnnotation(MatrixVariable.class) ? param.getParameterAnnotation(MatrixVariable.class).pathVar() : null);
+            String path = param.hasParameterAnnotation(MatrixVariable.class) ? param.getParameterAnnotation(MatrixVariable.class).pathVar() : null;
+            parameter.setPath(path == null || path.equals(ValueConstants.DEFAULT_NONE) ? null : path);
             parameter.setDescription(descriptions.get(names[i]));
 
             // 上面已经处理了明确的参数来源域 下面处理文件上传的参数和没有声明注解的参数

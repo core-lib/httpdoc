@@ -516,7 +516,7 @@ public class StandardConverter implements Converter {
         operation.setName((String) map.get("name"));
         operation.setPath((String) map.get("path"));
         operation.setMethod((String) map.get("method"));
-        operation.setMultipart(map.containsKey("multipart") && Boolean.valueOf((String) map.get("multipart")));
+        operation.setMultipart(map.containsKey("multipart") && (Boolean) map.get("multipart"));
 
         Object produces = map.get("produces");
         operation.setProduces(doConvertProduces(document, produces));
