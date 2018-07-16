@@ -29,6 +29,13 @@ import static io.httpdoc.core.Parameter.*;
  * @date 2018-04-27 15:59
  **/
 public abstract class RetrofitAbstractGenerator extends FragmentGenerator implements Generator {
+    protected final static Collection<String> SCOPES = Arrays.asList(
+            Parameter.HTTP_PARAM_SCOPE_HEADER,
+            Parameter.HTTP_PARAM_SCOPE_PATH,
+            Parameter.HTTP_PARAM_SCOPE_QUERY,
+            Parameter.HTTP_PARAM_SCOPE_BODY,
+            Parameter.HTTP_PARAM_SCOPE_FIELD
+    );
     protected final String prefix;
     protected final String suffix;
     protected final Set<Class<? extends Converter.Factory>> converterFactories = new LinkedHashSet<>();
@@ -98,17 +105,6 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         else return prefix + name.substring(0, 1).toUpperCase() + name.substring(1) + suffix;
     }
 
-    protected boolean multipart(List<Parameter> parameters) {
-        boolean multipart = false;
-        int bodies = 0;
-        for (int i = 0; parameters != null && i < parameters.size(); i++) {
-            Parameter param = parameters.get(i);
-            multipart = param.getType().isPart();
-            bodies += param.getScope().equals(HTTP_PARAM_SCOPE_BODY) ? 1 : 0;
-        }
-        return multipart || bodies > 1;
-    }
-
     protected Collection<ParameterFragment> generate(ParameterGenerateContext context) {
         String pkg = context.getPkg();
         boolean pkgForced = context.isPkgForced();
@@ -117,9 +113,16 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         List<Parameter> parameters = context.getParameters();
         Collection<ParameterFragment> fragments = new LinkedHashSet<>();
 
+        Operation operation = context.getOperation();
+        boolean multipart = operation.isMultipart();
+
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter param = parameters.get(i);
             ParameterFragment parameter = new ParameterFragment();
+            // 只处理能解析的
+            String scope = param.getScope();
+            if (!SCOPES.contains(scope)) continue;
+
             String name = StringKit.isBlank(param.getName()) ? param.getType().toName() : param.getName();
             loop:
             while (true) {
@@ -132,7 +135,6 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
                 break;
             }
             parameter.setName(name);
-            boolean multipart = multipart(parameters);
             Collection<HDAnnotation> annotations = annotate(param, multipart);
             parameter.getAnnotations().addAll(annotations);
             HDType type = param.getType().toType(pkg, pkgForced, supplier);
@@ -143,20 +145,26 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
     }
 
     protected Collection<HDAnnotation> annotate(Parameter parameter, boolean multipart) {
+        String name = parameter.getName();
         switch (parameter.getScope()) {
             case HTTP_PARAM_SCOPE_HEADER: {
                 HDAnnotation header = new HDAnnotation(Header.class);
-                if (parameter.getName() != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
                 return Collections.singleton(header);
             }
             case HTTP_PARAM_SCOPE_PATH: {
                 HDAnnotation path = new HDAnnotation(Path.class);
-                if (parameter.getName() != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
                 return Collections.singleton(path);
             }
             case HTTP_PARAM_SCOPE_QUERY: {
                 HDAnnotation query = new HDAnnotation(Query.class);
-                if (parameter.getName() != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
+                return Collections.singleton(query);
+            }
+            case HTTP_PARAM_SCOPE_FIELD: {
+                HDAnnotation query = new HDAnnotation(Query.class);
+                if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
                 return Collections.singleton(query);
             }
             case HTTP_PARAM_SCOPE_BODY: {
@@ -166,13 +174,13 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
                         return Collections.singleton(map);
                     } else {
                         HDAnnotation part = new HDAnnotation(Part.class);
-                        if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                        if (name != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
                         return Collections.singleton(part);
                     }
                 } else {
                     if (multipart) {
                         HDAnnotation part = new HDAnnotation(Part.class);
-                        if (parameter.getName() != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(parameter.getName()));
+                        if (name != null) part.getProperties().put("value", HDAnnotationConstant.valuesOf(name));
                         return Collections.singleton(part);
                     } else {
                         HDAnnotation body = new HDAnnotation(Body.class);
@@ -188,11 +196,12 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
 
     protected Collection<HDAnnotation> annotate(Document document, Controller controller, Operation operation) {
         Collection<HDAnnotation> annotations = new LinkedHashSet<>();
-        List<Parameter> parameters = operation.getParameters();
-        if (multipart(parameters)) {
+        boolean multipart = operation.isMultipart();
+        if (multipart) {
             HDAnnotation annotation = new HDAnnotation(Multipart.class);
             annotations.add(annotation);
         }
+
         StringBuilder builder = new StringBuilder();
         List<String> segments = Arrays.asList(document.getContext(), controller.getPath(), operation.getPath());
         for (String segment : segments) {
@@ -200,6 +209,7 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
             builder.append("/").append(segment);
         }
         String path = builder.toString().replaceAll("/+", "/");
+
         switch (operation.getMethod()) {
             case "HEAD": {
                 HDAnnotation head = new HDAnnotation(HEAD.class);
@@ -241,6 +251,7 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
                 break;
             }
         }
+
         return annotations;
     }
 
