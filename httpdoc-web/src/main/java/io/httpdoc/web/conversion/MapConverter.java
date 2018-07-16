@@ -22,7 +22,7 @@ public class MapConverter implements Converter<Map<?, ?>> {
     public Map<String, String[]> convert(String name, Map<?, ?> value, ConversionProvider provider) throws Exception {
         Map<String, String[]> map = new LinkedHashMap<String, String[]>();
         for (Map.Entry<?, ?> entry : value.entrySet()) {
-            Map<String, String[]> m = provider.convert(name + "['" + entry.getValue() + "']", entry.getValue());
+            Map<String, String[]> m = provider.convert(name + "['" + entry.getKey() + "']", entry.getValue());
             map.putAll(m);
         }
         return map;

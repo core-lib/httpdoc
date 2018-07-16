@@ -1,8 +1,11 @@
 package io.httpdoc.sample;
 
-import io.httpdoc.core.annotation.*;
+import io.httpdoc.core.annotation.Alias;
+import io.httpdoc.core.annotation.Name;
 import io.httpdoc.core.annotation.Package;
+import io.httpdoc.core.annotation.Tag;
 import io.httpdoc.nutz.ArticleAPI;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.qfox.jestful.core.http.*;
 import org.qfox.jestful.server.annotation.Field;
 import org.springframework.beans.factory.annotation.Autowired;
