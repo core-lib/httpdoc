@@ -18,7 +18,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jestful.group.id>com.github.core-lib.jestful</jestful.group.id>
-        <jestful.version>v2.3.3</jestful.version>
+        <jestful.version>v2.3.4</jestful.version>
         <spring.version>4.3.9.RELEASE</spring.version>
     </properties>
 
@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>io.httpdoc</groupId>
-            <artifactId>httpdoc-spring</artifactId>
+            <artifactId>httpdoc-spring-mvc</artifactId>
             <version>v1.3.2</version>
         </dependency>
         <dependency>

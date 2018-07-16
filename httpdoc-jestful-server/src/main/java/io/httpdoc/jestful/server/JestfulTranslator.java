@@ -157,6 +157,10 @@ public class JestfulTranslator implements Translator {
                 case Position.PATH:
                     parameter.setScope(Parameter.HTTP_PARAM_SCOPE_PATH);
                     break;
+                case Position.MATRIX:
+                    parameter.setScope(Parameter.HTTP_PARAM_SCOPE_MATRIX);
+                    parameter.setPath((String) param.property("path"));
+                    break;
                 case Position.QUERY:
                     parameter.setScope(Parameter.HTTP_PARAM_SCOPE_QUERY);
                     break;

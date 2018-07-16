@@ -9,6 +9,7 @@ package io.httpdoc.core;
 public class Parameter extends Definition {
     public static final String HTTP_PARAM_SCOPE_HEADER = "header";
     public static final String HTTP_PARAM_SCOPE_PATH = "path";
+    public static final String HTTP_PARAM_SCOPE_MATRIX = "matrix";
     public static final String HTTP_PARAM_SCOPE_QUERY = "query";
     public static final String HTTP_PARAM_SCOPE_BODY = "body";
     public static final String HTTP_PARAM_SCOPE_COOKIE = "cookie";
@@ -18,6 +19,7 @@ public class Parameter extends Definition {
     private String alias;
     private String scope;
     private Schema type;
+    private String path;
 
     public String getName() {
         return name;
@@ -51,4 +53,11 @@ public class Parameter extends Definition {
         this.type = type;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 }

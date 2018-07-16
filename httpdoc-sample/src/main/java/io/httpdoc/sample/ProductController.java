@@ -81,9 +81,15 @@ public class ProductController {
         return result;
     }
 
-    @Ignore
     @PUT("/{Id:\\d+}")
-    public ProductUpdateResult update(@Path("Id") Long id, @Body("map") String map, @Body("product") Product product, @Body("picture") Part[] picture, MultipartRequest request) {
+    public ProductUpdateResult update(
+            @Path("Id") Long id,
+            @Matrix(value = "name", path = "Id") String name,
+            @Body("map") String map,
+            @Body("product") Product product,
+            @Body("picture") Part[] picture,
+            MultipartRequest request
+    ) {
         ProductUpdateResult result = new ProductUpdateResult();
         product.setId(id);
         result.setProduct(product);

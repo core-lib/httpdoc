@@ -4,6 +4,7 @@ import io.httpdoc.core.Parameter;
 import io.httpdoc.core.Schema;
 
 public class ObjCParameter extends Parameter {
+    private static final long serialVersionUID = -7634617766193937946L;
     private final String prefix;
     private final Parameter parameter;
 
@@ -52,6 +53,16 @@ public class ObjCParameter extends Parameter {
     @Override
     public void setType(Schema type) {
         parameter.setType(type);
+    }
+
+    @Override
+    public String getPath() {
+        return parameter.getPath();
+    }
+
+    @Override
+    public void setPath(String path) {
+        parameter.setPath(path);
     }
 
     @Override

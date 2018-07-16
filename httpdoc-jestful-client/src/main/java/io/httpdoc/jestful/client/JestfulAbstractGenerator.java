@@ -131,6 +131,13 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
                 if (name != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(path);
             }
+            case HTTP_PARAM_SCOPE_MATRIX: {
+                HDAnnotation matrix = new HDAnnotation(Matrix.class);
+                if (name != null) matrix.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                String path = parameter.getPath();
+                if (path != null) matrix.getProperties().put("path", HDAnnotationConstant.valuesOf(path.isEmpty() ? "" : path));
+                return Collections.singleton(matrix);
+            }
             case HTTP_PARAM_SCOPE_QUERY: {
                 HDAnnotation query = new HDAnnotation(Query.class);
                 if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));

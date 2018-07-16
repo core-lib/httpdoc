@@ -4,6 +4,7 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 
 public class ObjCProperty extends Property {
+    private static final long serialVersionUID = 5785907913303818283L;
     private final String prefix;
     private final Property property;
 

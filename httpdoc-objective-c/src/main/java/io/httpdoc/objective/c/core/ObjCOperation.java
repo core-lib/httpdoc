@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjCOperation extends Operation {
+    private static final long serialVersionUID = 4252517603130381976L;
     private final String prefix;
     private final Operation operation;
 

@@ -11,6 +11,7 @@ import io.httpdoc.objective.c.type.ObjCType;
 import java.util.*;
 
 public class ObjCSchema extends Schema {
+    private static final long serialVersionUID = -9173526411507445705L;
     private final String prefix;
     private final Schema schema;
 

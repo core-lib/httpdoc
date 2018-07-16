@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjCController extends Controller {
+    private static final long serialVersionUID = -534658184125799508L;
     private final String prefix;
     private final Controller controller;
 

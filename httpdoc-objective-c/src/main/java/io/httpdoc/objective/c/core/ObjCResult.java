@@ -4,6 +4,7 @@ import io.httpdoc.core.Result;
 import io.httpdoc.core.Schema;
 
 public class ObjCResult extends Result {
+    private static final long serialVersionUID = -7309271115590827870L;
     private final String prefix;
     private final Result result;
 

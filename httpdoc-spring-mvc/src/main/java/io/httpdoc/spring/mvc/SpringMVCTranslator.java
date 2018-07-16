@@ -239,6 +239,7 @@ public class SpringMVCTranslator implements Translator {
         if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
+        if (parameter.hasParameterAnnotation(MatrixVariable.class)) return Parameter.HTTP_PARAM_SCOPE_MATRIX;
         if (parameter.hasParameterAnnotation(RequestHeader.class)) return Parameter.HTTP_PARAM_SCOPE_HEADER;
         if (parameter.hasParameterAnnotation(CookieValue.class)) return Parameter.HTTP_PARAM_SCOPE_COOKIE;
         return null;
@@ -264,6 +265,12 @@ public class SpringMVCTranslator implements Translator {
         }
         if (parameter.hasParameterAnnotation(PathVariable.class)) {
             PathVariable variable = parameter.getParameterAnnotation(PathVariable.class);
+            String value = variable.value();
+            String name = variable.name();
+            return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
+        }
+        if (parameter.hasParameterAnnotation(MatrixVariable.class)) {
+            MatrixVariable variable = parameter.getParameterAnnotation(MatrixVariable.class);
             String value = variable.value();
             String name = variable.name();
             return value.isEmpty() ? name.isEmpty() ? names[index] : name : value;
@@ -411,6 +418,7 @@ public class SpringMVCTranslator implements Translator {
             String scope = getBindScope(param);
             bodies = bodies + (Parameter.HTTP_PARAM_SCOPE_BODY.equals(scope) ? 1 : 0);
             parameter.setScope(scope);
+            parameter.setPath(param.hasParameterAnnotation(MatrixVariable.class) ? param.getParameterAnnotation(MatrixVariable.class).pathVar() : null);
             parameter.setDescription(descriptions.get(names[i]));
 
             // 上面已经处理了明确的参数来源域 下面处理文件上传的参数和没有声明注解的参数

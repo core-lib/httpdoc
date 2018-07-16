@@ -185,6 +185,9 @@ public class StandardConverter implements Converter {
         String scope = parameter.getScope();
         if (scope != null) map.put("scope", scope);
 
+        String path = parameter.getPath();
+        if (path != null) map.put("path", path);
+
         Schema type = parameter.getType();
         if (type != null) map.put("type", doConvertReference(type, format));
 
@@ -587,6 +590,7 @@ public class StandardConverter implements Converter {
         parameter.setName((String) map.get("name"));
         parameter.setAlias((String) map.get("alias"));
         parameter.setScope((String) map.get("scope"));
+        parameter.setPath((String) map.get("path"));
 
         String reference = (String) map.get("type");
         parameter.setType(doConvertReference(document, reference));
