@@ -1,11 +1,11 @@
 package io.httpdoc.core.kit;
 
+import io.httpdoc.core.exception.HttpdocRuntimeException;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -59,6 +59,42 @@ public class LoadKit {
             }
         }
         return urls;
+    }
+
+    public static <T> Map<String, T> load(ClassLoader classLoader, Class<T> type) {
+        Map<String, T> map = new LinkedHashMap<>();
+        try {
+            Set<URL> urls = LoadKit.load(classLoader);
+            for (URL url : urls) {
+                if (url.getFile().endsWith(".properties")) {
+                    Properties properties = new Properties();
+                    properties.load(url.openStream());
+                    if (properties.isEmpty()) continue;
+                    Enumeration<Object> keys = properties.keys();
+                    while (keys.hasMoreElements()) {
+                        String name = (String) keys.nextElement();
+                        String value = (String) properties.get(name);
+                        Class<? extends T> clazz = classForName(value, type);
+                        if (clazz == null) continue;
+                        T bean = clazz.newInstance();
+                        map.put(name, bean);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new HttpdocRuntimeException(e);
+        }
+        return map;
+    }
+
+    public static <T> Class<? extends T> classForName(String className, Class<T> superType) {
+        try {
+            Class<?> subType = Class.forName(className);
+            if (superType.isAssignableFrom(subType)) return subType.asSubclass(superType);
+            else return null;
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 
 }

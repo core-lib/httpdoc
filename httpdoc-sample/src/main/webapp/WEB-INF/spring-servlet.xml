@@ -17,4 +17,6 @@
         <property name="maxUploadSize" value="200000"/>
     </bean>
 
+    <bean class="io.httpdoc.spring.mvc.SpringMVCHttpdocController"/>
+
 </beans>

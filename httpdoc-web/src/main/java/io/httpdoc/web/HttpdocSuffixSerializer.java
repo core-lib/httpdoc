@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.URL;
-import java.util.*;
+import java.util.Map;
 
 /**
  * 智能序列化器
@@ -18,28 +17,7 @@ import java.util.*;
  * @date 2018-04-24 13:07
  **/
 public class HttpdocSuffixSerializer implements Serializer {
-    private final Map<String, Serializer> map = new LinkedHashMap<>();
-
-    HttpdocSuffixSerializer() {
-        try {
-            Set<URL> urls = LoadKit.load(HttpdocSuffixSerializer.class.getClassLoader());
-            for (URL url : urls) {
-                if (!url.getFile().endsWith("/serializer.properties")) continue;
-                Properties properties = new Properties();
-                properties.load(url.openStream());
-                if (properties.isEmpty()) continue;
-                Enumeration<Object> keys = properties.keys();
-                while (keys.hasMoreElements()) {
-                    String name = (String) keys.nextElement();
-                    String className = (String) properties.get(name);
-                    Serializer serializer = Class.forName(className).asSubclass(Serializer.class).newInstance();
-                    map.put(name, serializer);
-                }
-            }
-        } catch (Exception e) {
-            throw new HttpdocRuntimeException(e);
-        }
-    }
+    private final Map<String, Serializer> map = LoadKit.load(this.getClass().getClassLoader(), Serializer.class);
 
     private Serializer get() {
         HttpServletRequest request = HttpdocThreadLocal.getRequest();
