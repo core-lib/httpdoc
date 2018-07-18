@@ -6,8 +6,9 @@ import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
 import io.httpdoc.jestful.client.JestfulMergedGenerator;
+import org.junit.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 
 /**
@@ -42,6 +43,23 @@ public class Generate {
 //                .include(JestfulClientObservableGenerator.class);
 
         generator.generate(generation);
+    }
+
+    @Test
+    public void change() throws Exception {
+        File directory = new File("");
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            File newFile = new File(directory, "RS" + file.getName().substring(2));
+            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(newFile));
+            BufferedWriter bw = new BufferedWriter(osw);
+            while ((line = br.readLine()) != null) {
+                bw.write(line.replace("HD", "RS"));
+            }
+        }
     }
 
 }
