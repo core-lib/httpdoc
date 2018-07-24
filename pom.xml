@@ -18,6 +18,7 @@
         <module>httpdoc-nutz</module>
         <module>httpdoc-retrofit</module>
         <module>httpdoc-objective-c</module>
+        <module>httpdoc-objc</module>
         <!--<module>httpdoc-springmvc</module>-->
         <!--<module>httpdoc-sample</module>-->
     </modules>
