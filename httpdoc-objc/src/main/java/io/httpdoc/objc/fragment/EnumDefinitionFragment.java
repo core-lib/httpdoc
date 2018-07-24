@@ -1,6 +1,8 @@
 package io.httpdoc.objc.fragment;
 
 import io.httpdoc.core.Preference;
+import io.httpdoc.core.appender.EnterMergedAppender;
+import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
 
@@ -25,7 +27,12 @@ public class EnumDefinitionFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
+        if (noteFragment != null) noteFragment.joinTo(appender, preference);
+        appender.append("typedef NS_ENUM(NSInteger, ").append(name).append("){");
+        EnterMergedAppender indented = new EnterMergedAppender(new IndentAppender(appender, preference.getIndent()), 2);
+        // 枚举常量
 
+        appender.append("};");
     }
 
     public NoteFragment getNoteFragment() {
