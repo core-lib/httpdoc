@@ -15,6 +15,7 @@ import java.util.Set;
  **/
 public class EnumDefinitionFragment implements Fragment {
     private NoteFragment noteFragment;
+    private String name;
     private Set<EnumConstantFragment> constantFragments;
 
     @Override
@@ -33,6 +34,14 @@ public class EnumDefinitionFragment implements Fragment {
 
     public void setNoteFragment(NoteFragment noteFragment) {
         this.noteFragment = noteFragment;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<EnumConstantFragment> getConstantFragments() {
