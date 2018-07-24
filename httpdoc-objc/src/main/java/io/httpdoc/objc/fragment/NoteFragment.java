@@ -1,10 +1,10 @@
 package io.httpdoc.objc.fragment;
 
 /**
- * 实现代码碎片
+ * 注释代码碎片
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-07-24 17:30
+ * @date 2018-07-24 17:48
  **/
-public class ImplementationFragment {
+public class NoteFragment {
 }
