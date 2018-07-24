@@ -6,13 +6,10 @@ import io.httpdoc.core.type.HDType;
 import io.httpdoc.core.type.HDTypeVariable;
 import io.httpdoc.objective.c.ObjC;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class ObjCClass extends HDClass implements ObjC {
-    public static final List<String> PRIMARIES = Arrays.asList("id", "bool", "short", "char", "int", "float", "long", "double");
     private final String prefix;
     private final HDClass clazz;
 
@@ -79,17 +76,20 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.Id":
                 return ObjCReferenceType.STRONG;
+            case "io.httpdoc.objective.c.Instancetype":
+                return ObjCReferenceType.STRONG;
             case "java.lang.Error":
                 return ObjCReferenceType.STRONG;
-        }
 
-        switch (clazz.getCategory()) {
-            case CLASS:
-                return ObjCReferenceType.STRONG;
-            case ARRAY:
-                return ObjCReferenceType.COPY;
             default:
-                return ObjCReferenceType.ASSIGN;
+                switch (clazz.getCategory()) {
+                    case CLASS:
+                        return ObjCReferenceType.STRONG;
+                    case ARRAY:
+                        return ObjCReferenceType.COPY;
+                    default:
+                        return ObjCReferenceType.ASSIGN;
+                }
         }
     }
 
@@ -150,13 +150,17 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.Id":
                 return "id";
+            case "io.httpdoc.objective.c.Instancetype":
+                return "instancetype";
             case "java.lang.Error":
                 return "NSError";
+
+            default:
+                String[] names = name.split("\\.");
+                int index = names.length - 1;
+                names[index] = prefix + names[index];
+                return StringKit.join('.', names);
         }
-        String[] names = name.split("\\.");
-        int index = names.length - 1;
-        names[index] = prefix + names[index];
-        return StringKit.join('.', names);
     }
 
     public String getSimpleName() {
@@ -216,12 +220,16 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.Id":
                 return "id";
+            case "io.httpdoc.objective.c.Instancetype":
+                return "instancetype";
             case "java.lang.Error":
                 return "NSError";
+
+            default:
+                String[] names = name.split("\\.");
+                int index = names.length - 1;
+                return prefix + names[index];
         }
-        String[] names = name.split("\\.");
-        int index = names.length - 1;
-        return prefix + names[index];
     }
 
     @Override
@@ -282,21 +290,24 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.Id":
                 return Collections.emptySet();
+            case "io.httpdoc.objective.c.Instancetype":
+                return Collections.emptySet();
             case "java.lang.Error":
                 return Collections.singleton(ObjC.FOUNDATION);
-        }
 
-        switch (clazz.getCategory()) {
-            case INTERFACE:// 接口类型
-                return Collections.singleton(getSimpleName());
-            case CLASS: // 实现类型
-                return Collections.singleton(getSimpleName());
-            case ENUM: // 枚举类型
-                return Collections.singleton("\"" + getSimpleName() + ".h\"");
-            case ARRAY:// 数组类型
-                return getComponentType().imports();
-            default:// 不支持类型
-                throw new IllegalStateException();
+            default:
+                switch (clazz.getCategory()) {
+                    case INTERFACE:// 接口类型
+                        return Collections.singleton(getSimpleName());
+                    case CLASS: // 实现类型
+                        return Collections.singleton(getSimpleName());
+                    case ENUM: // 枚举类型
+                        return Collections.singleton("\"" + getSimpleName() + ".h\"");
+                    case ARRAY:// 数组类型
+                        return getComponentType().imports();
+                    default:// 不支持类型
+                        throw new IllegalStateException();
+                }
         }
     }
 
@@ -385,19 +396,22 @@ public class ObjCClass extends HDClass implements ObjC {
 
             case "io.httpdoc.objective.c.Id":
                 return "id";
+            case "io.httpdoc.objective.c.Instancetype":
+                return "instancetype";
             case "java.lang.Error":
                 return "NSError *";
-        }
 
-        switch (clazz.getCategory()) {
-            case INTERFACE:// 接口类型
-                return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
-            case CLASS: // 实现类型
-                return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
-            case ENUM: // 枚举类型
-                return prefix + (name.substring(name.lastIndexOf('.') + 1));
-            default:// 不支持类型
-                throw new IllegalStateException();
+            default:
+                switch (clazz.getCategory()) {
+                    case INTERFACE:// 接口类型
+                        return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
+                    case CLASS: // 实现类型
+                        return prefix + (name.substring(name.lastIndexOf('.') + 1)) + " *";
+                    case ENUM: // 枚举类型
+                        return prefix + (name.substring(name.lastIndexOf('.') + 1));
+                    default:// 不支持类型
+                        throw new IllegalStateException();
+                }
         }
     }
 

@@ -8,4 +8,10 @@ package io.httpdoc.core.fragment;
  **/
 public class ConstructorFragment extends MethodFragment {
 
+    public ConstructorFragment() {
+    }
+
+    public ConstructorFragment(int modifier) {
+        super(modifier);
+    }
 }

@@ -29,8 +29,7 @@ public class UserController {
     public String matrix(
             @PathVariable("路径") String path,
             @PathVariable("矩阵") String matrix,
-            @CookieValue("sid") String sid,
-            @MatrixVariable("name") String name,
+            @MatrixVariable(value = "name", pathVar = "路径") String[][] name,
             @RequestParam("查询") String query
     ) {
 

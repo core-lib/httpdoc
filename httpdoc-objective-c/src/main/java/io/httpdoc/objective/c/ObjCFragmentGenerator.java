@@ -15,12 +15,10 @@ import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 import io.httpdoc.objective.c.core.ObjCDocument;
-import io.httpdoc.objective.c.fragment.ObjCClassFragment;
-import io.httpdoc.objective.c.fragment.ObjCMethodFragment;
-import io.httpdoc.objective.c.fragment.ObjCParameterFragment;
-import io.httpdoc.objective.c.fragment.ObjCResultFragment;
+import io.httpdoc.objective.c.fragment.*;
 import io.httpdoc.objective.c.type.ObjCBlockType;
 import io.httpdoc.objective.c.type.ObjCClass;
+import io.httpdoc.objective.c.type.ObjCProtocol;
 import io.httpdoc.objective.c.type.ObjCType;
 
 import java.io.File;
@@ -102,6 +100,50 @@ public class ObjCFragmentGenerator implements Generator {
         implementation.setPkg(pkg);
         implementation.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
         implementation.setClazz(new ObjCClass(prefix, new HDClass(HDClass.Category.CLASS, pkg + "." + name)));
+
+        ObjCFieldFragment field = new ObjCFieldFragment();
+        field.setName("client");
+        field.setType(new ObjCProtocol(new ObjCClass("", new HDClass(Id.class)), new ObjCClass("", new HDClass("RSClient"))));
+        implementation.getFieldFragments().add(field);
+
+        {
+            ObjCConstructorFragment initWithBaseURL = new ObjCConstructorFragment();
+            ObjCParameterFragment baseURL = new ObjCParameterFragment();
+            baseURL.setName("baseURL");
+            baseURL.setType(ObjCType.valueOf("", HDType.valueOf(String.class)));
+            initWithBaseURL.getParameterFragments().add(baseURL);
+            initWithBaseURL.setBlockFragment(new BlockFragment(
+                    "return [self initWithSessionManager:[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL]];"
+            ));
+            interfase.getConstructorFragments().add(initWithBaseURL.signature());
+            implementation.getConstructorFragments().add(initWithBaseURL);
+
+            ObjCConstructorFragment initWithSessionManager = new ObjCConstructorFragment();
+            ObjCParameterFragment sessionManager = new ObjCParameterFragment();
+            sessionManager.setName("sessionManager");
+            sessionManager.setType(ObjCType.valueOf("", new HDClass("AFHTTPSessionManager")));
+            initWithSessionManager.getParameterFragments().add(sessionManager);
+            initWithSessionManager.setBlockFragment(new BlockFragment(
+                    "return [self initWithClient:[[RSAFNetworkingClient alloc] initWithSessionManager:sessionManager]];"
+            ));
+            interfase.getConstructorFragments().add(initWithSessionManager.signature());
+            implementation.getConstructorFragments().add(initWithSessionManager);
+
+            ObjCConstructorFragment initWithClient = new ObjCConstructorFragment();
+            ObjCParameterFragment client = new ObjCParameterFragment();
+            client.setName("client");
+            client.setType(new ObjCProtocol(new ObjCClass("", new HDClass(Id.class)), new ObjCClass("", new HDClass("RSClient"))));
+            initWithClient.getParameterFragments().add(client);
+            initWithClient.setBlockFragment(new BlockFragment(
+                    "self = [super init];",
+                    "if (self) {",
+                    "   _client = client;",
+                    "}",
+                    "return self;"
+            ));
+            interfase.getConstructorFragments().add(initWithClient.signature());
+            implementation.getConstructorFragments().add(initWithClient);
+        }
 
         List<Operation> operations = controller.getOperations() != null ? controller.getOperations() : Collections.<Operation>emptyList();
         for (Operation operation : operations) {

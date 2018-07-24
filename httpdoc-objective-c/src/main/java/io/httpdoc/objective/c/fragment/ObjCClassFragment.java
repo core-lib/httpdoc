@@ -65,9 +65,23 @@ public class ObjCClassFragment extends ClassFragment {
                     appender.append(interfaces.get(i));
                     if (i == interfaces.size() - 1) appender.append(">");
                 }
+                // 实例属性
+                for (FieldFragment fragment : fieldFragments) {
+                    if (Modifier.isStatic(fragment.modifier)) continue;
+                    fragment.joinTo(appender, preference);
+                    appender.enter();
+                }
+                appender.enter();
                 break;
             case CLASS:
                 appender.append("@interface ").append(((ObjCClass) clazz).getSimpleName()).append(" ()").enter();
+                appender.enter();
+                // 实例属性
+                for (FieldFragment fragment : fieldFragments) {
+                    if (Modifier.isStatic(fragment.modifier)) continue;
+                    fragment.joinTo(appender, preference);
+                    appender.enter();
+                }
                 appender.enter();
                 appender.append("@end").enter();
                 appender.enter();
@@ -79,14 +93,6 @@ public class ObjCClassFragment extends ClassFragment {
         appender.enter().enter();
 
         // 类型开始
-
-        // 实例属性
-        for (FieldFragment fragment : fieldFragments) {
-            if (Modifier.isStatic(fragment.modifier)) continue;
-            fragment.joinTo(appender, preference);
-            appender.enter();
-        }
-        appender.enter();
 
         // 构造器
         for (Fragment constructor : constructorFragments) {
