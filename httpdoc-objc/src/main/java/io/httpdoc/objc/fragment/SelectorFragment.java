@@ -122,6 +122,15 @@ public class SelectorFragment implements Fragment {
         return this;
     }
 
+    public boolean isInstantial() {
+        return instantial;
+    }
+
+    public SelectorFragment setInstantial(boolean instantial) {
+        this.instantial = instantial;
+        return this;
+    }
+
     public ResultFragment getResultFragment() {
         return resultFragment;
     }
