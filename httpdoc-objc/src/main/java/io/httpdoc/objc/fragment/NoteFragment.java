@@ -6,6 +6,7 @@ import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,9 +28,14 @@ public class NoteFragment implements Fragment {
         this.content = content;
     }
 
+    public NoteFragment(String content, String... imports) {
+        this.content = content;
+        this.imports.addAll(Arrays.asList(imports));
+    }
+
     public NoteFragment(String content, Set<String> imports) {
         this.content = content;
-        this.imports = imports;
+        this.imports.addAll(imports);
     }
 
     @Override
