@@ -5,6 +5,7 @@ import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.objc.ObjCProtocol;
 import io.httpdoc.objc.type.ObjCClass;
+import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -17,6 +18,7 @@ import java.util.Set;
  * @date 2018-07-24 17:30
  **/
 public class ClassInterfaceFragment implements Fragment {
+    private CommentFragment commentFragment;
     private String name;
     private ObjCClass superclass;
     private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
@@ -25,12 +27,100 @@ public class ClassInterfaceFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        return null;
+        Set<String> imports = new LinkedHashSet<>();
+        if (superclass != null) imports.addAll(superclass.imports());
+        for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
+        for (PropertyFragment propertyFragment : propertyFragments) imports.addAll(propertyFragment.imports());
+        for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
+        return imports;
     }
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
+        appender.enter();
+        for (String include : imports()) appender.append(include).enter();
+        appender.enter();
+
+        appender.append("@interfase").append(" ").append(name);
+
+        if (superclass != null) appender.append(" : ").append(superclass.getName());
+
+        int index = 0;
+        for (ObjCProtocol protocol : protocols) {
+            if (index++ == 0) appender.append("<");
+            else appender.append(", ");
+            appender.append(protocol.getName());
+            if (index == protocols.size()) appender.append(">");
+        }
+
+        appender.enter();
+        for (PropertyFragment propertyFragment : propertyFragments) {
+            appender.enter();
+            propertyFragment.joinTo(appender, preference);
+        }
+
+        appender.enter();
+        for (SelectorFragment selectorFragment : selectorFragments) {
+            appender.enter();
+            selectorFragment.joinTo(appender, preference);
+            appender.enter();
+        }
+
+        appender.enter().append("@end");
+    }
+
+    public ClassInterfaceFragment addProtocol(String name, String... imports) {
+        protocols.add(new ObjCProtocol(name, imports));
+        return this;
+    }
+
+    public ClassInterfaceFragment addPropertyFragment(ObjCType type, String name) {
+        return addPropertyFragment(new PropertyFragment(type, name));
+    }
+
+    public ClassInterfaceFragment addPropertyFragment(String comment, ObjCType type, String name) {
+        return addPropertyFragment(new PropertyFragment(comment, type, name));
+    }
+
+    public ClassInterfaceFragment addPropertyFragment(CommentFragment commentFragment, ObjCType type, String name) {
+        return addPropertyFragment(new PropertyFragment(commentFragment, type, name));
+    }
+
+    public ClassInterfaceFragment addPropertyFragment(PropertyFragment propertyFragment) {
+        propertyFragments.add(propertyFragment);
+        return this;
+    }
+
+    public ClassInterfaceFragment addSelectorFragment(ResultFragment resultFragment, String name) {
+        return addSelectorFragment(new SelectorFragment(resultFragment, name));
+    }
+
+    public ClassInterfaceFragment addSelectorFragment(ResultFragment resultFragment, String name, String comment) {
+        return addSelectorFragment(new SelectorFragment(resultFragment, name, comment));
+    }
+
+    public ClassInterfaceFragment addSelectorFragment(boolean instantial, ResultFragment resultFragment, String name) {
+        return addSelectorFragment(new SelectorFragment(instantial, resultFragment, name));
+    }
+
+    public ClassInterfaceFragment addSelectorFragment(boolean instantial, ResultFragment resultFragment, String name, String comment) {
+        return addSelectorFragment(new SelectorFragment(instantial, resultFragment, name, comment));
+    }
+
+    public ClassInterfaceFragment addSelectorFragment(SelectorFragment selectorFragment) {
+        selectorFragments.add(selectorFragment);
+        return this;
+    }
+
+    public CommentFragment getCommentFragment() {
+        return commentFragment;
+    }
+
+    public ClassInterfaceFragment setCommentFragment(CommentFragment commentFragment) {
+        this.commentFragment = commentFragment;
+        return this;
     }
 
     public String getName() {

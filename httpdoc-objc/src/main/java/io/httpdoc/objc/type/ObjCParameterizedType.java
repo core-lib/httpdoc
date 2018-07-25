@@ -1,20 +1,15 @@
 package io.httpdoc.objc.type;
 
-import io.httpdoc.core.type.HDClass;
-
 import java.util.Set;
 
 /**
- * ObjCConstant 类型
+ * ObjCConstant 参数化类型
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-07-25 11:35
+ * @date 2018-07-25 15:48
  **/
-public class ObjCClass extends ObjCType {
+public class ObjCParameterizedType extends ObjCType {
 
-    public ObjCClass(String prefix, HDClass hdClass) {
-
-    }
 
     @Override
     public String getName() {
@@ -30,5 +25,4 @@ public class ObjCClass extends ObjCType {
     public Set<String> imports() {
         return null;
     }
-
 }

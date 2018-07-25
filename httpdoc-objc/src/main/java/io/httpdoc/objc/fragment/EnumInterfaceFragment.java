@@ -3,7 +3,7 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjC;
+import io.httpdoc.objc.ObjCConstant;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import java.util.Set;
  * @date 2018-07-24 17:34
  **/
 public class EnumInterfaceFragment implements Fragment {
+    private String pkg;
     private CommentFragment commentFragment;
     private String name;
     private Set<EnumExportFragment> exportFragments = new LinkedHashSet<>();
@@ -77,6 +78,15 @@ public class EnumInterfaceFragment implements Fragment {
         return this;
     }
 
+    public String getPkg() {
+        return pkg;
+    }
+
+    public EnumInterfaceFragment setPkg(String pkg) {
+        this.pkg = pkg;
+        return this;
+    }
+
     public CommentFragment getCommentFragment() {
         return commentFragment;
     }
@@ -104,7 +114,7 @@ public class EnumInterfaceFragment implements Fragment {
         return this;
     }
 
-    public static class EnumExportFragment implements Fragment, ObjC {
+    public static class EnumExportFragment implements Fragment, ObjCConstant {
         private CommentFragment commentFragment;
         private String type;
         private String name;

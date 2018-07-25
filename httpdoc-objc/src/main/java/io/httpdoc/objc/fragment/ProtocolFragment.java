@@ -68,6 +68,7 @@ public class ProtocolFragment implements Fragment {
         for (SelectorFragment selectorFragment : selectorFragments) {
             appender.enter();
             selectorFragment.joinTo(appender, preference);
+            appender.enter();
         }
 
         appender.enter().append("@end");

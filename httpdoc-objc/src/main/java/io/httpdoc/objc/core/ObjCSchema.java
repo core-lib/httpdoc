@@ -6,6 +6,7 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDType;
+import io.httpdoc.objc.type.ObjCType;
 
 import java.util.*;
 
@@ -50,7 +51,7 @@ public class ObjCSchema extends Schema {
     @Override
     public HDType toType(String pkg, boolean pkgForced, Supplier supplier) {
         HDType type = schema.toType(pkg, pkgForced, supplier);
-        return type;
+        return ObjCType.valueOf(prefix, type);
     }
 
     @Override

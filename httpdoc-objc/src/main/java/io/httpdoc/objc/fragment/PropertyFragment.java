@@ -28,8 +28,8 @@ public class PropertyFragment implements Fragment {
         this.name = name;
     }
 
-    public PropertyFragment(String note, ObjCType type, String name) {
-        this.commentFragment = note != null ? new CommentFragment(note) : null;
+    public PropertyFragment(String comment, ObjCType type, String name) {
+        this.commentFragment = comment != null ? new CommentFragment(comment) : null;
         this.type = type;
         this.name = name;
     }

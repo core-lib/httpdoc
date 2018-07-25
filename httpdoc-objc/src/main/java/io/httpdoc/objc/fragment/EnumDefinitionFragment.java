@@ -5,7 +5,7 @@ import io.httpdoc.core.appender.EnterMergedAppender;
 import io.httpdoc.core.appender.IndentAppender;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjC;
+import io.httpdoc.objc.ObjCConstant;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -127,7 +127,7 @@ public class EnumDefinitionFragment implements Fragment {
      * @author 杨昌沛 646742615@qq.com
      * @date 2018-07-24 17:47
      **/
-    public static class EnumConstantFragment implements Fragment, ObjC {
+    public static class EnumConstantFragment implements Fragment, ObjCConstant {
         private CommentFragment commentFragment;
         private String name;
         private Integer value;
