@@ -16,7 +16,7 @@ import java.util.Set;
  * @date 2018-07-24 17:35
  **/
 public class EnumImplementationFragment implements Fragment {
-    private NoteFragment noteFragment;
+    private CommentFragment commentFragment;
     private String name;
     private Set<EnumAssignFragment> assignFragments = new LinkedHashSet<>();
 
@@ -27,13 +27,13 @@ public class EnumImplementationFragment implements Fragment {
         this.name = name;
     }
 
-    public EnumImplementationFragment(String note, String name) {
-        this.noteFragment = note != null ? new NoteFragment(note) : null;
+    public EnumImplementationFragment(String comment, String name) {
+        this.commentFragment = comment != null ? new CommentFragment(comment) : null;
         this.name = name;
     }
 
-    public EnumImplementationFragment(NoteFragment noteFragment, String name) {
-        this.noteFragment = noteFragment;
+    public EnumImplementationFragment(CommentFragment commentFragment, String name) {
+        this.commentFragment = commentFragment;
         this.name = name;
     }
 
@@ -46,7 +46,7 @@ public class EnumImplementationFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (noteFragment != null) noteFragment.joinTo(appender, preference);
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
         for (String include : imports()) appender.append(include).enter();
 
@@ -61,12 +61,12 @@ public class EnumImplementationFragment implements Fragment {
         return addAssignFragment(new EnumAssignFragment(this.name, name, value));
     }
 
-    public EnumImplementationFragment addAssignFragment(String note, String name, String value) {
-        return addAssignFragment(new EnumAssignFragment(note, this.name, name, value));
+    public EnumImplementationFragment addAssignFragment(String comment, String name, String value) {
+        return addAssignFragment(new EnumAssignFragment(comment, this.name, name, value));
     }
 
-    public EnumImplementationFragment addAssignFragment(NoteFragment noteFragment, String name, String value) {
-        return addAssignFragment(new EnumAssignFragment(noteFragment, this.name, name, value));
+    public EnumImplementationFragment addAssignFragment(CommentFragment commentFragment, String name, String value) {
+        return addAssignFragment(new EnumAssignFragment(commentFragment, this.name, name, value));
     }
 
     private EnumImplementationFragment addAssignFragment(EnumAssignFragment assignFragment) {
@@ -74,12 +74,12 @@ public class EnumImplementationFragment implements Fragment {
         return this;
     }
 
-    public NoteFragment getNoteFragment() {
-        return noteFragment;
+    public CommentFragment getCommentFragment() {
+        return commentFragment;
     }
 
-    public EnumImplementationFragment setNoteFragment(NoteFragment noteFragment) {
-        this.noteFragment = noteFragment;
+    public EnumImplementationFragment setCommentFragment(CommentFragment commentFragment) {
+        this.commentFragment = commentFragment;
         return this;
     }
 
@@ -102,7 +102,7 @@ public class EnumImplementationFragment implements Fragment {
     }
 
     public static class EnumAssignFragment implements Fragment {
-        private NoteFragment noteFragment;
+        private CommentFragment commentFragment;
         private String type;
         private String name;
         private String value;
@@ -116,15 +116,15 @@ public class EnumImplementationFragment implements Fragment {
             this.value = value;
         }
 
-        public EnumAssignFragment(String note, String type, String name, String value) {
-            this.noteFragment = note != null ? new NoteFragment(note) : null;
+        public EnumAssignFragment(String comment, String type, String name, String value) {
+            this.commentFragment = comment != null ? new CommentFragment(comment) : null;
             this.type = type;
             this.name = name;
             this.value = value;
         }
 
-        public EnumAssignFragment(NoteFragment noteFragment, String type, String name, String value) {
-            this.noteFragment = noteFragment;
+        public EnumAssignFragment(CommentFragment commentFragment, String type, String name, String value) {
+            this.commentFragment = commentFragment;
             this.type = type;
             this.name = name;
             this.value = value;
@@ -137,16 +137,16 @@ public class EnumImplementationFragment implements Fragment {
 
         @Override
         public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-            if (noteFragment != null) noteFragment.joinTo(appender, preference);
+            if (commentFragment != null) commentFragment.joinTo(appender, preference);
             appender.append(type).append(" const ").append(name).append(" = ").append("@\"").append(value).append("\";");
         }
 
-        public NoteFragment getNoteFragment() {
-            return noteFragment;
+        public CommentFragment getCommentFragment() {
+            return commentFragment;
         }
 
-        public EnumAssignFragment setNoteFragment(NoteFragment noteFragment) {
-            this.noteFragment = noteFragment;
+        public EnumAssignFragment setCommentFragment(CommentFragment commentFragment) {
+            this.commentFragment = commentFragment;
             return this;
         }
 

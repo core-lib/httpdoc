@@ -20,7 +20,7 @@ import java.util.Set;
  * @date 2018-07-24 17:36
  **/
 public class EnumDefinitionFragment implements Fragment {
-    private NoteFragment noteFragment;
+    private CommentFragment commentFragment;
     private String name;
     private Set<EnumConstantFragment> constantFragments = new LinkedHashSet<>();
 
@@ -32,12 +32,12 @@ public class EnumDefinitionFragment implements Fragment {
     }
 
     public EnumDefinitionFragment(String note, String name) {
-        this.noteFragment = note != null ? new NoteFragment(note) : null;
+        this.commentFragment = note != null ? new CommentFragment(note) : null;
         this.name = name;
     }
 
-    public EnumDefinitionFragment(NoteFragment noteFragment, String name) {
-        this.noteFragment = noteFragment;
+    public EnumDefinitionFragment(CommentFragment commentFragment, String name) {
+        this.commentFragment = commentFragment;
         this.name = name;
     }
 
@@ -50,7 +50,7 @@ public class EnumDefinitionFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (noteFragment != null) noteFragment.joinTo(appender, preference);
+        if (commentFragment != null) commentFragment.joinTo(appender, preference);
 
         for (String include : imports()) appender.append(include).enter();
 
@@ -77,16 +77,16 @@ public class EnumDefinitionFragment implements Fragment {
         return addConstantFragment(new EnumConstantFragment(name, value));
     }
 
-    public EnumDefinitionFragment addConstantFragment(String note, String name) {
-        return addConstantFragment(new EnumConstantFragment(note, name));
+    public EnumDefinitionFragment addConstantFragment(String comment, String name) {
+        return addConstantFragment(new EnumConstantFragment(comment, name));
     }
 
-    public EnumDefinitionFragment addConstantFragment(String note, String name, Integer value) {
-        return addConstantFragment(new EnumConstantFragment(note, name, value));
+    public EnumDefinitionFragment addConstantFragment(String comment, String name, Integer value) {
+        return addConstantFragment(new EnumConstantFragment(comment, name, value));
     }
 
-    public EnumDefinitionFragment addConstantFragment(NoteFragment noteFragment, String name, Integer value) {
-        return addConstantFragment(new EnumConstantFragment(noteFragment, name, value));
+    public EnumDefinitionFragment addConstantFragment(CommentFragment commentFragment, String name, Integer value) {
+        return addConstantFragment(new EnumConstantFragment(commentFragment, name, value));
     }
 
     public EnumDefinitionFragment addConstantFragment(EnumConstantFragment constantFragment) {
@@ -94,12 +94,12 @@ public class EnumDefinitionFragment implements Fragment {
         return this;
     }
 
-    public NoteFragment getNoteFragment() {
-        return noteFragment;
+    public CommentFragment getCommentFragment() {
+        return commentFragment;
     }
 
-    public EnumDefinitionFragment setNoteFragment(NoteFragment noteFragment) {
-        this.noteFragment = noteFragment;
+    public EnumDefinitionFragment setCommentFragment(CommentFragment commentFragment) {
+        this.commentFragment = commentFragment;
         return this;
     }
 
@@ -128,7 +128,7 @@ public class EnumDefinitionFragment implements Fragment {
      * @date 2018-07-24 17:47
      **/
     public static class EnumConstantFragment implements Fragment, ObjC {
-        private NoteFragment noteFragment;
+        private CommentFragment commentFragment;
         private String name;
         private Integer value;
 
@@ -143,16 +143,16 @@ public class EnumDefinitionFragment implements Fragment {
             this((String) null, name, value);
         }
 
-        public EnumConstantFragment(String note, String name) {
-            this(note, name, null);
+        public EnumConstantFragment(String comment, String name) {
+            this(comment, name, null);
         }
 
-        public EnumConstantFragment(String note, String name, Integer value) {
-            this(note != null ? new NoteFragment(note) : null, name, value);
+        public EnumConstantFragment(String comment, String name, Integer value) {
+            this(comment != null ? new CommentFragment(comment) : null, name, value);
         }
 
-        public EnumConstantFragment(NoteFragment noteFragment, String name, Integer value) {
-            this.noteFragment = noteFragment;
+        public EnumConstantFragment(CommentFragment commentFragment, String name, Integer value) {
+            this.commentFragment = commentFragment;
             this.name = name;
             this.value = value;
         }
@@ -164,17 +164,17 @@ public class EnumDefinitionFragment implements Fragment {
 
         @Override
         public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-            if (noteFragment != null) noteFragment.joinTo(appender, preference);
+            if (commentFragment != null) commentFragment.joinTo(appender, preference);
             appender.append(name);
             if (value != null) appender.append(" = ").append(String.valueOf(value));
         }
 
-        public NoteFragment getNoteFragment() {
-            return noteFragment;
+        public CommentFragment getCommentFragment() {
+            return commentFragment;
         }
 
-        public EnumConstantFragment setNoteFragment(NoteFragment noteFragment) {
-            this.noteFragment = noteFragment;
+        public EnumConstantFragment setCommentFragment(CommentFragment commentFragment) {
+            this.commentFragment = commentFragment;
             return this;
         }
 

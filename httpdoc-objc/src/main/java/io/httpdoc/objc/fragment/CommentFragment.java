@@ -17,23 +17,23 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:48
  **/
-public class NoteFragment implements Fragment {
+public class CommentFragment implements Fragment {
     private String content;
     private Set<String> imports = new LinkedHashSet<>();
 
-    public NoteFragment() {
+    public CommentFragment() {
     }
 
-    public NoteFragment(String content) {
+    public CommentFragment(String content) {
         this.content = content;
     }
 
-    public NoteFragment(String content, String... imports) {
+    public CommentFragment(String content, String... imports) {
         this.content = content;
         this.imports.addAll(Arrays.asList(imports));
     }
 
-    public NoteFragment(String content, Set<String> imports) {
+    public CommentFragment(String content, Set<String> imports) {
         this.content = content;
         this.imports.addAll(imports);
     }
