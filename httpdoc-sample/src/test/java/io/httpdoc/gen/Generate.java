@@ -5,7 +5,8 @@ import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.objective.c.ObjCFragmentGenerator;
+import io.httpdoc.objc.ObjCGenerator;
+import io.httpdoc.objc.ObjCSupplier;
 import org.junit.Test;
 
 import java.io.*;
@@ -24,7 +25,8 @@ public class Generate {
         generation.setPkg("io.httpdoc.gen");
         generation.setPkgForced(false);
         generation.setStrategy(new OverrideStrategy());
-        Generator generator = new ObjCFragmentGenerator("HD");
+        generation.setSupplier(new ObjCSupplier());
+        Generator generator = new ObjCGenerator("HD");
         generator.generate(generation);
     }
 

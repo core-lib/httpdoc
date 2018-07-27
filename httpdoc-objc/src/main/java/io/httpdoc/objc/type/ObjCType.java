@@ -1,11 +1,11 @@
 package io.httpdoc.objc.type;
 
 import io.httpdoc.core.Importable;
+import io.httpdoc.objc.ObjCConstant;
 import io.httpdoc.objc.foundation.Foundation;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-27 13:55
  **/
-public abstract class ObjCType implements Importable {
+public abstract class ObjCType implements Importable, ObjCConstant {
     private static final ConcurrentMap<Type, ObjCType> CACHE = new ConcurrentHashMap<>();
 
     public abstract String getName();
@@ -54,7 +54,6 @@ public abstract class ObjCType implements Importable {
 
     @Override
     public Set<String> imports() {
-        return Collections.emptySet();
+        return null;
     }
-
 }

@@ -20,7 +20,7 @@
         <module>httpdoc-objective-c</module>
         <module>httpdoc-objc</module>
         <!--<module>httpdoc-springmvc</module>-->
-        <!--<module>httpdoc-sample</module>-->
+        <module>httpdoc-sample</module>
     </modules>
     <packaging>pom</packaging>
 

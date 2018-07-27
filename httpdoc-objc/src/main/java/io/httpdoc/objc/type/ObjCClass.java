@@ -3,6 +3,8 @@ package io.httpdoc.objc.type;
 import io.httpdoc.objc.foundation.Foundation;
 import io.httpdoc.objc.foundation.ObjC;
 
+import java.util.Set;
+
 /**
  * ObjC class 类型
  *
@@ -32,5 +34,9 @@ public class ObjCClass extends ObjCType {
         return primitive;
     }
 
+    @Override
+    public Set<String> imports() {
+        return super.imports();
+    }
 
 }

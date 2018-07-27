@@ -57,7 +57,7 @@ public class ClassImplementationFragment implements Fragment {
             propertyFragment.joinTo(appender, preference);
         }
 
-        appender.enter().append("@end");
+        appender.enter().append("@end").enter().enter();
 
         appender.append("@implementation").append(" ").append(name);
 
