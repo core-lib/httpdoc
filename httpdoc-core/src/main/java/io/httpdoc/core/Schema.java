@@ -27,15 +27,15 @@ import java.util.*;
 public class Schema extends Definition {
     private static final long serialVersionUID = 9146240988324413872L;
 
-    protected Category category;
-    protected String pkg;
-    protected String name;
-    protected Schema superclass;
-    protected Map<String, Property> properties = new LinkedHashMap<>();
-    protected Schema component;
-    protected Schema owner;
-    protected Set<Constant> constants = new LinkedHashSet<>();
-    protected Collection<Schema> dependencies = new ArrayList<>();
+    private Category category;
+    private String pkg;
+    private String name;
+    private Schema superclass;
+    private Map<String, Property> properties = new LinkedHashMap<>();
+    private Schema component;
+    private Schema owner;
+    private Set<Constant> constants = new LinkedHashSet<>();
+    private Collection<Schema> dependencies = new ArrayList<>();
 
     public Schema() {
     }

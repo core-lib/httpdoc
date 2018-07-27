@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * char
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 16:06
  **/
 @ObjC(primitive = true, name = "char")
-public class Cchar {
+public class Cchar extends Foundation {
 }

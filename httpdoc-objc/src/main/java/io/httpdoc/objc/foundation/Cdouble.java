@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * double
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 16:08
  **/
 @ObjC(primitive = true, name = "double")
-public class Cdouble {
+public class Cdouble extends Foundation {
 }

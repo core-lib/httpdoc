@@ -25,7 +25,7 @@ public class BlockFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        appender.append("{").enter();
+        appender.enter().append("{").enter();
         IndentAppender apd = new IndentAppender(appender, preference.getIndent());
         for (CharSequence sentence : sentences) apd.append(sentence).enter();
         apd.close();
@@ -34,6 +34,12 @@ public class BlockFragment implements Fragment {
 
     public BlockFragment addSentence(CharSequence sentence, String... imports) {
         this.sentences.add(sentence);
+        this.imports.addAll(Arrays.asList(imports));
+        return this;
+    }
+
+    public BlockFragment addSentence(int index, CharSequence sentence, String... imports) {
+        this.sentences.add(index, sentence);
         this.imports.addAll(Arrays.asList(imports));
         return this;
     }

@@ -4,7 +4,6 @@ import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.objc.ObjCProtocol;
-import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ import java.util.Set;
 public class ClassInterfaceFragment implements Fragment {
     private CommentFragment commentFragment;
     private String name;
-    private ObjCClass superclass;
+    private ObjCType superclass;
     private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
     private Set<PropertyFragment> propertyFragments = new LinkedHashSet<>();
     private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
@@ -132,11 +131,11 @@ public class ClassInterfaceFragment implements Fragment {
         return this;
     }
 
-    public ObjCClass getSuperclass() {
+    public ObjCType getSuperclass() {
         return superclass;
     }
 
-    public ClassInterfaceFragment setSuperclass(ObjCClass superclass) {
+    public ClassInterfaceFragment setSuperclass(ObjCType superclass) {
         this.superclass = superclass;
         return this;
     }

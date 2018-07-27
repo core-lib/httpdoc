@@ -6,8 +6,14 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDType;
+import io.httpdoc.objc.foundation.NSArray;
+import io.httpdoc.objc.foundation.NSDictionary;
+import io.httpdoc.objc.foundation.NSString;
+import io.httpdoc.objc.type.ObjCClass;
+import io.httpdoc.objc.type.ObjCParameterizedType;
 import io.httpdoc.objc.type.ObjCType;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class ObjCSchema extends Schema {
@@ -18,6 +24,40 @@ public class ObjCSchema extends Schema {
     public ObjCSchema(String prefix, Schema schema) {
         this.prefix = prefix;
         this.schema = schema;
+    }
+
+    public ObjCType toObjCType(Supplier supplier) {
+        Category category = this.getCategory();
+        switch (category) {
+            case BASIC: {
+                Type type = supplier.acquire(this);
+                return ObjCType.valueOf(type);
+            }
+            case DICTIONARY: {
+                ObjCClass rawType = new ObjCClass(NSDictionary.class);
+                ObjCSchema component = (ObjCSchema) this.getComponent();
+                ObjCType[] actualTypeArguments = new ObjCType[]{new ObjCClass(NSString.class), component.toObjCType(supplier)};
+                return new ObjCParameterizedType(rawType, actualTypeArguments);
+            }
+            case ARRAY: {
+                ObjCClass rawType = new ObjCClass(NSArray.class);
+                ObjCSchema component = (ObjCSchema) this.getComponent();
+                if (component.isPrimitive()) component = (ObjCSchema) component.toWrapper();
+                ObjCType[] actualTypeArguments = new ObjCType[]{component.toObjCType(supplier)};
+                return new ObjCParameterizedType(rawType, actualTypeArguments);
+            }
+            case ENUM: {
+                String name = this.getName();
+                return new ObjCClass(prefix + name, false);
+            }
+            case OBJECT: {
+                String name = this.getName();
+                return new ObjCClass(prefix + name, false);
+            }
+            default: {
+                throw new IllegalStateException();
+            }
+        }
     }
 
     @Override
@@ -37,9 +77,8 @@ public class ObjCSchema extends Schema {
 
     @Override
     public Schema toWrapper() {
-        Schema wrapper = this.schema.toWrapper();
-        if (wrapper == null) return null;
-        return new ObjCSchema(prefix, wrapper);
+        if (!isPrimitive()) throw new IllegalStateException();
+        else return new ObjCSchema(prefix, Schema.valueOf(Number.class));
     }
 
     @Override
@@ -50,8 +89,7 @@ public class ObjCSchema extends Schema {
 
     @Override
     public HDType toType(String pkg, boolean pkgForced, Supplier supplier) {
-        HDType type = schema.toType(pkg, pkgForced, supplier);
-        return ObjCType.valueOf(prefix, type);
+        return schema.toType(pkg, pkgForced, supplier);
     }
 
     @Override

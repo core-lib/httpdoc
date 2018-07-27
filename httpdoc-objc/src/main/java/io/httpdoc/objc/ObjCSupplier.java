@@ -3,7 +3,7 @@ package io.httpdoc.objc;
 import io.httpdoc.core.Category;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.SystemSupplier;
-import io.httpdoc.objc.type.*;
+import io.httpdoc.objc.foundation.*;
 
 import java.lang.reflect.Type;
 

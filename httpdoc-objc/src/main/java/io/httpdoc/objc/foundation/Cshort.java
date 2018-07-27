@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * short
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 16:06
  **/
 @ObjC(primitive = true, name = "short")
-public class Cshort {
+public class Cshort extends Foundation {
 }

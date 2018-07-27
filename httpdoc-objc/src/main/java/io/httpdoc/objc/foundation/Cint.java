@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * int
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 16:01
  **/
 @ObjC(primitive = true, name = "int")
-public class Cint {
+public class Cint extends Foundation {
 }

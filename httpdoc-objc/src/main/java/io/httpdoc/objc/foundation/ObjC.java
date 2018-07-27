@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

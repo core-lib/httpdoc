@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * BOOL
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 15:56
  **/
 @ObjC(primitive = true, name = "bool")
-public class Cbool {
+public class Cbool extends Foundation {
 }

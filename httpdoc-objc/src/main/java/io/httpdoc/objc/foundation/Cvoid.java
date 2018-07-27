@@ -1,4 +1,4 @@
-package io.httpdoc.objc.type;
+package io.httpdoc.objc.foundation;
 
 /**
  * void
@@ -7,5 +7,5 @@ package io.httpdoc.objc.type;
  * @date 2018-07-25 16:10
  **/
 @ObjC(primitive = true, name = "void")
-public class Cvoid {
+public class Cvoid extends Foundation {
 }
