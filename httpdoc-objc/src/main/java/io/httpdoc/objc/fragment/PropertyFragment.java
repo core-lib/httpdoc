@@ -6,8 +6,8 @@ import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 属性代码碎片
@@ -42,7 +42,7 @@ public class PropertyFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         if (commentFragment != null) imports.addAll(commentFragment.imports());
         imports.addAll(type.imports());
         return imports;
@@ -52,7 +52,7 @@ public class PropertyFragment implements Fragment {
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.append("@property (nonatomic, ").append(type.getReferenceType()).append(") ");
-        appender.append(type.getName()).append(type.isPrimitive() ? " " : " *");
+        appender.append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? " " : " *");
         appender.append(name).append(";");
     }
 

@@ -8,8 +8,8 @@ import io.httpdoc.core.fragment.Fragment;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 注释代码碎片
@@ -19,7 +19,7 @@ import java.util.Set;
  **/
 public class CommentFragment implements Fragment {
     private String content;
-    private Set<String> imports = new LinkedHashSet<>();
+    private Set<String> imports = new TreeSet<>();
 
     public CommentFragment() {
     }

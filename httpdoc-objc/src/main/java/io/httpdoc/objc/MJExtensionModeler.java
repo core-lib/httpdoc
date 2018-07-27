@@ -10,6 +10,7 @@ import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.objc.core.ObjCSchema;
 import io.httpdoc.objc.foundation.NSDictionary;
+import io.httpdoc.objc.foundation.NSObject;
 import io.httpdoc.objc.foundation.NSString;
 import io.httpdoc.objc.fragment.*;
 import io.httpdoc.objc.type.ObjCClass;
@@ -74,7 +75,7 @@ public class MJExtensionModeler implements Modeler<ObjCFile> {
                 interfase.setName(prefix + name);
                 interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 ObjCSchema superclass = (ObjCSchema) schema.getSuperclass();
-                interfase.setSuperclass((ObjCClass) superclass.toObjCType(supplier));
+                interfase.setSuperclass(superclass != null ? (ObjCClass) superclass.toObjCType(supplier) : ObjCType.valueOf(NSObject.class));
                 Map<String, Property> properties = schema.getProperties();
                 for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                     Property property = entry.getValue();

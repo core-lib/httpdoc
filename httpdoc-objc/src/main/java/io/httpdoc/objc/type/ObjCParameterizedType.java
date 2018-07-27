@@ -1,7 +1,7 @@
 package io.httpdoc.objc.type;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * ObjC 参数化类型
@@ -30,7 +30,7 @@ public class ObjCParameterizedType extends ObjCType {
             if (i > 0) builder.append(", ");
             ObjCType actualTypeArgument = actualTypeArguments[i];
             builder.append(actualTypeArgument.getName());
-            if (!actualTypeArgument.isPrimitive()) builder.append(" *");
+            if (!actualTypeArgument.isPrimitive() && !actualTypeArgument.isTypedef()) builder.append(" *");
         }
         builder.append(">");
         return builder.toString();
@@ -42,13 +42,18 @@ public class ObjCParameterizedType extends ObjCType {
     }
 
     @Override
+    public boolean isTypedef() {
+        return rawType.isTypedef();
+    }
+
+    @Override
     public String getReferenceType() {
         return rawType.getReferenceType();
     }
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         imports.addAll(rawType.imports());
         for (ObjCType type : actualTypeArguments) imports.addAll(type.imports());
         return imports;

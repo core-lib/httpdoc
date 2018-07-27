@@ -22,6 +22,8 @@ public abstract class ObjCType implements Importable, ObjCConstant {
 
     public abstract boolean isPrimitive();
 
+    public abstract boolean isTypedef();
+
     public abstract String getReferenceType();
 
     public static ObjCType valueOf(Type type) {

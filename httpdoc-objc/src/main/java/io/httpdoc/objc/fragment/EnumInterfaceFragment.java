@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 枚举接口代码碎片
@@ -41,7 +42,7 @@ public class EnumInterfaceFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         for (EnumExportFragment export : exportFragments) imports.addAll(export.imports());
         return imports;
     }

@@ -8,6 +8,7 @@ import io.httpdoc.objc.ObjCProtocol;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 协议代码碎片
@@ -40,7 +41,7 @@ public class ProtocolFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
         for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
         return imports;

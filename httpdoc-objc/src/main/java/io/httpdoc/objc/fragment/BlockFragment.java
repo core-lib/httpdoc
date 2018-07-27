@@ -16,7 +16,7 @@ import java.util.*;
  **/
 public class BlockFragment implements Fragment {
     private List<CharSequence> sentences = new ArrayList<>();
-    private Set<String> imports = new LinkedHashSet<>();
+    private Set<String> imports = new TreeSet<>();
 
     @Override
     public Set<String> imports() {

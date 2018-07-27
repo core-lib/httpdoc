@@ -3,8 +3,8 @@ package io.httpdoc.objc;
 import io.httpdoc.core.Importable;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 协议
@@ -14,7 +14,7 @@ import java.util.Set;
  **/
 public class ObjCProtocol implements Importable {
     private String name;
-    private Set<String> imports = new LinkedHashSet<>();
+    private Set<String> imports = new TreeSet<>();
 
     public ObjCProtocol(String name, String... imports) {
         this.name = name;

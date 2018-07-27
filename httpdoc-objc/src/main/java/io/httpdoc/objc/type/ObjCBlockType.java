@@ -1,9 +1,9 @@
 package io.httpdoc.objc.type;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Objective-C Block 类型
@@ -27,8 +27,8 @@ public class ObjCBlockType extends ObjCType {
             if (count++ > 0) builder.append(", ");
             String name = entry.getKey();
             String type = entry.getValue().getName();
-            boolean primitive = entry.getValue().isPrimitive();
-            builder.append(type).append(primitive ? "" : " *").append(" ").append(name);
+            boolean simple = entry.getValue().isPrimitive() || entry.getValue().isTypedef();
+            builder.append(type).append(simple ? "" : " *").append(" ").append(name);
         }
         builder.append(")");
         return builder.toString();
@@ -36,6 +36,11 @@ public class ObjCBlockType extends ObjCType {
 
     @Override
     public boolean isPrimitive() {
+        return false;
+    }
+
+    @Override
+    public boolean isTypedef() {
         return true;
     }
 
@@ -46,7 +51,7 @@ public class ObjCBlockType extends ObjCType {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         for (ObjCType type : parameters.values()) imports.addAll(type.imports());
         return imports;
     }

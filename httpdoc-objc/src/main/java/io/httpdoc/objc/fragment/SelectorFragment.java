@@ -9,6 +9,7 @@ import io.httpdoc.objc.type.ObjCType;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 函数代码碎片
@@ -53,7 +54,7 @@ public class SelectorFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         if (resultFragment != null) imports.addAll(resultFragment.imports());
         for (ParameterFragment parameterFragment : parameterFragments) imports.addAll(parameterFragment.imports());
         if (blockFragment != null) imports.addAll(blockFragment.imports());

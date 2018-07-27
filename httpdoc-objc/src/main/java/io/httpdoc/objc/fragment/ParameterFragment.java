@@ -43,7 +43,7 @@ public class ParameterFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        appender.append(name).append(":(").append(type.getName()).append(type.isPrimitive() ? "" : " *").append(")").append(variable);
+        appender.append(name).append(":(").append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? "" : " *").append(")").append(variable);
     }
 
     public String getName() {

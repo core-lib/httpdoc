@@ -9,6 +9,7 @@ import io.httpdoc.objc.type.ObjCType;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 实现代码碎片
@@ -25,7 +26,7 @@ public class ClassImplementationFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         imports.add("#import \"" + name + ".h\"");
         for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
         for (PropertyFragment propertyFragment : propertyFragments) imports.addAll(propertyFragment.imports());

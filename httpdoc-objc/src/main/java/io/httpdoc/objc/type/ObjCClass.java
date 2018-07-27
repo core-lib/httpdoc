@@ -38,6 +38,11 @@ public class ObjCClass extends ObjCType {
     }
 
     @Override
+    public boolean isTypedef() {
+        return (flag & FLAG_TYPEDEF) != 0;
+    }
+
+    @Override
     public String getReferenceType() {
         if ((flag & FLAG_STRONG) != 0) return STRONG;
         else if ((flag & FLAG_WEAK) != 0) return WEAK;
@@ -49,6 +54,7 @@ public class ObjCClass extends ObjCType {
     @Override
     public Set<String> imports() {
         if (isPrimitive()) return Collections.emptySet();
+        else if (isTypedef()) return Collections.singleton("#import \"" + name + ".h\"");
         else if (isFoundation()) return Collections.singleton(FOUNDATION);
         else if (isEnum()) return Collections.singleton("#import \"" + name + ".h\"");
         else return Collections.singleton("@class " + name + ";");

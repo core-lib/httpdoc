@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 枚举实现代码碎片
@@ -39,7 +40,7 @@ public class EnumImplementationFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
+        Set<String> imports = new TreeSet<>();
         for (EnumAssignFragment assign : assignFragments) imports.addAll(assign.imports());
         return imports;
     }

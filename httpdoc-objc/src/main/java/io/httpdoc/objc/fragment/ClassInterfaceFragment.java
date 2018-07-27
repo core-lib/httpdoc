@@ -3,13 +3,16 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
+import io.httpdoc.objc.ObjCConstant;
 import io.httpdoc.objc.ObjCProtocol;
+import io.httpdoc.objc.foundation.NSObject;
 import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 接口代码碎片
@@ -17,18 +20,19 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:30
  **/
-public class ClassInterfaceFragment implements Fragment {
+public class ClassInterfaceFragment implements Fragment, ObjCConstant {
     private CommentFragment commentFragment;
     private String name;
-    private ObjCClass superclass;
+    private ObjCClass superclass = ObjCType.valueOf(NSObject.class);
     private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
     private Set<PropertyFragment> propertyFragments = new LinkedHashSet<>();
     private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
 
     @Override
     public Set<String> imports() {
-        Set<String> imports = new LinkedHashSet<>();
-        if (superclass != null) imports.addAll(superclass.imports());
+        Set<String> imports = new TreeSet<>();
+        if (superclass.isFoundation()) imports.add(FOUNDATION);
+        else imports.add("#import \"" + superclass.getName() + ".h\"");
         for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
         for (PropertyFragment propertyFragment : propertyFragments) imports.addAll(propertyFragment.imports());
         for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());

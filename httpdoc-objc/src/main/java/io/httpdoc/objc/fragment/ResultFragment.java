@@ -37,7 +37,7 @@ public class ResultFragment implements Fragment {
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
-        if (type != null) appender.append("(").append(type.getName()).append(type.isPrimitive() ? "" : " *").append(")");
+        if (type != null) appender.append("(").append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? "" : " *").append(")");
         else appender.append("(void)");
     }
 

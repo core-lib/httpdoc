@@ -15,9 +15,10 @@ public interface ObjCConstant {
     int FLAG_FOUNDATION = 1 << 1;
     int FLAG_ENUM = 1 << 2;
     int FLAG_PRIMITIVE = 1 << 3;
-    int FLAG_STRONG = 1 << 4;
-    int FLAG_WEAK = 1 << 5;
-    int FLAG_COPY = 1 << 6;
-    int FLAG_ASSIGN = 1 << 7;
+    int FLAG_TYPEDEF = 1 << 4;
+    int FLAG_STRONG = 1 << 5;
+    int FLAG_WEAK = 1 << 6;
+    int FLAG_COPY = 1 << 7;
+    int FLAG_ASSIGN = 1 << 8;
 
 }

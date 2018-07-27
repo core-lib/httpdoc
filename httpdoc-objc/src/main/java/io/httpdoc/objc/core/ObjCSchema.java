@@ -49,7 +49,7 @@ public class ObjCSchema extends Schema {
             }
             case ENUM: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, ObjCConstant.FLAG_ENUM);
+                return new ObjCClass(prefix + name, ObjCConstant.FLAG_ENUM | ObjCConstant.FLAG_TYPEDEF);
             }
             case OBJECT: {
                 String name = this.getName();
