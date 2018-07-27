@@ -43,7 +43,7 @@ public class ClassInterfaceFragment implements Fragment {
         for (String include : imports()) appender.append(include).enter();
         appender.enter();
 
-        appender.append("@interfase").append(" ").append(name);
+        appender.append("@interface").append(" ").append(name);
 
         if (superclass != null) appender.append(" : ").append(superclass.getName());
 

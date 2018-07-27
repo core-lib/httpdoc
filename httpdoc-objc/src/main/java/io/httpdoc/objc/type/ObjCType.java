@@ -6,7 +6,6 @@ import io.httpdoc.objc.foundation.Foundation;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,6 +21,8 @@ public abstract class ObjCType implements Importable, ObjCConstant {
     public abstract String getName();
 
     public abstract boolean isPrimitive();
+
+    public abstract String getReferenceType();
 
     public static ObjCType valueOf(Type type) {
         if (type == null) return null;
@@ -52,8 +53,4 @@ public abstract class ObjCType implements Importable, ObjCConstant {
         return ObjCType != null ? (ObjCParameterizedType) ObjCType : javaParameterizedType;
     }
 
-    @Override
-    public Set<String> imports() {
-        return null;
-    }
 }

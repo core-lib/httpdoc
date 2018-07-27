@@ -41,7 +41,7 @@ public class ClassImplementationFragment implements Fragment {
         for (String include : imports()) appender.append(include).enter();
         appender.enter();
 
-        appender.append("@interfase").append(" ").append(name).append(" ()");
+        appender.append("@interface").append(" ").append(name).append(" ()");
 
         int index = 0;
         for (ObjCProtocol protocol : protocols) {

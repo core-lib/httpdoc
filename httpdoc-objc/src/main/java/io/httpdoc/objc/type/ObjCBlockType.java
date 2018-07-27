@@ -1,7 +1,9 @@
 package io.httpdoc.objc.type;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Objective-C Block 类型
@@ -37,8 +39,21 @@ public class ObjCBlockType extends ObjCType {
         return true;
     }
 
+    @Override
+    public String getReferenceType() {
+        return STRONG;
+    }
+
+    @Override
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
+        for (ObjCType type : parameters.values()) imports.addAll(type.imports());
+        return imports;
+    }
+
     public Map<String, ObjCType> getParameters() {
         return parameters;
     }
+
 
 }

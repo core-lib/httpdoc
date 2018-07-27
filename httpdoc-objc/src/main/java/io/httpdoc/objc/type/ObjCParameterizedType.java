@@ -1,5 +1,8 @@
 package io.httpdoc.objc.type;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * ObjC 参数化类型
  *
@@ -36,6 +39,19 @@ public class ObjCParameterizedType extends ObjCType {
     @Override
     public boolean isPrimitive() {
         return rawType.isPrimitive();
+    }
+
+    @Override
+    public String getReferenceType() {
+        return rawType.getReferenceType();
+    }
+
+    @Override
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
+        imports.addAll(rawType.imports());
+        for (ObjCType type : actualTypeArguments) imports.addAll(type.imports());
+        return imports;
     }
 
     public ObjCClass getRawType() {

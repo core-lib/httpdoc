@@ -1,5 +1,8 @@
 package io.httpdoc.objc.type;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * ObjC 协议类型
  *
@@ -32,6 +35,19 @@ public class ObjCProtocolType extends ObjCType {
     @Override
     public boolean isPrimitive() {
         return rawType.isPrimitive();
+    }
+
+    @Override
+    public String getReferenceType() {
+        return rawType.getReferenceType();
+    }
+
+    @Override
+    public Set<String> imports() {
+        Set<String> imports = new LinkedHashSet<>();
+        imports.addAll(rawType.imports());
+        for (ObjCType type : protocols) imports.addAll(type.imports());
+        return imports;
     }
 
     public ObjCClass getRawType() {

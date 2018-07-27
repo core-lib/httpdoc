@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ObjC {
 
-    boolean primitive();
+    int flag();
 
     String name();
 

@@ -6,6 +6,7 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDType;
+import io.httpdoc.objc.ObjCConstant;
 import io.httpdoc.objc.foundation.NSArray;
 import io.httpdoc.objc.foundation.NSDictionary;
 import io.httpdoc.objc.foundation.NSString;
@@ -48,11 +49,11 @@ public class ObjCSchema extends Schema {
             }
             case ENUM: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, false);
+                return new ObjCClass(prefix + name, ObjCConstant.FLAG_ENUM);
             }
             case OBJECT: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, false);
+                return new ObjCClass(prefix + name, ObjCConstant.FLAG_NONE);
             }
             default: {
                 throw new IllegalStateException();

@@ -51,7 +51,7 @@ public class PropertyFragment implements Fragment {
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
-        appender.append("@property (nonatomic) ");
+        appender.append("@property (nonatomic, ").append(type.getReferenceType()).append(") ");
         appender.append(type.getName()).append(type.isPrimitive() ? " " : " *");
         appender.append(name).append(";");
     }
