@@ -70,7 +70,28 @@ public class MJExtensionModeler implements Modeler<ObjCFile> {
                 interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 Schema superclass = schema.getSuperclass();
                 interfase.setSuperclass(superclass != null && superclass.getCategory() == Category.OBJECT ? (ObjCClass) superclass.toType(pkgGenerated, pkgForced, supplier) : null);
+                Map<String, Property> properties = schema.getProperties();
+                for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
+                    Property property = entry.getValue();
+                    ObjCType type = (ObjCType) property.getType().toType(pkgGenerated, pkgForced, supplier);
+                    PropertyFragment propertyFragment = new PropertyFragment();
+                    propertyFragment.setName(entry.getKey());
+                    propertyFragment.setType(type);
+                    propertyFragment.setCommentFragment(new CommentFragment(property.getDescription()));
+                    interfase.addPropertyFragment(propertyFragment);
+                }
 
+                ClassImplementationFragment implementation = new ClassImplementationFragment();
+                interfase.setName(prefix + name);
+                implementation.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+
+                SelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(pkgForced, supplier, pkg, properties);
+                if (objectClassInArrayMethod != null) implementation.addSelectorFragment(objectClassInArrayMethod);
+
+                SelectorFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(pkgForced, supplier, pkg, properties);
+                if (replacedKeyFromPropertyNameMethod != null) implementation.addSelectorFragment(replacedKeyFromPropertyNameMethod);
+
+                return Arrays.asList(new ObjCFile(pkg, interfase), new ObjCFile(pkg, implementation));
             }
             default:
                 return Collections.emptySet();
