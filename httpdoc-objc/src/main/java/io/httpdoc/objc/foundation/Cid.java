@@ -1,7 +1,6 @@
 package io.httpdoc.objc.foundation;
 
-import static io.httpdoc.objc.ObjCConstant.FLAG_STRONG;
-import static io.httpdoc.objc.ObjCConstant.FLAG_TYPEDEF;
+import io.httpdoc.objc.ObjC;
 
 /**
  * id
@@ -9,6 +8,30 @@ import static io.httpdoc.objc.ObjCConstant.FLAG_TYPEDEF;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:13
  **/
-@Metadata(flag = FLAG_TYPEDEF | FLAG_STRONG, name = "id")
-public class Cid extends ObjC {
+public class Cid implements ObjC {
+
+    @Override
+    public String getName() {
+        return "id";
+    }
+
+    @Override
+    public Kind getKind() {
+        return Kind.TYPEDEF;
+    }
+
+    @Override
+    public Reference getReference() {
+        return Reference.STRONG;
+    }
+
+    @Override
+    public String getLocation() {
+        return FOUNDATION;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return true;
+    }
 }

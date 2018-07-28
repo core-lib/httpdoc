@@ -3,8 +3,6 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjCConstant;
-import io.httpdoc.objc.ObjCProtocol;
 import io.httpdoc.objc.foundation.NSObject;
 import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
@@ -20,20 +18,19 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:30
  **/
-public class ClassInterfaceFragment implements Fragment, ObjCConstant {
+public class ClassInterfaceFragment implements Fragment {
     private CommentFragment commentFragment;
     private String name;
     private ObjCClass superclass = ObjCType.valueOf(NSObject.class);
-    private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
+    private Set<ObjCClass> protocols = new LinkedHashSet<>();
     private Set<PropertyFragment> propertyFragments = new LinkedHashSet<>();
     private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
 
     @Override
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
-        if (superclass.isFoundation()) imports.add(FOUNDATION);
-        else imports.add("#import \"" + superclass.getName() + ".h\"");
-        for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
+        imports.add("#import " + superclass.getLocation());
+        for (ObjCClass protocol : protocols) imports.add(protocol.getLocation());
         for (PropertyFragment propertyFragment : propertyFragments) imports.addAll(propertyFragment.imports());
         for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
         return imports;
@@ -52,7 +49,7 @@ public class ClassInterfaceFragment implements Fragment, ObjCConstant {
         if (superclass != null) appender.append(" : ").append(superclass.getName());
 
         int index = 0;
-        for (ObjCProtocol protocol : protocols) {
+        for (ObjCClass protocol : protocols) {
             if (index++ == 0) appender.append("<");
             else appender.append(", ");
             appender.append(protocol.getName());
@@ -75,8 +72,8 @@ public class ClassInterfaceFragment implements Fragment, ObjCConstant {
         appender.enter().append("@end");
     }
 
-    public ClassInterfaceFragment addProtocol(String name, String... imports) {
-        protocols.add(new ObjCProtocol(name, imports));
+    public ClassInterfaceFragment addProtocol(ObjCClass protocol) {
+        protocols.add(protocol);
         return this;
     }
 
@@ -145,11 +142,11 @@ public class ClassInterfaceFragment implements Fragment, ObjCConstant {
         return this;
     }
 
-    public Set<ObjCProtocol> getProtocols() {
+    public Set<ObjCClass> getProtocols() {
         return protocols;
     }
 
-    public ClassInterfaceFragment setProtocols(Set<ObjCProtocol> protocols) {
+    public ClassInterfaceFragment setProtocols(Set<ObjCClass> protocols) {
         this.protocols = protocols;
         return this;
     }

@@ -3,10 +3,12 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
+import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 参数代码碎片
@@ -38,7 +40,9 @@ public class ParameterFragment implements Fragment {
 
     @Override
     public Set<String> imports() {
-        return type.imports();
+        Set<String> imports = new TreeSet<>();
+        for (ObjCClass dependency : type.dependencies()) imports.addAll(dependency.imports());
+        return imports;
     }
 
     @Override

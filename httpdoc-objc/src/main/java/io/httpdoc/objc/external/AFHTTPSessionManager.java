@@ -1,14 +1,8 @@
-package io.httpdoc.objc.foundation;
+package io.httpdoc.objc.external;
 
 import io.httpdoc.objc.ObjC;
 
-/**
- * NSArray
- *
- * @author 杨昌沛 646742615@qq.com
- * @date 2018-07-25 16:12
- **/
-public class NSArray implements ObjC {
+public class AFHTTPSessionManager implements ObjC {
 
     @Override
     public String getName() {
@@ -22,12 +16,12 @@ public class NSArray implements ObjC {
 
     @Override
     public Reference getReference() {
-        return Reference.COPY;
+        return Reference.STRONG;
     }
 
     @Override
     public String getLocation() {
-        return FOUNDATION;
+        return "AFNetworking.h";
     }
 
     @Override

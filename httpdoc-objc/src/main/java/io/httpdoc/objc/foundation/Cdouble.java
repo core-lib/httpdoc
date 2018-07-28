@@ -1,7 +1,6 @@
 package io.httpdoc.objc.foundation;
 
-import static io.httpdoc.objc.ObjCConstant.FLAG_ASSIGN;
-import static io.httpdoc.objc.ObjCConstant.FLAG_PRIMITIVE;
+import io.httpdoc.objc.ObjC;
 
 /**
  * double
@@ -9,6 +8,30 @@ import static io.httpdoc.objc.ObjCConstant.FLAG_PRIMITIVE;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:08
  **/
-@Metadata(flag = FLAG_PRIMITIVE | FLAG_ASSIGN, name = "double")
-public class Cdouble extends ObjC {
+public class Cdouble implements ObjC {
+
+    @Override
+    public String getName() {
+        return "double";
+    }
+
+    @Override
+    public Kind getKind() {
+        return Kind.PRIMITIVE;
+    }
+
+    @Override
+    public Reference getReference() {
+        return Reference.ASSIGN;
+    }
+
+    @Override
+    public String getLocation() {
+        return FOUNDATION;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return true;
+    }
 }

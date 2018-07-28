@@ -3,7 +3,7 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjCProtocol;
+import io.httpdoc.objc.type.ObjCClass;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -19,7 +19,7 @@ import java.util.TreeSet;
 public class ProtocolFragment implements Fragment {
     private CommentFragment commentFragment;
     private String name;
-    private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
+    private Set<ObjCClass> protocols = new LinkedHashSet<>();
     private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
 
     public ProtocolFragment() {
@@ -42,7 +42,7 @@ public class ProtocolFragment implements Fragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
-        for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
+        for (ObjCClass protocol : protocols) imports.addAll(protocol.imports());
         for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
         return imports;
     }
@@ -58,7 +58,7 @@ public class ProtocolFragment implements Fragment {
         appender.append("@protocol").append(" ").append(name);
 
         int index = 0;
-        for (ObjCProtocol protocol : protocols) {
+        for (ObjCClass protocol : protocols) {
             if (index++ == 0) appender.append("<");
             else appender.append(", ");
             appender.append(protocol.getName());
@@ -75,8 +75,8 @@ public class ProtocolFragment implements Fragment {
         appender.enter().append("@end");
     }
 
-    public ProtocolFragment addProtocol(String name, String... imports) {
-        protocols.add(new ObjCProtocol(name, imports));
+    public ProtocolFragment addProtocol(ObjCClass protocol) {
+        protocols.add(protocol);
         return this;
     }
 
@@ -119,11 +119,11 @@ public class ProtocolFragment implements Fragment {
         return this;
     }
 
-    public Set<ObjCProtocol> getProtocols() {
+    public Set<ObjCClass> getProtocols() {
         return protocols;
     }
 
-    public ProtocolFragment setProtocols(Set<ObjCProtocol> protocols) {
+    public ProtocolFragment setProtocols(Set<ObjCClass> protocols) {
         this.protocols = protocols;
         return this;
     }

@@ -33,26 +33,31 @@ public class ObjCProtocolType extends ObjCType {
     }
 
     @Override
-    public boolean isPrimitive() {
-        return rawType.isPrimitive();
+    public Kind getKind() {
+        return rawType.getKind();
     }
 
     @Override
-    public boolean isTypedef() {
-        return rawType.isTypedef();
+    public Reference getReference() {
+        return rawType.getReference();
     }
 
     @Override
-    public String getReferenceType() {
-        return rawType.getReferenceType();
+    public String getLocation() {
+        return rawType.getLocation();
     }
 
     @Override
-    public Set<String> imports() {
-        Set<String> imports = new TreeSet<>();
-        imports.addAll(rawType.imports());
-        for (ObjCType type : protocols) imports.addAll(type.imports());
-        return imports;
+    public boolean isExternal() {
+        return false;
+    }
+
+    @Override
+    public Set<ObjCClass> dependencies() {
+        Set<ObjCClass> dependencies = new TreeSet<>();
+        dependencies.addAll(rawType.dependencies());
+        for (ObjCType objCType : protocols) dependencies.addAll(objCType.dependencies());
+        return dependencies;
     }
 
     public ObjCClass getRawType() {

@@ -11,7 +11,7 @@ import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.strategy.Task;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.objc.core.ObjCDocument;
-import io.httpdoc.objc.extend.RSClient;
+import io.httpdoc.objc.external.RSClient;
 import io.httpdoc.objc.foundation.Cid;
 import io.httpdoc.objc.fragment.ClassImplementationFragment;
 import io.httpdoc.objc.fragment.ClassInterfaceFragment;
@@ -30,24 +30,24 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:26
  **/
-public class ObjCGenerator implements Generator {
+public class ObjCRSNetworkingGenerator implements Generator {
     private final static String DEFAULT_PREFIX = "HD";
     private final String prefix;
     private final Modeler<ObjCFile> modeler;
 
-    public ObjCGenerator() {
+    public ObjCRSNetworkingGenerator() {
         this(DEFAULT_PREFIX);
     }
 
-    public ObjCGenerator(String prefix) {
-        this(prefix, new MJExtensionModeler(prefix));
+    public ObjCRSNetworkingGenerator(String prefix) {
+        this(prefix, new ObjCMJExtensionModeler(prefix));
     }
 
-    public ObjCGenerator(Modeler<ObjCFile> modeler) {
+    public ObjCRSNetworkingGenerator(Modeler<ObjCFile> modeler) {
         this(DEFAULT_PREFIX, modeler);
     }
 
-    public ObjCGenerator(String prefix, Modeler<ObjCFile> modeler) {
+    public ObjCRSNetworkingGenerator(String prefix, Modeler<ObjCFile> modeler) {
         this.prefix = prefix;
         this.modeler = modeler;
     }

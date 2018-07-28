@@ -3,7 +3,7 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjCConstant;
+import io.httpdoc.objc.ObjC;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -43,6 +43,7 @@ public class EnumInterfaceFragment implements Fragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
+        imports.add("#import " + ObjC.FOUNDATION);
         for (EnumExportFragment export : exportFragments) imports.addAll(export.imports());
         return imports;
     }
@@ -115,7 +116,7 @@ public class EnumInterfaceFragment implements Fragment {
         return this;
     }
 
-    public static class EnumExportFragment implements Fragment, ObjCConstant {
+    public static class EnumExportFragment implements Fragment {
         private CommentFragment commentFragment;
         private String type;
         private String name;
@@ -142,7 +143,7 @@ public class EnumInterfaceFragment implements Fragment {
 
         @Override
         public Set<String> imports() {
-            return Collections.singleton(FOUNDATION);
+            return Collections.singleton("#import " + ObjC.FOUNDATION);
         }
 
         @Override

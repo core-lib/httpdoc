@@ -41,6 +41,7 @@ public class EnumImplementationFragment implements Fragment {
     @Override
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
+        imports.add("#import \"" + name + ".h\"");
         for (EnumAssignFragment assign : assignFragments) imports.addAll(assign.imports());
         return imports;
     }

@@ -5,7 +5,7 @@ import io.httpdoc.core.generation.Generation;
 import io.httpdoc.core.generation.Generator;
 import io.httpdoc.core.strategy.OverrideStrategy;
 import io.httpdoc.jackson.deserialization.YamlDeserializer;
-import io.httpdoc.objc.ObjCGenerator;
+import io.httpdoc.objc.ObjCRSNetworkingGenerator;
 import io.httpdoc.objc.ObjCSupplier;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class Generate {
         generation.setPkgForced(false);
         generation.setStrategy(new OverrideStrategy());
         generation.setSupplier(new ObjCSupplier());
-        Generator generator = new ObjCGenerator("HD");
+        Generator generator = new ObjCRSNetworkingGenerator("HD");
         generator.generate(generation);
     }
 

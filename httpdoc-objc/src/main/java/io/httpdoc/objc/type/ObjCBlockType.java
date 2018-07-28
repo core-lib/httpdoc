@@ -27,38 +27,41 @@ public class ObjCBlockType extends ObjCType {
             if (count++ > 0) builder.append(", ");
             String name = entry.getKey();
             String type = entry.getValue().getName();
-            boolean simple = entry.getValue().isPrimitive() || entry.getValue().isTypedef();
-            builder.append(type).append(simple ? "" : " *").append(" ").append(name);
+            builder.append(type).append(entry.getValue().isPrimitive() || entry.getValue().isTypedef() ? "" : " *").append(" ").append(name);
         }
         builder.append(")");
         return builder.toString();
     }
 
     @Override
-    public boolean isPrimitive() {
+    public Kind getKind() {
+        return Kind.BLOCK;
+    }
+
+    @Override
+    public Reference getReference() {
+        return Reference.STRONG;
+    }
+
+    @Override
+    public String getLocation() {
+        return FOUNDATION;
+    }
+
+    @Override
+    public boolean isExternal() {
         return false;
     }
 
     @Override
-    public boolean isTypedef() {
-        return true;
-    }
-
-    @Override
-    public String getReferenceType() {
-        return STRONG;
-    }
-
-    @Override
-    public Set<String> imports() {
-        Set<String> imports = new TreeSet<>();
-        for (ObjCType type : parameters.values()) imports.addAll(type.imports());
-        return imports;
+    public Set<ObjCClass> dependencies() {
+        Set<ObjCClass> dependencies = new TreeSet<>();
+        for (ObjCType objCType : parameters.values()) dependencies.addAll(objCType.dependencies());
+        return dependencies;
     }
 
     public Map<String, ObjCType> getParameters() {
         return parameters;
     }
-
 
 }

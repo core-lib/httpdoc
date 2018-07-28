@@ -6,12 +6,12 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDType;
-import io.httpdoc.objc.ObjCConstant;
+import io.httpdoc.objc.ObjC;
 import io.httpdoc.objc.foundation.NSArray;
 import io.httpdoc.objc.foundation.NSDictionary;
 import io.httpdoc.objc.foundation.NSString;
 import io.httpdoc.objc.type.ObjCClass;
-import io.httpdoc.objc.type.ObjCParameterizedType;
+import io.httpdoc.objc.type.ObjCGenericType;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.lang.reflect.Type;
@@ -38,22 +38,22 @@ public class ObjCSchema extends Schema {
                 ObjCClass rawType = new ObjCClass(NSDictionary.class);
                 ObjCSchema component = (ObjCSchema) this.getComponent();
                 ObjCType[] actualTypeArguments = new ObjCType[]{new ObjCClass(NSString.class), component.toObjCType(supplier)};
-                return new ObjCParameterizedType(rawType, actualTypeArguments);
+                return new ObjCGenericType(rawType, actualTypeArguments);
             }
             case ARRAY: {
                 ObjCClass rawType = new ObjCClass(NSArray.class);
                 ObjCSchema component = (ObjCSchema) this.getComponent();
                 if (component.isPrimitive()) component = (ObjCSchema) component.toWrapper();
                 ObjCType[] actualTypeArguments = new ObjCType[]{component.toObjCType(supplier)};
-                return new ObjCParameterizedType(rawType, actualTypeArguments);
+                return new ObjCGenericType(rawType, actualTypeArguments);
             }
             case ENUM: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, ObjCConstant.FLAG_ENUM | ObjCConstant.FLAG_TYPEDEF);
+                return new ObjCClass(prefix + name, ObjC.Kind.TYPEDEF, ObjC.Reference.COPY, prefix + name + ".h");
             }
             case OBJECT: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, ObjCConstant.FLAG_NONE);
+                return new ObjCClass(prefix + name, ObjC.Kind.CLASS, ObjC.Reference.STRONG, prefix + name + ".h");
             }
             default: {
                 throw new IllegalStateException();

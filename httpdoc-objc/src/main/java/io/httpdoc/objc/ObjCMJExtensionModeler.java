@@ -14,7 +14,7 @@ import io.httpdoc.objc.foundation.NSObject;
 import io.httpdoc.objc.foundation.NSString;
 import io.httpdoc.objc.fragment.*;
 import io.httpdoc.objc.type.ObjCClass;
-import io.httpdoc.objc.type.ObjCParameterizedType;
+import io.httpdoc.objc.type.ObjCGenericType;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.util.*;
@@ -23,10 +23,10 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:37
  **/
-public class MJExtensionModeler implements Modeler<ObjCFile> {
+public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
     private final String prefix;
 
-    public MJExtensionModeler(String prefix) {
+    public ObjCMJExtensionModeler(String prefix) {
         this.prefix = prefix;
     }
 
@@ -112,7 +112,7 @@ public class MJExtensionModeler implements Modeler<ObjCFile> {
         selector.setInstantial(false);
         selector.setName("mj_replacedKeyFromPropertyName");
         ResultFragment objectClassInArrayResult = new ResultFragment();
-        objectClassInArrayResult.setType(new ObjCParameterizedType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
+        objectClassInArrayResult.setType(new ObjCGenericType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
         selector.setResultFragment(objectClassInArrayResult);
         BlockFragment block = new BlockFragment();
         block.getSentences().add("return @{");
@@ -135,7 +135,7 @@ public class MJExtensionModeler implements Modeler<ObjCFile> {
         selector.setInstantial(false);
         selector.setName("mj_objectClassInArray");
         ResultFragment objectClassInArrayResult = new ResultFragment();
-        objectClassInArrayResult.setType(new ObjCParameterizedType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
+        objectClassInArrayResult.setType(new ObjCGenericType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
         selector.setResultFragment(objectClassInArrayResult);
         BlockFragment block = new BlockFragment();
         block.getSentences().add("return @{");

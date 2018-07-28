@@ -1,6 +1,6 @@
 package io.httpdoc.objc.foundation;
 
-import static io.httpdoc.objc.ObjCConstant.*;
+import io.httpdoc.objc.ObjC;
 
 /**
  * NSError
@@ -8,6 +8,30 @@ import static io.httpdoc.objc.ObjCConstant.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:12
  **/
-@Metadata(flag = FLAG_FOUNDATION | FLAG_CLASS | FLAG_STRONG)
-public class NSError extends ObjC {
+public class NSError implements ObjC {
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public Kind getKind() {
+        return Kind.CLASS;
+    }
+
+    @Override
+    public Reference getReference() {
+        return Reference.STRONG;
+    }
+
+    @Override
+    public String getLocation() {
+        return FOUNDATION;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return true;
+    }
 }

@@ -3,7 +3,7 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
-import io.httpdoc.objc.ObjCProtocol;
+import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.TreeSet;
 public class ClassImplementationFragment implements Fragment {
     private CommentFragment commentFragment;
     private String name;
-    private Set<ObjCProtocol> protocols = new LinkedHashSet<>();
+    private Set<ObjCClass> protocols = new LinkedHashSet<>();
     private Set<PropertyFragment> propertyFragments = new LinkedHashSet<>();
     private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
 
@@ -28,7 +28,7 @@ public class ClassImplementationFragment implements Fragment {
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
         imports.add("#import \"" + name + ".h\"");
-        for (ObjCProtocol protocol : protocols) imports.addAll(protocol.imports());
+        for (ObjCClass protocol : protocols) imports.add(protocol.getLocation());
         for (PropertyFragment propertyFragment : propertyFragments) imports.addAll(propertyFragment.imports());
         for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
         return imports;
@@ -45,7 +45,7 @@ public class ClassImplementationFragment implements Fragment {
         appender.append("@interface").append(" ").append(name).append(" ()");
 
         int index = 0;
-        for (ObjCProtocol protocol : protocols) {
+        for (ObjCClass protocol : protocols) {
             if (index++ == 0) appender.append("<");
             else appender.append(", ");
             appender.append(protocol.getName());
@@ -57,6 +57,7 @@ public class ClassImplementationFragment implements Fragment {
             appender.enter();
             propertyFragment.joinTo(appender, preference);
         }
+        appender.enter();
 
         appender.enter().append("@end").enter().enter();
 
@@ -72,8 +73,8 @@ public class ClassImplementationFragment implements Fragment {
         appender.enter().append("@end");
     }
 
-    public ClassImplementationFragment addProtocol(String name, String... imports) {
-        protocols.add(new ObjCProtocol(name, imports));
+    public ClassImplementationFragment addProtocol(ObjCClass protocol) {
+        protocols.add(protocol);
         return this;
     }
 
@@ -133,11 +134,11 @@ public class ClassImplementationFragment implements Fragment {
         return this;
     }
 
-    public Set<ObjCProtocol> getProtocols() {
+    public Set<ObjCClass> getProtocols() {
         return protocols;
     }
 
-    public ClassImplementationFragment setProtocols(Set<ObjCProtocol> protocols) {
+    public ClassImplementationFragment setProtocols(Set<ObjCClass> protocols) {
         this.protocols = protocols;
         return this;
     }

@@ -3,6 +3,7 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
+import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
@@ -44,14 +45,14 @@ public class PropertyFragment implements Fragment {
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
         if (commentFragment != null) imports.addAll(commentFragment.imports());
-        imports.addAll(type.imports());
+        for (ObjCClass dependency : type.dependencies()) imports.addAll(dependency.imports());
         return imports;
     }
 
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
-        appender.append("@property (nonatomic, ").append(type.getReferenceType()).append(") ");
+        appender.append("@property (nonatomic, ").append(type.getReference().name().toLowerCase()).append(") ");
         appender.append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? " " : " *");
         appender.append(name).append(";");
     }
