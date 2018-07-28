@@ -2,6 +2,7 @@ package io.httpdoc.objc.fragment;
 
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
+import io.httpdoc.core.appender.TitleCasedAppender;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.objc.type.ObjCType;
@@ -52,6 +53,16 @@ public class SelectorFragment implements Fragment {
         this.comment = comment;
     }
 
+    public SelectorFragment declaration() {
+        SelectorFragment declaration = new SelectorFragment();
+        declaration.setInstantial(instantial);
+        declaration.setResultFragment(resultFragment);
+        declaration.setName(name);
+        declaration.setParameterFragments(parameterFragments);
+        declaration.setComment(comment);
+        return declaration;
+    }
+
     @Override
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
@@ -73,12 +84,14 @@ public class SelectorFragment implements Fragment {
         else appender.append("(void)");
 
         appender.append(name);
+        TitleCasedAppender tca = new TitleCasedAppender(appender);
         int index = 0;
         for (ParameterFragment parameterFragment : parameterFragments) {
-            if (index++ == 0) appender.append("_");
+            if (index++ == 0) appender.append("With");
             else appender.enter().append("    ");
-            parameterFragment.joinTo(appender, preference);
+            parameterFragment.joinTo(tca, preference);
         }
+        tca.close();
 
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
         else appender.append(";");

@@ -11,12 +11,12 @@ import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.strategy.Task;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.objc.core.ObjCDocument;
+import io.httpdoc.objc.external.AFHTTPSessionManager;
 import io.httpdoc.objc.external.RSClient;
 import io.httpdoc.objc.foundation.Cid;
-import io.httpdoc.objc.fragment.ClassImplementationFragment;
-import io.httpdoc.objc.fragment.ClassInterfaceFragment;
-import io.httpdoc.objc.fragment.CommentFragment;
-import io.httpdoc.objc.fragment.PropertyFragment;
+import io.httpdoc.objc.foundation.Cinstancetype;
+import io.httpdoc.objc.foundation.NSString;
+import io.httpdoc.objc.fragment.*;
 import io.httpdoc.objc.type.ObjCProtocolType;
 import io.httpdoc.objc.type.ObjCType;
 
@@ -109,6 +109,43 @@ public class ObjCRSNetworkingGenerator implements Generator {
             client.setName("client");
             client.setType(new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSClient.class)));
             implementation.addPropertyFragment(client);
+        }
+
+        // initWithBaseURL:(NSString *)baseURL
+        {
+            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            SelectorFragment initWithBaseURL = new SelectorFragment(instancetype, "init");
+            ParameterFragment baseURL = new ParameterFragment("baseURL", ObjCType.valueOf(NSString.class));
+            initWithBaseURL.addParameterFragment(baseURL);
+            initWithBaseURL.addSentence("return [self initWithSessionManager:[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL]];");
+            interfase.addSelectorFragment(initWithBaseURL.declaration());
+            implementation.addSelectorFragment(initWithBaseURL);
+        }
+
+        // initWithSessionManager:(AFHTTPSessionManager *)sessionManager
+        {
+            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            SelectorFragment initWithSessionManager = new SelectorFragment(instancetype, "init");
+            ParameterFragment sessionManager = new ParameterFragment("sessionManager", ObjCType.valueOf(AFHTTPSessionManager.class));
+            initWithSessionManager.addParameterFragment(sessionManager);
+            initWithSessionManager.addSentence("return [self initWithClient:[[RSAFNetworkingClient alloc] initWithSessionManager:sessionManager]];");
+            interfase.addSelectorFragment(initWithSessionManager.declaration());
+            implementation.addSelectorFragment(initWithSessionManager);
+        }
+
+        // initWithClient:(id<RSClient>)client
+        {
+            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            SelectorFragment initWithClient = new SelectorFragment(instancetype, "init");
+            ParameterFragment client = new ParameterFragment("client", new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSClient.class)));
+            initWithClient.addParameterFragment(client);
+            initWithClient.addSentence("self = [super init];");
+            initWithClient.addSentence("if (self) {");
+            initWithClient.addSentence("    _client = client;");
+            initWithClient.addSentence("}");
+            initWithClient.addSentence("return self;");
+            interfase.addSelectorFragment(initWithClient.declaration());
+            implementation.addSelectorFragment(initWithClient);
         }
 
         return Arrays.asList(

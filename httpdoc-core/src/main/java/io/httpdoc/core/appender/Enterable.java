@@ -10,6 +10,8 @@ import java.io.IOException;
  **/
 public interface Enterable<T extends Enterable<T>> {
 
+    char CRLF = '\n';
+
     /**
      * 回车
      *

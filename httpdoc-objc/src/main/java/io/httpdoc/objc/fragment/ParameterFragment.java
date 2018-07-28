@@ -25,6 +25,12 @@ public class ParameterFragment implements Fragment {
     public ParameterFragment() {
     }
 
+    public ParameterFragment(String name, ObjCType type) {
+        this.name = name;
+        this.type = type;
+        this.variable = name;
+    }
+
     public ParameterFragment(String name, ObjCType type, String variable) {
         this.name = name;
         this.type = type;

@@ -12,7 +12,7 @@ public abstract class EnterableAppender<T extends EnterableAppender<T>> extends 
 
     @Override
     public T enter() throws IOException {
-        return append('\n');
+        return append(CRLF);
     }
 
 }

@@ -8,10 +8,10 @@ import java.io.IOException;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 10:03
  **/
-public class TitleCasedAppender extends FilterLineAppender<TitleCasedAppender> {
+public class TitleCasedAppender extends FilterAppender<TitleCasedAppender> implements LineAppender<TitleCasedAppender> {
     private volatile boolean first = true;
 
-    public TitleCasedAppender(LineAppender<?> appender) {
+    public TitleCasedAppender(Appender<?> appender) {
         super(appender);
     }
 
@@ -25,4 +25,10 @@ public class TitleCasedAppender extends FilterLineAppender<TitleCasedAppender> {
             return super.append(c);
         }
     }
+
+    @Override
+    public TitleCasedAppender enter() throws IOException {
+        return append(CRLF);
+    }
+
 }
