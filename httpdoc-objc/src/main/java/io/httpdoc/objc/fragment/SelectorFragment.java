@@ -18,12 +18,12 @@ import java.util.TreeSet;
  * @date 2018-07-24 17:41
  **/
 public class SelectorFragment implements Fragment {
-    private boolean instantial = true;
-    private ResultFragment resultFragment;
-    private String name;
-    private Set<ParameterFragment> parameterFragments = new LinkedHashSet<>();
-    private String comment;
-    private BlockFragment blockFragment;
+    protected boolean instantial = true;
+    protected ResultFragment resultFragment;
+    protected String name;
+    protected Set<ParameterFragment> parameterFragments = new LinkedHashSet<>();
+    protected String comment;
+    protected BlockFragment blockFragment;
 
     public SelectorFragment() {
     }
@@ -84,7 +84,7 @@ public class SelectorFragment implements Fragment {
         else appender.append(";");
     }
 
-    private String comment() {
+    protected String comment() {
         StringBuilder builder = new StringBuilder(comment != null ? comment : "").append('\n');
         for (ParameterFragment parameterFragment : parameterFragments) {
             String name = parameterFragment.getVariable();

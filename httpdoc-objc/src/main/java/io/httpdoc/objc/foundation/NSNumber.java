@@ -1,6 +1,6 @@
 package io.httpdoc.objc.foundation;
 
-import io.httpdoc.objc.ObjCConstant;
+import static io.httpdoc.objc.ObjCConstant.*;
 
 /**
  * NSNumber
@@ -8,6 +8,6 @@ import io.httpdoc.objc.ObjCConstant;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:10
  **/
-@ObjC(flag = ObjCConstant.FLAG_FOUNDATION | ObjCConstant.FLAG_STRONG, name = "NSNumber")
-public class NSNumber extends Foundation {
+@Metadata(flag = FLAG_FOUNDATION | FLAG_CLASS | FLAG_STRONG)
+public class NSNumber extends ObjC {
 }

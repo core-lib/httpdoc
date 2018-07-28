@@ -1,22 +1,10 @@
 package io.httpdoc.objc.foundation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * ObjC 类型注解
+ * ObjC 系统类型
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-07-25 15:58
+ * @date 2018-07-27 14:10
  **/
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ObjC {
-
-    int flag();
-
-    String name();
-
+public abstract class ObjC {
 }

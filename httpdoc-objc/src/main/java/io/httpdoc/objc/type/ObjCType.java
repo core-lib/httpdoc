@@ -2,7 +2,7 @@ package io.httpdoc.objc.type;
 
 import io.httpdoc.core.Importable;
 import io.httpdoc.objc.ObjCConstant;
-import io.httpdoc.objc.foundation.Foundation;
+import io.httpdoc.objc.foundation.ObjC;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -29,14 +29,14 @@ public abstract class ObjCType implements Importable, ObjCConstant {
     public static ObjCType valueOf(Type type) {
         if (type == null) return null;
         else if (CACHE.containsKey(type)) return CACHE.get(type);
-        else if (type instanceof Class<?>) return valueOf((Class<?>) type);
+        else if (type instanceof Class<?>) return valueOf(((Class<?>) type).asSubclass(ObjC.class));
         else if (type instanceof ParameterizedType) return valueOf((ParameterizedType) type);
         else throw new IllegalArgumentException("unsupported type " + type);
     }
 
-    public static ObjCClass valueOf(Class<?> clazz) {
+    public static ObjCClass valueOf(Class<? extends ObjC> clazz) {
         if (CACHE.containsKey(clazz)) return (ObjCClass) CACHE.get(clazz);
-        ObjCClass javaClass = new ObjCClass(clazz.asSubclass(Foundation.class));
+        ObjCClass javaClass = new ObjCClass(clazz);
         ObjCType objCType = CACHE.putIfAbsent(clazz, javaClass);
         return objCType != null ? (ObjCClass) objCType : javaClass;
     }
@@ -46,7 +46,7 @@ public abstract class ObjCType implements Importable, ObjCConstant {
         ObjCParameterizedType javaParameterizedType = new ObjCParameterizedType();
         ObjCType ObjCType = CACHE.putIfAbsent(type, javaParameterizedType);
         if (ObjCType == null) {
-            ObjCClass rawType = valueOf((Class<?>) type.getRawType());
+            ObjCClass rawType = valueOf(((Class<?>) type.getRawType()).asSubclass(ObjC.class));
             javaParameterizedType.setRawType(rawType);
             ObjCType[] actualTypeArguments = new ObjCType[type.getActualTypeArguments() != null ? type.getActualTypeArguments().length : 0];
             for (int i = 0; i < actualTypeArguments.length; i++) actualTypeArguments[i] = valueOf(type.getActualTypeArguments()[i]);

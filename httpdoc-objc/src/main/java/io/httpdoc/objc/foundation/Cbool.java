@@ -1,6 +1,7 @@
 package io.httpdoc.objc.foundation;
 
-import io.httpdoc.objc.ObjCConstant;
+import static io.httpdoc.objc.ObjCConstant.FLAG_ASSIGN;
+import static io.httpdoc.objc.ObjCConstant.FLAG_PRIMITIVE;
 
 /**
  * BOOL
@@ -8,6 +9,6 @@ import io.httpdoc.objc.ObjCConstant;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 15:56
  **/
-@ObjC(flag = ObjCConstant.FLAG_PRIMITIVE | ObjCConstant.FLAG_ASSIGN, name = "bool")
-public class Cbool extends Foundation {
+@Metadata(flag = FLAG_PRIMITIVE | FLAG_ASSIGN, name = "bool")
+public class Cbool extends ObjC {
 }

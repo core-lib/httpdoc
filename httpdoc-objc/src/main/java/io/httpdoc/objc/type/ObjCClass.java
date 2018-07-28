@@ -1,6 +1,6 @@
 package io.httpdoc.objc.type;
 
-import io.httpdoc.objc.foundation.Foundation;
+import io.httpdoc.objc.foundation.Metadata;
 import io.httpdoc.objc.foundation.ObjC;
 
 import java.util.Collections;
@@ -21,10 +21,10 @@ public class ObjCClass extends ObjCType {
         this.flag = flag;
     }
 
-    public ObjCClass(Class<? extends Foundation> clazz) {
-        ObjC objC = clazz.getAnnotation(ObjC.class);
-        this.name = objC.name();
-        this.flag = objC.flag();
+    public ObjCClass(Class<? extends ObjC> clazz) {
+        Metadata metadata = clazz.getAnnotation(Metadata.class);
+        this.name = metadata.name().isEmpty() ? clazz.getSimpleName() : metadata.name();
+        this.flag = metadata.flag();
     }
 
     @Override

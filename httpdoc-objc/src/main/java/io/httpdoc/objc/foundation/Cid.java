@@ -1,6 +1,7 @@
 package io.httpdoc.objc.foundation;
 
-import io.httpdoc.objc.ObjCConstant;
+import static io.httpdoc.objc.ObjCConstant.FLAG_STRONG;
+import static io.httpdoc.objc.ObjCConstant.FLAG_TYPEDEF;
 
 /**
  * id
@@ -8,6 +9,6 @@ import io.httpdoc.objc.ObjCConstant;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:13
  **/
-@ObjC(flag = ObjCConstant.FLAG_TYPEDEF | ObjCConstant.FLAG_ASSIGN, name = "id")
-public class Cid extends Foundation {
+@Metadata(flag = FLAG_TYPEDEF | FLAG_STRONG, name = "id")
+public class Cid extends ObjC {
 }

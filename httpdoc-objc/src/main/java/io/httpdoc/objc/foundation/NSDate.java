@@ -1,6 +1,6 @@
 package io.httpdoc.objc.foundation;
 
-import io.httpdoc.objc.ObjCConstant;
+import static io.httpdoc.objc.ObjCConstant.*;
 
 /**
  * NSDate
@@ -8,6 +8,6 @@ import io.httpdoc.objc.ObjCConstant;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:11
  **/
-@ObjC(flag = ObjCConstant.FLAG_FOUNDATION | ObjCConstant.FLAG_STRONG, name = "NSDate")
-public class NSDate extends Foundation {
+@Metadata(flag = FLAG_FOUNDATION | FLAG_CLASS | FLAG_STRONG)
+public class NSDate extends ObjC {
 }
