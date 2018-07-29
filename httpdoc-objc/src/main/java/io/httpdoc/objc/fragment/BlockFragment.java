@@ -29,7 +29,7 @@ public class BlockFragment implements Fragment {
         IndentAppender apd = new IndentAppender(appender, preference.getIndent());
         for (CharSequence sentence : sentences) apd.append(sentence).enter();
         apd.close();
-        appender.append("}").enter();
+        appender.append("}");
     }
 
     public BlockFragment addSentence(CharSequence sentence, String... imports) {
