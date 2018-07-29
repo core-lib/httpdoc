@@ -27,7 +27,7 @@ public class ObjCBlockType extends ObjCType {
             if (count++ > 0) builder.append(", ");
             String name = entry.getKey();
             String type = entry.getValue().getName();
-            builder.append(type).append(entry.getValue().isPrimitive() || entry.getValue().isTypedef() ? "" : " *").append(" ").append(name);
+            builder.append(type).append(entry.getValue().isPrimitive() || entry.getValue().isTypedef() || entry.getValue().isBlock() ? " " : " *").append(name);
         }
         builder.append(")");
         return builder.toString();

@@ -1,22 +1,21 @@
 package io.httpdoc.objc;
 
 import io.httpdoc.core.*;
-import io.httpdoc.core.generation.ControllerGenerateContext;
-import io.httpdoc.core.generation.Generation;
-import io.httpdoc.core.generation.Generator;
-import io.httpdoc.core.generation.SchemaGenerateContext;
+import io.httpdoc.core.generation.*;
+import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.modeler.Archetype;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.strategy.Strategy;
 import io.httpdoc.core.strategy.Task;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.objc.core.ObjCDocument;
+import io.httpdoc.objc.core.ObjCSchema;
 import io.httpdoc.objc.external.AFHTTPSessionManager;
+import io.httpdoc.objc.external.RSCall;
 import io.httpdoc.objc.external.RSClient;
-import io.httpdoc.objc.foundation.Cid;
-import io.httpdoc.objc.foundation.Cinstancetype;
-import io.httpdoc.objc.foundation.NSString;
+import io.httpdoc.objc.foundation.*;
 import io.httpdoc.objc.fragment.*;
+import io.httpdoc.objc.type.ObjCBlockType;
 import io.httpdoc.objc.type.ObjCProtocolType;
 import io.httpdoc.objc.type.ObjCType;
 
@@ -148,10 +147,87 @@ public class ObjCRSNetworkingGenerator implements Generator {
             implementation.addSelectorFragment(initWithClient);
         }
 
+        List<Operation> operations = controller.getOperations() != null ? controller.getOperations() : Collections.<Operation>emptyList();
+        for (Operation operation : operations) {
+            Collection<SelectorFragment> selectors = generate(new OperationGenerateContext(generation, controller, operation));
+            if (selectors == null) continue;
+            for (SelectorFragment selector : selectors) {
+                interfase.addSelectorFragment(selector.declaration());
+                implementation.addSelectorFragment(selector);
+            }
+        }
+
         return Arrays.asList(
                 new ObjCFile(pkg, interfase.getName(), ObjCFile.Type.INTERFACE, interfase),
                 new ObjCFile(pkg, implementation.getName(), ObjCFile.Type.IMPLEMENTATION, implementation)
         );
+    }
+
+    protected Collection<SelectorFragment> generate(OperationGenerateContext context) {
+        Operation operation = context.getOperation();
+        SelectorFragment selector = new SelectorFragment();
+        selector.setComment(operation.getDescription());
+        Result result = operation.getResult();
+        String comment = result != null ? result.getDescription() : null;
+        ResultFragment call = new ResultFragment(new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSCall.class)), comment);
+        selector.setResultFragment(call);
+        selector.setName(operation.getName());
+        Generation generation = context.getGeneration();
+        Controller controller = context.getController();
+        List<Parameter> parameters = operation.getParameters() != null ? operation.getParameters() : Collections.<Parameter>emptyList();
+        Collection<ParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
+        selector.getParameterFragments().addAll(fragments);
+
+        Supplier supplier = context.getSupplier();
+        ObjCType type = result != null && result.getType() != null
+                ? result.getType().isVoid()
+                ? null
+                : result.getType().isPrimitive()
+                ? ((ObjCSchema) result.getType().toWrapper()).toObjCType(supplier)
+                : ((ObjCSchema) result.getType()).toObjCType(supplier)
+                : null;
+        ObjCType returnType = type != null ? type : ObjCType.valueOf(Cid.class);
+
+        Map<String, ObjCType> map = new LinkedHashMap<>();
+        map.put("success", ObjCType.valueOf(Cbool.class));
+        map.put("result", returnType);
+        map.put("error", ObjCType.valueOf(NSError.class));
+        ObjCBlockType callback = new ObjCBlockType(map);
+        ParameterFragment success = new ParameterFragment();
+        success.setType(callback);
+        success.setName("callback");
+        success.setVariable("callback");
+        selector.getParameterFragments().add(success);
+
+        return Collections.singleton(selector);
+    }
+
+    protected Collection<ParameterFragment> generate(ParameterGenerateContext context) {
+        Supplier supplier = context.getSupplier();
+        List<Parameter> parameters = context.getParameters();
+        Collection<ParameterFragment> fragments = new LinkedHashSet<>();
+        for (int i = 0; parameters != null && i < parameters.size(); i++) {
+            Parameter parameter = parameters.get(i);
+            ParameterFragment fragment = new ParameterFragment();
+            String name = StringKit.isBlank(parameter.getName()) ? parameter.getType().toName() : parameter.getName();
+            String variable = StringKit.isBlank(parameter.getAlias()) ? name : parameter.getAlias();
+            loop:
+            while (true) {
+                for (ParameterFragment prev : fragments) {
+                    if (variable.equals(prev.getVariable())) {
+                        variable = String.format("_%s", variable);
+                        continue loop;
+                    }
+                }
+                break;
+            }
+            fragment.setName(name);
+            fragment.setComment(parameter.getDescription());
+            fragment.setType(((ObjCSchema) parameter.getType()).toObjCType(supplier));
+            fragment.setVariable(variable);
+            fragments.add(fragment);
+        }
+        return fragments;
     }
 
 }
