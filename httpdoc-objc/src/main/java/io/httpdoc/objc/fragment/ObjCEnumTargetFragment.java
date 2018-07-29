@@ -16,24 +16,24 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:35
  **/
-public class EnumImplementationFragment implements Fragment {
-    private CommentFragment commentFragment;
+public class ObjCEnumTargetFragment implements Fragment {
+    private ObjCCommentFragment commentFragment;
     private String name;
     private Set<EnumAssignFragment> assignFragments = new LinkedHashSet<>();
 
-    public EnumImplementationFragment() {
+    public ObjCEnumTargetFragment() {
     }
 
-    public EnumImplementationFragment(String name) {
+    public ObjCEnumTargetFragment(String name) {
         this.name = name;
     }
 
-    public EnumImplementationFragment(String comment, String name) {
-        this.commentFragment = comment != null ? new CommentFragment(comment) : null;
+    public ObjCEnumTargetFragment(String comment, String name) {
+        this.commentFragment = comment != null ? new ObjCCommentFragment(comment) : null;
         this.name = name;
     }
 
-    public EnumImplementationFragment(CommentFragment commentFragment, String name) {
+    public ObjCEnumTargetFragment(ObjCCommentFragment commentFragment, String name) {
         this.commentFragment = commentFragment;
         this.name = name;
     }
@@ -59,28 +59,28 @@ public class EnumImplementationFragment implements Fragment {
         }
     }
 
-    public EnumImplementationFragment addAssignFragment(String name, String value) {
+    public ObjCEnumTargetFragment addAssignFragment(String name, String value) {
         return addAssignFragment(new EnumAssignFragment(this.name, name, value));
     }
 
-    public EnumImplementationFragment addAssignFragment(String comment, String name, String value) {
+    public ObjCEnumTargetFragment addAssignFragment(String comment, String name, String value) {
         return addAssignFragment(new EnumAssignFragment(comment, this.name, name, value));
     }
 
-    public EnumImplementationFragment addAssignFragment(CommentFragment commentFragment, String name, String value) {
+    public ObjCEnumTargetFragment addAssignFragment(ObjCCommentFragment commentFragment, String name, String value) {
         return addAssignFragment(new EnumAssignFragment(commentFragment, this.name, name, value));
     }
 
-    private EnumImplementationFragment addAssignFragment(EnumAssignFragment assignFragment) {
+    private ObjCEnumTargetFragment addAssignFragment(EnumAssignFragment assignFragment) {
         assignFragments.add(assignFragment);
         return this;
     }
 
-    public CommentFragment getCommentFragment() {
+    public ObjCCommentFragment getCommentFragment() {
         return commentFragment;
     }
 
-    public EnumImplementationFragment setCommentFragment(CommentFragment commentFragment) {
+    public ObjCEnumTargetFragment setCommentFragment(ObjCCommentFragment commentFragment) {
         this.commentFragment = commentFragment;
         return this;
     }
@@ -89,7 +89,7 @@ public class EnumImplementationFragment implements Fragment {
         return name;
     }
 
-    public EnumImplementationFragment setName(String name) {
+    public ObjCEnumTargetFragment setName(String name) {
         this.name = name;
         return this;
     }
@@ -98,13 +98,13 @@ public class EnumImplementationFragment implements Fragment {
         return assignFragments;
     }
 
-    public EnumImplementationFragment setAssignFragments(Set<EnumAssignFragment> assignFragments) {
+    public ObjCEnumTargetFragment setAssignFragments(Set<EnumAssignFragment> assignFragments) {
         this.assignFragments = assignFragments;
         return this;
     }
 
     public static class EnumAssignFragment implements Fragment {
-        private CommentFragment commentFragment;
+        private ObjCCommentFragment commentFragment;
         private String type;
         private String name;
         private String value;
@@ -119,13 +119,13 @@ public class EnumImplementationFragment implements Fragment {
         }
 
         public EnumAssignFragment(String comment, String type, String name, String value) {
-            this.commentFragment = comment != null ? new CommentFragment(comment) : null;
+            this.commentFragment = comment != null ? new ObjCCommentFragment(comment) : null;
             this.type = type;
             this.name = name;
             this.value = value;
         }
 
-        public EnumAssignFragment(CommentFragment commentFragment, String type, String name, String value) {
+        public EnumAssignFragment(ObjCCommentFragment commentFragment, String type, String name, String value) {
             this.commentFragment = commentFragment;
             this.type = type;
             this.name = name;
@@ -143,11 +143,11 @@ public class EnumImplementationFragment implements Fragment {
             appender.append(type).append(" const ").append(name).append(" = ").append("@\"").append(value).append("\";");
         }
 
-        public CommentFragment getCommentFragment() {
+        public ObjCCommentFragment getCommentFragment() {
             return commentFragment;
         }
 
-        public EnumAssignFragment setCommentFragment(CommentFragment commentFragment) {
+        public EnumAssignFragment setCommentFragment(ObjCCommentFragment commentFragment) {
             this.commentFragment = commentFragment;
             return this;
         }

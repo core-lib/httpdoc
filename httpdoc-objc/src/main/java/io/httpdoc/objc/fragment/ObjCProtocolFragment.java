@@ -16,25 +16,25 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:39
  **/
-public class ProtocolFragment implements Fragment {
-    private CommentFragment commentFragment;
+public class ObjCProtocolFragment implements Fragment {
+    private ObjCCommentFragment commentFragment;
     private String name;
     private Set<ObjCClass> protocols = new LinkedHashSet<>();
-    private Set<SelectorFragment> selectorFragments = new LinkedHashSet<>();
+    private Set<ObjCSelectorFragment> selectorFragments = new LinkedHashSet<>();
 
-    public ProtocolFragment() {
+    public ObjCProtocolFragment() {
     }
 
-    public ProtocolFragment(String name) {
+    public ObjCProtocolFragment(String name) {
         this.name = name;
     }
 
-    public ProtocolFragment(String comment, String name) {
-        this.commentFragment = comment != null ? new CommentFragment(comment) : null;
+    public ObjCProtocolFragment(String comment, String name) {
+        this.commentFragment = comment != null ? new ObjCCommentFragment(comment) : null;
         this.name = name;
     }
 
-    public ProtocolFragment(CommentFragment commentFragment, String name) {
+    public ObjCProtocolFragment(ObjCCommentFragment commentFragment, String name) {
         this.commentFragment = commentFragment;
         this.name = name;
     }
@@ -43,7 +43,7 @@ public class ProtocolFragment implements Fragment {
     public Set<String> imports() {
         Set<String> imports = new TreeSet<>();
         for (ObjCClass protocol : protocols) imports.addAll(protocol.imports());
-        for (SelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
+        for (ObjCSelectorFragment selectorFragment : selectorFragments) imports.addAll(selectorFragment.imports());
         return imports;
     }
 
@@ -66,7 +66,7 @@ public class ProtocolFragment implements Fragment {
         }
 
         appender.enter();
-        for (SelectorFragment selectorFragment : selectorFragments) {
+        for (ObjCSelectorFragment selectorFragment : selectorFragments) {
             appender.enter();
             selectorFragment.joinTo(appender, preference);
             appender.enter();
@@ -75,37 +75,37 @@ public class ProtocolFragment implements Fragment {
         appender.enter().append("@end");
     }
 
-    public ProtocolFragment addProtocol(ObjCClass protocol) {
+    public ObjCProtocolFragment addProtocol(ObjCClass protocol) {
         protocols.add(protocol);
         return this;
     }
 
-    public ProtocolFragment addSelectorFragment(ResultFragment resultFragment, String name) {
-        return addSelectorFragment(new SelectorFragment(resultFragment, name));
+    public ObjCProtocolFragment addSelectorFragment(ObjCResultFragment resultFragment, String name) {
+        return addSelectorFragment(new ObjCSelectorFragment(resultFragment, name));
     }
 
-    public ProtocolFragment addSelectorFragment(ResultFragment resultFragment, String name, String comment) {
-        return addSelectorFragment(new SelectorFragment(resultFragment, name, comment));
+    public ObjCProtocolFragment addSelectorFragment(ObjCResultFragment resultFragment, String name, String comment) {
+        return addSelectorFragment(new ObjCSelectorFragment(resultFragment, name, comment));
     }
 
-    public ProtocolFragment addSelectorFragment(boolean instantial, ResultFragment resultFragment, String name) {
-        return addSelectorFragment(new SelectorFragment(instantial, resultFragment, name));
+    public ObjCProtocolFragment addSelectorFragment(boolean instantial, ObjCResultFragment resultFragment, String name) {
+        return addSelectorFragment(new ObjCSelectorFragment(instantial, resultFragment, name));
     }
 
-    public ProtocolFragment addSelectorFragment(boolean instantial, ResultFragment resultFragment, String name, String comment) {
-        return addSelectorFragment(new SelectorFragment(instantial, resultFragment, name, comment));
+    public ObjCProtocolFragment addSelectorFragment(boolean instantial, ObjCResultFragment resultFragment, String name, String comment) {
+        return addSelectorFragment(new ObjCSelectorFragment(instantial, resultFragment, name, comment));
     }
 
-    public ProtocolFragment addSelectorFragment(SelectorFragment selectorFragment) {
+    public ObjCProtocolFragment addSelectorFragment(ObjCSelectorFragment selectorFragment) {
         selectorFragments.add(selectorFragment);
         return this;
     }
 
-    public CommentFragment getCommentFragment() {
+    public ObjCCommentFragment getCommentFragment() {
         return commentFragment;
     }
 
-    public ProtocolFragment setCommentFragment(CommentFragment commentFragment) {
+    public ObjCProtocolFragment setCommentFragment(ObjCCommentFragment commentFragment) {
         this.commentFragment = commentFragment;
         return this;
     }
@@ -114,7 +114,7 @@ public class ProtocolFragment implements Fragment {
         return name;
     }
 
-    public ProtocolFragment setName(String name) {
+    public ObjCProtocolFragment setName(String name) {
         this.name = name;
         return this;
     }
@@ -123,16 +123,16 @@ public class ProtocolFragment implements Fragment {
         return protocols;
     }
 
-    public ProtocolFragment setProtocols(Set<ObjCClass> protocols) {
+    public ObjCProtocolFragment setProtocols(Set<ObjCClass> protocols) {
         this.protocols = protocols;
         return this;
     }
 
-    public Set<SelectorFragment> getSelectorFragments() {
+    public Set<ObjCSelectorFragment> getSelectorFragments() {
         return selectorFragments;
     }
 
-    public ProtocolFragment setSelectorFragments(Set<SelectorFragment> selectorFragments) {
+    public ObjCProtocolFragment setSelectorFragments(Set<ObjCSelectorFragment> selectorFragments) {
         this.selectorFragments = selectorFragments;
         return this;
     }
@@ -142,7 +142,7 @@ public class ProtocolFragment implements Fragment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProtocolFragment that = (ProtocolFragment) o;
+        ObjCProtocolFragment that = (ObjCProtocolFragment) o;
 
         return name != null ? name.equals(that.name) : that.name == null;
     }

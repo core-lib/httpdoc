@@ -16,18 +16,18 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-10 13:12
  **/
-public class ResultFragment implements Fragment {
+public class ObjCResultFragment implements Fragment {
     private ObjCType type;
     private String comment;
 
-    public ResultFragment() {
+    public ObjCResultFragment() {
     }
 
-    public ResultFragment(ObjCType type) {
+    public ObjCResultFragment(ObjCType type) {
         this.type = type;
     }
 
-    public ResultFragment(ObjCType type, String comment) {
+    public ObjCResultFragment(ObjCType type, String comment) {
         this.type = type;
         this.comment = comment;
     }
@@ -49,7 +49,7 @@ public class ResultFragment implements Fragment {
         return type;
     }
 
-    public ResultFragment setType(ObjCType type) {
+    public ObjCResultFragment setType(ObjCType type) {
         this.type = type;
         return this;
     }
@@ -58,7 +58,7 @@ public class ResultFragment implements Fragment {
         return comment;
     }
 
-    public ResultFragment setComment(String comment) {
+    public ObjCResultFragment setComment(String comment) {
         this.comment = comment;
         return this;
     }

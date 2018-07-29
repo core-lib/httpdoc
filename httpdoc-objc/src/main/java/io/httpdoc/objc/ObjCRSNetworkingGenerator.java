@@ -13,6 +13,7 @@ import io.httpdoc.objc.core.ObjCSchema;
 import io.httpdoc.objc.external.AFHTTPSessionManager;
 import io.httpdoc.objc.external.RSCall;
 import io.httpdoc.objc.external.RSClient;
+import io.httpdoc.objc.external.RSInvocation;
 import io.httpdoc.objc.foundation.*;
 import io.httpdoc.objc.fragment.*;
 import io.httpdoc.objc.type.ObjCBlockType;
@@ -96,15 +97,15 @@ public class ObjCRSNetworkingGenerator implements Generator {
         String pkgTranslated = controller.getPkg();
         String pkg = pkgForced || pkgTranslated == null ? pkgGenerated : pkgTranslated;
 
-        ClassInterfaceFragment interfase = new ClassInterfaceFragment();
-        interfase.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
+        ObjCClassHeaderFragment interfase = new ObjCClassHeaderFragment();
+        interfase.setCommentFragment(new ObjCCommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
         interfase.setName(prefix + name);
 
-        ClassImplementationFragment implementation = new ClassImplementationFragment();
-        implementation.setCommentFragment(new CommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
+        ObjCClassTargetFragment implementation = new ObjCClassTargetFragment();
+        implementation.setCommentFragment(new ObjCCommentFragment(controller.getDescription() != null ? controller.getDescription() + "\n" + comment : comment));
         implementation.setName(prefix + name);
         {
-            PropertyFragment client = new PropertyFragment();
+            ObjCPropertyFragment client = new ObjCPropertyFragment();
             client.setName("client");
             client.setType(new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSClient.class)));
             implementation.addPropertyFragment(client);
@@ -112,20 +113,21 @@ public class ObjCRSNetworkingGenerator implements Generator {
 
         // initWithBaseURL:(NSString *)baseURL
         {
-            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
-            SelectorFragment initWithBaseURL = new SelectorFragment(instancetype, "init");
-            ParameterFragment baseURL = new ParameterFragment("baseURL", ObjCType.valueOf(NSString.class));
+            ObjCResultFragment instancetype = new ObjCResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            ObjCSelectorFragment initWithBaseURL = new ObjCSelectorFragment(instancetype, "init");
+            ObjCParameterFragment baseURL = new ObjCParameterFragment("baseURL", ObjCType.valueOf(NSString.class));
             initWithBaseURL.addParameterFragment(baseURL);
-            initWithBaseURL.addSentence("return [self initWithSessionManager:[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL]];");
+            //noinspection unchecked
+            initWithBaseURL.addSentence("return [self initWithSessionManager:[[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:baseURL]]];", NSURL.class);
             interfase.addSelectorFragment(initWithBaseURL.declaration());
             implementation.addSelectorFragment(initWithBaseURL);
         }
 
         // initWithSessionManager:(AFHTTPSessionManager *)sessionManager
         {
-            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
-            SelectorFragment initWithSessionManager = new SelectorFragment(instancetype, "init");
-            ParameterFragment sessionManager = new ParameterFragment("sessionManager", ObjCType.valueOf(AFHTTPSessionManager.class));
+            ObjCResultFragment instancetype = new ObjCResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            ObjCSelectorFragment initWithSessionManager = new ObjCSelectorFragment(instancetype, "init");
+            ObjCParameterFragment sessionManager = new ObjCParameterFragment("sessionManager", ObjCType.valueOf(AFHTTPSessionManager.class));
             initWithSessionManager.addParameterFragment(sessionManager);
             initWithSessionManager.addSentence("return [self initWithClient:[[RSAFNetworkingClient alloc] initWithSessionManager:sessionManager]];");
             interfase.addSelectorFragment(initWithSessionManager.declaration());
@@ -134,9 +136,9 @@ public class ObjCRSNetworkingGenerator implements Generator {
 
         // initWithClient:(id<RSClient>)client
         {
-            ResultFragment instancetype = new ResultFragment(ObjCType.valueOf(Cinstancetype.class));
-            SelectorFragment initWithClient = new SelectorFragment(instancetype, "init");
-            ParameterFragment client = new ParameterFragment("client", new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSClient.class)));
+            ObjCResultFragment instancetype = new ObjCResultFragment(ObjCType.valueOf(Cinstancetype.class));
+            ObjCSelectorFragment initWithClient = new ObjCSelectorFragment(instancetype, "init");
+            ObjCParameterFragment client = new ObjCParameterFragment("client", new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSClient.class)));
             initWithClient.addParameterFragment(client);
             initWithClient.addSentence("self = [super init];");
             initWithClient.addSentence("if (self) {");
@@ -149,9 +151,9 @@ public class ObjCRSNetworkingGenerator implements Generator {
 
         List<Operation> operations = controller.getOperations() != null ? controller.getOperations() : Collections.<Operation>emptyList();
         for (Operation operation : operations) {
-            Collection<SelectorFragment> selectors = generate(new OperationGenerateContext(generation, controller, operation));
+            Collection<ObjCSelectorFragment> selectors = generate(new OperationGenerateContext(generation, controller, operation));
             if (selectors == null) continue;
-            for (SelectorFragment selector : selectors) {
+            for (ObjCSelectorFragment selector : selectors) {
                 interfase.addSelectorFragment(selector.declaration());
                 implementation.addSelectorFragment(selector);
             }
@@ -163,19 +165,20 @@ public class ObjCRSNetworkingGenerator implements Generator {
         );
     }
 
-    protected Collection<SelectorFragment> generate(OperationGenerateContext context) {
+    protected Collection<ObjCSelectorFragment> generate(OperationGenerateContext context) {
         Operation operation = context.getOperation();
-        SelectorFragment selector = new SelectorFragment();
+        ObjCSelectorFragment selector = new ObjCSelectorFragment();
         selector.setComment(operation.getDescription());
         Result result = operation.getResult();
         String comment = result != null ? result.getDescription() : null;
-        ResultFragment call = new ResultFragment(new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSCall.class)), comment);
+        ObjCResultFragment call = new ObjCResultFragment(new ObjCProtocolType(ObjCType.valueOf(Cid.class), ObjCType.valueOf(RSCall.class)), "RSCall");
         selector.setResultFragment(call);
         selector.setName(operation.getName());
         Generation generation = context.getGeneration();
+        Document document = context.getDocument();
         Controller controller = context.getController();
         List<Parameter> parameters = operation.getParameters() != null ? operation.getParameters() : Collections.<Parameter>emptyList();
-        Collection<ParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
+        Collection<ObjCParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
         selector.getParameterFragments().addAll(fragments);
 
         Supplier supplier = context.getSupplier();
@@ -193,27 +196,72 @@ public class ObjCRSNetworkingGenerator implements Generator {
         map.put("result", returnType);
         map.put("error", ObjCType.valueOf(NSError.class));
         ObjCBlockType callback = new ObjCBlockType(map);
-        ParameterFragment success = new ParameterFragment();
+        ObjCParameterFragment success = new ObjCParameterFragment();
         success.setType(callback);
         success.setName("callback");
         success.setVariable("callback");
+        success.setComment("(success, " + comment + ", error)");
         selector.getParameterFragments().add(success);
+
+        StringBuilder builder = new StringBuilder();
+        List<String> segments = Arrays.asList(document.getContext(), controller.getPath(), operation.getPath());
+        for (String segment : segments) {
+            if (segment == null) continue;
+            builder.append("/").append(segment);
+        }
+        String uri = builder.toString().replaceAll("/+", "/");
+        String method = operation.getMethod();
+
+        selector.addSentence("RSInvocation *invocation = [RSInvocation " + method.toUpperCase() + ":@\"" + uri + "\"];", RSInvocation.class);
+        int index = 0;
+        for (ObjCParameterFragment fragment : fragments) {
+            Parameter parameter = parameters.get(index++);
+            String variable = parameter.getType().isPrimitive() ? "@(" + fragment.getVariable() + ")" : fragment.getVariable();
+            String name = "@\"" + (parameter.getName() != null ? parameter.getName() : "") + "\"";
+            String path = "@\"" + (parameter.getPath() != null ? parameter.getPath() : "") + "\"";
+            switch (parameter.getScope()) {
+                case Parameter.HTTP_PARAM_SCOPE_HEADER:
+                    selector.addSentence("[invocation addHeaderValue:" + variable + " ofName:" + name + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_PATH:
+                    selector.addSentence("[invocation addPathValue:" + variable + " ofName:" + name + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_MATRIX:
+                    selector.addSentence("[invocation addMatrixValue:" + variable + " ofName:" + name + " forPath:" + path + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_QUERY:
+                    selector.addSentence("[invocation addQueryValue:" + variable + " ofName:" + name + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_BODY:
+                    selector.addSentence("[invocation addBodyValue:" + variable + " ofName:" + name + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_COOKIE:
+                    selector.addSentence("[invocation adCookieValue:" + variable + " ofName:" + name + "];");
+                    break;
+                case Parameter.HTTP_PARAM_SCOPE_FIELD:
+                    selector.addSentence("[invocation addQueryValue:" + variable + " ofName:" + name + "];");
+                    break;
+            }
+        }
+        selector.addSentence("invocation.resultType = NSClassFromString(@\"" + returnType.getName() + "\");");
+
+        selector.addSentence("return [_client invoke:invocation callback:callback];");
 
         return Collections.singleton(selector);
     }
 
-    protected Collection<ParameterFragment> generate(ParameterGenerateContext context) {
+    protected Collection<ObjCParameterFragment> generate(ParameterGenerateContext context) {
         Supplier supplier = context.getSupplier();
         List<Parameter> parameters = context.getParameters();
-        Collection<ParameterFragment> fragments = new LinkedHashSet<>();
+        Collection<ObjCParameterFragment> fragments = new LinkedHashSet<>();
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
-            ParameterFragment fragment = new ParameterFragment();
+            ObjCParameterFragment fragment = new ObjCParameterFragment();
             String name = StringKit.isBlank(parameter.getName()) ? parameter.getType().toName() : parameter.getName();
             String variable = StringKit.isBlank(parameter.getAlias()) ? name : parameter.getAlias();
             loop:
             while (true) {
-                for (ParameterFragment prev : fragments) {
+                for (ObjCParameterFragment prev : fragments) {
                     if (variable.equals(prev.getVariable())) {
                         variable = String.format("_%s", variable);
                         continue loop;

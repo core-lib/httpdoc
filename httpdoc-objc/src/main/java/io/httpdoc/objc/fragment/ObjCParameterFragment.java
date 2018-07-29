@@ -16,28 +16,28 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 13:51
  **/
-public class ParameterFragment implements Fragment {
+public class ObjCParameterFragment implements Fragment {
     private String name;
     private ObjCType type;
     private String variable;
     private String comment;
 
-    public ParameterFragment() {
+    public ObjCParameterFragment() {
     }
 
-    public ParameterFragment(String name, ObjCType type) {
+    public ObjCParameterFragment(String name, ObjCType type) {
         this.name = name;
         this.type = type;
         this.variable = name;
     }
 
-    public ParameterFragment(String name, ObjCType type, String variable) {
+    public ObjCParameterFragment(String name, ObjCType type, String variable) {
         this.name = name;
         this.type = type;
         this.variable = variable;
     }
 
-    public ParameterFragment(String name, ObjCType type, String variable, String comment) {
+    public ObjCParameterFragment(String name, ObjCType type, String variable, String comment) {
         this.name = name;
         this.type = type;
         this.variable = variable;
@@ -61,7 +61,7 @@ public class ParameterFragment implements Fragment {
         return name;
     }
 
-    public ParameterFragment setName(String name) {
+    public ObjCParameterFragment setName(String name) {
         this.name = name;
         return this;
     }
@@ -70,7 +70,7 @@ public class ParameterFragment implements Fragment {
         return type;
     }
 
-    public ParameterFragment setType(ObjCType type) {
+    public ObjCParameterFragment setType(ObjCType type) {
         this.type = type;
         return this;
     }
@@ -79,7 +79,7 @@ public class ParameterFragment implements Fragment {
         return variable;
     }
 
-    public ParameterFragment setVariable(String variable) {
+    public ObjCParameterFragment setVariable(String variable) {
         this.variable = variable;
         return this;
     }
@@ -88,7 +88,7 @@ public class ParameterFragment implements Fragment {
         return comment;
     }
 
-    public ParameterFragment setComment(String comment) {
+    public ObjCParameterFragment setComment(String comment) {
         this.comment = comment;
         return this;
     }
@@ -98,7 +98,7 @@ public class ParameterFragment implements Fragment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ParameterFragment that = (ParameterFragment) o;
+        ObjCParameterFragment that = (ObjCParameterFragment) o;
 
         return variable != null ? variable.equals(that.variable) : that.variable == null;
     }

@@ -17,25 +17,25 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:34
  **/
-public class EnumInterfaceFragment implements Fragment {
+public class ObjCEnumHeaderFragment implements Fragment {
     private String pkg;
-    private CommentFragment commentFragment;
+    private ObjCCommentFragment commentFragment;
     private String name;
     private Set<EnumExportFragment> exportFragments = new LinkedHashSet<>();
 
-    public EnumInterfaceFragment() {
+    public ObjCEnumHeaderFragment() {
     }
 
-    public EnumInterfaceFragment(String name) {
+    public ObjCEnumHeaderFragment(String name) {
         this.name = name;
     }
 
-    public EnumInterfaceFragment(String comment, String name) {
-        this.commentFragment = comment != null ? new CommentFragment(comment) : null;
+    public ObjCEnumHeaderFragment(String comment, String name) {
+        this.commentFragment = comment != null ? new ObjCCommentFragment(comment) : null;
         this.name = name;
     }
 
-    public EnumInterfaceFragment(CommentFragment commentFragment, String name) {
+    public ObjCEnumHeaderFragment(ObjCCommentFragment commentFragment, String name) {
         this.commentFragment = commentFragment;
         this.name = name;
     }
@@ -63,19 +63,19 @@ public class EnumInterfaceFragment implements Fragment {
         }
     }
 
-    public EnumInterfaceFragment addExportFragment(String name) {
+    public ObjCEnumHeaderFragment addExportFragment(String name) {
         return addExportFragment(new EnumExportFragment(this.name, name));
     }
 
-    public EnumInterfaceFragment addExportFragment(String comment, String name) {
+    public ObjCEnumHeaderFragment addExportFragment(String comment, String name) {
         return addExportFragment(new EnumExportFragment(comment, this.name, name));
     }
 
-    public EnumInterfaceFragment addExportFragment(CommentFragment commentFragment, String name) {
+    public ObjCEnumHeaderFragment addExportFragment(ObjCCommentFragment commentFragment, String name) {
         return addExportFragment(new EnumExportFragment(commentFragment, this.name, name));
     }
 
-    private EnumInterfaceFragment addExportFragment(EnumExportFragment exportFragment) {
+    private ObjCEnumHeaderFragment addExportFragment(EnumExportFragment exportFragment) {
         exportFragments.add(exportFragment);
         return this;
     }
@@ -84,16 +84,16 @@ public class EnumInterfaceFragment implements Fragment {
         return pkg;
     }
 
-    public EnumInterfaceFragment setPkg(String pkg) {
+    public ObjCEnumHeaderFragment setPkg(String pkg) {
         this.pkg = pkg;
         return this;
     }
 
-    public CommentFragment getCommentFragment() {
+    public ObjCCommentFragment getCommentFragment() {
         return commentFragment;
     }
 
-    public EnumInterfaceFragment setCommentFragment(CommentFragment commentFragment) {
+    public ObjCEnumHeaderFragment setCommentFragment(ObjCCommentFragment commentFragment) {
         this.commentFragment = commentFragment;
         return this;
     }
@@ -102,7 +102,7 @@ public class EnumInterfaceFragment implements Fragment {
         return name;
     }
 
-    public EnumInterfaceFragment setName(String name) {
+    public ObjCEnumHeaderFragment setName(String name) {
         this.name = name;
         return this;
     }
@@ -111,13 +111,13 @@ public class EnumInterfaceFragment implements Fragment {
         return exportFragments;
     }
 
-    public EnumInterfaceFragment setExportFragments(Set<EnumExportFragment> exportFragments) {
+    public ObjCEnumHeaderFragment setExportFragments(Set<EnumExportFragment> exportFragments) {
         this.exportFragments = exportFragments;
         return this;
     }
 
     public static class EnumExportFragment implements Fragment {
-        private CommentFragment commentFragment;
+        private ObjCCommentFragment commentFragment;
         private String type;
         private String name;
 
@@ -130,12 +130,12 @@ public class EnumInterfaceFragment implements Fragment {
         }
 
         public EnumExportFragment(String comment, String type, String name) {
-            this.commentFragment = comment != null ? new CommentFragment(comment) : null;
+            this.commentFragment = comment != null ? new ObjCCommentFragment(comment) : null;
             this.type = type;
             this.name = name;
         }
 
-        public EnumExportFragment(CommentFragment commentFragment, String type, String name) {
+        public EnumExportFragment(ObjCCommentFragment commentFragment, String type, String name) {
             this.commentFragment = commentFragment;
             this.type = type;
             this.name = name;
@@ -152,11 +152,11 @@ public class EnumInterfaceFragment implements Fragment {
             appender.append("FOUNDATION_EXPORT ").append(type).append(" const ").append(name).append(";");
         }
 
-        public CommentFragment getCommentFragment() {
+        public ObjCCommentFragment getCommentFragment() {
             return commentFragment;
         }
 
-        public EnumExportFragment setCommentFragment(CommentFragment commentFragment) {
+        public EnumExportFragment setCommentFragment(ObjCCommentFragment commentFragment) {
             this.commentFragment = commentFragment;
             return this;
         }

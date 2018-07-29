@@ -17,23 +17,23 @@ import java.util.TreeSet;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:48
  **/
-public class CommentFragment implements Fragment {
+public class ObjCCommentFragment implements Fragment {
     private String content;
     private Set<String> imports = new TreeSet<>();
 
-    public CommentFragment() {
+    public ObjCCommentFragment() {
     }
 
-    public CommentFragment(String content) {
+    public ObjCCommentFragment(String content) {
         this.content = content;
     }
 
-    public CommentFragment(String content, String... imports) {
+    public ObjCCommentFragment(String content, String... imports) {
         this.content = content;
         this.imports.addAll(Arrays.asList(imports));
     }
 
-    public CommentFragment(String content, Set<String> imports) {
+    public ObjCCommentFragment(String content, Set<String> imports) {
         this.content = content;
         this.imports.addAll(imports);
     }

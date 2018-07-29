@@ -95,7 +95,7 @@ public class MethodFragment extends ModifiedFragment implements Fragment {
         }
         if (resultFragment != null) {
             String comment = resultFragment.getComment();
-            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(" ").append(comment);
+            if (!StringKit.isBlank(comment)) builder.append('\n').append("@return ").append(comment);
         }
         for (int i = 0; exceptionFragments != null && i < exceptionFragments.size(); i++) {
             ExceptionFragment fragment = exceptionFragments.get(i);

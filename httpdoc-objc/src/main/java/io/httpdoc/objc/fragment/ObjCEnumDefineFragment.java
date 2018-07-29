@@ -16,24 +16,24 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-24 17:36
  **/
-public class EnumDefinitionFragment implements Fragment {
-    private CommentFragment commentFragment;
+public class ObjCEnumDefineFragment implements Fragment {
+    private ObjCCommentFragment commentFragment;
     private String name;
     private Set<EnumConstantFragment> constantFragments = new LinkedHashSet<>();
 
-    public EnumDefinitionFragment() {
+    public ObjCEnumDefineFragment() {
     }
 
-    public EnumDefinitionFragment(String name) {
+    public ObjCEnumDefineFragment(String name) {
         this.name = name;
     }
 
-    public EnumDefinitionFragment(String note, String name) {
-        this.commentFragment = note != null ? new CommentFragment(note) : null;
+    public ObjCEnumDefineFragment(String note, String name) {
+        this.commentFragment = note != null ? new ObjCCommentFragment(note) : null;
         this.name = name;
     }
 
-    public EnumDefinitionFragment(CommentFragment commentFragment, String name) {
+    public ObjCEnumDefineFragment(ObjCCommentFragment commentFragment, String name) {
         this.commentFragment = commentFragment;
         this.name = name;
     }
@@ -66,36 +66,36 @@ public class EnumDefinitionFragment implements Fragment {
         appender.append("};");
     }
 
-    public EnumDefinitionFragment addConstantFragment(String name) {
+    public ObjCEnumDefineFragment addConstantFragment(String name) {
         return addConstantFragment(new EnumConstantFragment(name));
     }
 
-    public EnumDefinitionFragment addConstantFragment(String name, Integer value) {
+    public ObjCEnumDefineFragment addConstantFragment(String name, Integer value) {
         return addConstantFragment(new EnumConstantFragment(name, value));
     }
 
-    public EnumDefinitionFragment addConstantFragment(String comment, String name) {
+    public ObjCEnumDefineFragment addConstantFragment(String comment, String name) {
         return addConstantFragment(new EnumConstantFragment(comment, name));
     }
 
-    public EnumDefinitionFragment addConstantFragment(String comment, String name, Integer value) {
+    public ObjCEnumDefineFragment addConstantFragment(String comment, String name, Integer value) {
         return addConstantFragment(new EnumConstantFragment(comment, name, value));
     }
 
-    public EnumDefinitionFragment addConstantFragment(CommentFragment commentFragment, String name, Integer value) {
+    public ObjCEnumDefineFragment addConstantFragment(ObjCCommentFragment commentFragment, String name, Integer value) {
         return addConstantFragment(new EnumConstantFragment(commentFragment, name, value));
     }
 
-    public EnumDefinitionFragment addConstantFragment(EnumConstantFragment constantFragment) {
+    public ObjCEnumDefineFragment addConstantFragment(EnumConstantFragment constantFragment) {
         constantFragments.add(constantFragment);
         return this;
     }
 
-    public CommentFragment getCommentFragment() {
+    public ObjCCommentFragment getCommentFragment() {
         return commentFragment;
     }
 
-    public EnumDefinitionFragment setCommentFragment(CommentFragment commentFragment) {
+    public ObjCEnumDefineFragment setCommentFragment(ObjCCommentFragment commentFragment) {
         this.commentFragment = commentFragment;
         return this;
     }
@@ -104,7 +104,7 @@ public class EnumDefinitionFragment implements Fragment {
         return name;
     }
 
-    public EnumDefinitionFragment setName(String name) {
+    public ObjCEnumDefineFragment setName(String name) {
         this.name = name;
         return this;
     }
@@ -113,7 +113,7 @@ public class EnumDefinitionFragment implements Fragment {
         return constantFragments;
     }
 
-    public EnumDefinitionFragment setConstantFragments(Set<EnumConstantFragment> constantFragments) {
+    public ObjCEnumDefineFragment setConstantFragments(Set<EnumConstantFragment> constantFragments) {
         this.constantFragments = constantFragments;
         return this;
     }
@@ -125,7 +125,7 @@ public class EnumDefinitionFragment implements Fragment {
      * @date 2018-07-24 17:47
      **/
     public static class EnumConstantFragment implements Fragment {
-        private CommentFragment commentFragment;
+        private ObjCCommentFragment commentFragment;
         private String name;
         private Integer value;
 
@@ -145,10 +145,10 @@ public class EnumDefinitionFragment implements Fragment {
         }
 
         public EnumConstantFragment(String comment, String name, Integer value) {
-            this(comment != null ? new CommentFragment(comment) : null, name, value);
+            this(comment != null ? new ObjCCommentFragment(comment) : null, name, value);
         }
 
-        public EnumConstantFragment(CommentFragment commentFragment, String name, Integer value) {
+        public EnumConstantFragment(ObjCCommentFragment commentFragment, String name, Integer value) {
             this.commentFragment = commentFragment;
             this.name = name;
             this.value = value;
@@ -166,11 +166,11 @@ public class EnumDefinitionFragment implements Fragment {
             if (value != null) appender.append(" = ").append(String.valueOf(value));
         }
 
-        public CommentFragment getCommentFragment() {
+        public ObjCCommentFragment getCommentFragment() {
             return commentFragment;
         }
 
-        public EnumConstantFragment setCommentFragment(CommentFragment commentFragment) {
+        public EnumConstantFragment setCommentFragment(ObjCCommentFragment commentFragment) {
             this.commentFragment = commentFragment;
             return this;
         }

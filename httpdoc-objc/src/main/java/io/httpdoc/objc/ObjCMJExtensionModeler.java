@@ -50,17 +50,17 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
 
         switch (schema.getCategory()) {
             case ENUM: {
-                EnumInterfaceFragment interfase = new EnumInterfaceFragment();
+                ObjCEnumHeaderFragment interfase = new ObjCEnumHeaderFragment();
                 interfase.setName(prefix + name);
-                interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                interfase.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 Set<Constant> constants = schema.getConstants();
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
                     interfase.addExportFragment(constant.getDescription(), prefix + name + constant.getName());
                 }
 
-                EnumImplementationFragment implementation = new EnumImplementationFragment();
+                ObjCEnumTargetFragment implementation = new ObjCEnumTargetFragment();
                 implementation.setName(prefix + name);
-                implementation.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                implementation.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
                     implementation.addAssignFragment(constant.getDescription(), prefix + name + constant.getName(), constant.getName());
                 }
@@ -71,30 +71,30 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
                 );
             }
             case OBJECT: {
-                ClassInterfaceFragment interfase = new ClassInterfaceFragment();
+                ObjCClassHeaderFragment interfase = new ObjCClassHeaderFragment();
                 interfase.setName(prefix + name);
-                interfase.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                interfase.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 ObjCSchema superclass = (ObjCSchema) schema.getSuperclass();
                 interfase.setSuperclass(superclass != null ? (ObjCClass) superclass.toObjCType(supplier) : ObjCType.valueOf(NSObject.class));
                 Map<String, Property> properties = schema.getProperties();
                 for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                     Property property = entry.getValue();
-                    PropertyFragment propertyFragment = new PropertyFragment();
+                    ObjCPropertyFragment propertyFragment = new ObjCPropertyFragment();
                     propertyFragment.setName(entry.getKey());
                     ObjCSchema type = (ObjCSchema) property.getType();
                     propertyFragment.setType(type.toObjCType(supplier));
-                    propertyFragment.setCommentFragment(new CommentFragment(property.getDescription()));
+                    propertyFragment.setCommentFragment(new ObjCCommentFragment(property.getDescription()));
                     interfase.addPropertyFragment(propertyFragment);
                 }
 
-                ClassImplementationFragment implementation = new ClassImplementationFragment();
+                ObjCClassTargetFragment implementation = new ObjCClassTargetFragment();
                 implementation.setName(prefix + name);
-                implementation.setCommentFragment(new CommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
+                implementation.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
 
-                SelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(properties);
+                ObjCSelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(properties);
                 if (objectClassInArrayMethod != null) implementation.addSelectorFragment(objectClassInArrayMethod);
 
-                SelectorFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(properties);
+                ObjCSelectorFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(properties);
                 if (replacedKeyFromPropertyNameMethod != null) implementation.addSelectorFragment(replacedKeyFromPropertyNameMethod);
 
                 return Arrays.asList(
@@ -107,14 +107,14 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
         }
     }
 
-    private SelectorFragment getReplacedKeyFromPropertyNameMethodFragment(Map<String, Property> properties) {
-        SelectorFragment selector = new SelectorFragment();
+    private ObjCSelectorFragment getReplacedKeyFromPropertyNameMethodFragment(Map<String, Property> properties) {
+        ObjCSelectorFragment selector = new ObjCSelectorFragment();
         selector.setInstantial(false);
         selector.setName("mj_replacedKeyFromPropertyName");
-        ResultFragment objectClassInArrayResult = new ResultFragment();
+        ObjCResultFragment objectClassInArrayResult = new ObjCResultFragment();
         objectClassInArrayResult.setType(new ObjCGenericType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
         selector.setResultFragment(objectClassInArrayResult);
-        BlockFragment block = new BlockFragment();
+        ObjCBlockFragment block = new ObjCBlockFragment();
         block.getSentences().add("return @{");
         int count = 0;
         for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
@@ -130,14 +130,14 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
         return count > 0 ? selector : null;
     }
 
-    private SelectorFragment getObjectClassInArrayMethodFragment(Map<String, Property> properties) {
-        SelectorFragment selector = new SelectorFragment();
+    private ObjCSelectorFragment getObjectClassInArrayMethodFragment(Map<String, Property> properties) {
+        ObjCSelectorFragment selector = new ObjCSelectorFragment();
         selector.setInstantial(false);
         selector.setName("mj_objectClassInArray");
-        ResultFragment objectClassInArrayResult = new ResultFragment();
+        ObjCResultFragment objectClassInArrayResult = new ObjCResultFragment();
         objectClassInArrayResult.setType(new ObjCGenericType(ObjCType.valueOf(NSDictionary.class), ObjCType.valueOf(NSString.class), ObjCType.valueOf(NSString.class)));
         selector.setResultFragment(objectClassInArrayResult);
-        BlockFragment block = new BlockFragment();
+        ObjCBlockFragment block = new ObjCBlockFragment();
         block.getSentences().add("return @{");
         int count = 0;
         for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
