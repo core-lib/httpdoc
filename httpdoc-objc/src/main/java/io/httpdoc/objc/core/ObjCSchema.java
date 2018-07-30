@@ -49,11 +49,11 @@ public class ObjCSchema extends Schema {
             }
             case ENUM: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, ObjC.Kind.TYPEDEF, ObjC.Reference.COPY, prefix + name + ".h");
+                return new ObjCClass(name, ObjC.Kind.TYPEDEF, ObjC.Reference.COPY, prefix + name + ".h");
             }
             case OBJECT: {
                 String name = this.getName();
-                return new ObjCClass(prefix + name, ObjC.Kind.CLASS, ObjC.Reference.STRONG, prefix + name + ".h");
+                return new ObjCClass(name, ObjC.Kind.CLASS, ObjC.Reference.STRONG, prefix + name + ".h");
             }
             default: {
                 throw new IllegalStateException();
@@ -115,7 +115,7 @@ public class ObjCSchema extends Schema {
 
     @Override
     public String getName() {
-        return schema.getName();
+        return this.getCategory() == Category.ENUM || this.getCategory() == Category.OBJECT ? prefix + schema.getName() : schema.getName();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class ObjCRSNetworkingGenerator implements Generator {
     }
 
     public ObjCRSNetworkingGenerator(String prefix) {
-        this(prefix, new ObjCMJExtensionModeler(prefix));
+        this(prefix, new ObjCMJExtensionModeler());
     }
 
     public ObjCRSNetworkingGenerator(Modeler<ObjCFile> modeler) {

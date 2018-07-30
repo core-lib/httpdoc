@@ -24,11 +24,6 @@ import java.util.*;
  * @date 2018-07-25 16:37
  **/
 public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
-    private final String prefix;
-
-    public ObjCMJExtensionModeler(String prefix) {
-        this.prefix = prefix;
-    }
 
     /**
      * 设计
@@ -51,28 +46,28 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
         switch (schema.getCategory()) {
             case ENUM: {
                 ObjCEnumHeaderFragment interfase = new ObjCEnumHeaderFragment();
-                interfase.setName(prefix + name);
+                interfase.setName(name);
                 interfase.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 Set<Constant> constants = schema.getConstants();
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
-                    interfase.addExportFragment(constant.getDescription(), prefix + name + constant.getName());
+                    interfase.addExportFragment(constant.getDescription(), name + constant.getName());
                 }
 
                 ObjCEnumTargetFragment implementation = new ObjCEnumTargetFragment();
-                implementation.setName(prefix + name);
+                implementation.setName(name);
                 implementation.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 for (Constant constant : (constants != null ? constants : Collections.<Constant>emptySet())) {
-                    implementation.addAssignFragment(constant.getDescription(), prefix + name + constant.getName(), constant.getName());
+                    implementation.addAssignFragment(constant.getDescription(), name + constant.getName(), constant.getName());
                 }
 
                 return Arrays.asList(
-                        new ObjCFile(pkg, prefix + name, ObjCFile.Type.INTERFACE, interfase),
-                        new ObjCFile(pkg, prefix + name, ObjCFile.Type.IMPLEMENTATION, implementation)
+                        new ObjCFile(pkg, name, ObjCFile.Type.INTERFACE, interfase),
+                        new ObjCFile(pkg, name, ObjCFile.Type.IMPLEMENTATION, implementation)
                 );
             }
             case OBJECT: {
                 ObjCClassHeaderFragment interfase = new ObjCClassHeaderFragment();
-                interfase.setName(prefix + name);
+                interfase.setName(name);
                 interfase.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
                 ObjCSchema superclass = (ObjCSchema) schema.getSuperclass();
                 interfase.setSuperclass(superclass != null ? (ObjCClass) superclass.toObjCType(supplier) : ObjCType.valueOf(NSObject.class));
@@ -88,7 +83,7 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
                 }
 
                 ObjCClassTargetFragment implementation = new ObjCClassTargetFragment();
-                implementation.setName(prefix + name);
+                implementation.setName(name);
                 implementation.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
 
                 ObjCSelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(properties);
@@ -98,8 +93,8 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
                 if (replacedKeyFromPropertyNameMethod != null) implementation.addSelectorFragment(replacedKeyFromPropertyNameMethod);
 
                 return Arrays.asList(
-                        new ObjCFile(pkg, prefix + name, ObjCFile.Type.INTERFACE, interfase),
-                        new ObjCFile(pkg, prefix + name, ObjCFile.Type.IMPLEMENTATION, implementation)
+                        new ObjCFile(pkg, name, ObjCFile.Type.INTERFACE, interfase),
+                        new ObjCFile(pkg, name, ObjCFile.Type.IMPLEMENTATION, implementation)
                 );
             }
             default:
