@@ -15,7 +15,7 @@ public class ObjCBlockType extends ObjCType {
     private final Map<String, ObjCType> parameters;
 
     public ObjCBlockType(Map<String, ObjCType> parameters) {
-        this.parameters = Collections.unmodifiableMap(parameters);
+        this.parameters = parameters != null ? Collections.unmodifiableMap(parameters) : Collections.<String, ObjCType>emptyMap();
     }
 
     @Override

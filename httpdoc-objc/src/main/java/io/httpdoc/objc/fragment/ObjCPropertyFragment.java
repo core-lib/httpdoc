@@ -3,10 +3,12 @@ package io.httpdoc.objc.fragment;
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
 import io.httpdoc.core.fragment.Fragment;
+import io.httpdoc.objc.type.ObjCBlockType;
 import io.httpdoc.objc.type.ObjCClass;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -53,8 +55,24 @@ public class ObjCPropertyFragment implements Fragment {
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         if (commentFragment != null) commentFragment.joinTo(appender, preference);
         appender.append("@property (nonatomic, ").append(type.getReference().name().toLowerCase()).append(") ");
-        appender.append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? " " : " *");
-        appender.append(name).append(";");
+        if (type instanceof ObjCBlockType) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("void (^").append(name).append(")");
+            builder.append("(");
+            int count = 0;
+            ObjCBlockType block = (ObjCBlockType) type;
+            for (Map.Entry<String, ObjCType> entry : block.getParameters().entrySet()) {
+                if (count++ > 0) builder.append(", ");
+                String name = entry.getKey();
+                String type = entry.getValue().getName();
+                builder.append(type).append(entry.getValue().isPrimitive() || entry.getValue().isTypedef() || entry.getValue().isBlock() ? " " : " *").append(name);
+            }
+            builder.append(");");
+            appender.append(builder);
+        } else {
+            appender.append(type.getName()).append(type.isPrimitive() || type.isTypedef() ? " " : " *");
+            appender.append(name).append(";");
+        }
     }
 
     public ObjCCommentFragment getCommentFragment() {
