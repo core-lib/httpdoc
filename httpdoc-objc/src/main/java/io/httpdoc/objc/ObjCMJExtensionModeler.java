@@ -75,7 +75,9 @@ public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
                 for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                     Property property = entry.getValue();
                     ObjCPropertyFragment propertyFragment = new ObjCPropertyFragment();
-                    propertyFragment.setName(entry.getKey());
+                    String key = entry.getKey();
+                    String alias = property.getAlias();
+                    propertyFragment.setName(alias != null ? alias : key);
                     ObjCSchema type = (ObjCSchema) property.getType();
                     propertyFragment.setType(type.toObjCType(supplier));
                     propertyFragment.setCommentFragment(new ObjCCommentFragment(property.getDescription()));

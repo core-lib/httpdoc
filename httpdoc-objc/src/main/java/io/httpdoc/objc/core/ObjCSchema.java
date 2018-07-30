@@ -49,11 +49,11 @@ public class ObjCSchema extends Schema {
             }
             case ENUM: {
                 String name = this.getName();
-                return new ObjCClass(name, ObjC.Kind.TYPEDEF, ObjC.Reference.COPY, prefix + name + ".h");
+                return new ObjCClass(name, ObjC.Kind.TYPEDEF, ObjC.Reference.COPY, name + ".h");
             }
             case OBJECT: {
                 String name = this.getName();
-                return new ObjCClass(name, ObjC.Kind.CLASS, ObjC.Reference.STRONG, prefix + name + ".h");
+                return new ObjCClass(name, ObjC.Kind.CLASS, ObjC.Reference.STRONG, name + ".h");
             }
             default: {
                 throw new IllegalStateException();

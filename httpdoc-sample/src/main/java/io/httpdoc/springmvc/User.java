@@ -1,5 +1,7 @@
 package io.httpdoc.springmvc;
 
+import io.httpdoc.core.annotation.Alias;
+
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ public class User {
         this.name = name;
     }
 
+    @Alias("$id")
     public String getId() {
         return id;
     }

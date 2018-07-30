@@ -257,8 +257,10 @@ public class ObjCRSNetworkingGenerator implements Generator {
         for (int i = 0; parameters != null && i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
             ObjCParameterFragment fragment = new ObjCParameterFragment();
-            String name = StringKit.isBlank(parameter.getName()) ? parameter.getType().toName() : parameter.getName();
-            String variable = StringKit.isBlank(parameter.getAlias()) ? name : parameter.getAlias();
+            String name = parameter.getName();
+            name = StringKit.isBlank(name) ? parameter.getType().toName() : name;
+            String alias = parameter.getAlias();
+            String variable = StringKit.isBlank(alias) ? name : alias;
             loop:
             while (true) {
                 for (ObjCParameterFragment prev : fragments) {
