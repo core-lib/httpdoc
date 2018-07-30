@@ -3,7 +3,6 @@ package io.httpdoc.objc;
 import io.httpdoc.core.Category;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.supplier.SystemSupplier;
-import io.httpdoc.objc.external.RSPart;
 import io.httpdoc.objc.foundation.*;
 
 import java.lang.reflect.Type;
@@ -65,7 +64,7 @@ public class ObjCSupplier extends SystemSupplier {
             case "Date":
                 return NSDate.class;
             case "File":
-                return RSPart.class;
+                return NSData.class;
             case "Object":
                 return NSObject.class;
         }
