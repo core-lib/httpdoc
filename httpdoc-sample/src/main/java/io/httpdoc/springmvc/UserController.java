@@ -1,5 +1,6 @@
 package io.httpdoc.springmvc;
 
+import io.httpdoc.core.annotation.Alias;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,7 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody
     public String test(
-            @PathVariable String id,
+            @Alias("ID") @PathVariable String id,
             User user,
             String dateCreated,
             MultipartFile file

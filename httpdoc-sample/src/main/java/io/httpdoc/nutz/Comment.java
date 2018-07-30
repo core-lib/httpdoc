@@ -7,15 +7,15 @@ package io.httpdoc.nutz;
  * @date 2018-05-21 14:39
  **/
 public class Comment {
-    private User user;
+    private Customer customer;
     private String content;
 
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getContent() {

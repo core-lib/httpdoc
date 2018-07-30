@@ -6,7 +6,7 @@ package io.httpdoc.nutz;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-21 14:42
  **/
-public class User {
+public class Customer {
     private String name;
 
     public String getName() {

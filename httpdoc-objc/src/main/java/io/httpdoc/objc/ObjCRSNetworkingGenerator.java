@@ -200,7 +200,7 @@ public class ObjCRSNetworkingGenerator implements Generator {
         success.setType(callback);
         success.setName("callback");
         success.setVariable("callback");
-        success.setComment("(success, " + comment + ", error)");
+        success.setComment("(success, " + (StringKit.isEmpty(comment) ? "result" : comment) + ", error)");
         selector.getParameterFragments().add(success);
 
         StringBuilder builder = new StringBuilder();
