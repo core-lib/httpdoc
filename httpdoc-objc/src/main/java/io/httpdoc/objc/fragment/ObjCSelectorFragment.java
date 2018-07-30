@@ -20,12 +20,12 @@ import java.util.TreeSet;
  * @date 2018-07-24 17:41
  **/
 public class ObjCSelectorFragment implements Fragment {
-    protected boolean instantial = true;
-    protected ObjCResultFragment resultFragment;
-    protected String name;
-    protected Set<ObjCParameterFragment> parameterFragments = new LinkedHashSet<>();
-    protected String comment;
-    protected ObjCBlockFragment blockFragment;
+    private boolean instantial = true;
+    private ObjCResultFragment resultFragment;
+    private String name;
+    private Set<ObjCParameterFragment> parameterFragments = new LinkedHashSet<>();
+    private String comment;
+    private ObjCBlockFragment blockFragment;
 
     public ObjCSelectorFragment() {
     }
@@ -98,7 +98,7 @@ public class ObjCSelectorFragment implements Fragment {
         else appender.append(";");
     }
 
-    protected String comment() {
+    private String comment() {
         StringBuilder builder = new StringBuilder(comment != null ? comment : "").append('\n');
         for (ObjCParameterFragment parameterFragment : parameterFragments) {
             String name = parameterFragment.getVariable();
