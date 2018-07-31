@@ -88,7 +88,7 @@ public class StandardConverter implements Converter {
         if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
 
         String description = controller.getDescription();
-        if (description != null) map.put("description", description);
+        if (!StringKit.isBlank(description)) map.put("description", description);
 
         return map;
     }
@@ -151,7 +151,7 @@ public class StandardConverter implements Converter {
         if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
 
         String description = operation.getDescription();
-        if (description != null) map.put("description", description);
+        if (!StringKit.isBlank(description)) map.put("description", description);
 
         return map;
     }
@@ -188,7 +188,7 @@ public class StandardConverter implements Converter {
         if (type != null) map.put("type", doConvertReference(type, format));
 
         String description = parameter.getDescription();
-        if (description != null) map.put("description", description);
+        if (!StringKit.isBlank(description)) map.put("description", description);
 
         return map;
     }
@@ -199,10 +199,10 @@ public class StandardConverter implements Converter {
 
         String reference = doConvertReference(type, format);
         String description = result.getDescription();
-        if (format.isCanonical() || description != null) {
+        if (format.isCanonical() || !StringKit.isBlank(description)) {
             Map<String, String> map = new LinkedHashMap<>();
             if (reference != null) map.put("type", reference);
-            if (description != null) map.put("description", description);
+            if (!StringKit.isBlank(description)) map.put("description", description);
             return map;
         }
 
@@ -236,7 +236,7 @@ public class StandardConverter implements Converter {
             case ENUM:
                 Set<Constant> constants = schema.getConstants();
                 boolean commented = false;
-                for (Constant constant : constants) commented = commented || constant.getDescription() != null;
+                for (Constant constant : constants) commented = commented || !StringKit.isBlank(constant.getDescription());
                 if (format.isCanonical() || commented) {
                     Map<String, String> m = new LinkedHashMap<>();
                     for (Constant constant : constants) m.put(constant.getName(), constant.getDescription());
@@ -259,11 +259,11 @@ public class StandardConverter implements Converter {
                     Schema type = property.getType();
                     String description = property.getDescription();
                     String reference = doConvertReference(type, format);
-                    if (format.isCanonical() || description != null || (!StringKit.isBlank(alias) && !alias.equals(name))) {
+                    if (format.isCanonical() || !StringKit.isBlank(description) || (!StringKit.isBlank(alias) && !alias.equals(name))) {
                         Map<String, Object> p = new LinkedHashMap<>();
                         if (!StringKit.isBlank(alias) && !alias.equals(name)) p.put("alias", alias);
                         if (reference != null) p.put("type", reference);
-                        if (description != null) p.put("description", description);
+                        if (!StringKit.isBlank(description)) p.put("description", description);
                         m.put(name, p);
                     } else {
                         m.put(name, reference);
@@ -273,7 +273,7 @@ public class StandardConverter implements Converter {
                 break;
         }
         String description = schema.getDescription();
-        if (description != null) map.put("description", description);
+        if (!StringKit.isBlank(description)) map.put("description", description);
         return map;
     }
 
