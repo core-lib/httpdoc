@@ -31,4 +31,6 @@ public interface Format extends Serializable {
 
     boolean isPkgIncluded();
 
+    boolean isCanonical();
+
 }

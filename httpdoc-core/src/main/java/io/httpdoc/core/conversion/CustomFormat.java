@@ -16,6 +16,7 @@ public class CustomFormat implements Format {
     private String arrPrefix = Format.ARR_PREFIX;
     private String arrSuffix = Format.ARR_SUFFIX;
     private boolean pkgIncluded = false;
+    private boolean canonical = false;
 
     @Override
     public String getRefPrefix() {
@@ -78,5 +79,14 @@ public class CustomFormat implements Format {
 
     public void setPkgIncluded(boolean pkgIncluded) {
         this.pkgIncluded = pkgIncluded;
+    }
+
+    @Override
+    public boolean isCanonical() {
+        return canonical;
+    }
+
+    public void setCanonical(boolean canonical) {
+        this.canonical = canonical;
     }
 }

@@ -44,4 +44,9 @@ public class DefaultFormat implements Format {
         return false;
     }
 
+    @Override
+    public boolean isCanonical() {
+        return false;
+    }
+
 }
