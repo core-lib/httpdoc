@@ -42,4 +42,30 @@ public abstract class IOKit {
         }
     }
 
+    public static long transfer(InputStream in, OutputStream out) throws IOException {
+        long total = 0;
+        byte[] buffer = new byte[4096];
+        int length;
+        while ((length = in.read(buffer)) != -1) {
+            out.write(buffer, 0, length);
+            total += length;
+        }
+        return total;
+    }
+
+    public static long transfer(Reader reader, Writer writer) throws IOException {
+        long total = 0;
+        char[] buffer = new char[4096];
+        int length;
+        while ((length = reader.read(buffer)) != -1) {
+            writer.write(buffer, 0, length);
+            total += length;
+        }
+        return total;
+    }
+
+    public static boolean delete(File file) {
+        return file != null && file.delete();
+    }
+
 }
