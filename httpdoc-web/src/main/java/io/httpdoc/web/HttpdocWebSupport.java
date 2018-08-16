@@ -110,10 +110,6 @@ public abstract class HttpdocWebSupport {
             if (src != null && src.trim().length() > 0) {
                 System.setProperty("httpdoc.src.path", config.getServletContext().getRealPath(src));
             }
-            String pkg = config.getInitParameter("httpdoc.pkg.path");
-            if (pkg != null && pkg.trim().length() > 0) {
-                System.setProperty("httpdoc.pkg.path", pkg);
-            }
             String lib = config.getInitParameter("httpdoc.lib.path");
             if (lib != null && lib.trim().length() > 0) {
                 StringBuilder builder = new StringBuilder();
