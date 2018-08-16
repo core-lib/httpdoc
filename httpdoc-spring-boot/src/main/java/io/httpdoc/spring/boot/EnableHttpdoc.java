@@ -39,7 +39,7 @@ public @interface EnableHttpdoc {
     /**
      * @return URL patterns
      */
-    String[] value() default {"/httpdoc", "/httpdoc.yaml", "/httpdoc.json"};
+    String[] value() default {"/httpdoc", "/httpdoc.yaml", "/httpdoc.json", "/httpdoc.xml"};
 
     /**
      * @return Filter Class

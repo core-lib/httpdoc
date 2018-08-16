@@ -50,6 +50,7 @@ public abstract class IOKit {
             out.write(buffer, 0, length);
             total += length;
         }
+        out.flush();
         return total;
     }
 
@@ -61,7 +62,31 @@ public abstract class IOKit {
             writer.write(buffer, 0, length);
             total += length;
         }
+        writer.flush();
         return total;
+    }
+
+    public static long transfer(InputStream in, File file) throws IOException {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            return transfer(in, out);
+        } finally {
+            close(out);
+        }
+    }
+
+    public static long transfer(Reader reader, File file) throws IOException {
+        OutputStream out = null;
+        Writer writer = null;
+        try {
+            out = new FileOutputStream(file);
+            writer = new OutputStreamWriter(out);
+            return transfer(reader, writer);
+        } finally {
+            close(writer);
+            close(out);
+        }
     }
 
     public static boolean delete(File file) {
