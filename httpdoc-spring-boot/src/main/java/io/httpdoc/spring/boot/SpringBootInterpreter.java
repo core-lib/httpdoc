@@ -1,12 +1,15 @@
 package io.httpdoc.spring.boot;
 
 import io.httpdoc.core.exception.HttpdocRuntimeException;
-import io.httpdoc.core.interpretation.SourceInterpreter;
+import io.httpdoc.core.interpretation.*;
 import io.httpdoc.core.kit.IOKit;
 
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.jar.Attributes;
@@ -21,11 +24,11 @@ import java.util.jar.Manifest;
  * @date 2018-08-14 15:55
  **/
 public class SpringBootInterpreter extends SourceInterpreter {
-    private static volatile boolean started = false;
+    private static volatile boolean prepared = false;
 
-    public SpringBootInterpreter() {
-        if (started) return;
-        else started = true;
+    private synchronized static void prepare() {
+        if (prepared) return;
+        else prepared = true;
 
         String classpath = System.getProperty("java.class.path");
         // 判断当前是以JAR包方式启动还是在IDE直接启动，如果classpath包含多个JAR则是在IDE中启动，否则是以单个JAR包启动
@@ -43,6 +46,7 @@ public class SpringBootInterpreter extends SourceInterpreter {
                     + UUID.randomUUID()
             );
             if (!directory.exists() && !directory.mkdirs()) throw new HttpdocRuntimeException("could not create directory: " + directory);
+            directory.deleteOnExit();
 
             // 1. 将整个Spring Boot 打包之后的JAR包 解压
             String workspace = System.getProperty("user.dir");
@@ -59,14 +63,8 @@ public class SpringBootInterpreter extends SourceInterpreter {
                 JarEntry jarEntry = entries.nextElement();
                 if (jarEntry.isDirectory()) continue;
                 String name = jarEntry.getName();
-                if ((name.startsWith(clsLocation) && name.endsWith(".java")) || (name.startsWith(libLocation) && name.endsWith(".jar"))) {
-                    InputStream in = boot.getInputStream(jarEntry);
-                    File file = new File(directory, name);
-                    File parent = file.getParentFile();
-                    if (!parent.exists() && !parent.mkdirs()) throw new IOException("could not create directory for " + parent);
-                    IOKit.transfer(in, file);
-                    IOKit.close(in);
-                }
+                if (name.startsWith(clsLocation) && name.endsWith(".java")) extract(boot, jarEntry, directory.getPath());
+                if (name.startsWith(libLocation) && name.endsWith(".jar")) extract(boot, jarEntry, directory.getPath());
             }
 
             String src = new File(directory, clsLocation).getPath();
@@ -85,14 +83,7 @@ public class SpringBootInterpreter extends SourceInterpreter {
                     JarEntry jarEntry = jarEntries.nextElement();
                     if (jarEntry.isDirectory()) continue;
                     String name = jarEntry.getName();
-                    if (name.endsWith(".java")) {
-                        InputStream in = jarFile.getInputStream(jarEntry);
-                        File file = new File(src, name);
-                        File parent = file.getParentFile();
-                        if (!parent.exists() && !parent.mkdirs()) throw new IOException("could not create directory for " + parent);
-                        IOKit.transfer(in, file);
-                        IOKit.close(in);
-                    }
+                    if (name.endsWith(".java")) extract(jarFile, jarEntry, src);
                 }
                 IOKit.close(jarFile);
             }
@@ -102,6 +93,47 @@ public class SpringBootInterpreter extends SourceInterpreter {
         } finally {
             IOKit.close(boot);
         }
+    }
+
+    private static void extract(JarFile jarFile, JarEntry jarEntry, String directory) throws IOException {
+        InputStream in = jarFile.getInputStream(jarEntry);
+        String name = jarEntry.getName();
+        File file = new File(directory, name);
+        File parent = file.getParentFile();
+        if (!parent.exists() && !parent.mkdirs()) throw new IOException("could not create directory for " + parent);
+        IOKit.transfer(in, file);
+        IOKit.close(in);
+        file.deleteOnExit();
+    }
+
+    @Override
+    public ClassInterpretation interpret(Class<?> clazz) {
+        if (!prepared) prepare();
+        return super.interpret(clazz);
+    }
+
+    @Override
+    public MethodInterpretation interpret(Method method) {
+        if (!prepared) prepare();
+        return super.interpret(method);
+    }
+
+    @Override
+    public FieldInterpretation interpret(Field field) {
+        if (!prepared) prepare();
+        return super.interpret(field);
+    }
+
+    @Override
+    public EnumInterpretation interpret(Enum<?> constant) {
+        if (!prepared) prepare();
+        return super.interpret(constant);
+    }
+
+    @Override
+    public Interpretation interpret(PropertyDescriptor descriptor) {
+        if (!prepared) prepare();
+        return super.interpret(descriptor);
     }
 
 }
