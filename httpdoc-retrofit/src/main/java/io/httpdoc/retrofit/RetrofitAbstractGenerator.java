@@ -124,6 +124,8 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
             if (!SCOPES.contains(scope)) continue;
 
             String name = StringKit.isBlank(param.getName()) ? param.getType().toName() : param.getName();
+            // 去掉特殊字符
+            name = name.replaceAll("[^0-9a-zA-Z_$]", "_");
             loop:
             while (true) {
                 for (ParameterFragment fragment : fragments) {

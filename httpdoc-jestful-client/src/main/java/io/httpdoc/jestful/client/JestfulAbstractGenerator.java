@@ -93,6 +93,8 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
             Parameter parameter = parameters.get(i);
             ParameterFragment fragment = new ParameterFragment();
             String name = StringKit.isBlank(parameter.getName()) ? parameter.getType().toName() : parameter.getName();
+            // 去掉特殊字符
+            name = name.replaceAll("[^0-9a-zA-Z_$]", "_");
             loop:
             while (true) {
                 for (ParameterFragment prev : fragments) {
@@ -123,39 +125,47 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
         switch (parameter.getScope()) {
             case HTTP_PARAM_SCOPE_HEADER: {
                 HDAnnotation header = new HDAnnotation(Header.class);
-                if (name != null) header.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    header.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(header);
             }
             case HTTP_PARAM_SCOPE_PATH: {
                 HDAnnotation path = new HDAnnotation(Path.class);
-                if (name != null) path.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    path.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(path);
             }
             case HTTP_PARAM_SCOPE_MATRIX: {
                 HDAnnotation matrix = new HDAnnotation(Matrix.class);
-                if (name != null) matrix.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    matrix.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 String path = parameter.getPath();
-                if (path != null) matrix.getProperties().put("path", HDAnnotationConstant.valuesOf(path.isEmpty() ? "" : path));
+                if (path != null)
+                    matrix.getProperties().put("path", HDAnnotationConstant.valuesOf(path.isEmpty() ? "" : path));
                 return Collections.singleton(matrix);
             }
             case HTTP_PARAM_SCOPE_QUERY: {
                 HDAnnotation query = new HDAnnotation(Query.class);
-                if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(query);
             }
             case HTTP_PARAM_SCOPE_BODY: {
                 HDAnnotation body = new HDAnnotation(Body.class);
-                if (name != null) body.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    body.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(body);
             }
             case HTTP_PARAM_SCOPE_COOKIE: {
                 HDAnnotation cookie = new HDAnnotation(Cookie.class);
-                if (name != null) cookie.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    cookie.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(cookie);
             }
             case HTTP_PARAM_SCOPE_FIELD: {
                 HDAnnotation query = new HDAnnotation(Query.class);
-                if (name != null) query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
+                if (name != null)
+                    query.getProperties().put("value", HDAnnotationConstant.valuesOf(name.isEmpty() ? "*" : name));
                 return Collections.singleton(query);
             }
             default: {
@@ -168,40 +178,54 @@ public abstract class JestfulAbstractGenerator extends FragmentGenerator impleme
         switch (operation.getMethod()) {
             case "HEAD": {
                 HDAnnotation head = new HDAnnotation(HEAD.class);
-                if (operation.getPath() != null) head.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) head.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    head.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    head.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
                 return Collections.singleton(head);
             }
             case "OPTIONS": {
                 HDAnnotation options = new HDAnnotation(OPTIONS.class);
-                if (operation.getPath() != null) options.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) options.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    options.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    options.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
                 return Collections.singleton(options);
             }
             case "GET": {
                 HDAnnotation get = new HDAnnotation(GET.class);
-                if (operation.getPath() != null) get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) get.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    get.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    get.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
                 return Collections.singleton(get);
             }
             case "POST": {
                 HDAnnotation post = new HDAnnotation(POST.class);
-                if (operation.getPath() != null) post.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) post.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
-                if (operation.getConsumes() != null) post.getProperties().put("consumes", HDAnnotationConstant.valuesOf(operation.getConsumes().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    post.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    post.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getConsumes() != null)
+                    post.getProperties().put("consumes", HDAnnotationConstant.valuesOf(operation.getConsumes().toArray(new Object[0])));
                 return Collections.singleton(post);
             }
             case "PUT": {
                 HDAnnotation put = new HDAnnotation(PUT.class);
-                if (operation.getPath() != null) put.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) put.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
-                if (operation.getConsumes() != null) put.getProperties().put("consumes", HDAnnotationConstant.valuesOf(operation.getConsumes().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    put.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    put.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getConsumes() != null)
+                    put.getProperties().put("consumes", HDAnnotationConstant.valuesOf(operation.getConsumes().toArray(new Object[0])));
                 return Collections.singleton(put);
             }
             case "DELETE": {
                 HDAnnotation delete = new HDAnnotation(DELETE.class);
-                if (operation.getPath() != null) delete.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
-                if (operation.getProduces() != null) delete.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
+                if (operation.getPath() != null)
+                    delete.getProperties().put("value", HDAnnotationConstant.valuesOf(operation.getPath()));
+                if (operation.getProduces() != null)
+                    delete.getProperties().put("produces", HDAnnotationConstant.valuesOf(operation.getProduces().toArray(new Object[0])));
                 return Collections.singleton(delete);
             }
             default: {
