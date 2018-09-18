@@ -38,8 +38,8 @@ import java.util.regex.Pattern;
  * @date 2018-04-20 9:29
  **/
 public class JestfulTranslator implements Translator {
-    private final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
-    private final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+    protected final Pattern pattern = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
+    protected final ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 
     @Override
     public Document translate(Translation translation) {
@@ -56,7 +56,7 @@ public class JestfulTranslator implements Translator {
         return document;
     }
 
-    private void translate(ControllerTranslation translation) {
+    protected void translate(ControllerTranslation translation) {
         Map<Class<?>, Controller> controllers = new LinkedHashMap<>();
 
         Document document = translation.getDocument();
@@ -94,7 +94,7 @@ public class JestfulTranslator implements Translator {
         document.getControllers().addAll(controllers.values());
     }
 
-    private void translate(OperationTranslation translation) {
+    protected void translate(OperationTranslation translation) {
         Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         Mapping mapping = translation.getMapping();
@@ -128,7 +128,7 @@ public class JestfulTranslator implements Translator {
         controller.getOperations().add(operation);
     }
 
-    private void translate(ParameterTranslation translation) {
+    protected void translate(ParameterTranslation translation) {
         Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         Mapping mapping = translation.getMapping();

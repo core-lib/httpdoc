@@ -54,9 +54,9 @@ import java.util.regex.Pattern;
 
 public class SpringMVCTranslator implements Translator {
 
-    private static final String EMPTY = "";
+    protected static final String EMPTY = "";
 
-    private static final Collection<Class<?>> IGNORED_PARAMETER_TYPES = Arrays.asList(
+    protected static final Collection<Class<?>> IGNORED_PARAMETER_TYPES = Arrays.asList(
             Void.TYPE,
             Void.class,
             Class.class,
@@ -74,7 +74,7 @@ public class SpringMVCTranslator implements Translator {
             ExtendedModelMap.class
     );
 
-    private static final Collection<Class<?>> PRIMITIVE_TYPES = Arrays.<Class<?>>asList(
+    protected static final Collection<Class<?>> PRIMITIVE_TYPES = Arrays.<Class<?>>asList(
             boolean.class,
             byte.class,
             short.class,
@@ -85,7 +85,7 @@ public class SpringMVCTranslator implements Translator {
             double.class
     );
 
-    private static final Collection<Class<?>> WRAPPER_TYPES = Arrays.<Class<?>>asList(
+    protected static final Collection<Class<?>> WRAPPER_TYPES = Arrays.<Class<?>>asList(
             Boolean.class,
             Byte.class,
             Short.class,
@@ -96,28 +96,28 @@ public class SpringMVCTranslator implements Translator {
             Double.class
     );
 
-    private static final Collection<Class<?>> NUMBER_TYPES = Arrays.<Class<?>>asList(
+    protected static final Collection<Class<?>> NUMBER_TYPES = Arrays.<Class<?>>asList(
             BigInteger.class,
             BigDecimal.class,
             AtomicInteger.class,
             AtomicLong.class
     );
 
-    private static final Collection<Class<?>> STRING_TYPES = Arrays.<Class<?>>asList(
+    protected static final Collection<Class<?>> STRING_TYPES = Arrays.<Class<?>>asList(
             String.class,
             StringBuilder.class,
             StringBuffer.class
     );
 
-    private static final Collection<Class<?>> DATE_TYPES = Arrays.<Class<?>>asList(
+    protected static final Collection<Class<?>> DATE_TYPES = Arrays.<Class<?>>asList(
             java.util.Date.class,
             java.sql.Date.class,
             java.sql.Time.class,
             java.sql.Timestamp.class
     );
 
-    private static final Pattern PATTERN = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
-    private static final ParameterNameDiscoverer DISCOVERER = new DefaultParameterNameDiscoverer();
+    protected static final Pattern PATTERN = Pattern.compile("\\{([^{}]+?)(:([^{}]+?))?}");
+    protected static final ParameterNameDiscoverer DISCOVERER = new DefaultParameterNameDiscoverer();
 
     /**
      * 获取多请求体的该参数部分的绑定名称， 缺省情况下采用参数变量名， 如果有@RequestPart 和 @RequestParam 则 @RequestParam 要优先于 @RequestPart
@@ -125,7 +125,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 多请求体情况下的该参数部分的绑定名称
      */
-    private static String getPartName(MethodParameter parameter) {
+    protected static String getPartName(MethodParameter parameter) {
         Method method = parameter.getMethod();
         int index = parameter.getParameterIndex();
         String[] names = DISCOVERER.getParameterNames(method);
@@ -150,7 +150,7 @@ public class SpringMVCTranslator implements Translator {
      * @param handler 处理器方法
      * @return 方法的返回值结果类型
      */
-    private static Type getReturnType(HandlerMethod handler) {
+    protected static Type getReturnType(HandlerMethod handler) {
         Type returnType = handler.getReturnType().getGenericParameterType();
         if (returnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) returnType;
@@ -166,7 +166,7 @@ public class SpringMVCTranslator implements Translator {
      * @param type 类型
      * @return 是否为简单类型
      */
-    private static boolean isSimpleType(Type type) {
+    protected static boolean isSimpleType(Type type) {
         // 普通类
         if (type instanceof Class<?>) {
             Class<?> clazz = (Class<?>) type;
@@ -205,12 +205,12 @@ public class SpringMVCTranslator implements Translator {
         return false;
     }
 
-    private static boolean isMultipartFile(Type type) {
+    protected static boolean isMultipartFile(Type type) {
         return type instanceof Class<?>
                 && (MultipartFile.class.isAssignableFrom((Class<?>) type) || Part.class.isAssignableFrom((Class<?>) type));
     }
 
-    private static boolean isMultipartFiles(Type type) {
+    protected static boolean isMultipartFiles(Type type) {
         if (type instanceof Class<?>) {
             Class<?> clazz = (Class<?>) type;
             return clazz.isArray() && isMultipartFile(clazz.getComponentType());
@@ -235,7 +235,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 绑定域
      */
-    private static String getBindScope(MethodParameter parameter) {
+    protected static String getBindScope(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
@@ -253,7 +253,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 参数名
      */
-    private static String getBindName(MethodParameter parameter) {
+    protected static String getBindName(MethodParameter parameter) {
         Method method = parameter.getMethod();
         int index = parameter.getParameterIndex();
         String[] names = DISCOVERER.getParameterNames(method);
@@ -305,7 +305,7 @@ public class SpringMVCTranslator implements Translator {
         return document;
     }
 
-    private void translate(ControllerTranslation translation) {
+    protected void translate(ControllerTranslation translation) {
         Document document = translation.getDocument();
 
         Map<RequestMappingInfo, HandlerMethod> map = new LinkedHashMap<>();
@@ -347,7 +347,7 @@ public class SpringMVCTranslator implements Translator {
         document.getControllers().addAll(controllers.values());
     }
 
-    private void translate(OperationTranslation translation) {
+    protected void translate(OperationTranslation translation) {
         Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         RequestMappingInfo mapping = translation.getMapping();
@@ -389,7 +389,7 @@ public class SpringMVCTranslator implements Translator {
         controller.getOperations().add(operation);
     }
 
-    private void translate(ParameterTranslation translation) {
+    protected void translate(ParameterTranslation translation) {
         Supplier supplier = translation.getSupplier();
         Interpreter interpreter = translation.getInterpreter();
         HandlerMethod handler = translation.getHandler();
