@@ -14,6 +14,7 @@ import io.httpdoc.web.HttpdocSuffixSerializer;
 import io.httpdoc.web.conversion.ConversionProvider;
 import org.springframework.context.annotation.Import;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import java.lang.annotation.*;
 
@@ -34,6 +35,31 @@ public @interface EnableHttpdoc {
      * @return Filter name
      */
     String name() default "httpdoc";
+
+    /**
+     * @return Filter bean name
+     */
+    String bean() default "httpdoc";
+
+    /**
+     * @return Filter async supported
+     */
+    boolean asyncSupported() default true;
+
+    /**
+     * @return Filter dispatcher type supported, empty means all.
+     */
+    DispatcherType[] dispatcherTypes() default {DispatcherType.REQUEST};
+
+    /**
+     * @return Filter match after
+     */
+    boolean matchAfter() default false;
+
+    /**
+     * @return Filter enabled
+     */
+    boolean enabled() default true;
 
     /**
      * @return URL patterns

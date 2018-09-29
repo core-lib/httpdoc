@@ -8,7 +8,9 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
+import javax.servlet.DispatcherType;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +29,18 @@ public class HttpdocFilterRegistrar implements ImportBeanDefinitionRegistrar {
 
         String name = attributes.getString("name");
         httpdoc.getPropertyValues().add("name", name);
+
+        boolean asyncSupported = attributes.getBoolean("asyncSupported");
+        httpdoc.getPropertyValues().add("asyncSupported", asyncSupported);
+
+        DispatcherType[] dispatcherTypes = (DispatcherType[]) attributes.get("dispatcherTypes");
+        httpdoc.getPropertyValues().add("dispatcherTypes", EnumSet.of(dispatcherTypes[0], dispatcherTypes));
+
+        boolean matchAfter = attributes.getBoolean("matchAfter");
+        httpdoc.getPropertyValues().add("matchAfter", matchAfter);
+
+        boolean enabled = attributes.getBoolean("enabled");
+        httpdoc.getPropertyValues().add("enabled", enabled);
 
         int order = attributes.getNumber("order");
         httpdoc.getPropertyValues().add("order", order);
@@ -58,7 +72,8 @@ public class HttpdocFilterRegistrar implements ImportBeanDefinitionRegistrar {
 
         httpdoc.getPropertyValues().add("initParameters", parameters);
 
-        registry.registerBeanDefinition("httpdoc", httpdoc);
+        String beanName = attributes.getString("bean");
+        registry.registerBeanDefinition(beanName, httpdoc);
     }
 
     private <T> T newInstance(Class<T> clazz) {
