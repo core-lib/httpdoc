@@ -8,6 +8,7 @@ import io.httpdoc.core.deserialization.Deserializer;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,6 +38,12 @@ public class Document extends Definition {
     private Set<Controller> controllers = new LinkedHashSet<>();
     private Map<String, Schema> schemas = new LinkedHashMap<>();
 
+    public static Document from(URLConnection connection, Deserializer deserializer) throws IOException {
+        try (InputStream in = connection.getInputStream()) {
+            return from(in, deserializer);
+        }
+    }
+
     public static Document from(File file, Deserializer deserializer) throws IOException {
         return from(file.toURI(), deserializer);
     }
@@ -59,6 +66,12 @@ public class Document extends Definition {
 
     public static Document from(Reader reader, Deserializer deserializer) throws IOException {
         return from(reader, deserializer, new StandardConverter());
+    }
+
+    public static Document from(URLConnection connection, Deserializer deserializer, Converter converter) throws IOException {
+        try (InputStream in = connection.getInputStream()) {
+            return from(in, deserializer, converter);
+        }
     }
 
     public static Document from(File file, Deserializer deserializer, Converter converter) throws IOException {
