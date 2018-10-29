@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HttpDoc UI</title>
+    <link rel="stylesheet" href="./bootstrap-3.3.7.min.css">
+    <link rel="stylesheet" href="./httpdoc-1.0.0.css">
+</head>
+<body>
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header col-md-2">
+            <a class="navbar-brand" href="#">HttpDoc</a>
+        </div>
+        <div class="col-md-10">
+            <div class="navbar-form navbar-right">
+                <div class="input-group">
+                    <input id="httpdoc-url" type="text" class="form-control" value="http://localhost:8080/httpdoc-sample/HttpDoc.json" placeholder="http://localhost/httpdoc.json">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" onclick="httpdoc.explore();">Explore</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2" style="border-right: 1px solid #f1f1f1;">
+            <ul id="httpdoc-navigation" class="nav nav-stacked">
+
+            </ul>
+        </div>
+        <div id="httpdoc-content" class="col-md-10">
+
+        </div>
+    </div>
+</div>
+</body>
+<script id="httpdoc-tag" type="text/html">
+    {{#.}}
+    <li><a href="javascript: httpdoc.show('{{.}}')">{{.}}</a></li>
+    {{/.}}
+</script>
+
+<script id="httpdoc-controller" type="text/html">
+    {{#.}}
+    <div>
+        <div class="page-header">
+            <h1>
+                {{name}}
+                <small>{{path}}</small>
+            </h1>
+        </div>
+        <h3><p class="text-muted">{{description}}</p></h3>
+        {{#operations}}
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <h3 data-toggle="collapse" href="#httpdoc-{{method}}-{{name}}">
+                        <label class="label label-{{method}}">{{method}}</label>
+                        {{path}}
+                    </h3>
+                </h4>
+            </div>
+            <div id="httpdoc-{{method}}-{{name}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <h4><p class="text-muted">{{description}}</p></h4>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#Documentation" data-toggle="tab">Documentation</a></li>
+                        <li><a href="#TryItOut" data-toggle="tab">Try it out</a></li>
+                    </ul>
+                    <div class="tab-content" style="border: 1px solid red;">
+                        <div class="tab-pane fade in active" id="Documentation">
+                            Documentation
+                        </div>
+                        <div class="tab-pane fade" id="TryItOut">
+                            TryItOut
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/operations}}
+    </div>
+    {{/.}}
+</script>
+
+<script src="./jquery-2.1.1.min.js"></script>
+<script src="./mustache.min-3.0.0.js"></script>
+<script src="./bootstrap-3.3.7.min.js"></script>
+<script src="./httpdoc-1.0.0.js"></script>
+<script type="text/javascript">
+    httpdoc.explore();
+</script>
+</html>
