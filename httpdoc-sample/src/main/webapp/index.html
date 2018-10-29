@@ -59,7 +59,7 @@
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <h3 data-toggle="collapse" href="#httpdoc-{{method}}-{{name}}">
-                        <label class="label label-{{method}}">{{method}}</label>
+                        <label class="label method-{{method}}">{{method}}</label>
                         {{path}}
                     </h3>
                 </h4>
@@ -67,17 +67,30 @@
             <div id="httpdoc-{{method}}-{{name}}" class="panel-collapse collapse">
                 <div class="panel-body">
                     <h4><p class="text-muted">{{description}}</p></h4>
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a href="#Documentation" data-toggle="tab">Documentation</a></li>
-                        <li><a href="#TryItOut" data-toggle="tab">Try it out</a></li>
-                    </ul>
-                    <div class="tab-content" style="border: 1px solid red;">
-                        <div class="tab-pane fade in active" id="Documentation">
-                            Documentation
-                        </div>
-                        <div class="tab-pane fade" id="TryItOut">
-                            TryItOut
-                        </div>
+                    <div class="row-fluid">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                                <th>Type</th>
+                                <th>Scope</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#parameters}}
+                            <tr>
+                                <td>{{name}}</td>
+                                <td><textarea class="form-control" name="{{name}}" style="resize: none; height: 200px;">{{value}}</textarea></td>
+                                <td>{{type}}</td>
+                                <td>{{scope}}</td>
+                                <td>{{description}}</td>
+                            </tr>
+                            {{/parameters}}
+                            </tbody>
+                        </table>
+                        <button class="btn method-{{method}}" style="color: white;"><b>Try it out</b></button>
                     </div>
                 </div>
             </div>

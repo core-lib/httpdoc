@@ -1,31 +1,31 @@
-.label-GET {
+.method-GET {
     background-color: #5cb85c
 }
 
-.label-GET[href]:focus, .label-GET[href]:hover {
+.method-GET[href]:focus, .method-GET[href]:hover {
     background-color: #449d44
 }
 
-.label-POST {
+.method-POST {
     background-color: #5bc0de
 }
 
-.label-POST[href]:focus, .label-POST[href]:hover {
+.method-POST[href]:focus, .method-POST[href]:hover {
     background-color: #31b0d5
 }
 
-.label-PUT {
+.method-PUT {
     background-color: #f0ad4e
 }
 
-.label-PUT[href]:focus, .label-PUT[href]:hover {
+.method-PUT[href]:focus, .method-PUT[href]:hover {
     background-color: #ec971f
 }
 
-.label-DELETE {
+.method-DELETE {
     background-color: #d9534f
 }
 
-.label-DELETE[href]:focus, .label-DELETE[href]:hover {
+.method-DELETE[href]:focus, .method-DELETE[href]:hover {
     background-color: #c9302c
 }
