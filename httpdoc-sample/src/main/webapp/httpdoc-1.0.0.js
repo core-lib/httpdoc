@@ -175,13 +175,13 @@ function HttpDoc() {
         }
         switch (type) {
             case "boolean":
-                return "true|false";
+                return "false";
             case "byte":
                 return "0";
             case "short":
                 return "0";
             case "char":
-                return "\" \"";
+                return "\"char\"";
             case "int":
                 return "0";
             case "float":
@@ -198,7 +198,7 @@ function HttpDoc() {
             case "Short":
                 return "0";
             case "Character":
-                return "\" \"";
+                return "\"char\"";
             case "Integer":
                 return "0";
             case "Float":
