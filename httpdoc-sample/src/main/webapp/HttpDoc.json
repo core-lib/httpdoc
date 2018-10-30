@@ -120,7 +120,7 @@
             {
               "name": "Access-Token",
               "scope": "header",
-              "type": "String",
+              "type": "String[]",
               "description": "身份凭证"
             },
             {

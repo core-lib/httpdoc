@@ -30,9 +30,7 @@
         <div class="col-md-2">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        Download SDK <b class="caret"></b>
-                    </a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Download SDK <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">Android</a></li>
                         <li><a href="#">iOS</a></li>
@@ -64,15 +62,15 @@
 </body>
 <script id="httpdoc-tag" type="text/html">
     {{#.}}
-    <li><a href="javascript: httpdoc.show('{{.}}')">{{.}}</a></li>
+    <li title="{{.}}"><a href="javascript: httpdoc.show('{{.}}')" class="text-nowrap" style="overflow: hidden;"><b>{{.}}</b></a></li>
     {{/.}}
 </script>
 
 <script id="httpdoc-affix" type="text/html">
     {{#.}}
-    <li><a href="#controller-{{id}}"><b>{{name}}</b></a></li>
+    <li title="{{name}}"><a href="#controller-{{id}}"><b>{{name}}</b></a></li>
     {{#operations}}
-    <li><a href="#operation-{{id}}"><label class="label method-{{method}}">{{method}}</label> {{path}}</a></li>
+    <li title="{{method}} {{path}}"><a href="#operation-{{id}}" class="text-nowrap"><label class="method-{{method}}">{{method}}</label> {{path}}</a></li>
     {{/operations}}
     {{/.}}
 </script>
@@ -91,8 +89,8 @@
         <div id="operation-{{id}}" class="panel panel-default">
             <div class="panel-heading" data-toggle="collapse" href="#httpdoc-{{id}}" style="cursor: pointer;">
                 <span class="panel-title">
-                    <label class="label method-{{method}}" style="cursor: pointer;">{{method}}</label>
-                    {{path}}
+                    <label class="method method-{{method}}" style="cursor: pointer;">{{method}}</label>
+                    <b>{{path}}</b>
                 </span>
                 <span class="glyphicon glyphicon-chevron-right pull-right" data-toggle="collapse" data-target="#httpdoc-{{id}}"></span>
             </div>
@@ -109,13 +107,28 @@
                                     <label class="label label-primary">{{scope}}</label>
                                     <h5 class="text-muted">{{type}}</h5>
                                 </td>
-                                <td width="60%"><textarea class="form-control" name="{{name}}">{{value}}</textarea></td>
+                                <td width="60%">
+                                    <div class="httpdoc-editor">
+                                        <textarea class="form-control" name="{{name}}">{{value}}</textarea>
+                                        <br/>
+                                    </div>
+                                    {{#array}}
+                                    <div>
+                                        <button class="btn btn-sm" onclick="httpdoc.doAddEditor(this);">
+                                            <span class="glyphicon glyphicon-plus"><b>&nbsp;Add</b></span>
+                                        </button>
+                                        <button class="btn btn-sm" onclick="httpdoc.doDelEditor(this);">
+                                            <span class="glyphicon glyphicon-minus"><b>&nbsp;Del</b></span>
+                                        </button>
+                                    </div>
+                                    {{/array}}
+                                </td>
                                 <td width="20%">{{description}}</td>
                             </tr>
                             {{/parameters}}
                             </tbody>
                         </table>
-                        <button class="btn method-{{method}}" style="color: white; float: right; width: 100%;"><b>Try it out</b></button>
+                        <button class="btn btn-{{method}}" style="color: white; float: right; width: 100%;"><b>Try it out</b></button>
                     </div>
                 </div>
             </div>

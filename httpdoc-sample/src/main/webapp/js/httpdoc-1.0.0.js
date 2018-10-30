@@ -58,6 +58,17 @@ function HttpDoc() {
                 }
             });
         });
+
+        DOC.controllers.forEach(function (controller) {
+            controller.operations.forEach(function (operation) {
+                operation.parameters.forEach(function (parameter) {
+                    var type = parameter.type;
+                    var array = type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX);
+                    parameter.array = array;
+                });
+            });
+        });
+
         REF_PREFIX = doc.refPrefix ? doc.refPrefix : REF_PREFIX;
         REF_SUFFIX = doc.refSuffix ? doc.refSuffix : REF_SUFFIX;
         MAP_PREFIX = doc.mapPrefix ? doc.mapPrefix : MAP_PREFIX;
@@ -116,6 +127,7 @@ function HttpDoc() {
                     else parameter.resolved = true;
 
                     var type = parameter.type;
+
                     parameter.value = this.toJSONString(0, type, true);
                 }
             }
@@ -125,19 +137,12 @@ function HttpDoc() {
             var tpl = $("#httpdoc-affix").html();
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-scrollspy").html(html);
-
-            $("#httpdoc-scrollspy").affix({
-                offset: {
-                    top: 125
-                }
-            });
         }
 
         {
             var tpl = $("#httpdoc-controller").html();
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-content").html(html);
-
             autosize($('textarea'));
         }
     };
@@ -239,7 +244,7 @@ function HttpDoc() {
             case "Date":
                 return "\"date\"";
             default:
-                return "\"\"";
+                return "\"unknown\"";
         }
     };
 
@@ -248,6 +253,16 @@ function HttpDoc() {
         this.renderControllers(controllers);
     };
 
+    this.doAddEditor = function (btn) {
+        var $editor = $(btn).parent().parent().find(".httpdoc-editor:last").clone();
+        $(btn).parent().before($editor);
+    };
+
+    this.doDelEditor = function (btn) {
+        var $editors = $(btn).parent().parent().find(".httpdoc-editor");
+        if ($editors.length === 1) return;
+        $(btn).parent().parent().find(".httpdoc-editor:last").remove();
+    };
 }
 
 window.httpdoc = new HttpDoc();

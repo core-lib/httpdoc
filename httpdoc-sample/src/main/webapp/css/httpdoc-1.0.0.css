@@ -1,32 +1,71 @@
+.method {
+    min-width: 72px;
+    border-radius: 3px;
+    color: white;
+    text-align: center;
+}
+
 .method-GET {
-    background-color: #5cb85c
+    color: #5cb85c
 }
 
 .method-GET[href]:focus, .method-GET[href]:hover {
-    background-color: #449d44
+    color: #449d44
 }
 
 .method-POST {
-    background-color: #5bc0de
+    color: #5bc0de
 }
 
 .method-POST[href]:focus, .method-POST[href]:hover {
-    background-color: #31b0d5
+    color: #31b0d5
 }
 
 .method-PUT {
-    background-color: #f0ad4e
+    color: #f0ad4e
 }
 
 .method-PUT[href]:focus, .method-PUT[href]:hover {
-    background-color: #ec971f
+    color: #ec971f
 }
 
 .method-DELETE {
-    background-color: #d9534f
+    color: #d9534f
 }
 
 .method-DELETE[href]:focus, .method-DELETE[href]:hover {
+    color: #c9302c
+}
+
+.btn-GET {
+    background-color: #5cb85c
+}
+
+.btn-GET[href]:focus, .btn-GET[href]:hover {
+    background-color: #449d44
+}
+
+.btn-POST {
+    background-color: #5bc0de
+}
+
+.btn-POST[href]:focus, .btn-POST[href]:hover {
+    background-color: #31b0d5
+}
+
+.btn-PUT {
+    background-color: #f0ad4e
+}
+
+.btn-PUT[href]:focus, .btn-PUT[href]:hover {
+    background-color: #ec971f
+}
+
+.btn-DELETE {
+    background-color: #d9534f
+}
+
+.btn-DELETE[href]:focus, .btn-DELETE[href]:hover {
     background-color: #c9302c
 }
 
