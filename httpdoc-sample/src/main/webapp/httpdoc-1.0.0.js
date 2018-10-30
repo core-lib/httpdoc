@@ -137,6 +137,7 @@ function HttpDoc() {
 
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             json += "[\n";
+            for (var i = 0; i < indent + 1; i++) json += INDENT;
             json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length));
             json += "\n";
             for (var i = 0; i < indent; i++) json += INDENT;
@@ -168,7 +169,6 @@ function HttpDoc() {
             // 自定义类型
             else {
                 var properties = schema.properties;
-                for (var i = 0; i < indent; i++) json += INDENT;
                 json += "{\n";
                 var index = 0;
                 for (var key in properties) {
