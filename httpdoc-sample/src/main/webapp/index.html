@@ -87,9 +87,10 @@
 
 <script id="httpdoc-operation" type="text/html">
     {{#.}}
+    <hr>
     <li title="{{name}}"><a href="#controller-{{id}}"><b>{{name}}</b></a></li>
     {{#operations}}
-    <li title="{{method}} {{path}}"><a href="#operation-{{id}}" class="text-nowrap"><label class="method-{{method}}">{{method}}</label> {{path}}</a></li>
+    <li title="{{method}} {{path}}"><a href="#operation-{{id}}" class="text-nowrap"><label class="method method-{{method}}">{{method}}</label> {{path}}</a></li>
     {{/operations}}
     {{/.}}
 </script>
