@@ -120,7 +120,7 @@
             {
               "name": "Access-Token",
               "scope": "header",
-              "type": "String",
+              "type": "String[]",
               "description": "身份凭证"
             },
             {
@@ -1487,7 +1487,7 @@
       "superclass": "Object",
       "properties": {
         "data": {
-          "type": "String[]"
+          "type": "Date"
         },
         "type": {
           "type": "String"

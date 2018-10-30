@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/httpdoc-1.0.0.css">
     <script src="js/autosize-4.0.2.js"></script>
 </head>
-<body data-spy="scroll" data-target="#httpdoc-scrollspy">
+<body data-spy="scroll" data-target="#httpdoc-operations">
 <!-- Fixed navbar -->
 <nav class="navbar navbar-default" role="navigation" style="border-radius: 0; border-width: 0 0 1px 0;">
     <div class="container-fluid">
@@ -45,15 +45,28 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
-            <ul id="httpdoc-navigation" class="nav nav-stacked">
+            <ul id="httpdoc-tags" class="nav nav-stacked">
 
             </ul>
         </div>
-        <div id="httpdoc-content" class="col-md-8">
+        <div class="col-md-8">
+            <div id="httpdoc-controllers">
 
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" href="#panel-models" style="cursor: pointer;">
+                    <span class="panel-title">Models</span>
+                    <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                </div>
+                <div id="panel-models" class="panel-collapse collapse">
+                    <div id="httpdoc-models" class="panel-body">
+
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-2">
-            <ul id="httpdoc-scrollspy" class="nav nav-stacked" data-spy="affix">
+            <ul id="httpdoc-operations" class="nav nav-stacked" data-spy="affix">
 
             </ul>
         </div>
@@ -62,17 +75,27 @@
 </body>
 <script id="httpdoc-tag" type="text/html">
     {{#.}}
-    <li title="{{.}}"><a href="javascript: httpdoc.show('{{.}}')" class="text-nowrap" style="overflow: hidden;"><b>{{.}}</b></a></li>
+    <li title="{{.}}"><a href="javascript: httpdoc.show('{{.}}');" class="text-nowrap" style="overflow: hidden;"><b>{{.}}</b></a></li>
     {{/.}}
 </script>
 
-<script id="httpdoc-affix" type="text/html">
+<script id="httpdoc-schema" type="text/html">
+    {{#.}}
+    <li title="{{name}}"><a href="#schema-{{name}}" class="text-nowrap" style="overflow: hidden;"><b>{{name}}</b></a></li>
+    {{/.}}
+</script>
+
+<script id="httpdoc-operation" type="text/html">
     {{#.}}
     <li title="{{name}}"><a href="#controller-{{id}}"><b>{{name}}</b></a></li>
     {{#operations}}
     <li title="{{method}} {{path}}"><a href="#operation-{{id}}" class="text-nowrap"><label class="method-{{method}}">{{method}}</label> {{path}}</a></li>
     {{/operations}}
     {{/.}}
+</script>
+
+<script id="httpdoc-model" type="text/html">
+
 </script>
 
 <script id="httpdoc-controller" type="text/html">
@@ -92,9 +115,10 @@
                     <label class="method method-{{method}}" style="cursor: pointer;">{{method}}</label>
                     <b>{{path}}</b>
                 </span>
-                <span class="glyphicon glyphicon-chevron-right pull-right" data-toggle="collapse" data-target="#httpdoc-{{id}}"></span>
+                <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                <span class="text-muted pull-right">&nbsp;&nbsp;{{description}}&nbsp;&nbsp;</span>
             </div>
-            <div id="httpdoc-{{id}}" class="panel-collapse collapse in">
+            <div id="httpdoc-{{id}}" class="panel-collapse collapse">
                 <div class="panel-body">
                     <h4><p class="text-muted">{{description}}</p></h4>
                     <div class="row-fluid">
@@ -108,27 +132,43 @@
                                     <h5 class="text-muted">{{type}}</h5>
                                 </td>
                                 <td width="60%">
-                                    <div class="httpdoc-editor">
-                                        <textarea class="form-control" name="{{name}}">{{value}}</textarea>
-                                        <br/>
-                                    </div>
-                                    {{#array}}
-                                    <div>
-                                        <button class="btn btn-sm" onclick="httpdoc.doAddEditor(this);">
-                                            <span class="glyphicon glyphicon-plus"><b>&nbsp;Add</b></span>
-                                        </button>
-                                        <button class="btn btn-sm" onclick="httpdoc.doDelEditor(this);">
-                                            <span class="glyphicon glyphicon-minus"><b>&nbsp;Del</b></span>
-                                        </button>
-                                    </div>
-                                    {{/array}}
+                                    <textarea class="form-control autosize" name="{{name}}">{{value}}</textarea>
                                 </td>
                                 <td width="20%">{{description}}</td>
                             </tr>
                             {{/parameters}}
                             </tbody>
                         </table>
-                        <button class="btn btn-{{method}}" style="color: white; float: right; width: 100%;"><b>Try it out</b></button>
+                        <button class="btn btn-{{method}}" style="color: white; width: 100%;"><b>Try it out</b></button>
+                        <br/><br/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" data-toggle="collapse" href="#httpdoc-expect-result-{{id}}" style="cursor: pointer;">
+                                        <span class="panel-title">Example</span>
+                                        <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                                    </div>
+                                    <div id="httpdoc-expect-result-{{id}}" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <textarea class="form-control autosize" readonly>{{result.value}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" data-toggle="collapse" href="#httpdoc-actual-result-{{id}}" style="cursor: pointer;">
+                                        <span class="panel-title">Result</span>
+                                        <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                                    </div>
+                                    <div id="httpdoc-actual-result-{{id}}" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <textarea class="form-control autosize" readonly>{{result.value}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

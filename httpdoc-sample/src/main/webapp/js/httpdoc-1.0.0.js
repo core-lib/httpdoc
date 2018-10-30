@@ -6,6 +6,21 @@ String.prototype.endsWith = function (suffix) {
     return this.length >= suffix.length && this.substring(this.length - suffix.length) === suffix;
 };
 
+Date.prototype.format = function (pattern) {
+    var o = {
+        "M+": this.getMonth() + 1,                      //月份
+        "d+": this.getDate(),                           //日
+        "H+": this.getHours(),                          //小时
+        "m+": this.getMinutes(),                        //分
+        "s+": this.getSeconds(),                        //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3),    //季度
+        "S": this.getMilliseconds()                     //毫秒
+    };
+    if (/(y+)/.test(pattern)) pattern = pattern.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o) if (new RegExp("(" + k + ")").test(pattern)) pattern = pattern.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return pattern;
+};
+
 function HttpDoc() {
     var DOC = {};
     var MAP = {};
@@ -59,16 +74,6 @@ function HttpDoc() {
             });
         });
 
-        DOC.controllers.forEach(function (controller) {
-            controller.operations.forEach(function (operation) {
-                operation.parameters.forEach(function (parameter) {
-                    var type = parameter.type;
-                    var array = type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX);
-                    parameter.array = array;
-                });
-            });
-        });
-
         REF_PREFIX = doc.refPrefix ? doc.refPrefix : REF_PREFIX;
         REF_SUFFIX = doc.refSuffix ? doc.refSuffix : REF_SUFFIX;
         MAP_PREFIX = doc.mapPrefix ? doc.mapPrefix : MAP_PREFIX;
@@ -80,19 +85,38 @@ function HttpDoc() {
             var schema = DOC.schemas[name];
             schema.properties = this.properties(schema);
         }
+
+        {
+            var tpl = $("#httpdoc-schema").html();
+            var schemas = [];
+            for (var name in DOC.schemas) {
+                var schema = DOC.schemas[name];
+                schema.name = name;
+                schemas.push(schema);
+            }
+            var html = Mustache.render(tpl, schemas);
+            $("#httpdoc-schemas").html(html);
+        }
     };
 
     this.properties = function (schema) {
-        if (schema.constants) return null;
+        if (schema.constants) return {};
 
         var superclass = schema.superclass;
-        var properties = schema.properties ? schema.properties : {};
+        var properties = {};
         if (superclass && superclass.startsWith(REF_PREFIX) && superclass.endsWith(REF_SUFFIX)) {
             var name = superclass.substring(REF_PREFIX.length, superclass.length - REF_SUFFIX.length);
             var scm = DOC.schemas[name];
             var props = this.properties(scm);
-            for (var key in props) properties[key] = props[key];
+            for (var key in props) {
+                properties[key] = props[key];
+            }
         }
+
+        for (var key in schema.properties ? schema.properties : {}) {
+            properties[key] = schema.properties[key];
+        }
+
         return properties;
     };
 
@@ -111,7 +135,7 @@ function HttpDoc() {
         for (var tag in MAP) tags.push(tag);
         var tpl = $("#httpdoc-tag").html();
         var html = Mustache.render(tpl, tags);
-        $("#httpdoc-navigation").html(html);
+        $("#httpdoc-tags").html(html);
     };
 
     this.renderControllers = function (controllers) {
@@ -130,21 +154,36 @@ function HttpDoc() {
 
                     parameter.value = this.toJSONString(0, type, true);
                 }
+
+                var result = operation.result;
+                var type = result.type;
+                result.value = this.toJSONString(0, type, true);
             }
         }
 
         {
-            var tpl = $("#httpdoc-affix").html();
+            var tpl = $("#httpdoc-operation").html();
             var html = Mustache.render(tpl, controllers);
-            $("#httpdoc-scrollspy").html(html);
+            $("#httpdoc-operations").html(html);
         }
 
         {
             var tpl = $("#httpdoc-controller").html();
             var html = Mustache.render(tpl, controllers);
-            $("#httpdoc-content").html(html);
-            autosize($('textarea'));
+            $("#httpdoc-controllers").html(html);
         }
+
+        $(".collapse").on("shown.bs.collapse", function () {
+            autosize($(this).find("textarea.autosize"));
+        });
+
+        $(".collapse").on("show.bs.collapse", function () {
+            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+        });
+
+        $(".collapse").on("hide.bs.collapse", function () {
+            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+        });
     };
 
     this.toJSONString = function (indent, type, doc) {
@@ -242,7 +281,7 @@ function HttpDoc() {
             case "Number":
                 return "0.0";
             case "Date":
-                return "\"date\"";
+                return "\"" + new Date().format('yyyy-MM-dd HH:mm:ss') + "\"";
             default:
                 return "\"unknown\"";
         }
@@ -251,17 +290,6 @@ function HttpDoc() {
     this.show = function (tag) {
         var controllers = MAP[tag];
         this.renderControllers(controllers);
-    };
-
-    this.doAddEditor = function (btn) {
-        var $editor = $(btn).parent().parent().find(".httpdoc-editor:last").clone();
-        $(btn).parent().before($editor);
-    };
-
-    this.doDelEditor = function (btn) {
-        var $editors = $(btn).parent().parent().find(".httpdoc-editor");
-        if ($editors.length === 1) return;
-        $(btn).parent().parent().find(".httpdoc-editor:last").remove();
     };
 }
 

@@ -77,12 +77,17 @@ textarea {
     font-weight: 600;
 }
 
-#httpdoc-navigation {
+#httpdoc-tags {
     border: 1px solid #f1f1f1;
     border-radius: 3px;
 }
 
-#httpdoc-scrollspy {
+#httpdoc-schemas {
+    border: 1px solid #f1f1f1;
+    border-radius: 3px;
+}
+
+#httpdoc-operations {
     border: 1px solid #f1f1f1;
     border-radius: 3px;
     max-height: 80%;
