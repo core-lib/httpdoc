@@ -7,15 +7,18 @@
     <link rel="stylesheet" href="./httpdoc-1.0.0.css">
     <script src="autosize-4.0.2.js"></script>
 </head>
-<body>
+<body data-spy="scroll" data-target="#scrollspy">
 <!-- Fixed navbar -->
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default" role="navigation" style="border-radius: 0; border-width: 0 0 1px 0;">
     <div class="container-fluid">
         <div class="navbar-header col-md-2">
-            <a class="navbar-brand" href="#">HttpDoc</a>
+            <a class="navbar-brand">
+                HttpDoc
+                <span class="badge">1.0.0</span>
+            </a>
         </div>
-        <div class="col-md-10">
-            <div class="navbar-form navbar-right">
+        <div class="col-md-8">
+            <div class="navbar-form">
                 <div class="input-group">
                     <input id="httpdoc-url" type="text" class="form-control" value="http://localhost:8080/httpdoc-sample/HttpDoc.json" placeholder="http://localhost/httpdoc.json">
                     <span class="input-group-btn">
@@ -24,17 +27,36 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-2">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Download SDK <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Android</a></li>
+                        <li><a href="#">iOS</a></li>
+                        <li><a href="#">Jestful</a></li>
+                        <li><a href="#">Retrofit</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2" style="border-right: 1px solid #f1f1f1;">
-            <ul id="httpdoc-navigation" class="nav nav-stacked">
+        <div class="col-md-2">
+            <ul id="httpdoc-navigation" class="nav nav-stacked" style="border-right: 1px solid #f1f1f1;">
 
             </ul>
         </div>
-        <div id="httpdoc-content" class="col-md-10">
+        <div id="httpdoc-content" class="col-md-8">
 
+        </div>
+        <div class="col-md-2">
+            <ul id="scrollspy" class="nav nav-stacked" data-spy="affix" style="border-left: 1px solid #f1f1f1;">
+            </ul>
         </div>
     </div>
 </div>
@@ -45,9 +67,18 @@
     {{/.}}
 </script>
 
+<script id="httpdoc-affix" type="text/html">
+    {{#.}}
+    <li><a href="#controller-{{name}}"><b>{{name}}</b></a></li>
+    {{#operations}}
+    <li><a href="#operation-{{method}}-{{name}}"><label class="label method-{{method}}">{{method}}</label> {{path}}</a></li>
+    {{/operations}}
+    {{/.}}
+</script>
+
 <script id="httpdoc-controller" type="text/html">
     {{#.}}
-    <div>
+    <div id="controller-{{name}}">
         <div class="page-header">
             <h1>
                 {{name}}
@@ -56,14 +87,12 @@
         </div>
         <h3><p class="text-muted">{{description}}</p></h3>
         {{#operations}}
-        <div class="panel">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <h3 data-toggle="collapse" href="#httpdoc-{{method}}-{{name}}">
-                        <label class="label method-{{method}}">{{method}}</label>
-                        {{path}}
-                    </h3>
-                </h4>
+        <div id="operation-{{method}}-{{name}}" class="panel panel-default">
+            <div class="panel-heading" data-toggle="collapse" href="#httpdoc-{{method}}-{{name}}">
+                <span class="panel-title">
+                    <label class="label method-{{method}}">{{method}}</label>
+                    {{path}}
+                </span>
             </div>
             <div id="httpdoc-{{method}}-{{name}}" class="panel-collapse collapse in">
                 <div class="panel-body">

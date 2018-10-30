@@ -111,11 +111,19 @@ function HttpDoc() {
             }
         }
 
-        var tpl = $("#httpdoc-controller").html();
-        var html = Mustache.render(tpl, controllers);
-        $("#httpdoc-content").html(html);
+        {
+            var tpl = $("#httpdoc-affix").html();
+            var html = Mustache.render(tpl, controllers);
+            $("#scrollspy").html(html);
+        }
 
-        autosize($('textarea'));
+        {
+            var tpl = $("#httpdoc-controller").html();
+            var html = Mustache.render(tpl, controllers);
+            $("#httpdoc-content").html(html);
+
+            autosize($('textarea'));
+        }
     };
 
     this.toJSONString = function (indent, type, doc) {
