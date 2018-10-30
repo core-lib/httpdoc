@@ -29,3 +29,11 @@
 .method-DELETE[href]:focus, .method-DELETE[href]:hover {
     background-color: #c9302c
 }
+
+textarea {
+    resize: none;
+    font-size: 12px !important;
+    outline: none;
+    font-family: monospace;
+    font-weight: 600;
+}

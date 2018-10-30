@@ -5,6 +5,7 @@
     <title>HttpDoc UI</title>
     <link rel="stylesheet" href="./bootstrap-3.3.7.min.css">
     <link rel="stylesheet" href="./httpdoc-1.0.0.css">
+    <script src="autosize-4.0.2.js"></script>
 </head>
 <body>
 <!-- Fixed navbar -->
@@ -64,33 +65,33 @@
                     </h3>
                 </h4>
             </div>
-            <div id="httpdoc-{{method}}-{{name}}" class="panel-collapse collapse">
+            <div id="httpdoc-{{method}}-{{name}}" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <h4><p class="text-muted">{{description}}</p></h4>
                     <div class="row-fluid">
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Value</th>
-                                <th>Type</th>
-                                <th>Scope</th>
-                                <th>Description</th>
+                                <th width="20%">Name</th>
+                                <th width="60%">Value</th>
+                                <th width="20%">Description</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#parameters}}
                             <tr>
-                                <td>{{name}}</td>
-                                <td><textarea class="form-control" name="{{name}}" style="resize: none; height: 200px;">{{value}}</textarea></td>
-                                <td>{{type}}</td>
-                                <td>{{scope}}</td>
+                                <td>
+                                    <h5>{{name}}</h5>
+                                    <label class="label label-primary">{{scope}}</label>
+                                    <h5 class="text-muted">{{type}}</h5>
+                                </td>
+                                <td><textarea class="form-control" name="{{name}}">{{value}}</textarea></td>
                                 <td>{{description}}</td>
                             </tr>
                             {{/parameters}}
                             </tbody>
                         </table>
-                        <button class="btn method-{{method}}" style="color: white;"><b>Try it out</b></button>
+                        <button class="btn method-{{method}}" style="color: white; float: right; width: 100%;"><b>Try it out</b></button>
                     </div>
                 </div>
             </div>
@@ -103,6 +104,7 @@
 <script src="./jquery-2.1.1.min.js"></script>
 <script src="./mustache.min-3.0.0.js"></script>
 <script src="./bootstrap-3.3.7.min.js"></script>
+<script src="./autosize-4.0.2.js"></script>
 <script src="./httpdoc-1.0.0.js"></script>
 <script type="text/javascript">
     httpdoc.explore();

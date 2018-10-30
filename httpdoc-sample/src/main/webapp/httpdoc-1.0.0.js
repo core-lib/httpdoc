@@ -1,3 +1,11 @@
+String.prototype.startsWith = function (prefix) {
+    return this.length >= prefix.length && this.substring(0, prefix.length) === prefix;
+};
+
+String.prototype.endsWith = function (suffix) {
+    return this.length >= suffix.length && this.substring(this.length - suffix.length) === suffix;
+};
+
 function HttpDoc() {
     var DOC = {};
     var MAP = {};
@@ -7,6 +15,7 @@ function HttpDoc() {
     var MAP_SUFFIX = ">";
     var ARR_PREFIX = "";
     var ARR_SUFFIX = "[]";
+    var INDENT = "    ";
 
     this.explore = function () {
         var self = this;
@@ -49,14 +58,6 @@ function HttpDoc() {
         for (var name in DOC.schemas) {
             var schema = DOC.schemas[name];
             schema.properties = this.properties(schema);
-        }
-
-        String.prototype.startsWith = function (prefix) {
-            return this.length >= prefix.length && this.substring(0, prefix.length) === prefix;
-        };
-
-        String.prototype.endsWith = function (suffix) {
-            return this.length >= suffix.length && this.substring(this.length - suffix.length) === suffix;
         }
     };
 
@@ -105,7 +106,7 @@ function HttpDoc() {
                     else parameter.resolved = true;
 
                     var type = parameter.type;
-                    parameter.value = this.toJSONString(0, type);
+                    parameter.value = this.toJSONString(0, type, true);
                 }
             }
         }
@@ -113,21 +114,25 @@ function HttpDoc() {
         var tpl = $("#httpdoc-controller").html();
         var html = Mustache.render(tpl, controllers);
         $("#httpdoc-content").html(html);
+
+        autosize($('textarea'));
     };
 
-    this.toJSONString = function (indent, type) {
+    this.toJSONString = function (indent, type, doc) {
         var json = "";
 
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             json += "[\n";
             json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length));
-            json += "\n]";
+            json += "\n";
+            for (var i = 0; i < indent; i++) json += INDENT;
+            json += "]";
             return json;
         }
 
         if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
             json += "{\n";
-            json += "    \"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length));
+            json += "\"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length));
             json += "\n}";
             return json;
         }
@@ -149,21 +154,69 @@ function HttpDoc() {
             // 自定义类型
             else {
                 var properties = schema.properties;
+                for (var i = 0; i < indent; i++) json += INDENT;
                 json += "{\n";
                 var index = 0;
                 for (var key in properties) {
                     if (index++ > 0) json += ",\n";
-                    json += "    \"" + key + "\": ";
+                    if (doc && properties[key].description) {
+                        for (var i = 0; i < indent + 1; i++) json += INDENT;
+                        json += "// " + properties[key].description + "\n";
+                    }
+                    for (var i = 0; i < indent + 1; i++) json += INDENT;
+                    json += "\"" + key + "\": ";
                     json += this.toJSONString(indent + 1, properties[key].type);
                 }
-                json += "\n}";
+                json += "\n";
+                for (var i = 0; i < indent; i++) json += INDENT;
+                json += "}";
                 return json;
             }
-
-            return json;
         }
+        switch (type) {
+            case "boolean":
+                return "true|false";
+            case "byte":
+                return "0";
+            case "short":
+                return "0";
+            case "char":
+                return "\" \"";
+            case "int":
+                return "0";
+            case "float":
+                return "0.0";
+            case "long":
+                return "0";
+            case "double":
+                return "0.0";
 
-        return "\"" + type + "\"";
+            case "Boolean":
+                return "false";
+            case "Byte":
+                return "0";
+            case "Short":
+                return "0";
+            case "Character":
+                return "\" \"";
+            case "Integer":
+                return "0";
+            case "Float":
+                return "0.0";
+            case "Long":
+                return "0";
+            case "Double":
+                return "0.0";
+
+            case "String":
+                return "\"string\"";
+            case "Number":
+                return "0.0";
+            case "Date":
+                return "\"date\"";
+            default:
+                return "\"\"";
+        }
     };
 
     this.show = function (tag) {
