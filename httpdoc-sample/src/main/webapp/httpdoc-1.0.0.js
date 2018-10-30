@@ -114,7 +114,13 @@ function HttpDoc() {
         {
             var tpl = $("#httpdoc-affix").html();
             var html = Mustache.render(tpl, controllers);
-            $("#scrollspy").html(html);
+            $("#httpdoc-scrollspy").html(html);
+
+            $("#httpdoc-scrollspy").affix({
+                offset: {
+                    top: 125
+                }
+            });
         }
 
         {

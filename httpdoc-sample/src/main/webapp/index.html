@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./httpdoc-1.0.0.css">
     <script src="autosize-4.0.2.js"></script>
 </head>
-<body data-spy="scroll" data-target="#scrollspy">
+<body data-spy="scroll" data-target="#httpdoc-scrollspy">
 <!-- Fixed navbar -->
 <nav class="navbar navbar-default" role="navigation" style="border-radius: 0; border-width: 0 0 1px 0;">
     <div class="container-fluid">
@@ -55,7 +55,8 @@
 
         </div>
         <div class="col-md-2">
-            <ul id="scrollspy" class="nav nav-stacked" data-spy="affix" style="border-left: 1px solid #f1f1f1;">
+            <ul id="httpdoc-scrollspy" class="nav nav-stacked" data-spy="affix" style="border-left: 1px solid #f1f1f1;">
+
             </ul>
         </div>
     </div>
@@ -81,7 +82,7 @@
     <div id="controller-{{name}}">
         <div class="page-header">
             <h1>
-                {{name}}
+                <b>{{name}}</b>
                 <small>{{path}}</small>
             </h1>
         </div>
