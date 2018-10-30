@@ -38,6 +38,16 @@ function HttpDoc() {
 
     this.init = function (doc) {
         DOC = doc;
+
+        // 给对象取一个唯一标识
+        var id = 0;
+        DOC.controllers.forEach(function (controller) {
+            controller.id = id++;
+            controller.operations.forEach(function (operation) {
+                operation.id = id++;
+            });
+        });
+
         DOC.controllers.forEach(function (controller) {
             controller.tags.forEach(function (tag) {
                 var controllers = MAP[tag];

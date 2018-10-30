@@ -1,0 +1,72 @@
+.method-GET {
+    background-color: #5cb85c
+}
+
+.method-GET[href]:focus, .method-GET[href]:hover {
+    background-color: #449d44
+}
+
+.method-POST {
+    background-color: #5bc0de
+}
+
+.method-POST[href]:focus, .method-POST[href]:hover {
+    background-color: #31b0d5
+}
+
+.method-PUT {
+    background-color: #f0ad4e
+}
+
+.method-PUT[href]:focus, .method-PUT[href]:hover {
+    background-color: #ec971f
+}
+
+.method-DELETE {
+    background-color: #d9534f
+}
+
+.method-DELETE[href]:focus, .method-DELETE[href]:hover {
+    background-color: #c9302c
+}
+
+textarea {
+    resize: none;
+    font-size: 12px !important;
+    outline: none;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+#httpdoc-navigation {
+    border: 1px solid #f1f1f1;
+    border-radius: 3px;
+}
+
+#httpdoc-scrollspy {
+    border: 1px solid #f1f1f1;
+    border-radius: 3px;
+    max-height: 80%;
+    overflow-y: auto;
+}
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    background-color: #F5F5F5;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #555;
+}

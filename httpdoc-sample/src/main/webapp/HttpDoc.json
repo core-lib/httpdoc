@@ -210,7 +210,7 @@
         }
       ],
       "tags": [
-        "BasicDataController"
+        "基础数据"
       ]
     },
     {
@@ -314,7 +314,7 @@
         }
       ],
       "tags": [
-        "ColorController"
+        "基础数据"
       ]
     },
     {
@@ -535,7 +535,7 @@
         }
       ],
       "tags": [
-        "LngController"
+        "基础数据"
       ]
     },
     {
@@ -951,7 +951,7 @@
         }
       ],
       "tags": [
-        "SizeController"
+        "基础数据"
       ]
     },
     {
