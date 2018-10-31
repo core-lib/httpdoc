@@ -36,6 +36,7 @@ public class Schema extends Definition {
     private Schema owner;
     private Set<Constant> constants = new LinkedHashSet<>();
     private Collection<Schema> dependencies = new ArrayList<>();
+    private String summary;
 
     public Schema() {
     }
@@ -71,6 +72,7 @@ public class Schema extends Definition {
                         this.constants.add(constant);
                     }
                     ClassInterpretation interpretation = interpreter.interpret(clazz);
+                    this.summary = interpretation != null ? interpretation.getSummary() : null;
                     this.description = interpretation != null ? interpretation.getContent() : null;
                 } else {
                     this.category = Category.OBJECT;
@@ -99,6 +101,7 @@ public class Schema extends Definition {
                         this.properties.put(name, property);
                     }
                     ClassInterpretation interpretation = interpreter.interpret(clazz);
+                    this.summary = interpretation != null ? interpretation.getSummary() : null;
                     this.description = interpretation != null ? interpretation.getContent() : null;
                 }
             } else if (type instanceof ParameterizedType) {
@@ -144,6 +147,7 @@ public class Schema extends Definition {
                             this.properties.put(field, property);
                         }
                         ClassInterpretation interpretation = interpreter.interpret(clazz);
+                        this.summary = interpretation != null ? interpretation.getSummary() : null;
                         this.description = interpretation != null ? interpretation.getContent() : null;
                         cache.remove(type);
                         cache.put(clazz, this);
@@ -354,6 +358,14 @@ public class Schema extends Definition {
 
     public void setDependencies(Collection<Schema> dependencies) {
         this.dependencies = dependencies;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @Override

@@ -63,6 +63,22 @@ function HttpDoc() {
             });
         });
 
+        // 补全Operation的summary信息，方便Mustache渲染时取了Controller的summary
+        DOC.controllers.forEach(function (controller) {
+            controller.operations.forEach(function (operation) {
+                operation.summary = operation.summary ? operation.summary : "";
+            });
+        });
+
+        // 补全Operation的path信息，方便Mustache渲染时取了Controller的path
+        DOC.controllers.forEach(function (controller) {
+            controller.operations.forEach(function (operation) {
+                var cPath = controller.path;
+                var oPath = operation.path;
+                operation.path = "" + (cPath ? cPath : "") + (oPath ? oPath : "");
+            });
+        });
+
         DOC.controllers.forEach(function (controller) {
             controller.tags.forEach(function (tag) {
                 var controllers = MAP[tag];

@@ -105,10 +105,10 @@
         <div class="page-header">
             <h1>
                 <b>{{name}}</b>
-                <small>{{path}}</small>
+                <small>{{summary}}</small>
             </h1>
         </div>
-        <h3><p class="text-muted">{{description}}</p></h3>
+        <h5><p class="text-muted">{{description}}</p></h5>
         {{#operations}}
         <div id="operation-{{id}}" class="panel panel-default">
             <div class="panel-heading" data-toggle="collapse" href="#httpdoc-{{id}}" style="cursor: pointer;">
@@ -117,11 +117,11 @@
                     <b>{{path}}</b>
                 </span>
                 <span class="glyphicon glyphicon-chevron-down pull-right"></span>
-                <span class="text-muted pull-right">&nbsp;&nbsp;{{description}}&nbsp;&nbsp;</span>
+                <span class="text-muted pull-right">&nbsp;&nbsp;{{summary}}&nbsp;&nbsp;</span>
             </div>
             <div id="httpdoc-{{id}}" class="panel-collapse collapse">
                 <div class="panel-body">
-                    <h4><p class="text-muted">{{description}}</p></h4>
+                    <h5><p class="text-muted">{{description}}</p></h5>
                     <div class="row-fluid">
                         <table class="table table-bordered table-hover" style="border-radius: 3px;">
                             <tbody>

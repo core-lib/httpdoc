@@ -198,6 +198,16 @@ public class ObjCSchema extends Schema {
     }
 
     @Override
+    public String getSummary() {
+        return schema.getSummary();
+    }
+
+    @Override
+    public void setSummary(String summary) {
+        schema.setSummary(summary);
+    }
+
+    @Override
     public String getDescription() {
         return schema.getDescription();
     }

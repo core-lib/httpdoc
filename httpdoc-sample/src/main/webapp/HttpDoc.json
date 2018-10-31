@@ -1086,12 +1086,14 @@
           "tags": [
             "TaskController"
           ],
+          "summary": "执行",
           "description": "催促任务立刻执行"
         }
       ],
       "tags": [
         "TaskController"
       ],
+      "summary": "任务",
       "description": "任务管理器"
     },
     {

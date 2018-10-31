@@ -278,6 +278,8 @@ public class StandardConverter implements Converter {
                 if (!m.isEmpty()) map.put("properties", m);
                 break;
         }
+        String summary = schema.getSummary();
+        if (!StringKit.isBlank(summary)) map.put("summary", summary);
         String description = schema.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
         return map;
@@ -417,6 +419,9 @@ public class StandardConverter implements Converter {
         } else {
             schema.setProperties(null);
         }
+
+        String summary = (String) definition.get("summary");
+        schema.setSummary(summary);
 
         String description = (String) definition.get("description");
         schema.setDescription(description);
