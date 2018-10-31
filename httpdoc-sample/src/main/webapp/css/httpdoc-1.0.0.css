@@ -162,6 +162,8 @@
 
 .button {
     background-color: silver;
+    color: white !important;
+    width: 100%;
 }
 
 .button-GET {

@@ -343,6 +343,15 @@ function HttpDoc() {
         var controllers = MAP[tag];
         this.renderControllers(controllers);
     };
+
+    this.submit = function (btn) {
+        var $operation = $(btn).parent();
+        var $textareas = $operation.find("textarea.x-param");
+        $textareas.each(function (index, textarea) {
+
+        });
+    };
+
 }
 
 window.httpdoc = new HttpDoc();
