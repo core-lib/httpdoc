@@ -3,7 +3,7 @@ package io.httpdoc.jestful.server;
 import io.httpdoc.core.*;
 import io.httpdoc.core.annotation.*;
 import io.httpdoc.core.annotation.Package;
-import io.httpdoc.core.interpretation.Interpretation;
+import io.httpdoc.core.interpretation.ClassInterpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
@@ -81,7 +81,8 @@ public class JestfulTranslator implements Translator {
                 controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
                 Resource resource = mapping.getResource();
                 controller.setPath(normalize(resource.getExpression()));
-                Interpretation interpretation = interpreter.interpret(clazz);
+                ClassInterpretation interpretation = interpreter.interpret(clazz);
+                controller.setSummary(interpretation != null ? interpretation.getSummary() : null);
                 controller.setDescription(interpretation != null ? interpretation.getContent() : null);
                 Tag tag = clazz.getAnnotation(Tag.class);
                 if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
@@ -114,6 +115,7 @@ public class JestfulTranslator implements Translator {
         if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
 
         MethodInterpretation interpretation = interpreter.interpret(method);
+        operation.setSummary(interpretation != null ? interpretation.getSummary() : null);
         operation.setDescription(interpretation != null ? interpretation.getContent() : null);
 
         Result result = new Result();

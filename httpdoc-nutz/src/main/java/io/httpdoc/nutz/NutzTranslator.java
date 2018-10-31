@@ -2,7 +2,7 @@ package io.httpdoc.nutz;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.exception.DocumentTranslationException;
-import io.httpdoc.core.interpretation.Interpretation;
+import io.httpdoc.core.interpretation.ClassInterpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
@@ -67,7 +67,8 @@ public class NutzTranslator implements Translator {
                     controller.setPkg(clazz.getPackage().getName());
                     controller.setName(clazz.getSimpleName());
                     controller.setPath("");
-                    Interpretation interpretation = interpreter.interpret(clazz);
+                    ClassInterpretation interpretation = interpreter.interpret(clazz);
+                    controller.setSummary(interpretation != null ? interpretation.getSummary() : null);
                     controller.setDescription(interpretation != null ? interpretation.getContent() : null);
                     controllers.put(clazz, controller);
                 }
@@ -167,6 +168,7 @@ public class NutzTranslator implements Translator {
                 result.setDescription(interpretation != null && interpretation.getReturnNote() != null ? interpretation.getReturnNote().getText() : null);
                 operation.setResult(result);
 
+                operation.setSummary(interpretation != null ? interpretation.getSummary() : null);
                 operation.setDescription(interpretation != null ? interpretation.getContent() : null);
                 controller.getOperations().add(operation);
             }

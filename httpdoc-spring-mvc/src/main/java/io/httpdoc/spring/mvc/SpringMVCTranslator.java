@@ -4,7 +4,7 @@ import io.httpdoc.core.*;
 import io.httpdoc.core.annotation.*;
 import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.exception.DocumentTranslationException;
-import io.httpdoc.core.interpretation.Interpretation;
+import io.httpdoc.core.interpretation.ClassInterpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
 import io.httpdoc.core.interpretation.Note;
@@ -334,7 +334,8 @@ public class SpringMVCTranslator implements Translator {
                 controller = new Controller();
                 controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
                 controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
-                Interpretation interpretation = interpreter.interpret(clazz);
+                ClassInterpretation interpretation = interpreter.interpret(clazz);
+                controller.setSummary(interpretation == null ? null : interpretation.getSummary());
                 controller.setDescription(interpretation == null ? null : interpretation.getContent());
                 Tag tag = clazz.getAnnotation(Tag.class);
                 if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
@@ -370,6 +371,7 @@ public class SpringMVCTranslator implements Translator {
         operation.setMethod(methods.isEmpty() ? RequestMethod.POST.name() : methods.iterator().next().name());
 
         MethodInterpretation interpretation = interpreter.interpret(method);
+        operation.setSummary(interpretation == null ? null : interpretation.getSummary());
         operation.setDescription(interpretation == null ? null : interpretation.getContent());
 
         Tag tag = method.getAnnotation(Tag.class);

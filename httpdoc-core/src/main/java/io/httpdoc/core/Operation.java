@@ -21,6 +21,7 @@ public class Operation extends Definition {
     private Result result;
     private List<String> tags = new ArrayList<>();
     private boolean multipart;
+    protected String summary;
 
     public String getName() {
         return name;
@@ -92,5 +93,13 @@ public class Operation extends Definition {
 
     public void setMultipart(boolean multipart) {
         this.multipart = multipart;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

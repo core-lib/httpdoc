@@ -6,7 +6,7 @@ package io.httpdoc.core.interpretation;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 17:04
  **/
-public class ClassInterpretation extends Interpretation {
+public class ClassInterpretation extends SummaryInterpretation {
 
     public ClassInterpretation(String content, Note[] notes, String text) {
         super(content, notes, text);
