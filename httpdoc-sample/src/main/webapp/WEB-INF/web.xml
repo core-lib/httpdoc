@@ -65,14 +65,14 @@
             <param-name>httpdoc.lib.path</param-name>
             <param-value>/WEB-INF/lib</param-value>
         </init-param>
-        <init-param>
-            <param-name>contentType</param-name>
-            <param-value>text/plain</param-value>
-        </init-param>
-        <init-param>
-            <param-name>format.pkgIncluded</param-name>
-            <param-value>true</param-value>
-        </init-param>
+        <!--<init-param>-->
+        <!--<param-name>contentType</param-name>-->
+        <!--<param-value>text/plain</param-value>-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+        <!--<param-name>format.pkgIncluded</param-name>-->
+        <!--<param-value>true</param-value>-->
+        <!--</init-param>-->
     </filter>
     <filter-mapping>
         <filter-name>httpdoc</filter-name>

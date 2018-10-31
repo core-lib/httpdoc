@@ -54,9 +54,12 @@ function HttpDoc() {
     this.init = function (doc) {
         DOC = doc;
 
+        DOC.controllers = DOC.controllers ? DOC.controllers : [];
+
         // 给对象取一个唯一标识
         var id = 0;
         DOC.controllers.forEach(function (controller) {
+            if (!controller.operations) return;
             controller.id = id++;
             controller.operations.forEach(function (operation) {
                 operation.id = id++;
@@ -65,6 +68,7 @@ function HttpDoc() {
 
         // 补全Operation的summary信息，方便Mustache渲染时取了Controller的summary
         DOC.controllers.forEach(function (controller) {
+            if (!controller.operations) return;
             controller.operations.forEach(function (operation) {
                 operation.summary = operation.summary ? operation.summary : "";
             });
@@ -72,6 +76,7 @@ function HttpDoc() {
 
         // 补全Operation的path信息，方便Mustache渲染时取了Controller的path
         DOC.controllers.forEach(function (controller) {
+            if (!controller.operations) return;
             controller.operations.forEach(function (operation) {
                 var cPath = controller.path;
                 var oPath = operation.path;
@@ -79,7 +84,9 @@ function HttpDoc() {
             });
         });
 
+        MAP = {};
         DOC.controllers.forEach(function (controller) {
+            controller.tags = controller.tags ? controller.tags : [controller.name];
             controller.tags.forEach(function (tag) {
                 var controllers = MAP[tag];
                 if (controllers) {
