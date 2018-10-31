@@ -1,72 +1,215 @@
 .method {
     min-width: 72px;
-    border-radius: 3px;
-    color: white;
+    color: silver;
     text-align: center;
 }
 
 .method-GET {
-    color: #5cb85c
+    color: #5cb85c;
 }
 
 .method-GET[href]:focus, .method-GET[href]:hover {
-    color: #449d44
+    color: #449d44;
 }
 
 .method-POST {
-    color: #5bc0de
+    color: #5bc0de;
 }
 
 .method-POST[href]:focus, .method-POST[href]:hover {
-    color: #31b0d5
+    color: #31b0d5;
 }
 
 .method-PUT {
-    color: #f0ad4e
+    color: #f0ad4e;
 }
 
 .method-PUT[href]:focus, .method-PUT[href]:hover {
-    color: #ec971f
+    color: #ec971f;
 }
 
 .method-DELETE {
-    color: #d9534f
+    color: #d9534f;
 }
 
 .method-DELETE[href]:focus, .method-DELETE[href]:hover {
-    color: #c9302c
+    color: #c9302c;
 }
 
-.btn-GET {
-    background-color: #5cb85c
+.method-OPTIONS {
+    color: #337ab7;
 }
 
-.btn-GET[href]:focus, .btn-GET[href]:hover {
-    background-color: #449d44
+.method-OPTIONS[href]:focus, .method-OPTIONS[href]:hover {
+    color: #286090;
 }
 
-.btn-POST {
-    background-color: #5bc0de
+.method-HEAD {
+    color: #777;
 }
 
-.btn-POST[href]:focus, .btn-POST[href]:hover {
-    background-color: #31b0d5
+.method-HEAD[href]:focus, .method-HEAD[href]:hover {
+    color: #5e5e5e;
 }
 
-.btn-PUT {
-    background-color: #f0ad4e
+.path {
+    color: silver;
 }
 
-.btn-PUT[href]:focus, .btn-PUT[href]:hover {
-    background-color: #ec971f
+.path-GET {
+    color: #5cb85c;
 }
 
-.btn-DELETE {
-    background-color: #d9534f
+.path-POST {
+    color: #5bc0de;
 }
 
-.btn-DELETE[href]:focus, .btn-DELETE[href]:hover {
-    background-color: #c9302c
+.path-PUT {
+    color: #f0ad4e;
+}
+
+.path-DELETE {
+    color: #d9534f;
+}
+
+.path-OPTIONS {
+    color: #337ab7;
+}
+
+.path-HEAD {
+    color: #777;
+}
+
+.panel {
+    border-color: silver;
+}
+
+.panel > .panel-heading {
+    border-color: silver;
+}
+
+.panel-GET {
+    border-color: #5cb85c;
+}
+
+.panel-GET > .panel-heading {
+    border-color: #5cb85c;
+}
+
+.panel-GET[href]:focus, .panel-GET[href]:hover {
+    border-color: #449d44;
+}
+
+.panel-POST {
+    border-color: #5bc0de;
+}
+
+.panel-POST > .panel-heading {
+    border-color: #5bc0de;
+}
+
+.panel-POST[href]:focus, .panel-POST[href]:hover {
+    border-color: #31b0d5;
+}
+
+.panel-PUT {
+    border-color: #f0ad4e;
+}
+
+.panel-PUT > .panel-heading {
+    border-color: #f0ad4e;
+}
+
+.panel-PUT[href]:focus, .panel-PUT[href]:hover {
+    border-color: #ec971f;
+}
+
+.panel-DELETE {
+    border-color: #d9534f;
+}
+
+.panel-DELETE > .panel-heading {
+    border-color: #d9534f;
+}
+
+.panel-DELETE[href]:focus, .panel-DELETE[href]:hover {
+    border-color: #c9302c;
+}
+
+.panel-OPTIONS {
+    border-color: #337ab7;
+}
+
+.panel-OPTIONS > .panel-heading {
+    border-color: #337ab7;
+}
+
+.panel-OPTIONS[href]:focus, .panel-OPTIONS[href]:hover {
+    border-color: #286090;
+}
+
+.panel-HEAD {
+    border-color: #777;
+}
+
+.panel-HEAD > .panel-heading {
+    border-color: #777;
+}
+
+.panel-HEAD[href]:focus, .panel-HEAD[href]:hover {
+    border-color: #5e5e5e;
+}
+
+.button {
+    background-color: silver;
+}
+
+.button-GET {
+    background-color: #5cb85c;
+}
+
+.button-GET[href]:focus, .button-GET[href]:hover {
+    background-color: #449d44;
+}
+
+.button-POST {
+    background-color: #5bc0de;
+}
+
+.button-POST[href]:focus, .button-POST[href]:hover {
+    background-color: #31b0d5;
+}
+
+.button-PUT {
+    background-color: #f0ad4e;
+}
+
+.button-PUT[href]:focus, .button-PUT[href]:hover {
+    background-color: #ec971f;
+}
+
+.button-DELETE {
+    background-color: #d9534f;
+}
+
+.button-DELETE[href]:focus, .button-DELETE[href]:hover {
+    background-color: #c9302c;
+}
+
+.button-OPTIONS {
+    background-color: #337ab7;
+}
+
+.button-OPTIONS[href]:focus, .button-OPTIONS[href]:hover {
+    background-color: #286090;
+}
+
+.button-HEAD {
+    background-color: #777;
+}
+
+.button-HEAD[href]:focus, .button-HEAD[href]:hover {
+    background-color: #5e5e5e;
 }
 
 textarea {
@@ -75,6 +218,17 @@ textarea {
     outline: none;
     font-family: monospace;
     font-weight: 600;
+    overflow: hidden;
+}
+
+.textarea-model {
+    background-color: white !important;
+    border: 0 !important;
+    -webkit-box-shadow: inset 0 0 0 !important;
+}
+
+.table > tbody > tr > td {
+    border: 0;
 }
 
 #httpdoc-tags {
@@ -113,4 +267,8 @@ textarea {
     border-radius: 3px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
     background-color: #555;
+}
+
+.border-less {
+    border: 0 !important;
 }

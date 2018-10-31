@@ -66,11 +66,12 @@ function HttpDoc() {
             });
         });
 
-        // 补全Operation的summary信息，方便Mustache渲染时取了Controller的summary
+        // 补全Operation的注释信息，方便Mustache渲染时取了Controller的注释
         DOC.controllers.forEach(function (controller) {
             if (!controller.operations) return;
             controller.operations.forEach(function (operation) {
                 operation.summary = operation.summary ? operation.summary : "";
+                operation.description = operation.description ? operation.description : "";
             });
         });
 
@@ -119,6 +120,34 @@ function HttpDoc() {
             }
             var html = Mustache.render(tpl, schemas);
             $("#httpdoc-schemas").html(html);
+        }
+
+        {
+            var tpl = $("#httpdoc-model").html();
+            var models = [];
+            for (var name in DOC.schemas) {
+                var model = DOC.schemas[name];
+                model.name = name;
+
+                var type = REF_PREFIX + name + REF_SUFFIX;
+                model.value = this.toJSONString(0, type, true);
+
+                models.push(model);
+            }
+            var html = Mustache.render(tpl, models);
+            $("#httpdoc-models").html(html);
+
+            $("#httpdoc-models").find(".collapse").on("shown.bs.collapse", function () {
+                autosize($(this).find("textarea.autosize"));
+            });
+
+            $("#httpdoc-models").find(".collapse").on("show.bs.collapse", function () {
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+            });
+
+            $("#httpdoc-models").find(".collapse").on("hide.bs.collapse", function () {
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+            });
         }
     };
 
@@ -196,16 +225,16 @@ function HttpDoc() {
             $("#httpdoc-controllers").html(html);
         }
 
-        $(".collapse").on("shown.bs.collapse", function () {
+        $("#httpdoc-controllers").find(".collapse").on("shown.bs.collapse", function () {
             autosize($(this).find("textarea.autosize"));
         });
 
-        $(".collapse").on("show.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+        $("#httpdoc-controllers").find(".collapse").on("show.bs.collapse", function () {
+            $(this).find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
         });
 
-        $(".collapse").on("hide.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+        $("#httpdoc-controllers").find(".collapse").on("hide.bs.collapse", function () {
+            $(this).find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
         });
     };
 
