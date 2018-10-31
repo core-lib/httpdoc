@@ -87,6 +87,9 @@ public class StandardConverter implements Converter {
         List<String> tags = controller.getTags();
         if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
 
+        String summary = controller.getSummary();
+        if (!StringKit.isBlank(summary)) map.put("summary", summary);
+
         String description = controller.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
 
@@ -149,6 +152,9 @@ public class StandardConverter implements Converter {
 
         List<String> tags = operation.getTags();
         if (tags != null && !tags.isEmpty()) map.put("tags", doConvertTags(tags, format));
+
+        String summary = operation.getSummary();
+        if (!StringKit.isBlank(summary)) map.put("summary", summary);
 
         String description = operation.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
@@ -452,6 +458,7 @@ public class StandardConverter implements Converter {
         Object tags = map.get("tags");
         controller.setTags(doConvertTags(document, tags));
 
+        controller.setSummary((String) map.get("summary"));
         controller.setDescription((String) map.get("description"));
 
         document.getControllers().add(controller);
@@ -534,6 +541,7 @@ public class StandardConverter implements Converter {
         Object tags = map.get("tags");
         operation.setTags(doConvertTags(document, tags));
 
+        operation.setSummary((String) map.get("summary"));
         operation.setDescription((String) map.get("description"));
 
         return operation;

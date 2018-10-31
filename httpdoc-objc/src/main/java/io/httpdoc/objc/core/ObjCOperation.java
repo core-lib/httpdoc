@@ -104,6 +104,16 @@ public class ObjCOperation extends Operation {
     }
 
     @Override
+    public String getSummary() {
+        return operation.getSummary();
+    }
+
+    @Override
+    public void setSummary(String summary) {
+        operation.setSummary(summary);
+    }
+
+    @Override
     public String getDescription() {
         return operation.getDescription();
     }

@@ -91,6 +91,16 @@ public class ObjCController extends Controller {
     }
 
     @Override
+    public String getSummary() {
+        return controller.getSummary();
+    }
+
+    @Override
+    public void setSummary(String summary) {
+        controller.setSummary(summary);
+    }
+
+    @Override
     public String getDescription() {
         return controller.getDescription();
     }
