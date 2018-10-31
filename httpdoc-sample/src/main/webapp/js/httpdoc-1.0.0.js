@@ -160,6 +160,12 @@ function HttpDoc() {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
             });
         }
+
+        {
+            var tpl = $("#httpdoc-setting").html();
+            var html = Mustache.render(tpl, DOC);
+            $("#httpdoc-config").find(".modal-body").html(html);
+        }
     };
 
     this.properties = function (schema) {

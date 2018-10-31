@@ -17,7 +17,7 @@
                 <span class="badge">1.0.0</span>
             </a>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="navbar-form">
                 <div class="input-group">
                     <input id="httpdoc-url" type="text" class="form-control" value="http://localhost:8080/httpdoc.json" placeholder="http://localhost/httpdoc.json">
@@ -27,8 +27,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <ul class="nav navbar-nav">
+        <div class="col-md-4">
+            <ul class="nav navbar-nav pull-right">
+                <li><a href="#" data-toggle="modal" data-target="#httpdoc-config">Global Settings</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Download SDK <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -72,7 +73,49 @@
         </div>
     </div>
 </div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="httpdoc-config" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Global Settings</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">OK</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 </body>
+
+<script id="httpdoc-setting" type="text/html">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>PROTOCOL</td>
+            <td><input class="form-control" name="protocol" value="{{protocol}}"/></td>
+        </tr>
+        <tr>
+            <td>HOSTNAME</td>
+            <td><input class="form-control" name="hostname" value="{{hostname}}"/></td>
+        </tr>
+        <tr>
+            <td>PORT</td>
+            <td><input class="form-control" name="port" value="{{port}}"/></td>
+        </tr>
+        <tr>
+            <td>CONTEXT</td>
+            <td><input class="form-control" name="context" value="{{context}}"/></td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
 <script id="httpdoc-tag" type="text/html">
     {{#.}}
     <li title="{{.}}"><a href="javascript: httpdoc.show('{{.}}');" class="text-nowrap" style="overflow: hidden;"><b>{{.}}</b></a></li>
