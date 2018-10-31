@@ -132,6 +132,14 @@
           "result": {
             "type": "$/schemas/BasicDataModifyResult"
           },
+          "produces": [
+            "application/json",
+            "application/xml"
+          ],
+          "consumes": [
+            "application/json",
+            "application/xml"
+          ],
           "tags": [
             "BasicDataController"
           ]

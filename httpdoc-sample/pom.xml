@@ -221,18 +221,18 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.5</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.8</version>
-        </dependency>
         <!--<dependency>-->
         <!--<groupId>com.sun</groupId>-->
         <!--<artifactId>tools</artifactId>-->
         <!--<version>1.8</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>E:\Java\jdk1.8.0_181\lib\tools.jar</systemPath>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>E:\Java\jdk1.8.0_181\lib\tools.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -280,7 +280,7 @@
                     <username>admin</username>
                     <password>admin</password>
                     <uriEncoding>UTF-8</uriEncoding>
-                    <path>/httpdoc-sample</path>
+                    <path>/</path>
                 </configuration>
             </plugin>
             <plugin>

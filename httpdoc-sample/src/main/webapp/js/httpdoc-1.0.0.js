@@ -66,12 +66,23 @@ function HttpDoc() {
             });
         });
 
-        // 补全Operation的注释信息，方便Mustache渲染时取了Controller的注释
+        // 补全Operation的注释信息，避免Mustache渲染时取了Controller的注释
         DOC.controllers.forEach(function (controller) {
             if (!controller.operations) return;
             controller.operations.forEach(function (operation) {
                 operation.summary = operation.summary ? operation.summary : "";
                 operation.description = operation.description ? operation.description : "";
+            });
+        });
+
+        // 补全Parameter的path信息，避免Mustache渲染时取了Operation的path
+        DOC.controllers.forEach(function (controller) {
+            if (!controller.operations) return;
+            controller.operations.forEach(function (operation) {
+                if (!operation.parameters) return;
+                operation.parameters.forEach(function (parameter) {
+                    parameter.path = parameter.path ? parameter.path : "";
+                });
             });
         });
 
@@ -264,12 +275,12 @@ function HttpDoc() {
 
             // 枚举类型
             if (schema.constants) {
-                json += "(";
-                for (var i = 0; i < schema.constants.length; i++) {
-                    if (i === 0) json += "|";
-                    json += schema.constants[i];
+                json += "\"";
+                for (var con in schema.constants) {
+                    json += con;
+                    break;
                 }
-                json += ")";
+                json += "\"";
                 return json;
             }
             // 自定义类型
@@ -301,7 +312,7 @@ function HttpDoc() {
             case "short":
                 return "0";
             case "char":
-                return "\"char\"";
+                return "\" \"";
             case "int":
                 return "0";
             case "float":
@@ -318,7 +329,7 @@ function HttpDoc() {
             case "Short":
                 return "0";
             case "Character":
-                return "\"char\"";
+                return "\" \"";
             case "Integer":
                 return "0";
             case "Float":
@@ -345,11 +356,120 @@ function HttpDoc() {
     };
 
     this.submit = function (btn) {
-        var $operation = $(btn).parent();
-        var $textareas = $operation.find("textarea.x-param");
-        $textareas.each(function (index, textarea) {
+        var $btn = $(btn);
+        var id = $btn.attr("x-operation");
+        var method = $btn.attr("x-method");
+        var path = $btn.attr("x-path");
+        var $operation = $("#operation-" + id);
+        var $params = $operation.find(".x-param");
 
+        var paths = {};
+        var matrices = {};
+        var queries = {};
+        var headers = {};
+        var cookies = {};
+        var bodies = {};
+
+        // 构建参数
+        $params.each(function (index, param) {
+            var $param = $(param);
+            var name = $param.attr("x-name");
+            var scope = $param.attr("x-scope");
+            var path = $param.attr("x-path");
+            var value = JSON.parse($param.val());
+            var metadata = {
+                name: name,
+                scope: scope,
+                path: path,
+                value: value
+            };
+            switch (scope) {
+                case "path": {
+                    if (paths[name]) paths[name].push(metadata);
+                    else paths[name] = [metadata];
+                }
+                    break;
+                case "matrix": {
+                    if (matrices[name]) matrices[name].push(metadata);
+                    else matrices[name] = [metadata];
+                }
+                    break;
+                case "query": {
+                    if (queries[name]) queries[name].push(metadata);
+                    else queries[name] = [metadata];
+                }
+                    break;
+                case "field": {
+                    if (queries[name]) queries[name].push(metadata);
+                    else queries[name] = [metadata];
+                }
+                    break;
+                case "header": {
+                    if (headers[name]) headers[name].push(metadata);
+                    else headers[name] = [metadata];
+                }
+                    break;
+                case "cookie": {
+                    if (cookies[name]) cookies[name].push(metadata);
+                    else cookies[name] = [metadata];
+                }
+                    break;
+                case "body": {
+                    if (bodies[name]) bodies[name].push(metadata);
+                    else bodies[name] = [metadata];
+                }
+                    break;
+                default:
+                    break;
+            }
         });
+
+        // 处理路径的占位符
+        var index = 0;
+        for (var key in paths) {
+            index++;
+
+            var matrixs = [];
+            // 找到对应的矩阵参数
+            for (var m in matrices) {
+                if (key === m || (path === "" && index === 1)) {
+                    matrixs = matrices[m];
+                    break;
+                }
+            }
+
+            var matrix = "";
+            for (var i = 0; i < matrixs.length; i++) {
+                var metadata = matrixs[i];
+                var name = metadata.name;
+                var value = metadata.value;
+                // 如果是数组还要遍历来encodeURL
+                if ($.isArray(value)) for (var k = 0; k < value.length; k++) value[k] = encodeURIComponent("" + value[k]);
+                if (matrix !== "") {
+                    matrix += ";";
+                }
+                matrix += encodeURIComponent(name);
+                matrix += "=";
+                matrix += $.isArray(value) ? value.join(",") : encodeURIComponent("" + value);
+            }
+
+            var metadata = paths[key];
+            var value = "" + metadata[0].value;
+            value = (matrix === "" ? value : (value + ";" + matrix));
+            path = path.replace("{" + key + "}", value);
+        }
+
+        $.ajax({
+            method: method,
+            url: path,
+            success: function (res) {
+                alert(JSON.stringify(res));
+            },
+            error: function (xhr) {
+                alert("error");
+            }
+        });
+
     };
 
 }
