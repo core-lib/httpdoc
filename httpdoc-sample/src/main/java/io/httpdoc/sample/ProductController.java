@@ -66,14 +66,13 @@ public class ProductController {
     /**
      * 创建产品
      *
-     * @param product 产品
      * @return 产品创建结果
      */
     @POST("/")
-    public ProductCreateResult create(@Body Product product) {
+    public ProductCreateResult create(@Body("product1") Product product1, @Body("product2") Product product2) {
         ProductCreateResult result = new ProductCreateResult();
-        product.setId(new Random().nextLong());
-        result.setProduct(product);
+        product1.setId(new Random().nextLong());
+        result.setProduct(product1);
         return result;
     }
 

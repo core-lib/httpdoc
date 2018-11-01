@@ -534,22 +534,46 @@ function HttpDoc() {
         }
         if (cookie !== "") header["Cookie"] = [cookie];
 
-        // 处理请求体
-        var body = bodies.length > 0 ? bodies[0].value : {};
-
-        $.ajax({
-            url: path,
-            method: method,
-            headers: header,
-            data: body,
-            success: function (result) {
-                alert(JSON.stringify(result));
-            },
-            error: function (xhr) {
-                alert(JSON.stringify(xhr));
+        // multipart/form-data
+        if (bodies.length > 1) {
+            var multipart = new FormData();
+            for (var i = 0; i < bodies.length; i++) {
+                var metadata = bodies[i];
+                multipart.append(metadata.name, JSON.stringify(metadata.value));
             }
-        });
-
+            multipart.forEach(function (value1, key1, parent) {
+                alert(parent);
+            });
+            $.ajax({
+                url: path,
+                method: method,
+                headers: header,
+                data: multipart,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    alert(JSON.stringify(result));
+                },
+                error: function (xhr) {
+                    alert(JSON.stringify(xhr));
+                }
+            });
+        }
+        // 简单请求
+        else {
+            $.ajax({
+                url: path,
+                method: method,
+                headers: header,
+                data: bodies.length > 0 ? bodies[0].value : {},
+                success: function (result) {
+                    alert(JSON.stringify(result));
+                },
+                error: function (xhr) {
+                    alert(JSON.stringify(xhr));
+                }
+            });
+        }
     };
 
     this.addSettingRow = function (btn) {
@@ -584,10 +608,10 @@ function HttpDoc() {
             var hostname = $basic.find("input[name='hostname']").val();
             var port = $basic.find("input[name='port']").val();
             var context = $basic.find("input[name='context']").val();
-            SETTING.protocol = protocol && protocol !== "" ? protocol : location.protocol.replace(":", "");
-            SETTING.hostname = hostname && hostname !== "" ? hostname : location.hostname;
-            SETTING.port = port && port !== "" && /\d+/.test(port) ? parseInt(port) : location.port;
-            SETTING.context = context && context !== "" ? context : "";
+            SETTING.protocol = protocol && protocol !== "" ? protocol : DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
+            SETTING.hostname = hostname && hostname !== "" ? hostname : DOC.hostname ? DOC.hostname : location.hostname;
+            SETTING.port = port && port !== "" && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port;
+            SETTING.context = context && context !== "" ? context : DOC.context ? DOC.context : "";
         }
         // Query 设置
         {
