@@ -169,9 +169,13 @@ function HttpDoc() {
         {
             // 读取本地设置
             var setting = localStorage.getItem("setting");
-            // 如果本地设置存在则读取
+            // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
             if (setting) {
                 SETTING = JSON.parse(localStorage.getItem("setting"));
+                var tpl = $("#httpdoc-setting").html();
+                var html = Mustache.render(tpl, SETTING);
+                $("#httpdoc-config").find(".modal-body").html(html);
+                $('#httpdoc-config').modal('show');
             }
             // 如果本地设置没有则初始化之
             else {
