@@ -534,45 +534,47 @@ function HttpDoc() {
         }
         if (cookie !== "") header["Cookie"] = [cookie];
 
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function (event) {
+            alert(this.readyState);
+        };
+        xhr.open(method, path);
+        for (var key in header) {
+            var values = header[key];
+            for (var i = 0; i < values.length; i++) {
+                xhr.setRequestHeader(key, values[i]);
+            }
+        }
+
         // multipart/form-data
         if (bodies.length > 1) {
-            var multipart = new FormData();
+            var body = "";
+            var CRLF = "\r\n";
+            var boundary = this.random(32);
             for (var i = 0; i < bodies.length; i++) {
                 var metadata = bodies[i];
-                multipart.append(metadata.name, JSON.stringify(metadata.value));
+                body += "--" + boundary + CRLF;
+                body += "Content-Disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
+                body += "Content-Type: application/json" + CRLF;
+                body += CRLF;
+                body += JSON.stringify(metadata.value) + CRLF;
             }
-            multipart.forEach(function (value1, key1, parent) {
-                alert(parent);
-            });
-            $.ajax({
-                url: path,
-                method: method,
-                headers: header,
-                data: multipart,
-                contentType: false,
-                processData: false,
-                success: function (result) {
-                    alert(JSON.stringify(result));
-                },
-                error: function (xhr) {
-                    alert(JSON.stringify(xhr));
-                }
-            });
+            body += "--" + boundary + "--" + CRLF;
+            console.log(body);
+            xhr.setRequestHeader("Content-Type", "multipart/form-data;boundary=" + boundary);
+            xhr.send(body);
         }
         // 简单请求
         else {
-            $.ajax({
-                url: path,
-                method: method,
-                headers: header,
-                data: bodies.length > 0 ? bodies[0].value : {},
-                success: function (result) {
-                    alert(JSON.stringify(result));
-                },
-                error: function (xhr) {
-                    alert(JSON.stringify(xhr));
-                }
-            });
+            xhr.setRequestHeader("Accept", "application/json");
+            var body = bodies.length > 0 ? JSON.stringify(bodies[0].value) : null;
+            if (body) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(body);
+            } else {
+                xhr.send();
+            }
         }
     };
 
@@ -705,6 +707,29 @@ function HttpDoc() {
 
         return map;
     };
+
+    /**
+     * 获取随机字符串
+     * @param length 随机字符串长度，如果参数不合法则返回32位长度的随机字符串
+     * @returns {string} 指定长度的随机字符串
+     */
+    this.random = function (length) {
+        var chars = [
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+            'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+            'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z'
+        ];
+        var str = "";
+        for (var i = 0; i < (length && typeof length === 'number' && length > 0 ? length : 32); i++) {
+            var idx = Math.ceil(Math.random() * chars.length);
+            str += chars[idx];
+        }
+        return str;
+    }
 
 }
 
