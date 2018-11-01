@@ -1,15 +1,34 @@
+/**
+ * 判断字符串是否以某字符串开头
+ * @param prefix 前缀
+ * @returns {boolean} true: 是， false: 不是
+ */
 String.prototype.startsWith = function (prefix) {
     return this.length >= prefix.length && this.substring(0, prefix.length) === prefix;
 };
 
+/**
+ * 判断字符串是否以某字符串结尾
+ * @param suffix 后缀
+ * @returns {boolean} true: 是， false: 不是
+ */
 String.prototype.endsWith = function (suffix) {
     return this.length >= suffix.length && this.substring(this.length - suffix.length) === suffix;
 };
 
+/**
+ * 字符串前后trim
+ * @returns {string} trim后的字符串
+ */
 String.prototype.trim = function () {
     return this.replace(/(^\s*)|(\s*$)/g, '');
 };
 
+/**
+ * 日期格式化
+ * @param pattern 格式化模式
+ * @returns {*} 格式化后的字符串
+ */
 Date.prototype.format = function (pattern) {
     var o = {
         "M+": this.getMonth() + 1,                      //月份
@@ -25,6 +44,9 @@ Date.prototype.format = function (pattern) {
     return pattern;
 };
 
+/**
+ * HttpDoc 框架
+ */
 function HttpDoc() {
     var DOC = {};
     var MAP = {};
@@ -64,6 +86,7 @@ function HttpDoc() {
         // 给对象取一个唯一标识
         var id = 0;
         DOC.controllers.forEach(function (controller) {
+            /** @namespace controller.operations */
             if (!controller.operations) return;
             controller.id = id++;
             controller.operations.forEach(function (operation) {
@@ -114,11 +137,17 @@ function HttpDoc() {
             });
         });
 
+        /** @namespace doc.refPrefix */
         REF_PREFIX = doc.refPrefix ? doc.refPrefix : REF_PREFIX;
+        /** @namespace doc.refSuffix */
         REF_SUFFIX = doc.refSuffix ? doc.refSuffix : REF_SUFFIX;
+        /** @namespace doc.mapPrefix */
         MAP_PREFIX = doc.mapPrefix ? doc.mapPrefix : MAP_PREFIX;
+        /** @namespace doc.mapSuffix */
         MAP_SUFFIX = doc.mapSuffix ? doc.mapSuffix : MAP_SUFFIX;
+        /** @namespace doc.arrPrefix */
         ARR_PREFIX = doc.arrPrefix ? doc.arrPrefix : ARR_PREFIX;
+        /** @namespace doc.arrSuffix */
         ARR_SUFFIX = doc.arrSuffix ? doc.arrSuffix : ARR_SUFFIX;
 
         for (var name in DOC.schemas) {
@@ -196,6 +225,7 @@ function HttpDoc() {
     };
 
     this.properties = function (schema) {
+        /** @namespace schema.constants */
         if (schema.constants) return {};
 
         var superclass = schema.superclass;
@@ -217,16 +247,16 @@ function HttpDoc() {
     };
 
     this.render = function () {
-        this.renderNavigation();
+        this.doRenderTags();
         // 第一个tag的内容默认展示
         for (var tag in MAP) {
             var controllers = MAP[tag];
-            this.renderControllers(controllers);
+            this.doRenderControllers(controllers);
             break;
         }
     };
 
-    this.renderNavigation = function () {
+    this.doRenderTags = function () {
         var tags = [];
         for (var tag in MAP) tags.push(tag);
         var tpl = $("#httpdoc-tag").html();
@@ -234,7 +264,7 @@ function HttpDoc() {
         $("#httpdoc-tags").html(html);
     };
 
-    this.renderControllers = function (controllers) {
+    this.doRenderControllers = function (controllers) {
         for (var i = 0; i < controllers.length; i++) {
             var controller = controllers[i];
             var operations = controller.operations;
@@ -397,7 +427,7 @@ function HttpDoc() {
 
     this.show = function (tag) {
         var controllers = MAP[tag];
-        this.renderControllers(controllers);
+        this.doRenderControllers(controllers);
     };
 
     this.submit = function (btn) {
@@ -456,126 +486,18 @@ function HttpDoc() {
             }
         });
 
-        // 路径占位符替换
-        for (var i = 0; i < paths.length; i++) {
-            var metadata = paths[i];
-            var name = metadata.name;
-            var value = metadata.value;
-            var map = this.flatten(name, value);
-            var values = map[name];
-            var val = values[0];
-            // 追加矩阵参数
-            var append = "";
-            for (var j = 0; j < matrices.length; j++) {
-                var matrix = matrices[j];
-                // 指定路径占位符的或第一个路径占位符
-                if (name === matrix.path || (matrix.path === "" && i === 0)) {
-                    var m = this.flatten(matrix.name, matrix.value);
-                    for (var k in m) {
-                        var vals = m[k];
-                        // 对每个元素都进行URL编码
-                        for (var x = 0; x < vals.length; x++) vals[x] = encodeURIComponent(vals[x]);
-                        if (append !== "") append += ";";
-                        append += encodeURIComponent(k);
-                        append += "=";
-                        append += vals.join(",");
-                    }
-                }
-            }
-            var replacement = encodeURIComponent(val) + (append === "" ? "" : ";" + append);
-            // 替换路径中的占位符
-            path = path.replace("{" + name + "}", replacement);
-        }
-
-        // 查询参数拼接
-        var query = "";
-        for (var i = 0; i < queries.length; i++) {
-            var metadata = queries[i];
-            var map = this.flatten(metadata.name, metadata.value);
-            for (var key in map) {
-                if (query !== "") query += "&";
-                var values = map[key];
-                for (var j = 0; j < values.length; j++) {
-                    query += encodeURIComponent(key);
-                    query += "=";
-                    query += encodeURIComponent(values[j]);
-                }
-            }
-        }
-        if (query !== "") path += path.indexOf("?") < 0 ? ("?" + query) : ("&" + query);
-
-        // 处理请求头
-        var header = {};
-        for (var i = 0; i < headers.length; i++) {
-            var metadata = headers[i];
-            var map = this.flatten(metadata.name, metadata.value);
-            for (var key in map) {
-                var headerKey = encodeURIComponent(key);
-                var headerValues = map[key];
-                for (var j = 0; j < map[key].length; j++) headerValues[j] = encodeURIComponent(headerValues[j]);
-                header[headerKey] = headerValues;
-            }
-        }
-
-        // 处理请Cookie
-        var cookie = "";
-        for (var i = 0; i < cookies.length; i++) {
-            var metadata = cookies[i];
-            var map = this.flatten(metadata.name, metadata.value);
-            for (var key in map) {
-                var values = map[key];
-                for (var j = 0; j < values.length; j++) {
-                    if (cookie !== "") query += ";";
-                    cookie += encodeURIComponent(key);
-                    cookie += "=";
-                    cookie += encodeURIComponent(values[j]);
-                }
-            }
-        }
-        if (cookie !== "") header["Cookie"] = [cookie];
-
-
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function (event) {
+        var http = new HTTP();
+        http.uri = path;
+        http.method = method;
+        http.paths = paths;
+        http.matrices = matrices;
+        http.queries = queries;
+        http.headers = headers;
+        http.cookies = cookies;
+        http.bodies = bodies;
+        http.execute(function () {
             alert(this.readyState);
-        };
-        xhr.open(method, path);
-        for (var key in header) {
-            var values = header[key];
-            for (var i = 0; i < values.length; i++) {
-                xhr.setRequestHeader(key, values[i]);
-            }
-        }
-
-        // multipart/form-data
-        if (bodies.length > 1) {
-            var body = "";
-            var CRLF = "\r\n";
-            var boundary = this.random(32);
-            for (var i = 0; i < bodies.length; i++) {
-                var metadata = bodies[i];
-                body += "--" + boundary + CRLF;
-                body += "Content-Disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
-                body += "Content-Type: application/json" + CRLF;
-                body += CRLF;
-                body += JSON.stringify(metadata.value) + CRLF;
-            }
-            body += "--" + boundary + "--" + CRLF;
-            console.log(body);
-            xhr.setRequestHeader("Content-Type", "multipart/form-data;boundary=" + boundary);
-            xhr.send(body);
-        }
-        // 简单请求
-        else {
-            xhr.setRequestHeader("Accept", "application/json");
-            var body = bodies.length > 0 ? JSON.stringify(bodies[0].value) : null;
-            if (body) {
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(body);
-            } else {
-                xhr.send();
-            }
-        }
+        });
     };
 
     this.addSettingRow = function (btn) {
@@ -587,7 +509,7 @@ function HttpDoc() {
         $(btn).parent().parent().remove();
     };
 
-    this.clearSetting = function (btn) {
+    this.clearSetting = function () {
         localStorage.removeItem("setting");
         SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
         SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
@@ -602,7 +524,7 @@ function HttpDoc() {
         $('#httpdoc-config').modal('hide');
     };
 
-    this.mergeSetting = function (btn) {
+    this.mergeSetting = function () {
         // 基础设置
         {
             var $basic = $("#httpdoc-setting-basic");
@@ -670,8 +592,176 @@ function HttpDoc() {
         $('#httpdoc-config').modal('hide');
     };
 
+}
+
+/**
+ * HTTP Request
+ */
+function HTTP() {
+    this.setting = {};
+    this.uri = "";
+    this.method = "";
+    this.paths = [];
+    this.matrices = [];
+    this.queries = [];
+    this.headers = [];
+    this.cookies = [];
+    this.bodies = [];
+
+    /**
+     * 执行
+     * @param callback 回调函数，this 就是 XMLHttpRequest
+     */
+    this.execute = function (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = callback;
+        var url = this.path();
+        var query = this.query();
+        if (query && typeof query === 'string' && query !== "") url += url.indexOf("?") < 0 ? "?" + query : "&" + query;
+        xhr.open(this.method, url);
+        var header = this.header();
+        for (var key in header) {
+            var values = header[key];
+            for (var h = 0; h < values.length; h++) {
+                xhr.setRequestHeader(key, values[h]);
+            }
+        }
+
+        // multipart/form-data
+        var bodies = this.bodies;
+        if (bodies.length > 1) {
+            var multipart = "";
+            var CRLF = "\r\n";
+            var boundary = this.random(32);
+            for (var b = 0; b < bodies.length; b++) {
+                var metadata = bodies[b];
+                multipart += "--" + boundary + CRLF;
+                multipart += "Content-Disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
+                multipart += "Content-Type: application/json" + CRLF;
+                multipart += CRLF;
+                multipart += JSON.stringify(metadata.value) + CRLF;
+            }
+            multipart += "--" + boundary + "--" + CRLF;
+            console.log(multipart);
+            xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+            xhr.send(multipart);
+        }
+        // 简单请求
+        else {
+            xhr.setRequestHeader("Accept", "application/json");
+            var body = bodies.length > 0 ? JSON.stringify(bodies[0].value) : null;
+            if (body) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(body);
+            } else {
+                xhr.send();
+            }
+        }
+    };
+
+    /**
+     * 获取请求路径
+     * @returns {string} 请求路径
+     */
+    this.path = function () {
+        var path = this.uri;
+        for (var i = 0; i < this.paths.length; i++) {
+            var metadata = this.paths[i];
+            var name = metadata.name;
+            var value = metadata.value;
+            var map = this.flatten(name, value);
+            var values = map[name];
+            var val = values[0];
+            // 追加矩阵参数
+            var append = "";
+            for (var j = 0; j < this.matrices.length; j++) {
+                var matrix = this.matrices[j];
+                // 指定路径占位符的或第一个路径占位符
+                if (name === matrix.path || (matrix.path === "" && i === 0)) {
+                    var m = this.flatten(matrix.name, matrix.value);
+                    for (var k in m) {
+                        var array = m[k];
+                        // 对每个元素都进行URL编码
+                        for (var x = 0; x < array.length; x++) array[x] = encodeURIComponent(array[x]);
+                        if (append !== "") append += ";";
+                        append += encodeURIComponent(k);
+                        append += "=";
+                        append += array.join(",");
+                    }
+                }
+            }
+            var replacement = encodeURIComponent(val) + (append === "" ? "" : ";" + append);
+            // 替换路径中的占位符
+            path = path.replace("{" + name + "}", replacement);
+        }
+        return path;
+    };
+
+    /**
+     * 获取查询字符串
+     * @returns {string} 查询字符串
+     */
+    this.query = function () {
+        var query = "";
+        for (var i = 0; i < this.queries.length; i++) {
+            var metadata = this.queries[i];
+            var map = this.flatten(metadata.name, metadata.value);
+            for (var key in map) {
+                if (query !== "") query += "&";
+                var values = map[key];
+                for (var j = 0; j < values.length; j++) {
+                    query += encodeURIComponent(key);
+                    query += "=";
+                    query += encodeURIComponent(values[j]);
+                }
+            }
+        }
+        return query;
+    };
+
+    /**
+     * 获取请求头
+     */
+    this.header = function () {
+        var header = {};
+        for (var i = 0; i < this.headers.length; i++) {
+            var metadata = this.headers[i];
+            var map = this.flatten(metadata.name, metadata.value);
+            for (var key in map) {
+                var headerKey = encodeURIComponent(key);
+                var headerValues = map[key];
+                for (var j = 0; j < map[key].length; j++) headerValues[j] = encodeURIComponent(headerValues[j]);
+                header[headerKey] = headerValues;
+            }
+        }
+        return header;
+    };
+
+    /**
+     * 获取Cookie
+     * @returns {string} cookie
+     */
+    this.cookie = function () {
+        var cookie = "";
+        for (var i = 0; i < this.cookies.length; i++) {
+            var metadata = this.cookies[i];
+            var map = this.flatten(metadata.name, metadata.value);
+            for (var key in map) {
+                var values = map[key];
+                for (var j = 0; j < values.length; j++) {
+                    if (cookie !== "") cookie += ";";
+                    cookie += encodeURIComponent(key);
+                    cookie += "=";
+                    cookie += encodeURIComponent(values[j]);
+                }
+            }
+        }
+        return cookie;
+    };
+
     /**
      * 对象扁平化
+     * @param name 名称
      * @param obj 对象
      */
     this.flatten = function (name, obj) {
@@ -690,15 +780,15 @@ function HttpDoc() {
                 break;
             case "array":
                 for (var i = 0; i < obj.length; i++) {
-                    var m = this.flatten(name + "[" + i + "]", obj[i]);
-                    for (var k in m) map[k] = m[k];
+                    var am = this.flatten(name + "[" + i + "]", obj[i]);
+                    for (var a in am) map[a] = am[a];
                 }
                 break;
             case "object":
                 for (var p in obj) {
                     var n = (name === "" ? p : (name + "." + p));
-                    var m = this.flatten(n, obj[p]);
-                    for (var k in m) map[k] = m[k];
+                    var om = this.flatten(n, obj[p]);
+                    for (var o in om) map[o] = om[o];
                 }
                 break;
             default:
@@ -729,8 +819,12 @@ function HttpDoc() {
             str += chars[idx];
         }
         return str;
-    }
+    };
 
 }
 
+/**
+ * 全局可用httpdoc对象
+ * @type {HttpDoc} HttpDoc
+ */
 window.httpdoc = new HttpDoc();
