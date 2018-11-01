@@ -1,13 +1,10 @@
 package io.httpdoc.sample;
 
-import io.httpdoc.core.annotation.Alias;
 import io.httpdoc.core.annotation.Name;
 import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.annotation.Tag;
 import io.httpdoc.nutz.ArticleAPI;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.qfox.jestful.core.http.*;
-import org.qfox.jestful.server.annotation.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +13,6 @@ import org.springframework.web.multipart.MultipartRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -48,13 +44,10 @@ public class ProductController {
     @Transactional
     @GET("/{page}/{size}") // name=sdfsd&age=12
     public ProductListResult list(
-            @Alias("p") @Path("page") int p,
-            @Alias("s") @Path("size") int s,
-            @Field ProductStatus status,
-            @Ignore @Alias("strings") @Field List<String> arr,
-            @Ignore @Field Product[] products,
-            @Ignore @Body("file1") Part file1,
-            @Ignore @Body("file2") Part file2,
+            @Path("page") int p,
+            @Path("size") int s,
+            @Matrix(value = "status", path = "size") ProductStatus status,
+            @Header("name") String name,
             HttpServletRequest request
     ) {
         ProductListResult result = new ProductListResult();

@@ -540,7 +540,6 @@ function HttpDoc() {
             }
         }
         if (cookie !== "") header["Cookie"] = [cookie];
-        alert(JSON.stringify(header));
 
         $.ajax({
             url: path,
