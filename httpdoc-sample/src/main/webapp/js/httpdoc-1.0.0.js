@@ -71,9 +71,10 @@ function HttpDoc() {
             success: function (doc) {
                 self.init(doc);
                 self.render();
+                $("#httpdoc-container").show();
             },
             error: function (xhr) {
-
+                $("#httpdoc-container").hide();
             }
         });
     };
