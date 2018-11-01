@@ -6,6 +6,10 @@ String.prototype.endsWith = function (suffix) {
     return this.length >= suffix.length && this.substring(this.length - suffix.length) === suffix;
 };
 
+String.prototype.trim = function () {
+    return this.replace(/(^\s*)|(\s*$)/g, '');
+};
+
 Date.prototype.format = function (pattern) {
     var o = {
         "M+": this.getMonth() + 1,                      //月份
@@ -31,6 +35,7 @@ function HttpDoc() {
     var ARR_PREFIX = "";
     var ARR_SUFFIX = "[]";
     var INDENT = "    ";
+    var SETTING = {};
 
     this.explore = function () {
         var self = this;
@@ -162,9 +167,27 @@ function HttpDoc() {
         }
 
         {
-            var tpl = $("#httpdoc-setting").html();
-            var html = Mustache.render(tpl, DOC);
-            $("#httpdoc-config").find(".modal-body").html(html);
+            // 读取本地设置
+            var setting = localStorage.getItem("setting");
+            // 如果本地设置存在则读取
+            if (setting) {
+                SETTING = JSON.parse(localStorage.getItem("setting"));
+            }
+            // 如果本地设置没有则初始化之
+            else {
+                SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
+                SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
+                SETTING.port = DOC.port ? DOC.port : location.port;
+                SETTING.context = DOC.context ? DOC.context : "";
+                SETTING.queries = [];
+                SETTING.headers = [];
+                SETTING.cookies = [];
+            }
+            $('#httpdoc-config').on('show.bs.modal', function () {
+                var tpl = $("#httpdoc-setting").html();
+                var html = Mustache.render(tpl, SETTING);
+                $("#httpdoc-config").find(".modal-body").html(html);
+            });
         }
     };
 
@@ -356,6 +379,18 @@ function HttpDoc() {
         }
     };
 
+    this.toJSONObject = function (string) {
+        var lines = string.split("\n");
+        var json = "";
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            // 忽略注释行
+            if (line.trim().startsWith("//")) continue;
+            json += line + '\n';
+        }
+        return JSON.parse(json);
+    };
+
     this.show = function (tag) {
         var controllers = MAP[tag];
         this.renderControllers(controllers);
@@ -376,13 +411,14 @@ function HttpDoc() {
         var cookies = {};
         var bodies = {};
 
+        var self = this;
         // 构建参数
         $params.each(function (index, param) {
             var $param = $(param);
             var name = $param.attr("x-name");
             var scope = $param.attr("x-scope");
             var path = $param.attr("x-path");
-            var value = JSON.parse($param.val());
+            var value = self.toJSONObject($param.val());
             var metadata = {
                 name: name,
                 scope: scope,
@@ -476,6 +512,98 @@ function HttpDoc() {
             }
         });
 
+    };
+
+    this.addSettingRow = function (btn) {
+        var row = $("#httpdoc-setting-row").html();
+        $(btn).parent().parent().before(row);
+    };
+
+    this.delSettingRow = function (btn) {
+        $(btn).parent().parent().remove();
+    };
+
+    this.clearSetting = function (btn) {
+        localStorage.removeItem("setting");
+        SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
+        SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
+        SETTING.port = DOC.port ? DOC.port : location.port;
+        SETTING.context = DOC.context ? DOC.context : "";
+        SETTING.queries = [];
+        SETTING.headers = [];
+        SETTING.cookies = [];
+        var tpl = $("#httpdoc-setting").html();
+        var html = Mustache.render(tpl, SETTING);
+        $("#httpdoc-config").find(".modal-body").html(html);
+        $('#httpdoc-config').modal('hide');
+    };
+
+    this.mergeSetting = function (btn) {
+        // 基础设置
+        {
+            var $basic = $("#httpdoc-setting-basic");
+            var protocol = $basic.find("input[name='protocol']").val();
+            var hostname = $basic.find("input[name='hostname']").val();
+            var port = $basic.find("input[name='port']").val();
+            var context = $basic.find("input[name='context']").val();
+            SETTING.protocol = protocol && protocol !== "" ? protocol : location.protocol.replace(":", "");
+            SETTING.hostname = hostname && hostname !== "" ? hostname : location.hostname;
+            SETTING.port = port && port !== "" && /\d+/.test(port) ? parseInt(port) : location.port;
+            SETTING.context = context && context !== "" ? context : "";
+        }
+        // Query 设置
+        {
+            var queries = [];
+            var $query = $("#httpdoc-setting-query");
+            var $items = $query.find("tr");
+            $items.each(function (index, item) {
+                var $item = $(item);
+                var key = $item.find("input[name='setting-key']").val();
+                var value = $item.find("input[name='setting-value']").val();
+                if (!key || key === "") return;
+                queries.push({
+                    key: key,
+                    value: value
+                });
+            });
+            SETTING.queries = queries;
+        }
+        // Header 设置
+        {
+            var headers = [];
+            var $header = $("#httpdoc-setting-header");
+            var $items = $header.find("tr");
+            $items.each(function (index, item) {
+                var $item = $(item);
+                var key = $item.find("input[name='setting-key']").val();
+                var value = $item.find("input[name='setting-value']").val();
+                if (!key || key === "") return;
+                headers.push({
+                    key: key,
+                    value: value
+                });
+            });
+            SETTING.headers = headers;
+        }
+        // Cookie 设置
+        {
+            var cookies = [];
+            var $cookie = $("#httpdoc-setting-cookie");
+            var $items = $cookie.find("tr");
+            $items.each(function (index, item) {
+                var $item = $(item);
+                var key = $item.find("input[name='setting-key']").val();
+                var value = $item.find("input[name='setting-value']").val();
+                if (!key || key === "") return;
+                cookies.push({
+                    key: key,
+                    value: value
+                });
+            });
+            SETTING.cookies = cookies;
+        }
+        localStorage.setItem("setting", JSON.stringify(SETTING));
+        $('#httpdoc-config').modal('hide');
     };
 
 }

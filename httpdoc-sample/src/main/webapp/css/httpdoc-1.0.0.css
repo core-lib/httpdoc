@@ -233,6 +233,10 @@ textarea {
     border: 0;
 }
 
+.table > thead > tr > th {
+    border: 0;
+}
+
 #httpdoc-tags {
     border: 1px solid #f1f1f1;
     border-radius: 3px;
