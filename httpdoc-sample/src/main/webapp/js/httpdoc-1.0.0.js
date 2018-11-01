@@ -430,33 +430,26 @@ function HttpDoc() {
                 value: value
             };
             switch (scope) {
-                case "path": {
+                case "path":
                     paths.push(metadata);
-                }
                     break;
-                case "matrix": {
+                case "matrix":
                     matrices.push(metadata);
-                }
                     break;
-                case "query": {
+                case "query":
                     queries.push(metadata);
-                }
                     break;
-                case "field": {
+                case "field":
                     queries.push(metadata);
-                }
                     break;
-                case "header": {
+                case "header":
                     headers.push(metadata);
-                }
                     break;
-                case "cookie": {
+                case "cookie":
                     cookies.push(metadata);
-                }
                     break;
-                case "body": {
+                case "body":
                     bodies.push(metadata);
-                }
                     break;
                 default:
                     break;
@@ -541,10 +534,14 @@ function HttpDoc() {
         }
         if (cookie !== "") header["Cookie"] = [cookie];
 
+        // 处理请求体
+        var body = bodies.length > 0 ? bodies[0].value : {};
+
         $.ajax({
             url: path,
             method: method,
             headers: header,
+            data: body,
             success: function (result) {
                 alert(JSON.stringify(result));
             },
