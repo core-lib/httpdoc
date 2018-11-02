@@ -69,6 +69,7 @@ function HttpDoc() {
             },
             method: "GET",
             success: function (doc) {
+                doc = typeof doc === 'object' ? doc : JSON.parse(doc);
                 self.init(doc);
                 self.render();
                 $("#httpdoc-container").show();

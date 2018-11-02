@@ -6,7 +6,7 @@
 
     <groupId>io.httpdoc</groupId>
     <artifactId>httpdoc</artifactId>
-    <version>v1.4.2</version>
+    <version>v1.4.3</version>
     <modules>
         <module>httpdoc-core</module>
         <module>httpdoc-web</module>
@@ -19,7 +19,8 @@
         <module>httpdoc-retrofit</module>
         <module>httpdoc-objc</module>
         <module>httpdoc-spring-boot</module>
-        <module>httpdoc-sample</module>
+        <!--<module>httpdoc-sample</module>-->
+        <module>httpdoc-ui</module>
     </modules>
     <packaging>pom</packaging>
 
