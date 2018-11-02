@@ -488,6 +488,7 @@ function HttpDoc() {
         });
 
         var http = new HTTP();
+        http.setting = SETTING;
         http.uri = path;
         http.method = method;
         http.paths = paths;
@@ -496,9 +497,11 @@ function HttpDoc() {
         http.headers = headers;
         http.cookies = cookies;
         http.bodies = bodies;
+        $btn.button('loading');
         http.execute(function (event) {
             // 未完成
             if (this.readyState !== 4) return;
+            $btn.button('reset');
             var curl = "curl -X " + this.method + " \"" + this.url + "\"";
             for (var key in this.header) {
                 var values = this.header[key];
@@ -519,7 +522,11 @@ function HttpDoc() {
             autosize.update($operation.find(".httpdoc-header")
                 .show()
                 .find("textarea")
-                .html(this.status + " " + (this.statusText ? this.statusText : "") + "\r\n" + this.getAllResponseHeaders()));
+                .html(this.status === 0 ? "" : this.status + " " + (this.statusText ? this.statusText : "") + "\r\n" + this.getAllResponseHeaders()));
+
+            autosize.update(
+                $operation.find(".httpdoc-result").html(this.responseText)
+            );
         });
     };
 
@@ -645,7 +652,6 @@ function HTTP() {
         xhr.method = method;
         xhr.url = url;
         xhr.open(method, url);
-
 
         // multipart/form-data
         var bodies = this.bodies;
