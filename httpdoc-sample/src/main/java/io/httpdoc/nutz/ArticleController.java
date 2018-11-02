@@ -23,10 +23,8 @@ public class ArticleController {
     @At("/")
     @POST
     @AdaptBy(type = JsonAdaptor.class)
-    public ArticleCreateResult create(@Param("..") Article article) {
-        ArticleCreateResult result = new ArticleCreateResult();
-
-        return result;
+    public Article create(@Param("..") Article article) {
+        return article;
     }
 
 }
