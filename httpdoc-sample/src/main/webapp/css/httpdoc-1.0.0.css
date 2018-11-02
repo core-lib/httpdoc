@@ -252,6 +252,7 @@ textarea {
     border-radius: 3px;
     max-height: 80%;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/

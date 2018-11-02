@@ -397,8 +397,15 @@
                             <div class="row-md-12">
                                 <button type="button" class="btn button button-{{method}}" onclick="httpdoc.submit(this);" x-method="{{method}}" x-path="{{path}}" x-operation="{{id}}"><b>Try it out</b></button>
                             </div>
+                            <div class="row-md-12 httpdoc-curl" style="display: none;">
+                                <br/>
+                                <textarea class="form-control autosize" readonly></textarea>
+                            </div>
+                            <div class="row-md-12 httpdoc-header" style="display: none;">
+                                <br/>
+                                <textarea class="form-control autosize" readonly></textarea>
+                            </div>
                         </div>
-                        <br/>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="panel border-less">

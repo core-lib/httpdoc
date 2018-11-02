@@ -496,8 +496,30 @@ function HttpDoc() {
         http.headers = headers;
         http.cookies = cookies;
         http.bodies = bodies;
-        http.execute(function () {
-            alert(this.readyState);
+        http.execute(function (event) {
+            // 未完成
+            if (this.readyState !== 4) return;
+            var curl = "curl -X " + this.method + " \"" + this.url + "\"";
+            for (var key in this.header) {
+                var values = this.header[key];
+                for (var h = 0; h < values.length; h++) curl += " -H \"" + key + ": " + values[h] + "\"";
+            }
+            if (this.body) {
+                var d = this.body.replace(new RegExp("[\r\n]", "g"), "")
+                    .replace(new RegExp("\\\\", "g"), "\\\\")
+                    .replace(new RegExp("\"", "g"), "\\\"");
+                curl += " -d \"" + d + "\"";
+            }
+
+            autosize.update($operation.find(".httpdoc-curl")
+                .show()
+                .find("textarea")
+                .html(curl));
+
+            autosize.update($operation.find(".httpdoc-header")
+                .show()
+                .find("textarea")
+                .html(this.status + " " + (this.statusText ? this.statusText : "") + "\r\n" + this.getAllResponseHeaders()));
         });
     };
 
@@ -599,6 +621,7 @@ function HttpDoc() {
  * HTTP Request
  */
 function HTTP() {
+    this.xhr = new XMLHttpRequest();
     this.setting = {};
     this.uri = "";
     this.method = "";
@@ -614,19 +637,15 @@ function HTTP() {
      * @param callback 回调函数，this 就是 XMLHttpRequest
      */
     this.execute = function (callback) {
-        var xhr = new XMLHttpRequest();
+        var xhr = this.xhr;
         xhr.onreadystatechange = callback;
-        var url = this.path();
-        var query = this.query();
-        if (query && typeof query === 'string' && query !== "") url += url.indexOf("?") < 0 ? "?" + query : "&" + query;
-        xhr.open(this.method, url);
-        var header = this.header();
-        for (var key in header) {
-            var values = header[key];
-            for (var h = 0; h < values.length; h++) {
-                xhr.setRequestHeader(key, values[h]);
-            }
-        }
+
+        var method = this.method;
+        var url = this.url();
+        xhr.method = method;
+        xhr.url = url;
+        xhr.open(method, url);
+
 
         // multipart/form-data
         var bodies = this.bodies;
@@ -643,21 +662,54 @@ function HTTP() {
                 multipart += JSON.stringify(metadata.value) + CRLF;
             }
             multipart += "--" + boundary + "--" + CRLF;
-            console.log(multipart);
-            xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+            var header = this.header();
+            header['Content-Type'] = ["multipart/form-data; boundary=" + boundary];
+            for (var key in header) {
+                var values = header[key];
+                for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+            }
+            xhr.header = header;
+            xhr.body = multipart;
             xhr.send(multipart);
         }
         // 简单请求
         else {
-            xhr.setRequestHeader("Accept", "application/json");
             var body = bodies.length > 0 ? JSON.stringify(bodies[0].value) : null;
             if (body) {
-                xhr.setRequestHeader("Content-Type", "application/json");
+                var header = this.header();
+                header['Content-Type'] = ["application/json"];
+                for (var key in header) {
+                    var values = header[key];
+                    for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+                }
+                xhr.header = header;
+                xhr.body = body;
                 xhr.send(body);
             } else {
+                var header = this.header();
+                for (var key in header) {
+                    var values = header[key];
+                    for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+                }
+                xhr.header = header;
                 xhr.send();
             }
         }
+    };
+
+    /**
+     * 获取请求URL
+     * @returns {string} URL
+     */
+    this.url = function () {
+        var protocol = this.setting && this.setting.protocol ? this.setting.protocol : location.protocol.replace(":", "");
+        var hostname = this.setting && this.setting.hostname ? this.setting.hostname : location.hostname;
+        var port = this.setting && this.setting.port ? this.setting.port : location.port;
+        var context = this.setting && this.setting.context ? this.setting.context : "";
+        var url = protocol + "://" + hostname + (port <= 0 ? "" : ":" + port) + context + this.path();
+        var query = this.query();
+        if (query && typeof query === 'string' && query !== "") url += url.indexOf("?") < 0 ? "?" + query : "&" + query;
+        return url;
     };
 
     /**
