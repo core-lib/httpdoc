@@ -93,7 +93,7 @@ function XMLConversion() {
 
     this.beautify = function (xml) {
         return formatXml(xml);
-    }
+    };
 
     return this;
 }
