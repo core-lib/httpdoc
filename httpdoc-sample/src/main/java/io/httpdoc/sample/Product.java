@@ -35,6 +35,7 @@ public class Product {
     private String name;
     /**
      * 产品价格
+     * 支持浮点型
      */
     private BigDecimal price;
     /**

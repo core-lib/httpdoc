@@ -525,6 +525,62 @@ function HttpDoc() {
             }
         });
 
+        // 将全局设置放进参数里面但是原则是如果已存在则忽略
+        for (var q = 0; SETTING && SETTING.queries && q < SETTING.queries.length; q++) {
+            var query = SETTING.queries[q];
+            // 先看是否存在
+            var exists = false;
+            for (var i = 0; i < queries.length; i++) {
+                var _query = queries[i];
+                if (query.key === _query.name) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) queries.push({
+                name: query.key,
+                scope: "query",
+                path: "",
+                value: query.value
+            });
+        }
+        for (var h = 0; SETTING && SETTING.headers && h < SETTING.headers.length; h++) {
+            var header = SETTING.headers[h];
+            // 先看是否存在
+            var exists = false;
+            for (var i = 0; i < headers.length; i++) {
+                var _header = headers[i];
+                if (header.key === _header.name) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) headers.push({
+                name: header.key,
+                scope: "header",
+                path: "",
+                value: header.value
+            });
+        }
+        for (var c = 0; SETTING && SETTING.cookies && c < SETTING.cookies.length; c++) {
+            var cookie = SETTING.cookies[c];
+            // 先看是否存在
+            var exists = false;
+            for (var i = 0; i < cookies.length; i++) {
+                var _cookie = cookies[i];
+                if (cookie.key === _cookie.name) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) cookies.push({
+                name: cookie.key,
+                scope: "cookie",
+                path: "",
+                value: cookie.value
+            });
+        }
+
         var http = new HTTP();
         http.setting = SETTING;
         http.uri = path;
@@ -860,6 +916,7 @@ function HTTP() {
                 }
             }
         }
+        alert(cookie);
         return cookie;
     };
 
