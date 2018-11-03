@@ -361,9 +361,14 @@
                                 <td width="80%">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <select class="form-control x-param" x-name="Content-Type" x-scope="header" x-type="String">
+                                            <select class="form-control x-param"
+                                                    x-name="Content-Type"
+                                                    x-scope="header"
+                                                    x-type="String"
+                                                    onchange="httpdoc.onConsumeChanged(this.value, '{{id}}');"
+                                            >
                                                 {{#consumes}}
-                                                <option value="{{.}}">{{.}}</option>
+                                                <option value='{{.}}'>{{.}}</option>
                                                 {{/consumes}}
                                             </select>
                                         </div>
@@ -381,9 +386,14 @@
                                 <td width="80%">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <select class="form-control x-param" x-name="Content-Type" x-scope="header" x-type="String">
+                                            <select class="form-control x-param"
+                                                    x-name="Accept"
+                                                    x-scope="header"
+                                                    x-type="String"
+                                                    onchange="httpdoc.onProduceChanged(this.value, '{{id}}');"
+                                            >
                                                 {{#produces}}
-                                                <option value="{{.}}">{{.}}</option>
+                                                <option value='{{.}}'>{{.}}</option>
                                                 {{/produces}}
                                             </select>
                                         </div>
@@ -423,7 +433,7 @@
                                     </div>
                                     <div id="httpdoc-example-{{id}}" class="panel-collapse collapse in">
                                         <div class="panel-body">
-                                            <textarea class="form-control autosize textarea-model httpdoc-example" readonly>{{result.value}}</textarea>
+                                            <textarea class="form-control autosize textarea-model httpdoc-example" readonly x-type="{{result.type}}">{{result.value}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -436,7 +446,7 @@
                                     </div>
                                     <div id="httpdoc-result-{{id}}" class="panel-collapse collapse in">
                                         <div class="panel-body">
-                                            <textarea class="form-control autosize textarea-model httpdoc-result" readonly></textarea>
+                                            <textarea class="form-control autosize textarea-model httpdoc-result" readonly x-type="{{result.type}}"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -455,6 +465,8 @@
 <script src="js/mustache.min-3.0.0.js"></script>
 <script src="js/bootstrap-3.3.7.min.js"></script>
 <script src="js/autosize-4.0.2.js"></script>
+<script src="js/obj-tree-1.0.0.js"></script>
+<script src="js/jkl-dumper-1.0.0.js"></script>
 <script src="js/httpdoc-1.0.0.js"></script>
 <script type="text/javascript">
     httpdoc.explore();
