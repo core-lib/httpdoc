@@ -543,15 +543,7 @@ function HttpDoc() {
     };
 
     this.toJSONObject = function (string) {
-        var lines = string.split("\n");
-        var json = "";
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i];
-            // 忽略注释行
-            if (line.trim().startsWith("//")) continue;
-            json += line + '\n';
-        }
-        json = json.trim();
+        var json = this.clean(string);
         if (json.startsWith("{") && json.endsWith("}")) return JSON.parse(json);
         if (json.startsWith("[") && json.endsWith("]")) return JSON.parse(json);
         if (json.startsWith("\"") && json.endsWith("\"")) return JSON.parse(json);
@@ -715,6 +707,19 @@ function HttpDoc() {
         return xml;
     };
 
+    this.clean = function (string) {
+        var lines = string.split("\n");
+        var cleaned = "";
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            // 忽略注释行
+            if (line.trim().startsWith("//")) continue;
+            cleaned += line + '\n';
+        }
+        cleaned = cleaned.trim();
+        return cleaned;
+    };
+
     this.show = function (tag) {
         var controllers = MAP[tag];
         this.doRenderControllers(controllers);
@@ -742,7 +747,7 @@ function HttpDoc() {
             var name = $param.attr("x-name");
             var scope = $param.attr("x-scope");
             var path = $param.attr("x-path");
-            var value = self.toJSONObject($param.val());
+            var value = scope === "body" ? self.clean($param.val()) : self.toJSONObject($param.val());
             var metadata = {
                 name: name,
                 scope: scope,
@@ -854,6 +859,7 @@ function HttpDoc() {
             }
             if (this.body) {
                 var d = this.body.replace(new RegExp("[\r\n]", "g"), "")
+                    .replace(new RegExp("\\s+", "g"), "")
                     .replace(new RegExp("\\\\", "g"), "\\\\")
                     .replace(new RegExp("\"", "g"), "\\\"");
                 curl += " -d \"" + d + "\"";
@@ -1062,7 +1068,7 @@ function HTTP() {
                 multipart += "content-disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
                 multipart += "content-type: application/json" + CRLF;
                 multipart += CRLF;
-                multipart += JSON.stringify(metadata.value) + CRLF;
+                multipart += metadata.value + CRLF;
             }
             multipart += "--" + boundary + "--" + CRLF;
             var header = this.header();
@@ -1084,21 +1090,9 @@ function HTTP() {
                 var contentType = header["content-type"] ? header['content-type'][0] : null;
                 // 如果没有的话 默认用 application/json
                 if (!contentType || contentType.trim() === "") {
-                    contentType = "application/json";
-                    header["content-type"] = [contentType];
+                    header["content-type"] = ["application/json"];
                 }
-                var body = "";
-                switch (contentType.toLowerCase()) {
-                    case "application/json":
-                        body = JSONConverter.stringify(bodies[0].value);
-                        break;
-                    case "application/xml":
-                        body = XMLConverter.stringify(bodies[0].value);
-                        break;
-                    default:
-                        break;
-                }
-                console.log(body);
+                var body = bodies[0].value;
                 for (var key in header) {
                     var values = header[key];
                     for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
