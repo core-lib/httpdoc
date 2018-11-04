@@ -723,6 +723,7 @@ function HttpDoc() {
     this.show = function (tag) {
         var controllers = MAP[tag];
         this.doRenderControllers(controllers);
+        window.scrollTo(0, 0);
     };
 
     this.submit = function (btn) {
@@ -1306,7 +1307,7 @@ function HTTP() {
             delete(obj[key]);
         }
         return obj;
-    }
+    };
 
     return this;
 }

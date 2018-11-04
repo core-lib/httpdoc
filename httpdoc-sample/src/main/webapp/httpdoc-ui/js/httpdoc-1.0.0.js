@@ -1306,7 +1306,7 @@ function HTTP() {
             delete(obj[key]);
         }
         return obj;
-    }
+    };
 
     return this;
 }
