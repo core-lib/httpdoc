@@ -179,20 +179,38 @@ function HttpDoc() {
     this.explore = function () {
         var self = this;
         var httpdocURL = $("#httpdoc-url").val();
+
         $.ajax({
             url: httpdocURL,
             data: {
                 "format.canonical": true
             },
             method: "GET",
+            beforeSend: function () {
+                $("#httpdoc-loading").modal('show');
+            },
             success: function (doc) {
                 doc = typeof doc === 'object' ? doc : JSON.parse(doc);
+                doc.url = httpdocURL;
                 self.init(doc);
                 self.render();
                 $("#httpdoc-container").show();
             },
             error: function (xhr) {
                 $("#httpdoc-container").hide();
+
+                var tpl = $("#httpdoc-error").html();
+                var html = Mustache.render(tpl, {
+                    code: xhr.status,
+                    message: xhr.statusText,
+                    body: xhr.responseText,
+                    url: httpdocURL
+                });
+                $("#httpdoc-welcome").html(html);
+
+            },
+            complete: function () {
+                $("#httpdoc-loading").modal('hide');
             }
         });
     };
@@ -272,6 +290,12 @@ function HttpDoc() {
         for (var name in DOC.schemas) {
             var schema = DOC.schemas[name];
             schema.properties = this.properties(schema);
+        }
+
+        {
+            var tpl = $("#httpdoc-jumbotron").html();
+            var html = Mustache.render(tpl, DOC);
+            $("#httpdoc-welcome").html(html);
         }
 
         {
