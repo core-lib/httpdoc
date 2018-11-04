@@ -13,7 +13,7 @@ public abstract class SummaryInterpretation extends Interpretation {
     }
 
     public String getSummary() {
-        for (int i = 0; notes != null && i < notes.length; i++) if ("summary".equals(notes[i].getKind())) return notes[i].getText();
+        for (int i = 0; notes != null && i < notes.length; i++) if ("@summary".equals(notes[i].getKind())) return notes[i].getText();
         return null;
     }
 

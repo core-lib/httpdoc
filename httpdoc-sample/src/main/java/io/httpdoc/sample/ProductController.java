@@ -1,5 +1,6 @@
 package io.httpdoc.sample;
 
+import io.httpdoc.core.annotation.Ignore;
 import io.httpdoc.core.annotation.Name;
 import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.annotation.Tag;
@@ -13,6 +14,7 @@ import java.util.Random;
  * 产品管理器
  *
  * @author 杨昌沛 646742615@qq.com
+ * @summary 产品
  * @date 2018-04-20 12:18
  **/
 @HTTP("/products")
@@ -28,6 +30,7 @@ public class ProductController {
      * @param p 页码
      * @param s 页面容量
      * @return 产品列表结果
+     * @summary 分页查询
      */
     @GET("/{page}/{size}")
     public ProductListResult list(
@@ -48,11 +51,17 @@ public class ProductController {
         return result;
     }
 
+    /**
+     * 根据ID删除产品
+     *
+     * @param id  产品ID
+     * @param sid SID
+     * @summary 删除产品
+     */
     @DELETE(value = "/{id}", produces = {"application/json", "application/xml"})
     public void delete(
             @Path("id") String id,
-            @Cookie("sid") String sid
-
+            @Ignore @Cookie("sid") String sid
     ) {
 
     }
@@ -60,7 +69,9 @@ public class ProductController {
     /**
      * 创建产品
      *
+     * @param product 产品对象
      * @return 产品创建结果
+     * @summary 创建产品
      */
     @POST(value = "/", consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ProductCreateResult create(@Body("product") Product product) {
@@ -70,6 +81,15 @@ public class ProductController {
         return result;
     }
 
+    /**
+     * 根据ID更新产品
+     *
+     * @param id      产品ID
+     * @param name    产品名称
+     * @param product 产品对象
+     * @return 产品更新结果
+     * @summary 更新产品
+     */
     @PUT(value = "/{id}", consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ProductUpdateResult update(
             @Path("id") Long id,

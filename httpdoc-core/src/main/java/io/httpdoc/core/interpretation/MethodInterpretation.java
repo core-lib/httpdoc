@@ -16,19 +16,19 @@ public class MethodInterpretation extends SummaryInterpretation {
     }
 
     public Note getReturnNote() {
-        for (int i = 0; notes != null && i < notes.length; i++) if ("return".equals(notes[i].getKind())) return notes[i];
+        for (int i = 0; notes != null && i < notes.length; i++) if ("@return".equals(notes[i].getKind())) return notes[i];
         return null;
     }
 
     public Note[] getParamNotes() {
         List<Note> list = new ArrayList<>();
-        for (int i = 0; notes != null && i < notes.length; i++) if ("param".equals(notes[i].getKind())) list.add(notes[i]);
+        for (int i = 0; notes != null && i < notes.length; i++) if ("@param".equals(notes[i].getKind())) list.add(notes[i]);
         return list.toArray(new Note[0]);
     }
 
     public Note[] getThrowsNotes() {
         List<Note> list = new ArrayList<>();
-        for (int i = 0; notes != null && i < notes.length; i++) if ("throws".equals(notes[i].getKind())) list.add(notes[i]);
+        for (int i = 0; notes != null && i < notes.length; i++) if ("@throws".equals(notes[i].getKind())) list.add(notes[i]);
         return list.toArray(new Note[0]);
     }
 

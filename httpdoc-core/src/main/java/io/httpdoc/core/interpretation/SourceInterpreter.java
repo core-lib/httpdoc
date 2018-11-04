@@ -29,15 +29,19 @@ public class SourceInterpreter implements Interpreter {
         List<Note> notes = new ArrayList<>();
         {
             ParamTag[] tags = doc.paramTags();
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("param", tags[i].parameterName(), tags[i].parameterComment()));
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@param", tags[i].parameterName(), tags[i].parameterComment()));
         }
         {
             ThrowsTag[] tags = doc.throwsTags();
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("throws", tags[i].exceptionName(), tags[i].exceptionComment()));
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@throws", tags[i].exceptionName(), tags[i].exceptionComment()));
         }
         {
             Tag[] tags = doc.tags("return");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("return", null, tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@return", null, tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("summary");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@summary", null, tags[i].text()));
         }
         return new MethodInterpretation(doc.commentText(), notes.toArray(new Note[0]), doc.getRawCommentText());
     }
@@ -165,11 +169,11 @@ public class SourceInterpreter implements Interpreter {
         private static MethodDoc of(Method method) {
             Class<?> clazz = method.getDeclaringClass();
             ClassDoc doc = getClassDoc(clazz);
-            if (doc == null || !(doc instanceof ClassDocImpl)) return null;
+            if (!(doc instanceof ClassDocImpl)) return null;
             ClassDocImpl impl = (ClassDocImpl) doc;
             String name = method.getName();
             Class<?>[] parameterTypes = method.getParameterTypes();
-            String[] types = new String[parameterTypes != null ? parameterTypes.length : 0];
+            String[] types = new String[parameterTypes.length];
             for (int i = 0; parameterTypes != null && i < parameterTypes.length; i++) {
                 Class<?> type = parameterTypes[i];
                 types[i] = type.getName();
