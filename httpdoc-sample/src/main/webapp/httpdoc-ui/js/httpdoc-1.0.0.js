@@ -72,7 +72,7 @@ function XMLConversion() {
                 break;
             case 'array':
                 xml += "<" + name + ">";
-                for (var i = 0; i < obj.length; i++) xml += this.stringify(obj[i], name);
+                for (var i = 0; obj && i < obj.length; i++) xml += this.stringify(obj[i], name);
                 xml += "</" + name + ">";
                 break;
             case 'object': {
@@ -384,13 +384,13 @@ function HttpDoc() {
     };
 
     this.doRenderControllers = function (controllers) {
-        for (var i = 0; i < controllers.length; i++) {
+        for (var i = 0; controllers && i < controllers.length; i++) {
             var controller = controllers[i];
             var operations = controller.operations;
-            for (var j = 0; j < operations.length; j++) {
+            for (var j = 0; operations && j < operations.length; j++) {
                 var operation = operations[j];
                 var parameters = operation.parameters;
-                for (var k = 0; k < parameters.length; k++) {
+                for (var k = 0; parameters && k < parameters.length; k++) {
                     var parameter = parameters[k];
                     if (parameter.resolved) continue;
                     else parameter.resolved = true;
@@ -479,7 +479,7 @@ function HttpDoc() {
                     if (index++ > 0) json += ",\n";
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
-                        for (var d = 0; d < descriptions.length; d++) {
+                        for (var d = 0; descriptions && d < descriptions.length; d++) {
                             for (var i = 0; i < indent + 1; i++) json += INDENT;
                             json += "// " + descriptions[d].trim() + "\n";
                         }
@@ -616,7 +616,7 @@ function HttpDoc() {
                 for (var key in properties) {
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
-                        for (var d = 0; d < descriptions.length; d++) {
+                        for (var d = 0; descriptions && d < descriptions.length; d++) {
                             for (var i = 0; i < indent + 1; i++) xml += INDENT;
                             xml += "// " + descriptions[d].trim() + "\n";
                         }
@@ -710,7 +710,7 @@ function HttpDoc() {
     this.clean = function (string) {
         var lines = string.split("\n");
         var cleaned = "";
-        for (var i = 0; i < lines.length; i++) {
+        for (var i = 0; lines && i < lines.length; i++) {
             var line = lines[i];
             // 忽略注释行
             if (line.trim().startsWith("//")) continue;
@@ -786,7 +786,7 @@ function HttpDoc() {
             var query = SETTING.queries[q];
             // 先看是否存在
             var exists = false;
-            for (var i = 0; i < queries.length; i++) {
+            for (var i = 0; queries && i < queries.length; i++) {
                 var _query = queries[i];
                 if (query.key === _query.name) {
                     exists = true;
@@ -804,7 +804,7 @@ function HttpDoc() {
             var header = SETTING.headers[h];
             // 先看是否存在
             var exists = false;
-            for (var i = 0; i < headers.length; i++) {
+            for (var i = 0; headers && i < headers.length; i++) {
                 var _header = headers[i];
                 if (header.key === _header.name) {
                     exists = true;
@@ -822,7 +822,7 @@ function HttpDoc() {
             var cookie = SETTING.cookies[c];
             // 先看是否存在
             var exists = false;
-            for (var i = 0; i < cookies.length; i++) {
+            for (var i = 0; cookies && i < cookies.length; i++) {
                 var _cookie = cookies[i];
                 if (cookie.key === _cookie.name) {
                     exists = true;
@@ -855,7 +855,7 @@ function HttpDoc() {
             var curl = "curl -X " + this.method + " \"" + this.url + "\"";
             for (var key in this.header) {
                 var values = this.header[key];
-                for (var h = 0; h < values.length; h++) curl += " -H \"" + key + ": " + values[h] + "\"";
+                for (var h = 0; values && h < values.length; h++) curl += " -H \"" + key + ": " + values[h] + "\"";
             }
             if (this.body) {
                 var d = this.body.replace(new RegExp("[\r\n]", "g"), "")
@@ -1062,7 +1062,7 @@ function HTTP() {
             var multipart = "";
             var CRLF = "\r\n";
             var boundary = this.random(32);
-            for (var b = 0; b < bodies.length; b++) {
+            for (var b = 0; bodies && b < bodies.length; b++) {
                 var metadata = bodies[b];
                 multipart += "--" + boundary + CRLF;
                 multipart += "content-disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
@@ -1075,7 +1075,7 @@ function HTTP() {
             header['content-type'] = ["multipart/form-data; boundary=" + boundary];
             for (var key in header) {
                 var values = header[key];
-                for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+                for (var h = 0; values && h < values.length; h++) xhr.setRequestHeader(key, values[h]);
             }
             xhr.header = header;
             xhr.body = multipart;
@@ -1095,7 +1095,7 @@ function HTTP() {
                 var body = bodies[0].value;
                 for (var key in header) {
                     var values = header[key];
-                    for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+                    for (var h = 0; values && h < values.length; h++) xhr.setRequestHeader(key, values[h]);
                 }
                 xhr.header = header;
                 xhr.body = body;
@@ -1105,7 +1105,7 @@ function HTTP() {
                 this.lowercase(header);
                 for (var key in header) {
                     var values = header[key];
-                    for (var h = 0; h < values.length; h++) xhr.setRequestHeader(key, values[h]);
+                    for (var h = 0; values && h < values.length; h++) xhr.setRequestHeader(key, values[h]);
                 }
                 xhr.header = header;
                 xhr.send();
@@ -1134,7 +1134,7 @@ function HTTP() {
      */
     this.path = function () {
         var path = this.uri;
-        for (var i = 0; i < this.paths.length; i++) {
+        for (var i = 0; this.paths && i < this.paths.length; i++) {
             var metadata = this.paths[i];
             var name = metadata.name;
             var value = metadata.value;
@@ -1143,7 +1143,7 @@ function HTTP() {
             var val = values[0];
             // 追加矩阵参数
             var append = "";
-            for (var j = 0; j < this.matrices.length; j++) {
+            for (var j = 0; this.matrices && j < this.matrices.length; j++) {
                 var matrix = this.matrices[j];
                 // 指定路径占位符的或第一个路径占位符
                 if (name === matrix.path || (matrix.path === "" && i === 0)) {
@@ -1151,7 +1151,7 @@ function HTTP() {
                     for (var k in m) {
                         var array = m[k];
                         // 对每个元素都进行URL编码
-                        for (var x = 0; x < array.length; x++) array[x] = encodeURIComponent(array[x]);
+                        for (var x = 0; array && x < array.length; x++) array[x] = encodeURIComponent(array[x]);
                         if (append !== "") append += ";";
                         append += encodeURIComponent(k);
                         append += "=";
@@ -1172,13 +1172,13 @@ function HTTP() {
      */
     this.query = function () {
         var query = "";
-        for (var i = 0; i < this.queries.length; i++) {
+        for (var i = 0; this.queries && i < this.queries.length; i++) {
             var metadata = this.queries[i];
             var map = this.flatten(metadata.name, metadata.value);
             for (var key in map) {
                 if (query !== "") query += "&";
                 var values = map[key];
-                for (var j = 0; j < values.length; j++) {
+                for (var j = 0; values && j < values.length; j++) {
                     query += encodeURIComponent(key);
                     query += "=";
                     query += encodeURIComponent(values[j]);
@@ -1193,13 +1193,13 @@ function HTTP() {
      */
     this.header = function () {
         var header = {};
-        for (var i = 0; i < this.headers.length; i++) {
+        for (var i = 0; this.headers && i < this.headers.length; i++) {
             var metadata = this.headers[i];
             var map = this.flatten(metadata.name, metadata.value);
             for (var key in map) {
                 var headerKey = encodeURI(key);
                 var headerValues = map[key];
-                for (var j = 0; j < map[key].length; j++) headerValues[j] = encodeURI(headerValues[j]);
+                for (var j = 0; headerValues && j < headerValues.length; j++) headerValues[j] = encodeURI(headerValues[j]);
                 header[headerKey] = headerValues;
             }
         }
@@ -1216,12 +1216,12 @@ function HTTP() {
      */
     this.cookie = function () {
         var cookie = "";
-        for (var i = 0; i < this.cookies.length; i++) {
+        for (var i = 0; this.cookies && i < this.cookies.length; i++) {
             var metadata = this.cookies[i];
             var map = this.flatten(metadata.name, metadata.value);
             for (var key in map) {
                 var values = map[key];
-                for (var j = 0; j < values.length; j++) {
+                for (var j = 0; values && j < values.length; j++) {
                     if (cookie !== "") cookie += "; ";
                     cookie += encodeURI(key);
                     cookie += "=";
@@ -1252,7 +1252,7 @@ function HTTP() {
                 map[name] = ["" + obj];
                 break;
             case "array":
-                for (var i = 0; i < obj.length; i++) {
+                for (var i = 0; obj && i < obj.length; i++) {
                     var am = this.flatten(name + "[" + i + "]", obj[i]);
                     for (var a in am) map[a] = am[a];
                 }

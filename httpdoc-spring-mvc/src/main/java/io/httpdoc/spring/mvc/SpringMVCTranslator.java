@@ -356,6 +356,7 @@ public class SpringMVCTranslator implements Translator {
         Method method = translation.getMethod();
         Controller controller = translation.getController();
         // 方法解析 只取第一个
+        if (mapping.getPatternsCondition().getPatterns().isEmpty()) return;
         String expression = mapping.getPatternsCondition().getPatterns().iterator().next();
         Operation operation = new Operation();
         // 重定义方法名
