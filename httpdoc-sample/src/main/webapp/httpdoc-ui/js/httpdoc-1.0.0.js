@@ -189,7 +189,7 @@ function HttpDoc() {
             beforeSend: function () {
                 $("#httpdoc-loading").modal('show');
             },
-            success: function (doc, xhr) {
+            success: function (doc) {
                 try {
                     doc = typeof doc === 'object' ? doc : JSON.parse(doc);
                     doc.url = httpdocURL;
@@ -199,9 +199,9 @@ function HttpDoc() {
                     $("#httpdoc-body").hide();
                     var tpl = $("#tpl-httpdoc-error").html();
                     var html = Mustache.render(tpl, {
-                        code: xhr.status,
-                        message: xhr.statusText,
-                        body: xhr.responseText,
+                        code: -1,
+                        message: "Unknown Error",
+                        body: doc,
                         url: httpdocURL
                     });
                     $("#httpdoc-head").html(html);
