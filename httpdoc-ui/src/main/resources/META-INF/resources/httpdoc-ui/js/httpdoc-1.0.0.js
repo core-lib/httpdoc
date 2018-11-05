@@ -189,10 +189,10 @@ function HttpDoc() {
                 doc = typeof doc === 'object' ? doc : JSON.parse(doc);
                 self.init(doc);
                 self.render();
-                $("#httpdoc-container").show();
+                $("#httpdoc-body").show();
             },
             error: function (xhr) {
-                $("#httpdoc-container").hide();
+                $("#httpdoc-body").hide();
             }
         });
     };

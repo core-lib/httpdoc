@@ -193,20 +193,19 @@ function HttpDoc() {
                 doc = typeof doc === 'object' ? doc : JSON.parse(doc);
                 doc.url = httpdocURL;
                 self.init(doc);
-                self.render();
-                $("#httpdoc-container").show();
+                $("#httpdoc-body").show();
             },
             error: function (xhr) {
-                $("#httpdoc-container").hide();
+                $("#httpdoc-body").hide();
 
-                var tpl = $("#httpdoc-error").html();
+                var tpl = $("#tpl-httpdoc-error").html();
                 var html = Mustache.render(tpl, {
                     code: xhr.status,
                     message: xhr.statusText,
                     body: xhr.responseText,
                     url: httpdocURL
                 });
-                $("#httpdoc-welcome").html(html);
+                $("#httpdoc-head").html(html);
 
             },
             complete: function () {
@@ -293,25 +292,28 @@ function HttpDoc() {
         }
 
         {
-            var tpl = $("#httpdoc-jumbotron").html();
+            var tpl = $("#tpl-httpdoc-introduction").html();
             var html = Mustache.render(tpl, DOC);
-            $("#httpdoc-welcome").html(html);
+            $("#httpdoc-head").html(html);
         }
 
         {
-            var tpl = $("#httpdoc-schema").html();
-            var schemas = [];
-            for (var name in DOC.schemas) {
-                var schema = DOC.schemas[name];
-                schema.name = name;
-                schemas.push(schema);
+            var tags = [];
+            for (var tag in MAP) tags.push(tag);
+            var tpl = $("#tpl-httpdoc-modules").html();
+            var html = Mustache.render(tpl, tags);
+            $("#httpdoc-tags").html(html);
+        }
+
+        {
+            for (var tag in MAP) {
+                this.show(tag);
+                break;
             }
-            var html = Mustache.render(tpl, schemas);
-            $("#httpdoc-schemas").html(html);
         }
 
         {
-            var tpl = $("#httpdoc-model").html();
+            var tpl = $("#tpl-httpdoc-models").html();
             var models = [];
             for (var name in DOC.schemas) {
                 var model = DOC.schemas[name];
@@ -323,17 +325,17 @@ function HttpDoc() {
                 models.push(model);
             }
             var html = Mustache.render(tpl, models);
-            $("#httpdoc-models").html(html);
+            $("#httpdoc-schemas").html(html);
 
-            $("#httpdoc-models").find(".collapse").on("shown.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("shown.bs.collapse", function () {
                 autosize($(this).find("textarea.autosize"));
             });
 
-            $("#httpdoc-models").find(".collapse").on("show.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function () {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
             });
 
-            $("#httpdoc-models").find(".collapse").on("hide.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function () {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
             });
         }
@@ -344,7 +346,7 @@ function HttpDoc() {
             // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
             if (setting) {
                 SETTING = JSON.parse(localStorage.getItem("setting"));
-                var tpl = $("#httpdoc-setting").html();
+                var tpl = $("#tpl-httpdoc-setting").html();
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
                 $('#httpdoc-config').modal('show');
@@ -360,7 +362,7 @@ function HttpDoc() {
                 SETTING.cookies = [];
             }
             $('#httpdoc-config').on('show.bs.modal', function () {
-                var tpl = $("#httpdoc-setting").html();
+                var tpl = $("#tpl-httpdoc-setting").html();
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
             });
@@ -389,25 +391,7 @@ function HttpDoc() {
         return properties;
     };
 
-    this.render = function () {
-        this.doRenderTags();
-        // 第一个tag的内容默认展示
-        for (var tag in MAP) {
-            var controllers = MAP[tag];
-            this.doRenderControllers(controllers);
-            break;
-        }
-    };
-
-    this.doRenderTags = function () {
-        var tags = [];
-        for (var tag in MAP) tags.push(tag);
-        var tpl = $("#httpdoc-tag").html();
-        var html = Mustache.render(tpl, tags);
-        $("#httpdoc-tags").html(html);
-    };
-
-    this.doRenderControllers = function (controllers) {
+    this.display = function (controllers) {
         for (var i = 0; controllers && i < controllers.length; i++) {
             var controller = controllers[i];
             var operations = controller.operations;
@@ -436,13 +420,7 @@ function HttpDoc() {
         }
 
         {
-            var tpl = $("#httpdoc-operation").html();
-            var html = Mustache.render(tpl, controllers);
-            $("#httpdoc-operations").html(html);
-        }
-
-        {
-            var tpl = $("#httpdoc-controller").html();
+            var tpl = $("#tpl-httpdoc-apis").html();
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-controllers").html(html);
         }
@@ -746,7 +724,7 @@ function HttpDoc() {
 
     this.show = function (tag) {
         var controllers = MAP[tag];
-        this.doRenderControllers(controllers);
+        this.display(controllers);
     };
 
     this.submit = function (btn) {
@@ -921,8 +899,8 @@ function HttpDoc() {
     };
 
     this.addSettingRow = function (btn) {
-        var row = $("#httpdoc-setting-row").html();
-        $(btn).parent().parent().before(row);
+        var tpl = $("#tpl-httpdoc-setting-row").html();
+        $(btn).parent().parent().before(tpl);
     };
 
     this.delSettingRow = function (btn) {
@@ -938,7 +916,7 @@ function HttpDoc() {
         SETTING.queries = [];
         SETTING.headers = [];
         SETTING.cookies = [];
-        var tpl = $("#httpdoc-setting").html();
+        var tpl = $("#tpl-httpdoc-setting").html();
         var html = Mustache.render(tpl, SETTING);
         $("#httpdoc-config").find(".modal-body").html(html);
         $('#httpdoc-config').modal('hide');

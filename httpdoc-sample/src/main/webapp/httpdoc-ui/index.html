@@ -3,19 +3,21 @@
 <head>
     <meta charset="utf-8">
     <title>HttpDoc UI</title>
-    <link rel="stylesheet" href="css/bootstrap-3.3.7.min.css">
-    <link rel="stylesheet" href="css/httpdoc-1.0.0.css">
-    <script src="js/autosize-4.0.2.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap-3.3.7.min.css">
+    <link rel="stylesheet" href="./css/httpdoc-1.0.0.css">
+    <script src="./js/autosize-4.0.2.js"></script>
 </head>
-<body data-spy="scroll">
+<body>
 <!-- Fixed navbar -->
 <nav class="navbar navbar-default" role="navigation" style="border-radius: 0; border-width: 0 0 1px 0; margin: 0;">
-    <div class="container-fluid">
-        <div class="navbar-header col-md-2">
-            <a class="navbar-brand" href="https://github.com/core-lib/httpdoc" target="_blank">
-                HttpDoc
-                <span class="badge">v1.4.4</span>
-            </a>
+    <div class="container">
+        <div class="col-md-2">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://github.com/core-lib/httpdoc" target="_blank">
+                    HttpDoc UI
+                    <span class="badge">v1.4.4</span>
+                </a>
+            </div>
         </div>
         <div class="col-md-8">
             <div class="navbar-form" style="width: 100%;">
@@ -34,17 +36,17 @@
         </div>
     </div>
 </nav>
-<div id="httpdoc-welcome" class="row-fluid">
+<div id="httpdoc-head" class="row-fluid">
 
 </div>
-<div id="httpdoc-container" class="container-fluid" style="display: none;">
-    <div class="row">
+<div id="httpdoc-body" class="row-fluid" style="display: none;">
+    <div class="container">
         <div class="col-md-2">
             <ul id="httpdoc-tags" class="nav nav-stacked">
 
             </ul>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div id="httpdoc-controllers">
 
             </div>
@@ -54,18 +56,16 @@
                     <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 <div id="panel-models" class="panel-collapse collapse">
-                    <div id="httpdoc-models" class="panel-body">
+                    <div id="httpdoc-schemas" class="panel-body">
 
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <ul id="httpdoc-operations" class="nav nav-stacked">
-
-            </ul>
-        </div>
     </div>
+</div>
+<div id="httpdoc-foot" class="row-fluid">
+
 </div>
 <!-- 模态框（Modal） -->
 <div class="modal fade" id="httpdoc-config" tabindex="-1" role="dialog" aria-hidden="true">
@@ -98,7 +98,7 @@
 </div>
 </body>
 
-<script id="httpdoc-jumbotron" type="text/html">
+<script id="tpl-httpdoc-introduction" type="text/html">
     <div class="jumbotron" style="background-color: #f8f8f8; border-bottom: 1px solid #e7e7e7;">
         <div class="container">
             <h1>{{#name}}{{.}}{{/name}}{{^name}}HttpDoc{{/name}} <label class="badge">{{#version}}{{.}}{{/version}}{{^version}}1.0.0{{/version}}</label></h1>
@@ -109,7 +109,7 @@
     </div>
 </script>
 
-<script id="httpdoc-error" type="text/html">
+<script id="tpl-httpdoc-error" type="text/html">
     <div class="jumbotron" style="background-color: #f8f8f8; border-bottom: 1px solid #e7e7e7;">
         <div class="container">
             <h1>{{code}}&nbsp{{message}}</h1>
@@ -120,7 +120,7 @@
     </div>
 </script>
 
-<script id="httpdoc-setting" type="text/html">
+<script id="tpl-httpdoc-setting" type="text/html">
     <ul class="nav nav-tabs">
         <li class="active"><a href="#httpdoc-setting-basic" data-toggle="tab">Basic</a></li>
         <li><a href="#httpdoc-setting-query" data-toggle="tab">Query</a></li>
@@ -285,7 +285,7 @@
     </div>
 </script>
 
-<script id="httpdoc-setting-row" type="text/html">
+<script id="tpl-httpdoc-setting-row" type="text/html">
     <tr>
         <td><input class="form-control" name="setting-key" placeholder="Setting Key"/></td>
         <td><input class="form-control" name="setting-value" placeholder="Setting Value"/></td>
@@ -297,37 +297,21 @@
     </tr>
 </script>
 
-<script id="httpdoc-tag" type="text/html">
+<script id="tpl-httpdoc-modules" type="text/html">
     {{#.}}
     <li title="{{.}}"><a href="javascript: httpdoc.show('{{.}}');" class="text-nowrap" style="overflow: hidden;"><b>{{.}}</b></a></li>
     {{/.}}
 </script>
 
-<script id="httpdoc-schema" type="text/html">
-    {{#.}}
-    <li title="{{name}}"><a href="#schema-{{name}}" class="text-nowrap" style="overflow: hidden;"><b>{{name}}</b></a></li>
-    {{/.}}
-</script>
-
-<script id="httpdoc-operation" type="text/html">
-    {{#.}}
-    <hr>
-    <li title="{{name}}"><a href="#controller-{{id}}"><b>{{name}}</b></a></li>
-    {{#operations}}
-    <li title="{{method}} {{path}}"><a href="#operation-{{id}}" class="text-nowrap"><label class="method method-{{method}}">{{method}}</label><span class="path path-{{method}}">{{path}}</span></a></li>
-    {{/operations}}
-    {{/.}}
-</script>
-
-<script id="httpdoc-model" type="text/html">
+<script id="tpl-httpdoc-models" type="text/html">
     {{#.}}
     <div class="panel border-less">
-        <div class="panel-heading border-less" data-toggle="collapse" href="#httpdoc-models-{{name}}" style="cursor: pointer;">
+        <div class="panel-heading border-less" data-toggle="collapse" href="#httpdoc-schemas-{{name}}" style="cursor: pointer;">
             <span class="panel-title"><b>{{name}}</b></span>
             <span class="glyphicon glyphicon-chevron-down"></span>
             <span class="text-muted">{{summary}}</span>
         </div>
-        <div id="httpdoc-models-{{name}}" class="panel-collapse collapse">
+        <div id="httpdoc-schemas-{{name}}" class="panel-collapse collapse">
             <div class="panel-body">
                 {{#description}}
                 <p class="text-muted"><b>——</b>{{description}}</p>
@@ -339,7 +323,7 @@
     {{/.}}
 </script>
 
-<script id="httpdoc-controller" type="text/html">
+<script id="tpl-httpdoc-apis" type="text/html">
     {{#.}}
     <div id="controller-{{id}}">
         <div class="page-header">
@@ -487,13 +471,13 @@
     {{/.}}
 </script>
 
-<script src="js/jquery-2.1.1.min.js"></script>
-<script src="js/mustache.min-3.0.0.js"></script>
-<script src="js/bootstrap-3.3.7.min.js"></script>
-<script src="js/autosize-4.0.2.js"></script>
-<script src="js/obj-tree-1.0.0.js"></script>
-<script src="js/jkl-dumper-1.0.0.js"></script>
-<script src="js/httpdoc-1.0.0.js"></script>
+<script src="./js/jquery-2.1.1.min.js"></script>
+<script src="./js/mustache.min-3.0.0.js"></script>
+<script src="./js/bootstrap-3.3.7.min.js"></script>
+<script src="./js/autosize-4.0.2.js"></script>
+<script src="./js/obj-tree-1.0.0.js"></script>
+<script src="./js/jkl-dumper-1.0.0.js"></script>
+<script src="./js/httpdoc-1.0.0.js"></script>
 <script type="text/javascript">
     httpdoc.explore();
 </script>

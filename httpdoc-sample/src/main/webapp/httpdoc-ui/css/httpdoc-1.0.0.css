@@ -238,42 +238,7 @@ textarea {
 }
 
 #httpdoc-tags {
-    border: 1px solid #f1f1f1;
-    border-radius: 3px;
-}
-
-#httpdoc-schemas {
-    border: 1px solid #f1f1f1;
-    border-radius: 3px;
-}
-
-#httpdoc-operations {
-    border: 1px solid #f1f1f1;
-    border-radius: 3px;
-    max-height: 80%;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: #F5F5F5;
-}
-
-/*定义滚动条轨道 内阴影+圆角*/
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
-    background-color: #F5F5F5;
-}
-
-/*定义滑块 内阴影+圆角*/
-::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-    background-color: #555;
+    border-right: 1px solid #f1f1f1;
 }
 
 .border-less {
