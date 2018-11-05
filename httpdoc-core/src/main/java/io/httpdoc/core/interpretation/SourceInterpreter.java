@@ -112,15 +112,18 @@ public class SourceInterpreter implements Interpreter {
             }
 
             // 把所有 .java 源码文件放到一个统一的目录
-            File directory = new File(System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID());
+            File directory = new File(System.getProperty("java.io.tmpdir") + File.separator + "httpdoc" + File.separator + UUID.randomUUID());
             srcPath = directory.getPath();
             StringBuilder builder = new StringBuilder();
             for (URL url : resources) {
-                builder.append(new File(url.getFile()).getPath()).append(";");
                 try {
                     // 只处理本地文件
                     if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
                     String file = url.getFile();
+                    // 如果文件不存在则忽略掉
+                    if (!new File(file).exists()) {
+                        continue;
+                    }
                     // 如果是一个jar包
                     if (file.endsWith(".jar")) {
                         extractTo(new JarFile(file, false), directory);
@@ -129,6 +132,7 @@ public class SourceInterpreter implements Interpreter {
                     else {
                         extractTo(file, new File(file), directory);
                     }
+                    builder.append(new File(url.getFile()).getPath()).append(";");
                 } catch (Exception e) {
                     logger.warn("error reading classpath: " + url, e);
                 }
