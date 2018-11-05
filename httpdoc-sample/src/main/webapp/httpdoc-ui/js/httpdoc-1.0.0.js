@@ -189,11 +189,23 @@ function HttpDoc() {
             beforeSend: function () {
                 $("#httpdoc-loading").modal('show');
             },
-            success: function (doc) {
-                doc = typeof doc === 'object' ? doc : JSON.parse(doc);
-                doc.url = httpdocURL;
-                self.init(doc);
-                $("#httpdoc-body").show();
+            success: function (doc, xhr) {
+                try {
+                    doc = typeof doc === 'object' ? doc : JSON.parse(doc);
+                    doc.url = httpdocURL;
+                    self.init(doc);
+                    $("#httpdoc-body").show();
+                } catch (e) {
+                    $("#httpdoc-body").hide();
+                    var tpl = $("#tpl-httpdoc-error").html();
+                    var html = Mustache.render(tpl, {
+                        code: xhr.status,
+                        message: xhr.statusText,
+                        body: xhr.responseText,
+                        url: httpdocURL
+                    });
+                    $("#httpdoc-head").html(html);
+                }
             },
             error: function (xhr) {
                 $("#httpdoc-body").hide();
