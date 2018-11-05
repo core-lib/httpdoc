@@ -8,15 +8,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-    <context:component-scan base-package="io.httpdoc.springmvc"/>
+    <context:component-scan base-package="io.httpdoc.sample"/>
     <mvc:annotation-driven enable-matrix-variables="true"/>
-
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="defaultEncoding" value="UTF-8"/>
-        <!-- 指定所上传文件的总大小不能超过200KB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
-        <property name="maxUploadSize" value="200000"/>
-    </bean>
-
-    <bean class="io.httpdoc.spring.mvc.SpringMVCHttpdocController"/>
 
 </beans>

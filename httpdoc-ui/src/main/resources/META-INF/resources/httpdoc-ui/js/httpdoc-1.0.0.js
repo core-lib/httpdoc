@@ -179,20 +179,49 @@ function HttpDoc() {
     this.explore = function () {
         var self = this;
         var httpdocURL = $("#httpdoc-url").val();
+
         $.ajax({
             url: httpdocURL,
             data: {
                 "format.canonical": true
             },
             method: "GET",
+            beforeSend: function () {
+                $("#httpdoc-loading").modal('show');
+            },
             success: function (doc) {
-                doc = typeof doc === 'object' ? doc : JSON.parse(doc);
-                self.init(doc);
-                self.render();
-                $("#httpdoc-body").show();
+                try {
+                    doc = typeof doc === 'object' ? doc : JSON.parse(doc);
+                    doc.url = httpdocURL;
+                    self.init(doc);
+                    $("#httpdoc-body").show();
+                } catch (e) {
+                    $("#httpdoc-body").hide();
+                    var tpl = $("#tpl-httpdoc-error").html();
+                    var html = Mustache.render(tpl, {
+                        code: -1,
+                        message: "Unknown Error",
+                        body: doc,
+                        url: httpdocURL
+                    });
+                    $("#httpdoc-head").html(html);
+                }
             },
             error: function (xhr) {
                 $("#httpdoc-body").hide();
+
+                var tpl = $("#tpl-httpdoc-error").html();
+                var html = Mustache.render(tpl, {
+                    code: xhr.status,
+                    message: xhr.statusText,
+                    body: xhr.responseText,
+                    url: httpdocURL
+                });
+                $("#httpdoc-head").html(html);
+
+            },
+            complete: function () {
+                $("#httpdoc-loading").modal('hide');
             }
         });
     };
@@ -275,19 +304,28 @@ function HttpDoc() {
         }
 
         {
-            var tpl = $("#httpdoc-schema").html();
-            var schemas = [];
-            for (var name in DOC.schemas) {
-                var schema = DOC.schemas[name];
-                schema.name = name;
-                schemas.push(schema);
-            }
-            var html = Mustache.render(tpl, schemas);
-            $("#httpdoc-schemas").html(html);
+            var tpl = $("#tpl-httpdoc-introduction").html();
+            var html = Mustache.render(tpl, DOC);
+            $("#httpdoc-head").html(html);
         }
 
         {
-            var tpl = $("#httpdoc-model").html();
+            var tags = [];
+            for (var tag in MAP) tags.push(tag);
+            var tpl = $("#tpl-httpdoc-modules").html();
+            var html = Mustache.render(tpl, tags);
+            $("#httpdoc-tags").html(html);
+        }
+
+        {
+            for (var tag in MAP) {
+                this.show(tag);
+                break;
+            }
+        }
+
+        {
+            var tpl = $("#tpl-httpdoc-models").html();
             var models = [];
             for (var name in DOC.schemas) {
                 var model = DOC.schemas[name];
@@ -299,17 +337,17 @@ function HttpDoc() {
                 models.push(model);
             }
             var html = Mustache.render(tpl, models);
-            $("#httpdoc-models").html(html);
+            $("#httpdoc-schemas").html(html);
 
-            $("#httpdoc-models").find(".collapse").on("shown.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("shown.bs.collapse", function () {
                 autosize($(this).find("textarea.autosize"));
             });
 
-            $("#httpdoc-models").find(".collapse").on("show.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function () {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
             });
 
-            $("#httpdoc-models").find(".collapse").on("hide.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function () {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
             });
         }
@@ -320,7 +358,7 @@ function HttpDoc() {
             // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
             if (setting) {
                 SETTING = JSON.parse(localStorage.getItem("setting"));
-                var tpl = $("#httpdoc-setting").html();
+                var tpl = $("#tpl-httpdoc-setting").html();
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
                 $('#httpdoc-config').modal('show');
@@ -336,7 +374,7 @@ function HttpDoc() {
                 SETTING.cookies = [];
             }
             $('#httpdoc-config').on('show.bs.modal', function () {
-                var tpl = $("#httpdoc-setting").html();
+                var tpl = $("#tpl-httpdoc-setting").html();
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
             });
@@ -365,25 +403,7 @@ function HttpDoc() {
         return properties;
     };
 
-    this.render = function () {
-        this.doRenderTags();
-        // 第一个tag的内容默认展示
-        for (var tag in MAP) {
-            var controllers = MAP[tag];
-            this.doRenderControllers(controllers);
-            break;
-        }
-    };
-
-    this.doRenderTags = function () {
-        var tags = [];
-        for (var tag in MAP) tags.push(tag);
-        var tpl = $("#httpdoc-tag").html();
-        var html = Mustache.render(tpl, tags);
-        $("#httpdoc-tags").html(html);
-    };
-
-    this.doRenderControllers = function (controllers) {
+    this.display = function (controllers) {
         for (var i = 0; controllers && i < controllers.length; i++) {
             var controller = controllers[i];
             var operations = controller.operations;
@@ -412,13 +432,7 @@ function HttpDoc() {
         }
 
         {
-            var tpl = $("#httpdoc-operation").html();
-            var html = Mustache.render(tpl, controllers);
-            $("#httpdoc-operations").html(html);
-        }
-
-        {
-            var tpl = $("#httpdoc-controller").html();
+            var tpl = $("#tpl-httpdoc-apis").html();
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-controllers").html(html);
         }
@@ -722,8 +736,7 @@ function HttpDoc() {
 
     this.show = function (tag) {
         var controllers = MAP[tag];
-        this.doRenderControllers(controllers);
-        window.scrollTo(0, 0);
+        this.display(controllers);
     };
 
     this.submit = function (btn) {
@@ -898,8 +911,8 @@ function HttpDoc() {
     };
 
     this.addSettingRow = function (btn) {
-        var row = $("#httpdoc-setting-row").html();
-        $(btn).parent().parent().before(row);
+        var tpl = $("#tpl-httpdoc-setting-row").html();
+        $(btn).parent().parent().before(tpl);
     };
 
     this.delSettingRow = function (btn) {
@@ -915,7 +928,7 @@ function HttpDoc() {
         SETTING.queries = [];
         SETTING.headers = [];
         SETTING.cookies = [];
-        var tpl = $("#httpdoc-setting").html();
+        var tpl = $("#tpl-httpdoc-setting").html();
         var html = Mustache.render(tpl, SETTING);
         $("#httpdoc-config").find(".modal-body").html(html);
         $('#httpdoc-config').modal('hide');
@@ -1063,16 +1076,23 @@ function HTTP() {
             var multipart = "";
             var CRLF = "\r\n";
             var boundary = this.random(32);
+            var header = this.header();
+            this.lowercase(header);
+            // 从header里面拿出content-type
+            var contentType = header["content-type"] ? header['content-type'][0] : null;
+            // 如果没有的话 默认用 application/json
+            if (!contentType || contentType.trim() === "") {
+                contentType = "application/json";
+            }
             for (var b = 0; bodies && b < bodies.length; b++) {
                 var metadata = bodies[b];
                 multipart += "--" + boundary + CRLF;
                 multipart += "content-disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
-                multipart += "content-type: application/json" + CRLF;
+                multipart += "content-type: " + contentType + CRLF;
                 multipart += CRLF;
                 multipart += metadata.value + CRLF;
             }
             multipart += "--" + boundary + "--" + CRLF;
-            var header = this.header();
             header['content-type'] = ["multipart/form-data; boundary=" + boundary];
             for (var key in header) {
                 var values = header[key];

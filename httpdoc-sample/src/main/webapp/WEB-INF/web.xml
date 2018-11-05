@@ -5,50 +5,11 @@
          version="3.0">
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath*:/jestful/*.xml,
-            classpath*:*-context.xml
-        </param-value>
+        <param-value>classpath*:*-context.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
-    <filter>
-        <filter-name>jestful</filter-name>
-        <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
-        <init-param>
-            <param-name>view-prefix</param-name>
-            <param-value>/WEB-INF/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>view-suffix</param-name>
-            <param-value>.jsp</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>jestful</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>nutz</filter-name>
-        <filter-class>org.nutz.mvc.NutFilter</filter-class>
-        <init-param>
-            <param-name>modules</param-name>
-            <param-value>io.httpdoc.nutz.NutzModule</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>nutz</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
 
     <filter>
         <filter-name>httpdoc</filter-name>
@@ -65,14 +26,6 @@
             <param-name>httpdoc.lib.path</param-name>
             <param-value>/WEB-INF/lib</param-value>
         </init-param>
-        <!--<init-param>-->
-        <!--<param-name>contentType</param-name>-->
-        <!--<param-value>text/plain</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>-->
-        <!--<param-name>format.pkgIncluded</param-name>-->
-        <!--<param-value>true</param-value>-->
-        <!--</init-param>-->
     </filter>
     <filter-mapping>
         <filter-name>httpdoc</filter-name>
@@ -81,14 +34,14 @@
         <url-pattern>/httpdoc.yaml</url-pattern>
     </filter-mapping>
 
-    <!--<servlet>-->
-    <!--<servlet-name>spring</servlet-name>-->
-    <!--<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>-->
-    <!--<load-on-startup>1</load-on-startup>-->
-    <!--</servlet>-->
-    <!--<servlet-mapping>-->
-    <!--<servlet-name>spring</servlet-name>-->
-    <!--<url-pattern>/*</url-pattern>-->
-    <!--</servlet-mapping>-->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
 
 </web-app>
