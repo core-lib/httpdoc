@@ -46,6 +46,7 @@ public class NutzTranslator implements Translator {
         document.setPort(translation.getPort());
         document.setContext(translation.getContext());
         document.setVersion(translation.getVersion());
+        document.setDescription(translation.getDescription());
 
         Container container = translation.getContainer();
         Supplier supplier = translation.getSupplier();

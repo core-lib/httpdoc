@@ -17,6 +17,18 @@
     <servlet>
         <servlet-name>httpdoc</servlet-name>
         <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+        <init-param>
+            <param-name>httpdoc</param-name>
+            <param-value>HttpDoc-Sample</param-value>
+        </init-param>
+        <init-param>
+            <param-name>version</param-name>
+            <param-value>v1.0.0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>description</param-name>
+            <param-value>这是HttpDoc框架的一个官方示例</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>

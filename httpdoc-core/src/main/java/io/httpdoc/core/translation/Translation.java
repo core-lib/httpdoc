@@ -16,6 +16,7 @@ public class Translation {
     private Integer port;
     private String context;
     private String version;
+    private String description;
     private Container container;
     private Supplier supplier;
     private Interpreter interpreter;
@@ -75,6 +76,14 @@ public class Translation {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Container getContainer() {

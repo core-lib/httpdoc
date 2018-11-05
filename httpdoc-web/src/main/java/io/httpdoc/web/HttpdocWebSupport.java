@@ -42,6 +42,7 @@ public abstract class HttpdocWebSupport {
     private Integer port;
     private String context;
     private String version;
+    private String description;
     private String charset = "UTF-8";
     private String contentType = null;
     private Translator translator = new HttpdocMergedTranslator();
@@ -77,6 +78,10 @@ public abstract class HttpdocWebSupport {
             String version = config.getInitParameter("version");
             if (version != null && version.trim().length() > 0) {
                 this.version = version;
+            }
+            String description = config.getInitParameter("description");
+            if (description != null && description.trim().length() > 0) {
+                this.description = description;
             }
             String charset = config.getInitParameter("charset");
             if (charset != null && charset.trim().length() > 0) {
@@ -174,12 +179,13 @@ public abstract class HttpdocWebSupport {
             Container container = new HttpdocWebContainer(request.getServletContext());
             Translation translation = new Translation(container, supplier, interpreter);
 
-            translation.setHttpdoc(httpdoc != null ? httpdoc : Module.getInstance().getVersion());
+            translation.setHttpdoc(httpdoc);
             translation.setProtocol(protocol != null ? protocol : req.getProtocol().split("/")[0].toLowerCase());
             translation.setHostname(hostname != null ? hostname : req.getServerName());
             translation.setPort(port != null ? port : req.getServerPort());
             translation.setContext(context != null ? context : req.getContextPath());
             translation.setVersion(version);
+            translation.setDescription(description);
 
             Format clone = IOKit.clone(format);
 

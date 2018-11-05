@@ -42,6 +42,7 @@ public class StandardConverter implements Converter {
         if (document.getPort() != null) map.put("port", document.getPort());
         if (document.getContext() != null) map.put("context", document.getContext());
         if (document.getVersion() != null) map.put("version", document.getVersion());
+        if (document.getDescription() != null) map.put("description", document.getDescription());
         if (!Format.REF_PREFIX.equals(format.getRefPrefix())) map.put("refPrefix", format.getRefPrefix());
         if (!Format.REF_SUFFIX.equals(format.getRefSuffix())) map.put("refSuffix", format.getRefSuffix());
         if (!Format.MAP_PREFIX.equals(format.getMapPrefix())) map.put("mapPrefix", format.getMapPrefix());
@@ -312,6 +313,7 @@ public class StandardConverter implements Converter {
         document.setPort(dictionary.containsKey("port") ? Integer.valueOf(dictionary.get("port").toString()) : null);
         document.setContext((String) dictionary.get("context"));
         document.setVersion((String) dictionary.get("version"));
+        document.setDescription((String) dictionary.get("description"));
 
         String refPrefix = (String) dictionary.get("refPrefix");
         if (refPrefix != null) document.setRefPrefix(refPrefix);
