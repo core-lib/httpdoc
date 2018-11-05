@@ -20,6 +20,7 @@
         <module>httpdoc-objc</module>
         <module>httpdoc-spring-boot</module>
         <module>httpdoc-ui</module>
+        <module>httpdoc-sample</module>
     </modules>
     <packaging>pom</packaging>
 
