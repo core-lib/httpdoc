@@ -18,6 +18,10 @@
         <servlet-name>httpdoc</servlet-name>
         <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
         <init-param>
+            <param-name>interpreter</param-name>
+            <param-value>io.httpdoc.core.interpretation.SourceInterpreter</param-value>
+        </init-param>
+        <init-param>
             <param-name>httpdoc</param-name>
             <param-value>HttpDoc-Sample</param-value>
         </init-param>
