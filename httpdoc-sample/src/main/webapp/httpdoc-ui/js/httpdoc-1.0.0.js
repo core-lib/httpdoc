@@ -1076,16 +1076,23 @@ function HTTP() {
             var multipart = "";
             var CRLF = "\r\n";
             var boundary = this.random(32);
+            var header = this.header();
+            this.lowercase(header);
+            // 从header里面拿出content-type
+            var contentType = header["content-type"] ? header['content-type'][0] : null;
+            // 如果没有的话 默认用 application/json
+            if (!contentType || contentType.trim() === "") {
+                contentType = "application/json";
+            }
             for (var b = 0; bodies && b < bodies.length; b++) {
                 var metadata = bodies[b];
                 multipart += "--" + boundary + CRLF;
                 multipart += "content-disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
-                multipart += "content-type: application/json" + CRLF;
+                multipart += "content-type: " + contentType + CRLF;
                 multipart += CRLF;
                 multipart += metadata.value + CRLF;
             }
             multipart += "--" + boundary + "--" + CRLF;
-            var header = this.header();
             header['content-type'] = ["multipart/form-data; boundary=" + boundary];
             for (var key in header) {
                 var values = header[key];
