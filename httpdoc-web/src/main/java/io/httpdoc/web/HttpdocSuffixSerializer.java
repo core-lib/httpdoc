@@ -22,7 +22,7 @@ public class HttpdocSuffixSerializer implements Serializer {
     private Serializer get() {
         HttpServletRequest request = HttpdocThreadLocal.getRequest();
         String uri = request.getRequestURI();
-        int index = uri.indexOf(".");
+        int index = uri.lastIndexOf(".");
         if (index < 0) return map.values().iterator().next();
         String suffix = uri.substring(index + 1);
         Serializer serializer = map.get(suffix);
