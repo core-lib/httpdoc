@@ -30,7 +30,12 @@ public class UserAPI {
      * @ignore user
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(
+            value = "",
+            method = RequestMethod.POST,
+            consumes = {"application/json", "application/xml"},
+            produces = {"application/json", "application/xml"}
+    )
     public UserCreateResult create(@RequestBody User user) {
         UserCreateResult result = new UserCreateResult();
         if (StringUtils.isEmpty(user.getName())) {

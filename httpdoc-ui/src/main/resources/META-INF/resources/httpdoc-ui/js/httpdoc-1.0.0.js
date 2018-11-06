@@ -339,15 +339,25 @@ function HttpDoc() {
             var html = Mustache.render(tpl, models);
             $("#httpdoc-schemas").html(html);
 
+            $("#panel-models").on("show.bs.collapse", function () {
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+            });
+
+            $("#panel-models").on("hide.bs.collapse", function () {
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+            });
+
             $("#httpdoc-schemas").find(".collapse").on("shown.bs.collapse", function () {
                 autosize($(this).find("textarea.autosize"));
             });
 
-            $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function (event) {
+                event.stopPropagation();
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
             });
 
-            $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function () {
+            $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function (event) {
+                event.stopPropagation();
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
             });
         }
@@ -873,7 +883,7 @@ function HttpDoc() {
             }
             if (this.body) {
                 var d = this.body.replace(new RegExp("[\r\n]", "g"), "")
-                    .replace(new RegExp("\\s+", "g"), "")
+                    .replace(new RegExp("\\s+", "g"), " ")
                     .replace(new RegExp("\\\\", "g"), "\\\\")
                     .replace(new RegExp("\"", "g"), "\\\"");
                 curl += " -d \"" + d + "\"";

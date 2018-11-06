@@ -20,6 +20,17 @@
                     </bean>
                 </property>
             </bean>
+            <bean class="org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.dataformat.xml.XmlMapper">
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
     <mvc:resources mapping="/httpdoc-ui/**" location="classpath:/META-INF/resources/httpdoc-ui/"/>
