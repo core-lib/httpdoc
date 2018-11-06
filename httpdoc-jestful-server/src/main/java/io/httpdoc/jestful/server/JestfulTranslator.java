@@ -21,6 +21,7 @@ import org.qfox.jestful.server.annotation.Field;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartRequest;
 
@@ -72,22 +73,55 @@ public class JestfulTranslator implements Translator {
             Mapping mapping = mappings.nextElement();
             Method method = mapping.getMethod();
             Class<?> clazz = method.getDeclaringClass();
+
+            // 如果Controller或方法的注释上有@skip标签则忽略
+            {
+                ClassInterpretation interpretation = interpreter.interpret(clazz);
+                if (interpretation != null && interpretation.isSkip()) continue;
+            }
+            {
+                MethodInterpretation interpretation = interpreter.interpret(method);
+                if (interpretation != null && interpretation.isSkip()) continue;
+            }
+
             // 是否忽略
             if (clazz.isAnnotationPresent(Skip.class) || method.isAnnotationPresent(Skip.class)) continue;
             Controller controller = controllers.get(clazz);
             if (controller == null) {
+                ClassInterpretation interpretation = interpreter.interpret(clazz);
+
                 controller = new Controller();
+
                 // 重定义包名
-                controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
-                controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
+                String pkg = interpretation != null ? interpretation.getPackage() : null;
+                if (StringUtils.hasText(pkg)) controller.setPkg(pkg);
+                else controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
+
+                String name = interpretation != null ? interpretation.getName() : null;
+                if (StringUtils.hasText(name)) controller.setName(name);
+                else controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
+
                 Resource resource = mapping.getResource();
                 controller.setPath(normalize(resource.getExpression()));
-                ClassInterpretation interpretation = interpreter.interpret(clazz);
+
                 controller.setSummary(interpretation != null ? interpretation.getSummary() : null);
                 controller.setDescription(interpretation != null ? interpretation.getContent() : null);
-                Tag tag = clazz.getAnnotation(Tag.class);
-                if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
-                if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
+                controller.setDeprecated(
+                        interpretation != null && interpretation.getDeprecated() != null
+                                ? interpretation.getDeprecated()
+                                : clazz.isAnnotationPresent(Deprecated.class)
+                                ? "deprecated"
+                                : null
+                );
+
+                List<String> tags = interpretation != null ? interpretation.getTags() : null;
+                if (tags != null && !tags.isEmpty()) {
+                    controller.setTags(tags);
+                } else {
+                    Tag tag = clazz.getAnnotation(Tag.class);
+                    if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
+                    if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
+                }
                 controllers.put(clazz, controller);
             }
             translate(new OperationTranslation(translation, mapping, method, controller));
@@ -103,21 +137,37 @@ public class JestfulTranslator implements Translator {
         Method method = translation.getMethod();
         Controller controller = translation.getController();
 
+        MethodInterpretation interpretation = interpreter.interpret(method);
+
         Operation operation = new Operation();
         // 重定义方法名
-        operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
+        // 重定义方法名
+        String name = interpretation != null ? interpretation.getName() : null;
+        if (StringUtils.hasText(name)) operation.setName(name);
+        else operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
         operation.setPath(normalize(mapping.getExpression()));
         for (MediaType produce : mapping.getProduces()) operation.getProduces().add(produce.toString());
         for (MediaType consume : mapping.getConsumes()) operation.getConsumes().add(consume.toString());
         operation.setMethod(mapping.getRestful().getMethod());
 
-        Tag tag = method.getAnnotation(Tag.class);
-        if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
-        if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
-
-        MethodInterpretation interpretation = interpreter.interpret(method);
         operation.setSummary(interpretation != null ? interpretation.getSummary() : null);
         operation.setDescription(interpretation != null ? interpretation.getContent() : null);
+        operation.setDeprecated(
+                interpretation != null && interpretation.getDeprecated() != null
+                        ? interpretation.getDeprecated()
+                        : method.isAnnotationPresent(Deprecated.class)
+                        ? "deprecated"
+                        : null
+        );
+
+        List<String> tags = interpretation != null ? interpretation.getTags() : null;
+        if (tags != null && !tags.isEmpty()) {
+            operation.setTags(tags);
+        } else {
+            Tag tag = method.getAnnotation(Tag.class);
+            if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
+            if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
+        }
 
         Result result = new Result();
         Type resultType = mapping.getResult().getType();
@@ -144,13 +194,22 @@ public class JestfulTranslator implements Translator {
         for (int i = 0; notes != null && i < notes.length; i++) map.put(notes[i].getName(), notes[i].getText());
         String[] names = discoverer.getParameterNames(method);
 
+        // 忽略的参数名称
+        List<String> ignores = interpretation != null ? interpretation.getIgnores() : Collections.<String>emptyList();
+        Map<String, String> aliases = interpretation != null ? interpretation.getAliases() : Collections.<String, String>emptyMap();
+
         for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
             // 忽略
-            if (param.isAnnotationPresent(Ignore.class)) continue;
+            int index = param.getIndex();
+            if ((names.length > index && ignores.contains(names[index])) || param.isAnnotationPresent(Ignore.class)) continue;
 
             Parameter parameter = new Parameter();
-            parameter.setName(param.getName().equals(String.valueOf(param.getIndex())) ? "" : param.getName());
-            parameter.setAlias(param.isAnnotationPresent(Alias.class) ? param.getAnnotation(Alias.class).value() : parameter.getName());
+            parameter.setName(param.getName().equals(String.valueOf(index)) ? "" : param.getName());
+            if (StringUtils.hasText(names.length > index ? aliases.get(names[index]) : "")) {
+                parameter.setAlias(aliases.get(names[index]).trim());
+            } else {
+                parameter.setAlias(param.isAnnotationPresent(Alias.class) ? param.getAnnotation(Alias.class).value() : parameter.getName());
+            }
             int bodies = 0;
             int position = param.getPosition();
             switch (position) {
@@ -208,7 +267,7 @@ public class JestfulTranslator implements Translator {
             // 如果来源于请求体的参数数量大于 1 个 或者有上传文件的参数 则为 multipart 方法
             operation.setMultipart(bodies > 1 || upload);
 
-            String name = names != null && names.length > param.getIndex() ? names[param.getIndex()] : param.getName();
+            String name = names.length > index ? names[index] : param.getName();
             String description = map.get(name);
             parameter.setDescription(description);
 

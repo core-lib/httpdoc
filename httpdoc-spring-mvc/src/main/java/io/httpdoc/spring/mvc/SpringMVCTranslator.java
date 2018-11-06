@@ -3,7 +3,6 @@ package io.httpdoc.spring.mvc;
 import io.httpdoc.core.*;
 import io.httpdoc.core.annotation.*;
 import io.httpdoc.core.annotation.Package;
-import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.interpretation.ClassInterpretation;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.MethodInterpretation;
@@ -292,7 +291,7 @@ public class SpringMVCTranslator implements Translator {
     }
 
     @Override
-    public Document translate(Translation translation) throws DocumentTranslationException {
+    public Document translate(Translation translation) {
         Document document = new Document();
         document.setHttpdoc(translation.getHttpdoc());
         document.setProtocol(translation.getProtocol());
