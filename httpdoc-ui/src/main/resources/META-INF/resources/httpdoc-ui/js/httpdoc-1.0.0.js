@@ -905,6 +905,8 @@ function HttpDoc() {
 
             autosize.update(
                 $operation.find(".httpdoc-result")
+                    .show()
+                    .find("textarea")
                     .text(responseText)
             );
         });

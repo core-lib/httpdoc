@@ -27,6 +27,7 @@ public class UserAPI {
      * @param user 用户数据
      * @return 用户创建结果
      * @summary 创建用户
+     * @ignore user
      */
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST)

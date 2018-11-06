@@ -354,27 +354,33 @@
                     <h5><p class="text-muted">{{description}}</p></h5>
                     <div class="row-fluid">
                         <table class="table">
+                            <thead>
+                            <tr>
+                                <td width="30%"></td>
+                                <td width="70%"></td>
+                            </tr>
+                            </thead>
                             <tbody>
                             {{#parameters}}
                             <tr>
-                                <td width="20%">
+                                <td>
                                     <h5>{{name}} <span class="badge">{{scope}}</span></h5>
                                     <p><b>{{type}}</b></p>
                                     <h6 class="text-muted">{{description}}</h6>
                                 </td>
-                                <td width="80%">
+                                <td>
                                     <textarea class="form-control autosize x-param" x-name="{{name}}" x-scope="{{scope}}" x-type="{{type}}" x-path="{{path}}">{{value}}</textarea>
                                 </td>
                             </tr>
                             {{/parameters}}
                             {{#consumes.length}}
                             <tr>
-                                <td width="20%">
+                                <td>
                                     <h5>Content-Type <span class="badge">header</span></h5>
                                     <p><b>String</b></p>
                                     <h6 class="text-muted">Request data format</h6>
                                 </td>
-                                <td width="80%">
+                                <td>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <select class="form-control x-param"
@@ -394,12 +400,12 @@
                             {{/consumes.length}}
                             {{#produces.length}}
                             <tr>
-                                <td width="20%">
+                                <td>
                                     <h5>Accept <span class="badge">header</span></h5>
                                     <p><b>String</b></p>
                                     <h6 class="text-muted">Response data format</h6>
                                 </td>
-                                <td width="80%">
+                                <td>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <select class="form-control x-param"
@@ -431,42 +437,48 @@
                                     <b>Try it out</b>
                                 </button>
                             </div>
-                            <div class="row-md-12 httpdoc-curl" style="display: none;">
-                                <br/>
-                                <textarea class="form-control autosize textarea-model" readonly></textarea>
-                            </div>
-                            <div class="row-md-12 httpdoc-header" style="display: none;">
-                                <br/>
-                                <textarea class="form-control autosize textarea-model" readonly></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="panel border-less">
-                                    <div class="panel-heading border-less" data-toggle="collapse" href="#httpdoc-example-{{id}}" style="cursor: pointer;">
-                                        <span class="panel-title"><b>Example</b></span>
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </div>
-                                    <div id="httpdoc-example-{{id}}" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            <textarea class="form-control autosize textarea-model httpdoc-example" readonly x-type="{{result.type}}">{{result.value}}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="panel border-less">
-                                    <div class="panel-heading border-less" data-toggle="collapse" href="#httpdoc-result-{{id}}" style="cursor: pointer;">
-                                        <span class="panel-title"><b>Result</b></span>
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </div>
-                                    <div id="httpdoc-result-{{id}}" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            <textarea class="form-control autosize textarea-model httpdoc-result" readonly x-type="{{result.type}}"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td width="30%"></td>
+                                    <td width="70%"></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="httpdoc-curl" style="display: none;">
+                                    <td>
+                                        <h5>curl</h5>
+                                        <p></p>
+                                        <h6 class="text-muted"></h6>
+                                    </td>
+                                    <td><textarea class="form-control autosize textarea-model" readonly></textarea></td>
+                                </tr>
+                                <tr class="httpdoc-header" style="display: none;">
+                                    <td>
+                                        <h5>Response header <span class="badge">header</span></h5>
+                                        <p></p>
+                                        <h6 class="text-muted"></h6>
+                                    </td>
+                                    <td><textarea class="form-control autosize textarea-model" readonly></textarea></td>
+                                </tr>
+                                <tr class="httpdoc-result" style="display: none;">
+                                    <td>
+                                        <h5>Response body <span class="badge">body</span></h5>
+                                        <p><b>{{result.type}}</b></p>
+                                        <h6 class="text-muted">{{result.description}}</h6>
+                                    </td>
+                                    <td><textarea class="form-control autosize textarea-model" readonly x-type="{{result.type}}"></textarea></td>
+                                </tr>
+                                <tr class="httpdoc-example">
+                                    <td>
+                                        <h5>Response example <span class="badge">body</span></h5>
+                                        <p><b>{{result.type}}</b></p>
+                                        <h6 class="text-muted">{{result.description}}</h6>
+                                    </td>
+                                    <td><textarea class="form-control autosize textarea-model" readonly x-type="{{result.type}}">{{result.value}}</textarea></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
