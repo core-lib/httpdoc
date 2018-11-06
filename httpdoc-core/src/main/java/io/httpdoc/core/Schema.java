@@ -84,7 +84,11 @@ public class Schema extends Definition {
 
                     this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
                     this.description = classInterpretation != null ? classInterpretation.getContent() : null;
-                    this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
+                    this.deprecated = classInterpretation != null && classInterpretation.getDeprecated() != null
+                            ? classInterpretation.getDeprecated()
+                            : clazz.isAnnotationPresent(Deprecated.class)
+                            ? "deprecated"
+                            : null;
                 } else {
                     ClassInterpretation classInterpretation = interpreter.interpret(clazz);
 
@@ -124,7 +128,11 @@ public class Schema extends Definition {
 
                     this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
                     this.description = classInterpretation != null ? classInterpretation.getContent() : null;
-                    this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
+                    this.deprecated = classInterpretation != null && classInterpretation.getDeprecated() != null
+                            ? classInterpretation.getDeprecated()
+                            : clazz.isAnnotationPresent(Deprecated.class)
+                            ? "deprecated"
+                            : null;
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -180,7 +188,11 @@ public class Schema extends Definition {
 
                         this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
                         this.description = classInterpretation != null ? classInterpretation.getContent() : null;
-                        this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
+                        this.deprecated = classInterpretation != null && classInterpretation.getDeprecated() != null
+                                ? classInterpretation.getDeprecated()
+                                : clazz.isAnnotationPresent(Deprecated.class)
+                                ? "deprecated"
+                                : null;
                         cache.remove(type);
                         cache.put(clazz, this);
                     }

@@ -357,7 +357,13 @@ public class SpringMVCTranslator implements Translator {
 
                 controller.setSummary(interpretation == null ? null : interpretation.getSummary());
                 controller.setDescription(interpretation == null ? null : interpretation.getContent());
-                controller.setDeprecated(interpretation == null ? clazz.isAnnotationPresent(Deprecated.class) ? "deprecated" : null : interpretation.getDeprecated());
+                controller.setDeprecated(
+                        interpretation != null && interpretation.getDeprecated() != null
+                                ? interpretation.getDeprecated()
+                                : clazz.isAnnotationPresent(Deprecated.class)
+                                ? "deprecated"
+                                : null
+                );
 
                 List<String> tags = interpretation != null ? interpretation.getTags() : null;
                 if (tags != null && !tags.isEmpty()) {
@@ -405,7 +411,13 @@ public class SpringMVCTranslator implements Translator {
 
         operation.setSummary(interpretation == null ? null : interpretation.getSummary());
         operation.setDescription(interpretation == null ? null : interpretation.getContent());
-        operation.setDeprecated(interpretation == null ? method.isAnnotationPresent(Deprecated.class) ? "deprecated" : null : interpretation.getDeprecated());
+        operation.setDeprecated(
+                interpretation != null && interpretation.getDeprecated() != null
+                        ? interpretation.getDeprecated()
+                        : method.isAnnotationPresent(Deprecated.class)
+                        ? "deprecated"
+                        : null
+        );
 
         List<String> tags = interpretation != null ? interpretation.getTags() : null;
         if (tags != null && !tags.isEmpty()) {
