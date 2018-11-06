@@ -248,6 +248,7 @@ function HttpDoc() {
             controller.operations.forEach(function (operation) {
                 operation.summary = operation.summary ? operation.summary : "";
                 operation.description = operation.description ? operation.description : "";
+                operation.deprecated = operation.deprecated ? operation.deprecated : "";
             });
         });
 
@@ -338,6 +339,7 @@ function HttpDoc() {
             }
             var html = Mustache.render(tpl, models);
             $("#httpdoc-schemas").html(html);
+            $("#httpdoc-schemas").find("[data-toggle='tooltip']").tooltip();
 
             $("#panel-models").on("show.bs.collapse", function () {
                 $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
@@ -445,6 +447,7 @@ function HttpDoc() {
             var tpl = $("#tpl-httpdoc-apis").html();
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-controllers").html(html);
+            $("#httpdoc-controllers").find("[data-toggle='tooltip']").tooltip();
         }
 
         $("#httpdoc-controllers").find(".collapse").on("shown.bs.collapse", function () {

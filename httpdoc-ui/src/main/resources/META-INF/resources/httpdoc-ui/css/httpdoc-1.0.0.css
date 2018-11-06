@@ -214,6 +214,10 @@
     background-color: #5e5e5e;
 }
 
+.tooltip-holder {
+    cursor: pointer;
+}
+
 textarea {
     resize: none;
     font-size: 12px !important;
