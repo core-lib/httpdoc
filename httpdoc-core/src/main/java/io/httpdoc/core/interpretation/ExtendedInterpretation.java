@@ -58,7 +58,15 @@ public abstract class ExtendedInterpretation extends Interpretation {
 
     public Map<String, String> getAliases() {
         Map<String, String> aliases = new LinkedHashMap<>();
-        for (int i = 0; notes != null && i < notes.length; i++) if ("@alias".equals(notes[i].getKind())) aliases.put(notes[i].getName(), notes[i].getText());
+        for (int i = 0; notes != null && i < notes.length; i++) {
+            if ("@alias".equals(notes[i].getKind())) {
+                String text = notes[i].getText();
+                if (text == null) text = "";
+                String[] texts = text.trim().split("\\s+");
+                if (texts.length > 1) aliases.put(texts[0], texts[1]);
+                else aliases.put("", texts[0]);
+            }
+        }
         return aliases;
     }
 
