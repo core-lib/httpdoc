@@ -883,12 +883,34 @@ function HttpDoc() {
         http.cookies = cookies;
         http.bodies = bodies;
         $btn.button('loading');
-        http.xhr.addEventListener("timeout", function () {
+        http.xhr.addEventListener("timeout", function (event) {
             autosize.update(
                 $operation.find(".httpdoc-header")
                     .show()
                     .find("textarea")
+                    .text("0 Error")
+            );
+
+            autosize.update(
+                $operation.find(".httpdoc-result")
+                    .show()
+                    .find("textarea")
                     .text("timeout")
+            );
+        });
+        http.xhr.addEventListener("error", function (event) {
+            autosize.update(
+                $operation.find(".httpdoc-header")
+                    .show()
+                    .find("textarea")
+                    .text("0 Error")
+            );
+
+            autosize.update(
+                $operation.find(".httpdoc-result")
+                    .show()
+                    .find("textarea")
+                    .text("error")
             );
         });
         http.execute(function () {
