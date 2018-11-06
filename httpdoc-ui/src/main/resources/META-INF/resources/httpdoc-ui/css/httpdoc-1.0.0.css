@@ -1,3 +1,21 @@
+@media (min-width: 1400px) {
+    .container {
+        width: 1200px
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        width: 1400px
+    }
+}
+
+@media (min-width: 1800px) {
+    .container {
+        width: 1600px
+    }
+}
+
 .method {
     min-width: 72px;
     color: silver;
