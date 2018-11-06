@@ -20,6 +20,7 @@ public class Controller extends Definition {
     private List<Operation> operations = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private String summary;
+    private String deprecated;
 
     public String getPkg() {
         return pkg;
@@ -83,6 +84,14 @@ public class Controller extends Definition {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(String deprecated) {
+        this.deprecated = deprecated;
     }
 
     @Override

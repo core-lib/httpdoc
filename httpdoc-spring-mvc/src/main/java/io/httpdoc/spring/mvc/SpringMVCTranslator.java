@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
@@ -326,21 +327,46 @@ public class SpringMVCTranslator implements Translator {
             HandlerMethod handler = entry.getValue();
             Class<?> clazz = handler.getBeanType();
             Method method = handler.getMethod();
-            // 如果Controller或方法上有Ignore注解 则忽略
-            if (clazz.isAnnotationPresent(Ignore.class) || method.isAnnotationPresent(Ignore.class)) continue;
+            // 如果Controller或方法的注释上有@skip标签则忽略
+            {
+                ClassInterpretation interpretation = interpreter.interpret(clazz);
+                if (interpretation != null && interpretation.isSkip()) continue;
+            }
+            {
+                MethodInterpretation interpretation = interpreter.interpret(method);
+                if (interpretation != null && interpretation.isSkip()) continue;
+            }
+
+            // 如果Controller或方法上有@Skip注解 则忽略
+            if (clazz.isAnnotationPresent(Skip.class) || method.isAnnotationPresent(Skip.class)) continue;
 
             // Controller 解析
             Controller controller = controllers.get(clazz);
             if (controller == null) {
-                controller = new Controller();
-                controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
-                controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
                 ClassInterpretation interpretation = interpreter.interpret(clazz);
+
+                controller = new Controller();
+
+                String pkg = interpretation != null ? interpretation.getPackage() : null;
+                if (StringUtils.hasText(pkg)) controller.setPkg(pkg);
+                else controller.setPkg(clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName());
+
+                String name = interpretation != null ? interpretation.getName() : null;
+                if (StringUtils.hasText(name)) controller.setName(name);
+                else controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
+
                 controller.setSummary(interpretation == null ? null : interpretation.getSummary());
                 controller.setDescription(interpretation == null ? null : interpretation.getContent());
-                Tag tag = clazz.getAnnotation(Tag.class);
-                if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
-                if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
+                controller.setDeprecated(interpretation == null ? clazz.isAnnotationPresent(Deprecated.class) ? "deprecated" : null : interpretation.getDeprecated());
+
+                List<String> tags = interpretation != null ? interpretation.getTags() : null;
+                if (tags != null && !tags.isEmpty()) {
+                    controller.setTags(tags);
+                } else {
+                    Tag tag = clazz.getAnnotation(Tag.class);
+                    if (tag == null || tag.value().length == 0 || !tag.override()) controller.getTags().add(controller.getName());
+                    if (tag != null) controller.getTags().addAll(Arrays.asList(tag.value()));
+                }
                 controllers.put(clazz, controller);
             }
             translate(new OperationTranslation(translation, mapping, handler, method, controller));
@@ -359,9 +385,14 @@ public class SpringMVCTranslator implements Translator {
         // 方法解析 只取第一个
         if (mapping.getPatternsCondition().getPatterns().isEmpty()) return;
         String expression = mapping.getPatternsCondition().getPatterns().iterator().next();
+
+        MethodInterpretation interpretation = interpreter.interpret(method);
+
         Operation operation = new Operation();
         // 重定义方法名
-        operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
+        String name = interpretation != null ? interpretation.getName() : null;
+        if (StringUtils.hasText(name)) operation.setName(name);
+        else operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
         operation.setPath(normalize(expression));
         // produces
         Set<MediaTypeExpression> produces = mapping.getProducesCondition().getExpressions();
@@ -372,13 +403,18 @@ public class SpringMVCTranslator implements Translator {
         Set<RequestMethod> methods = mapping.getMethodsCondition().getMethods();
         operation.setMethod(methods.isEmpty() ? RequestMethod.POST.name() : methods.iterator().next().name());
 
-        MethodInterpretation interpretation = interpreter.interpret(method);
         operation.setSummary(interpretation == null ? null : interpretation.getSummary());
         operation.setDescription(interpretation == null ? null : interpretation.getContent());
+        operation.setDeprecated(interpretation == null ? method.isAnnotationPresent(Deprecated.class) ? "deprecated" : null : interpretation.getDeprecated());
 
-        Tag tag = method.getAnnotation(Tag.class);
-        if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
-        if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
+        List<String> tags = interpretation != null ? interpretation.getTags() : null;
+        if (tags != null && !tags.isEmpty()) {
+            operation.setTags(tags);
+        } else {
+            Tag tag = method.getAnnotation(Tag.class);
+            if (tag == null || tag.value().length == 0 || !tag.override()) operation.getTags().addAll(controller.getTags());
+            if (tag != null) operation.getTags().addAll(Arrays.asList(tag.value()));
+        }
 
         // 返回值解析
         Result result = new Result();
@@ -406,11 +442,15 @@ public class SpringMVCTranslator implements Translator {
         for (int i = 0; notes != null && i < notes.length; i++) descriptions.put(notes[i].getName(), notes[i].getText());
         String[] names = DISCOVERER.getParameterNames(method);
 
+        // 忽略的参数名称
+        List<String> ignores = interpretation != null ? interpretation.getIgnores() : Collections.<String>emptyList();
+        Map<String, String> aliases = interpretation != null ? interpretation.getAliases() : Collections.<String, String>emptyMap();
+
         MethodParameter[] params = handler.getMethodParameters();
         for (int i = 0; i < params.length; i++) {
             MethodParameter param = params[i];
             // 忽略
-            if (param.hasParameterAnnotation(Ignore.class)) continue;
+            if (ignores.contains(names[i]) || param.hasParameterAnnotation(Ignore.class)) continue;
             Type paramType = param.getGenericParameterType();
             if (paramType instanceof Class<?> && IGNORED_PARAMETER_TYPES.contains(paramType)) continue;
 
@@ -418,7 +458,11 @@ public class SpringMVCTranslator implements Translator {
             Parameter parameter = new Parameter();
             String name = getBindName(param);
             parameter.setName(name);
-            parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+            if (StringUtils.hasText(aliases.get(names[i]))) {
+                parameter.setAlias(aliases.get(names[i]).trim());
+            } else {
+                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+            }
             String scope = getBindScope(param);
             bodies = bodies + (Parameter.HTTP_PARAM_SCOPE_BODY.equals(scope) ? 1 : 0);
             parameter.setScope(scope);
@@ -441,7 +485,11 @@ public class SpringMVCTranslator implements Translator {
                 parameter.setType(Schema.valueOf(File.class));
                 String paramName = getPartName(param);
                 parameter.setName(paramName);
-                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                if (StringUtils.hasText(aliases.get(names[i]))) {
+                    parameter.setAlias(aliases.get(names[i]).trim());
+                } else {
+                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                }
                 upload = true;
             }
             // 3. 如果是MultipartFile或者Part的数组 则也是文件上传 同时参数的名称优先采用 @RequestParam 注解的名称 其次采用参数的变量名
@@ -450,7 +498,11 @@ public class SpringMVCTranslator implements Translator {
                 parameter.setType(Schema.valueOf(File[].class));
                 String paramName = getPartName(param);
                 parameter.setName(paramName);
-                parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                if (StringUtils.hasText(aliases.get(names[i]))) {
+                    parameter.setAlias(aliases.get(names[i]).trim());
+                } else {
+                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                }
                 upload = true;
             }
             // 4. 如果绑定域不是空的话 则表明用户明确指定过参数绑定域 框架也默认用户声明这个参数来源于客户端 框架不予忽略
@@ -465,19 +517,31 @@ public class SpringMVCTranslator implements Translator {
                 String annoName = annotation != null ? annotation.name() : EMPTY;
                 if (!annoValue.isEmpty() || !annoName.isEmpty()) {
                     parameter.setName(annoValue.isEmpty() ? annoName : annoValue);
-                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    if (StringUtils.hasText(aliases.get(names[i]))) {
+                        parameter.setAlias(aliases.get(names[i]).trim());
+                    } else {
+                        parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    }
                 }
                 // 4-2. 如果没有指定那么还会分两种情况
                 // 1. 简单类型-采用参数变量名称
                 else if (isSimpleType(paramType)) {
                     int index = param.getParameterIndex();
                     parameter.setName(names[index]);
-                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    if (StringUtils.hasText(aliases.get(names[i]))) {
+                        parameter.setAlias(aliases.get(names[i]).trim());
+                    } else {
+                        parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    }
                 }
                 //  2. 自定义类型则无名称
                 else {
                     parameter.setName(EMPTY);
-                    parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    if (StringUtils.hasText(aliases.get(names[i]))) {
+                        parameter.setAlias(aliases.get(names[i]).trim());
+                    } else {
+                        parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+                    }
                 }
             }
             // 5. 绑定域不为空 则参数名也不会为空 只需要指定参数类型即可

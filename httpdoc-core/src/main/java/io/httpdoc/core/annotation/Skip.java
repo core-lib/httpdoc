@@ -3,13 +3,13 @@ package io.httpdoc.core.annotation;
 import java.lang.annotation.*;
 
 /**
- * 翻译时忽略
+ * 跳过
  *
  * @author 杨昌沛 646742615@qq.com
- * @date 2018-06-29 15:05
- **/
-@Target(ElementType.PARAMETER)
+ * 2018/11/6
+ */
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Ignore {
+public @interface Skip {
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 17:14
  **/
-public class MethodInterpretation extends SummaryInterpretation {
+public class MethodInterpretation extends ExtendedInterpretation {
 
     public MethodInterpretation(String content, Note[] notes, String text) {
         super(content, notes, text);

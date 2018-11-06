@@ -1,12 +1,13 @@
 package io.httpdoc.core;
 
 import io.httpdoc.core.annotation.Alias;
-import io.httpdoc.core.annotation.Ignore;
 import io.httpdoc.core.annotation.Name;
 import io.httpdoc.core.annotation.Package;
+import io.httpdoc.core.annotation.Skip;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
+import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
 import io.httpdoc.core.type.HDClass;
@@ -37,6 +38,7 @@ public class Schema extends Definition {
     private Set<Constant> constants = new LinkedHashSet<>();
     private Collection<Schema> dependencies = new ArrayList<>();
     private String summary;
+    private String deprecated;
 
     public Schema() {
     }
@@ -59,50 +61,70 @@ public class Schema extends Definition {
                     this.component = Schema.valueOf(Object.class, cache, supplier, interpreter);
                     cache.remove(type);
                 } else if (clazz.isEnum()) {
+                    ClassInterpretation classInterpretation = interpreter.interpret(clazz);
                     Class<? extends Enum> enumClass = clazz.asSubclass(Enum.class);
                     this.category = Category.ENUM;
-                    this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                    this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
+                    String pkg = classInterpretation != null ? classInterpretation.getPackage() : null;
+                    if (!StringKit.isBlank(pkg)) this.pkg = pkg.trim();
+                    else this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
+
+                    String name = classInterpretation != null ? classInterpretation.getName() : null;
+                    if (!StringKit.isBlank(name)) this.name = name.trim();
+                    else this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     Enum<?>[] enumerations = enumClass.getEnumConstants();
                     for (Enum<?> enumeration : enumerations) {
-                        EnumInterpretation interpretation = interpreter.interpret(enumeration);
-                        String description = interpretation != null ? interpretation.getContent() : null;
+                        EnumInterpretation enumInterpretation = interpreter.interpret(enumeration);
+                        String description = enumInterpretation != null ? enumInterpretation.getContent() : null;
                         Constant constant = new Constant(enumeration.name(), description);
                         this.constants.add(constant);
                     }
-                    ClassInterpretation interpretation = interpreter.interpret(clazz);
-                    this.summary = interpretation != null ? interpretation.getSummary() : null;
-                    this.description = interpretation != null ? interpretation.getContent() : null;
+
+                    this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
+                    this.description = classInterpretation != null ? classInterpretation.getContent() : null;
+                    this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
                 } else {
+                    ClassInterpretation classInterpretation = interpreter.interpret(clazz);
+
                     this.category = Category.OBJECT;
-                    this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                    this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
+                    String pkg = classInterpretation != null ? classInterpretation.getPackage() : null;
+                    if (!StringKit.isBlank(pkg)) this.pkg = pkg.trim();
+                    else this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
+
+                    String name = classInterpretation != null ? classInterpretation.getName() : null;
+                    if (!StringKit.isBlank(name)) this.name = name.trim();
+                    else this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
                     for (PropertyDescriptor descriptor : descriptors) {
-                        String name = descriptor.getName();
-                        if (name.equals("class")) continue;
+                        String field = descriptor.getName();
+                        if (field.equals("class")) continue;
                         Method getter = descriptor.getReadMethod();
-                        Method setter = descriptor.getWriteMethod();
                         if (getter == null || getter.getDeclaringClass() != clazz) continue;
+                        if (getter.isAnnotationPresent(Skip.class)) continue;
                         Type t = getter.getGenericReturnType();
                         Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
-                        Interpretation interpretation = interpreter.interpret(descriptor);
-                        String description = interpretation != null ? interpretation.getContent() : null;
+                        ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
+                        String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                         Property property = new Property(schema, description);
-                        Alias alias = getter.isAnnotationPresent(Alias.class)
-                                ? getter.getAnnotation(Alias.class)
-                                : setter != null && setter.isAnnotationPresent(Alias.class)
-                                ? setter.getAnnotation(Alias.class)
-                                : null;
-                        property.setAlias(alias != null ? alias.value() : name);
-                        this.properties.put(name, property);
+                        Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();
+                        if (aliases != null && !aliases.isEmpty()) {
+                            property.setAlias(aliases.entrySet().iterator().next().getValue());
+                        } else {
+                            Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
+                            property.setAlias(annotation != null ? annotation.value() : field);
+                        }
+                        this.properties.put(field, property);
                     }
-                    ClassInterpretation interpretation = interpreter.interpret(clazz);
-                    this.summary = interpretation != null ? interpretation.getSummary() : null;
-                    this.description = interpretation != null ? interpretation.getContent() : null;
+
+                    this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
+                    this.description = classInterpretation != null ? classInterpretation.getContent() : null;
+                    this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -120,9 +142,18 @@ public class Schema extends Definition {
                         this.component = Schema.valueOf(actualTypeArgument, cache, supplier, interpreter);
                         cache.remove(type);
                     } else {
+                        ClassInterpretation classInterpretation = interpreter.interpret(clazz);
+
                         this.category = Category.OBJECT;
-                        this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
-                        this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
+                        String pkg = classInterpretation != null ? classInterpretation.getPackage() : null;
+                        if (!StringKit.isBlank(pkg)) this.pkg = pkg.trim();
+                        else this.pkg = clazz.isAnnotationPresent(Package.class) ? clazz.getAnnotation(Package.class).value() : clazz.getPackage().getName();
+
+                        String name = classInterpretation != null ? classInterpretation.getName() : null;
+                        if (!StringKit.isBlank(name)) this.name = name.trim();
+                        else this.name = clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName();
+
                         this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                         this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
@@ -130,25 +161,26 @@ public class Schema extends Definition {
                             String field = descriptor.getName();
                             if (field.equals("class")) continue;
                             Method getter = descriptor.getReadMethod();
-                            Method setter = descriptor.getWriteMethod();
                             if (getter == null || getter.getDeclaringClass() != clazz) continue;
-                            if (getter.isAnnotationPresent(Ignore.class) || (setter != null && setter.isAnnotationPresent(Ignore.class))) continue;
+                            if (getter.isAnnotationPresent(Skip.class)) continue;
                             Type t = getter.getGenericReturnType();
                             Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
-                            Interpretation interpretation = interpreter.interpret(descriptor);
-                            String description = interpretation != null ? interpretation.getContent() : null;
+                            ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
+                            String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                             Property property = new Property(schema, description);
-                            Alias alias = getter.isAnnotationPresent(Alias.class)
-                                    ? getter.getAnnotation(Alias.class)
-                                    : setter != null && setter.isAnnotationPresent(Alias.class)
-                                    ? setter.getAnnotation(Alias.class)
-                                    : null;
-                            property.setAlias(alias != null ? alias.value() : name);
+                            Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();
+                            if (aliases != null && !aliases.isEmpty()) {
+                                property.setAlias(aliases.entrySet().iterator().next().getValue());
+                            } else {
+                                Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
+                                property.setAlias(annotation != null ? annotation.value() : field);
+                            }
                             this.properties.put(field, property);
                         }
-                        ClassInterpretation interpretation = interpreter.interpret(clazz);
-                        this.summary = interpretation != null ? interpretation.getSummary() : null;
-                        this.description = interpretation != null ? interpretation.getContent() : null;
+
+                        this.summary = classInterpretation != null ? classInterpretation.getSummary() : null;
+                        this.description = classInterpretation != null ? classInterpretation.getContent() : null;
+                        this.deprecated = classInterpretation != null ? classInterpretation.getDeprecated() : null;
                         cache.remove(type);
                         cache.put(clazz, this);
                     }
@@ -366,6 +398,14 @@ public class Schema extends Definition {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(String deprecated) {
+        this.deprecated = deprecated;
     }
 
     @Override

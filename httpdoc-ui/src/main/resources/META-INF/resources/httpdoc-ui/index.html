@@ -335,7 +335,7 @@
         <div class="page-header">
             <h1>
                 <b>{{name}}</b>
-                <small>{{summary}}</small>
+                <small>{{summary}} {{#deprecated}}<label class="badge">deprecated</label>{{/deprecated}}</small>
             </h1>
         </div>
         <h5><p class="text-muted">{{description}}</p></h5>
@@ -344,7 +344,7 @@
             <div class="panel-heading" data-toggle="collapse" href="#httpdoc-{{id}}" style="cursor: pointer;">
                 <span class="panel-title">
                     <label class="method method-{{method}}" style="cursor: pointer;">{{method}}</label>
-                    <span class="path path-{{method}}"><b>{{path}}</b></span>
+                    <span class="path path-{{method}}"><b>{{path}}</b> {{#deprecated}}<label class="badge">deprecated</label>{{/deprecated}}</span>
                 </span>
                 <span class="glyphicon glyphicon-chevron-down pull-right path path-{{method}}"></span>
                 <span class="path path-{{method}} pull-right">&nbsp;&nbsp;{{summary}}&nbsp;&nbsp;</span>

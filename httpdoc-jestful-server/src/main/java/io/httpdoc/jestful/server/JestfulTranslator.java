@@ -73,7 +73,7 @@ public class JestfulTranslator implements Translator {
             Method method = mapping.getMethod();
             Class<?> clazz = method.getDeclaringClass();
             // 是否忽略
-            if (clazz.isAnnotationPresent(Ignore.class) || method.isAnnotationPresent(Ignore.class)) continue;
+            if (clazz.isAnnotationPresent(Skip.class) || method.isAnnotationPresent(Skip.class)) continue;
             Controller controller = controllers.get(clazz);
             if (controller == null) {
                 controller = new Controller();

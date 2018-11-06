@@ -91,6 +91,9 @@ public class StandardConverter implements Converter {
         String summary = controller.getSummary();
         if (!StringKit.isBlank(summary)) map.put("summary", summary);
 
+        String deprecated = controller.getDeprecated();
+        if (!StringKit.isBlank(deprecated)) map.put("deprecated", deprecated);
+
         String description = controller.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
 
@@ -156,6 +159,9 @@ public class StandardConverter implements Converter {
 
         String summary = operation.getSummary();
         if (!StringKit.isBlank(summary)) map.put("summary", summary);
+
+        String deprecated = operation.getDeprecated();
+        if (!StringKit.isBlank(deprecated)) map.put("deprecated", deprecated);
 
         String description = operation.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
@@ -281,8 +287,13 @@ public class StandardConverter implements Converter {
         }
         String summary = schema.getSummary();
         if (!StringKit.isBlank(summary)) map.put("summary", summary);
+
+        String deprecated = schema.getDeprecated();
+        if (!StringKit.isBlank(deprecated)) map.put("deprecated", deprecated);
+
         String description = schema.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
+
         return map;
     }
 
@@ -425,6 +436,9 @@ public class StandardConverter implements Converter {
         String summary = (String) definition.get("summary");
         schema.setSummary(summary);
 
+        String deprecated = (String) definition.get("deprecated");
+        schema.setDeprecated(deprecated);
+
         String description = (String) definition.get("description");
         schema.setDescription(description);
     }
@@ -466,6 +480,7 @@ public class StandardConverter implements Converter {
         controller.setTags(doConvertTags(document, tags));
 
         controller.setSummary((String) map.get("summary"));
+        controller.setDeprecated((String) map.get("deprecated"));
         controller.setDescription((String) map.get("description"));
 
         document.getControllers().add(controller);
@@ -549,6 +564,7 @@ public class StandardConverter implements Converter {
         operation.setTags(doConvertTags(document, tags));
 
         operation.setSummary((String) map.get("summary"));
+        operation.setDeprecated((String) map.get("deprecated"));
         operation.setDescription((String) map.get("description"));
 
         return operation;

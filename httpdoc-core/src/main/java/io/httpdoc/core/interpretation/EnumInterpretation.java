@@ -6,7 +6,7 @@ package io.httpdoc.core.interpretation;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-20 17:28
  **/
-public class EnumInterpretation extends SummaryInterpretation {
+public class EnumInterpretation extends ExtendedInterpretation {
 
     public EnumInterpretation(String content, Note[] notes, String text) {
         super(content, notes, text);

@@ -48,11 +48,31 @@ public class SourceInterpreter implements Interpreter {
         }
         {
             Tag[] tags = doc.tags("return");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@return", null, tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@return", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("summary");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@summary", null, tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@summary", tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("deprecated");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@deprecated", tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("skip");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@skip", tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("tag");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@tag", tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("ignore");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@ignore", tags[i].name(), tags[i].text()));
+        }
+        {
+            Tag[] tags = doc.tags("alias");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@alias", tags[i].name(), tags[i].text()));
         }
         return new MethodInterpretation(doc.commentText(), notes.toArray(new Note[0]), doc.getRawCommentText());
     }

@@ -21,7 +21,8 @@ public class Operation extends Definition {
     private Result result;
     private List<String> tags = new ArrayList<>();
     private boolean multipart;
-    protected String summary;
+    private String summary;
+    private String deprecated;
 
     public String getName() {
         return name;
@@ -101,5 +102,13 @@ public class Operation extends Definition {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(String deprecated) {
+        this.deprecated = deprecated;
     }
 }

@@ -16,6 +16,7 @@ import java.util.Random;
  * 2018/11/5
  * @summary 用户管理API
  * @tag 用户
+ * @deprecated 不推荐再使用了
  */
 @Controller
 @RequestMapping("/api/users")
@@ -27,7 +28,7 @@ public class UserAPI {
      * @param user 用户数据
      * @return 用户创建结果
      * @summary 创建用户
-     * @ignore user
+     * @name 创建
      */
     @ResponseBody
     @RequestMapping(
