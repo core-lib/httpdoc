@@ -101,6 +101,16 @@ public class ObjCController extends Controller {
     }
 
     @Override
+    public String getDeprecated() {
+        return controller.getDeprecated();
+    }
+
+    @Override
+    public void setDeprecated(String deprecated) {
+        controller.setDeprecated(deprecated);
+    }
+
+    @Override
     public String getDescription() {
         return controller.getDescription();
     }

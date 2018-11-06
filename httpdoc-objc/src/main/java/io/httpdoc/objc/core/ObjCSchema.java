@@ -208,6 +208,16 @@ public class ObjCSchema extends Schema {
     }
 
     @Override
+    public String getDeprecated() {
+        return schema.getDeprecated();
+    }
+
+    @Override
+    public void setDeprecated(String deprecated) {
+        schema.setDeprecated(deprecated);
+    }
+
+    @Override
     public String getDescription() {
         return schema.getDescription();
     }

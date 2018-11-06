@@ -1036,7 +1036,7 @@ function HttpDoc() {
 
     this.onProduceChanged = function (value, id) {
         var $operation = $("#operation-" + id);
-        var $textarea = $operation.find(".httpdoc-example");
+        var $textarea = $operation.find(".httpdoc-example").find("textarea");
         var type = $textarea.attr("x-type");
         switch (value) {
             case "application/json":

@@ -104,6 +104,16 @@ public class ObjCOperation extends Operation {
     }
 
     @Override
+    public boolean isMultipart() {
+        return operation.isMultipart();
+    }
+
+    @Override
+    public void setMultipart(boolean multipart) {
+        operation.setMultipart(multipart);
+    }
+
+    @Override
     public String getSummary() {
         return operation.getSummary();
     }
@@ -111,6 +121,16 @@ public class ObjCOperation extends Operation {
     @Override
     public void setSummary(String summary) {
         operation.setSummary(summary);
+    }
+
+    @Override
+    public String getDeprecated() {
+        return operation.getDeprecated();
+    }
+
+    @Override
+    public void setDeprecated(String deprecated) {
+        operation.setDeprecated(deprecated);
     }
 
     @Override
