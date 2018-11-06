@@ -30,6 +30,7 @@ public class UserAPI {
      * @summary 创建用户
      * @name 创建
      * @deprecated
+     * @alias user u
      */
     @ResponseBody
     @RequestMapping(

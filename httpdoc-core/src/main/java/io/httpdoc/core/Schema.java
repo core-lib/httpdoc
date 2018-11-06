@@ -111,9 +111,10 @@ public class Schema extends Definition {
                         Method getter = descriptor.getReadMethod();
                         if (getter == null || getter.getDeclaringClass() != clazz) continue;
                         if (getter.isAnnotationPresent(Skip.class)) continue;
+                        ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
+                        if (extendedInterpretation != null && extendedInterpretation.isSkip()) continue;
                         Type t = getter.getGenericReturnType();
                         Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
-                        ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
                         String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                         Property property = new Property(schema, description);
                         Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();
@@ -171,9 +172,10 @@ public class Schema extends Definition {
                             Method getter = descriptor.getReadMethod();
                             if (getter == null || getter.getDeclaringClass() != clazz) continue;
                             if (getter.isAnnotationPresent(Skip.class)) continue;
+                            ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
+                            if (extendedInterpretation != null && extendedInterpretation.isSkip()) continue;
                             Type t = getter.getGenericReturnType();
                             Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
-                            ExtendedInterpretation extendedInterpretation = (ExtendedInterpretation) interpreter.interpret(descriptor);
                             String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                             Property property = new Property(schema, description);
                             Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();

@@ -24,10 +24,12 @@ public class User {
     private Gender gender;
     /**
      * 出生日期
+     * @alias date
      */
     private Date birthday;
     /**
      * 年龄
+     * @skip
      */
     private int age;
 
