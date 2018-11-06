@@ -913,7 +913,7 @@ function HttpDoc() {
                     .text("error")
             );
         });
-        http.execute(function () {
+        http.execute(function (event) {
             // 未完成
             if (this.readyState !== 4) return;
             $btn.button('reset');
