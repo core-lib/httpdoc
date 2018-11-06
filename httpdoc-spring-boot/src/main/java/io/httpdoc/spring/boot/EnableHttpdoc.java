@@ -83,7 +83,7 @@ public @interface EnableHttpdoc {
     Param[] params() default {};
 
     /**
-     * @return HttpDoc Version
+     * @return Project Name
      */
     String httpdoc() default "";
 
@@ -111,6 +111,11 @@ public @interface EnableHttpdoc {
      * @return Server API Version
      */
     String version() default "";
+
+    /**
+     * @return Project Description
+     */
+    String description() default "";
 
     /**
      * @return Document charset
