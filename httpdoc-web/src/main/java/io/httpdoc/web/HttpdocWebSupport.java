@@ -41,6 +41,7 @@ public abstract class HttpdocWebSupport {
     private Integer port;
     private String context;
     private String version;
+    private String dateFormat = "yyyy-MM-dd HH:mm:ss";
     private String description;
     private String charset = "UTF-8";
     private String contentType = null;
@@ -51,6 +52,7 @@ public abstract class HttpdocWebSupport {
     private Serializer serializer = new HttpdocSuffixSerializer();
     private ConversionProvider conversionProvider = new HttpdocConversionProvider();
     private Format format = new CustomFormat();
+
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
@@ -77,6 +79,10 @@ public abstract class HttpdocWebSupport {
             String version = config.getInitParameter("version");
             if (version != null && version.trim().length() > 0) {
                 this.version = version;
+            }
+            String dateFormat = config.getInitParameter("dateFormat");
+            if (dateFormat != null && dateFormat.trim().length() > 0) {
+                this.dateFormat = dateFormat;
             }
             String description = config.getInitParameter("description");
             if (description != null && description.trim().length() > 0) {
@@ -144,6 +150,7 @@ public abstract class HttpdocWebSupport {
             translation.setPort(port != null ? port : req.getServerPort());
             translation.setContext(context != null ? context : req.getContextPath());
             translation.setVersion(version);
+            translation.setDateFormat(dateFormat);
             translation.setDescription(description);
 
             Format clone = IOKit.clone(format);

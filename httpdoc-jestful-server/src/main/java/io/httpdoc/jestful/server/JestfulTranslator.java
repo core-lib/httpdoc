@@ -51,6 +51,7 @@ public class JestfulTranslator implements Translator {
         document.setPort(translation.getPort());
         document.setContext(translation.getContext());
         document.setVersion(translation.getVersion());
+        document.setDateFormat(translation.getDateFormat());
         document.setDescription(translation.getDescription());
 
         translate(new ControllerTranslation(translation, document));

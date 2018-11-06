@@ -113,6 +113,11 @@ public @interface EnableHttpdoc {
     String version() default "";
 
     /**
+     * @return Date Format
+     */
+    String dateFormat() default "yyyy-MM-dd HH:mm:ss";
+
+    /**
      * @return Project Description
      */
     String description() default "";

@@ -29,6 +29,7 @@ public class Document extends Definition {
     private Integer port;
     private String context;
     private String version;
+    private String dateFormat;
     private String refPrefix = Format.REF_PREFIX;
     private String refSuffix = Format.REF_SUFFIX;
     private String mapPrefix = Format.MAP_PREFIX;
@@ -145,6 +146,14 @@ public class Document extends Definition {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
     }
 
     public String getRefPrefix() {

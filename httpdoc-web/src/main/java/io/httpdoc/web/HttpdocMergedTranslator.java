@@ -29,6 +29,7 @@ public class HttpdocMergedTranslator implements Translator {
         document.setPort(translation.getPort());
         document.setContext(translation.getContext());
         document.setVersion(translation.getVersion());
+        document.setDateFormat(translation.getDateFormat());
         document.setDescription(translation.getDescription());
         for (Translator translator : translators) {
             Document doc = translator.translate(translation);

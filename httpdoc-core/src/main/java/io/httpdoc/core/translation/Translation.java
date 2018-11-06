@@ -16,6 +16,7 @@ public class Translation {
     private Integer port;
     private String context;
     private String version;
+    private String dateFormat;
     private String description;
     private Container container;
     private Supplier supplier;
@@ -76,6 +77,14 @@ public class Translation {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
     }
 
     public String getDescription() {

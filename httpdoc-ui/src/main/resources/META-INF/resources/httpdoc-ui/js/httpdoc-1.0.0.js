@@ -175,6 +175,7 @@ function HttpDoc() {
     var ARR_SUFFIX = "[]";
     var INDENT = "    ";
     var SETTING = {};
+    var DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     this.explore = function () {
         var self = this;
@@ -298,6 +299,8 @@ function HttpDoc() {
         ARR_PREFIX = doc.arrPrefix ? doc.arrPrefix : ARR_PREFIX;
         /** @namespace doc.arrSuffix */
         ARR_SUFFIX = doc.arrSuffix ? doc.arrSuffix : ARR_SUFFIX;
+        /** @namespace doc.dateFormat */
+        DATE_FORMAT = doc.dateFormat ? doc.dateFormat : DATE_FORMAT;
 
         for (var name in DOC.schemas) {
             var schema = DOC.schemas[name];
@@ -561,7 +564,7 @@ function HttpDoc() {
             case "Number":
                 return "0.0";
             case "Date":
-                return "\"" + new Date().format('yyyy-MM-dd HH:mm:ss') + "\"";
+                return DATE_FORMAT.toLowerCase() === "timestamp" ? "" + new Date().getTime() : "\"" + new Date().format(DATE_FORMAT) + "\"";
             case "void":
                 return "void";
             default:
@@ -720,7 +723,7 @@ function HttpDoc() {
                 xml += "0.0";
                 break;
             case "Date":
-                xml += "<![CDATA[" + new Date().format('yyyy-MM-dd HH:mm:ss') + "]]>";
+                xml += (DATE_FORMAT.toLowerCase() === "timestamp" ? "" + new Date().getTime() : "<![CDATA[" + new Date().format(DATE_FORMAT) + "]]>");
                 break;
             case "void":
                 xml += "void";

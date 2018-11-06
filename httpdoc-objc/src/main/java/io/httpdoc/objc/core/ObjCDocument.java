@@ -80,6 +80,16 @@ public class ObjCDocument extends Document {
     }
 
     @Override
+    public String getDateFormat() {
+        return document.getDateFormat();
+    }
+
+    @Override
+    public void setDateFormat(String dateFormat) {
+        document.setDateFormat(dateFormat);
+    }
+
+    @Override
     public String getRefPrefix() {
         return document.getRefPrefix();
     }
