@@ -10,15 +10,16 @@ import org.slf4j.LoggerFactory;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class SourceInterpreter implements Interpreter {
 
@@ -100,93 +101,193 @@ public class SourceInterpreter implements Interpreter {
         private static String libPath;
 
         static {
-            // 找出所有classpath
-            Set<URL> resources = new LinkedHashSet<>();
-            ClassLoader classLoader = Javadoc.class.getClassLoader();
-            while (classLoader != null) {
-                if (classLoader instanceof URLClassLoader) {
-                    URL[] urls = ((URLClassLoader) classLoader).getURLs();
-                    resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
-                }
-                classLoader = classLoader.getParent();
-            }
-
-            // 把所有 .java 源码文件放到一个统一的目录
-            File directory = new File(System.getProperty("java.io.tmpdir") + File.separator + "httpdoc" + File.separator + UUID.randomUUID());
-            srcPath = directory.getPath();
-            StringBuilder builder = new StringBuilder();
-            for (URL url : resources) {
-                try {
-                    // 只处理本地文件
-                    if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
-                    String file = url.getFile();
-                    // 如果文件不存在则忽略掉
-                    if (!new File(file).exists()) {
-                        continue;
-                    }
-                    // 如果是一个jar包
-                    if (file.endsWith(".jar")) {
-                        extractTo(new JarFile(file, false), directory);
-                    }
-                    // 否则就是一个文件夹
-                    else {
-                        extractTo(file, new File(file), directory);
-                    }
-                    builder.append(new File(url.getFile()).getPath()).append(";");
-                } catch (Exception e) {
-                    logger.warn("error reading classpath: " + url, e);
-                }
-            }
-            libPath = builder.toString();
+            initial();
         }
 
-        private static void extractTo(final String root, final File file, final File directory) {
+        private static void initial() {
+            String classpath = System.getProperty("java.class.path");
+            // 判断当前是不是Spring-Boot的单JAR包启动
+            boolean springboot = false;
+            String[] jarLocations = classpath.split(";");
+            if (jarLocations.length == 1) {
+                JarFile jar = null;
+                try {
+                    String workspace = System.getProperty("user.dir");
+                    String filepath = workspace + File.separator + classpath;
+                    File file = new File(filepath);
+                    jar = new JarFile(file, false);
+                    Manifest manifest = jar.getManifest();
+                    Attributes attributes = manifest.getMainAttributes();
+                    String clsLocation = attributes.getValue("Spring-Boot-Classes");
+                    String libLocation = attributes.getValue("Spring-Boot-Lib");
+                    springboot = clsLocation != null && libLocation != null;
+                } catch (Exception e) {
+                    // Ignored ...
+                } finally {
+                    IOKit.close(jar);
+                }
+            }
+            File directory = new File(""
+                    + System.getProperty("java.io.tmpdir")
+                    + File.separator
+                    + "httpdoc"
+                    + File.separator
+                    + UUID.randomUUID()
+            );
+            if (!directory.exists() && !directory.mkdirs()) {
+                logger.warn("could not create directory: " + directory);
+                return;
+            } else {
+                directory.deleteOnExit();
+            }
+
+            if (springboot) {
+                JarFile boot = null;
+                try {
+                    // 1. 将整个Spring Boot 打包之后的JAR包 解压
+                    String workspace = System.getProperty("user.dir");
+                    String filepath = workspace + File.separator + classpath;
+                    boot = new JarFile(filepath);
+                    Manifest manifest = boot.getManifest();
+                    Attributes attributes = manifest.getMainAttributes();
+
+                    String clsLocation = attributes.getValue("Spring-Boot-Classes");
+                    String libLocation = attributes.getValue("Spring-Boot-Lib");
+
+                    Enumeration<JarEntry> entries = boot.entries();
+                    while (entries != null && entries.hasMoreElements()) {
+                        JarEntry jarEntry = entries.nextElement();
+                        if (jarEntry.isDirectory()) continue;
+                        String name = jarEntry.getName();
+                        if (name.startsWith(clsLocation) && name.endsWith(".java")) extract(boot, jarEntry, directory);
+                        if (name.startsWith(libLocation) && name.endsWith(".jar")) extract(boot, jarEntry, directory);
+                    }
+
+                    File folder = new File(directory, clsLocation);
+                    srcPath = folder.getPath();
+
+                    File[] libs = new File(directory, libLocation).listFiles();
+                    StringBuilder lib = new StringBuilder();
+                    for (int i = 0; libs != null && i < libs.length; i++) {
+                        if (i > 0) lib.append(";");
+                        lib.append(libs[i].getPath());
+
+                        // 将其中的源码也提取到源码目录里面去
+                        JarFile jarFile = new JarFile(libs[i]);
+                        Enumeration<JarEntry> jarEntries = jarFile.entries();
+                        while (jarEntries != null && jarEntries.hasMoreElements()) {
+                            JarEntry jarEntry = jarEntries.nextElement();
+                            if (jarEntry.isDirectory()) continue;
+                            String name = jarEntry.getName();
+                            if (name.endsWith(".java")) extract(jarFile, jarEntry, folder);
+                        }
+
+                        IOKit.close(jarFile);
+                    }
+                    libPath = lib.toString();
+                } catch (Exception e) {
+                    logger.warn("error reading classpath" + (boot != null ? boot.getName() : ""), e);
+                } finally {
+                    IOKit.close(boot);
+                }
+            } else {
+                // 找出所有classpath
+                Set<URL> resources = new LinkedHashSet<>();
+                ClassLoader classLoader = Javadoc.class.getClassLoader();
+                while (classLoader != null) {
+                    if (classLoader instanceof URLClassLoader) {
+                        URL[] urls = ((URLClassLoader) classLoader).getURLs();
+                        resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
+                    }
+                    classLoader = classLoader.getParent();
+                }
+
+                srcPath = directory.getPath();
+                StringBuilder builder = new StringBuilder();
+                for (URL url : resources) {
+                    try {
+                        // 只处理本地文件
+                        if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
+                        String file = url.getFile();
+                        // 如果文件不存在则忽略掉
+                        if (!new File(file).exists()) {
+                            continue;
+                        }
+                        // 如果是一个jar包
+                        if (file.endsWith(".jar")) {
+                            extract(new JarFile(file, false), directory);
+                        }
+                        // 否则就是一个文件夹
+                        else {
+                            extract(file, new File(file), directory);
+                        }
+                        builder.append(new File(url.getFile()).getPath()).append(";");
+                    } catch (Exception e) {
+                        logger.warn("error reading classpath: " + url, e);
+                    }
+                }
+                libPath = builder.toString();
+            }
+        }
+
+        private static void extract(final JarFile jarFile, final JarEntry jarEntry, final File directory) {
+            InputStream in = null;
+            File src = null;
+            try {
+                String name = jarEntry.getName();
+                src = new File(directory, name);
+                if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
+                    logger.warn("could not create directory: " + src.getParentFile());
+                    return;
+                }
+                in = jarFile.getInputStream(jarEntry);
+                IOKit.transfer(in, src);
+            } catch (Exception e) {
+                logger.warn("error occur while copying jar src file: " + jarEntry + " to: " + src);
+            } finally {
+                IOKit.close(in);
+                if (src != null) src.deleteOnExit();
+            }
+        }
+
+        private static void extract(final String root, final File file, final File directory) {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
                 for (int i = 0; files != null && i < files.length; i++) {
-                    extractTo(root, files[i], directory);
+                    extract(root, files[i], directory);
                 }
             } else if (file.isFile() && file.getName().endsWith(".java")) {
-                File src = new File(directory, file.getAbsolutePath().substring(new File(root).getAbsolutePath().length()));
-                if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
-                    logger.warn("error occur while making directory: " + src.getParentFile());
-                    return;
-                }
+                File src = null;
                 InputStream in = null;
                 try {
+                    String name = file.getAbsolutePath().substring(new File(root).getAbsolutePath().length());
+                    src = new File(directory, name);
+                    if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
+                        logger.warn("could not create directory: " + src.getParentFile());
+                        return;
+                    }
                     in = new FileInputStream(file);
                     IOKit.transfer(in, src);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.warn("error occur while copying src file: " + file + " to: " + src);
                 } finally {
                     IOKit.close(in);
+                    if (src != null) src.deleteOnExit();
                 }
             }
         }
 
-        private static void extractTo(final JarFile jarFile, final File directory) {
+        private static void extract(final JarFile jarFile, final File directory) {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
                 String name = jarEntry.getName();
                 if (!name.endsWith(".java")) continue;
-                File src = new File(directory, name);
-                if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
-                    logger.warn("error occur while making directory: " + src.getParentFile());
-                    continue;
-                }
-                InputStream in = null;
-                try {
-                    in = jarFile.getInputStream(jarEntry);
-                    IOKit.transfer(in, src);
-                } catch (IOException e) {
-                    logger.warn("error occur while copying jar src file: " + jarEntry + " to: " + src);
-                } finally {
-                    IOKit.close(in);
-                }
+                extract(jarFile, jarEntry, directory);
             }
         }
 
+        @Deprecated
         public synchronized static boolean start(RootDoc root) {
             Javadoc.root = root;
             return true;

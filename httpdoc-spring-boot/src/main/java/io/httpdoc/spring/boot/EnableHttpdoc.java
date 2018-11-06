@@ -3,6 +3,7 @@ package io.httpdoc.spring.boot;
 import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.serialization.Serializer;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
@@ -134,7 +135,7 @@ public @interface EnableHttpdoc {
     /**
      * @return Document Interpreter
      */
-    Class<? extends Interpreter> interpreter() default SpringBootInterpreter.class;
+    Class<? extends Interpreter> interpreter() default SourceInterpreter.class;
 
     /**
      * @return Document Converter
