@@ -29,6 +29,7 @@ public class UserAPI {
      * @return 用户创建结果
      * @summary 创建用户
      * @name 创建
+     * @deprecated
      */
     @ResponseBody
     @RequestMapping(
