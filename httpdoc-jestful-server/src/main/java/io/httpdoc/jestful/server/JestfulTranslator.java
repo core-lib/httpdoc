@@ -141,7 +141,6 @@ public class JestfulTranslator implements Translator {
 
         Operation operation = new Operation();
         // 重定义方法名
-        // 重定义方法名
         String name = interpretation != null ? interpretation.getName() : null;
         if (StringUtils.hasText(name)) operation.setName(name);
         else operation.setName(method.isAnnotationPresent(Name.class) ? method.getAnnotation(Name.class).value() : method.getName());
