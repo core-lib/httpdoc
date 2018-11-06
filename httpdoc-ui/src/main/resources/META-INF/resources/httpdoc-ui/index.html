@@ -129,6 +129,7 @@
 <script id="tpl-httpdoc-setting" type="text/html">
     <ul class="nav nav-tabs">
         <li class="active"><a href="#httpdoc-setting-basic" data-toggle="tab">Basic</a></li>
+        <li><a href="#httpdoc-setting-xhr" data-toggle="tab">XMLHttpRequest</a></li>
         <li><a href="#httpdoc-setting-query" data-toggle="tab">Query</a></li>
         <li><a href="#httpdoc-setting-header" data-toggle="tab">Header</a></li>
         <li><a href="#httpdoc-setting-cookie" data-toggle="tab">Cookie</a></li>
@@ -144,20 +145,52 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>PROTOCOL</td>
-                    <td><input class="form-control" name="protocol" value="{{protocol}}"/></td>
+                    <td>protocol</td>
+                    <td><input class="form-control" name="protocol" value="{{protocol}}" placeholder="http or https"/></td>
                 </tr>
                 <tr>
-                    <td>HOSTNAME</td>
-                    <td><input class="form-control" name="hostname" value="{{hostname}}"/></td>
+                    <td>hostname</td>
+                    <td><input class="form-control" name="hostname" value="{{hostname}}" placeholder="ip address or domain name"/></td>
                 </tr>
                 <tr>
-                    <td>PORT</td>
-                    <td><input class="form-control" name="port" value="{{port}}"/></td>
+                    <td>port</td>
+                    <td><input class="form-control" name="port" value="{{port}}" placeholder="port number"/></td>
                 </tr>
                 <tr>
-                    <td>CONTEXT</td>
-                    <td><input class="form-control" name="context" value="{{context}}"/></td>
+                    <td>context</td>
+                    <td><input class="form-control" name="context" value="{{context}}" placeholder="context path"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="httpdoc-setting-xhr">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="30%"></th>
+                    <th width="70%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>username</td>
+                    <td><input class="form-control" name="username" value="{{username}}" placeholder="username"/></td>
+                </tr>
+                <tr>
+                    <td>password</td>
+                    <td><input class="form-control" name="password" value="{{password}}" placeholder="password"/></td>
+                </tr>
+                <tr>
+                    <td>async</td>
+                    <td><input class="form-control" name="async" value="{{async}}" placeholder="true or false"/></td>
+                </tr>
+                <tr>
+                    <td>timeout</td>
+                    <td><input class="form-control" name="timeout" value="{{timeout}}" placeholder="timeout in milliseconds"/></td>
+                </tr>
+                <tr>
+                    <td>withCredentials</td>
+                    <td><input class="form-control" name="withCredentials" value="{{withCredentials}}" placeholder="true or false"/></td>
                 </tr>
                 </tbody>
             </table>

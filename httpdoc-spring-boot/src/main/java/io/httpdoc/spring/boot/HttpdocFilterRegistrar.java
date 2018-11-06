@@ -61,6 +61,7 @@ public class HttpdocFilterRegistrar implements ImportBeanDefinitionRegistrar {
         parameters.put("port", attributes.getNumber("port").toString());
         parameters.put("context", attributes.getString("context"));
         parameters.put("version", attributes.getString("version"));
+        parameters.put("dateFormat", attributes.getString("dateFormat"));
         parameters.put("description", attributes.getString("description"));
         parameters.put("charset", attributes.getString("charset"));
         parameters.put("contentType", attributes.getString("contentType"));

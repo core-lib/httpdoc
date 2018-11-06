@@ -384,6 +384,11 @@ function HttpDoc() {
                 SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
                 SETTING.port = DOC.port ? DOC.port : location.port;
                 SETTING.context = DOC.context ? DOC.context : "";
+                SETTING.username = "";
+                SETTING.password = "";
+                SETTING.async = true;
+                SETTING.timeout = 0;
+                SETTING.withCredentials = false;
                 SETTING.queries = [];
                 SETTING.headers = [];
                 SETTING.cookies = [];
@@ -878,7 +883,15 @@ function HttpDoc() {
         http.cookies = cookies;
         http.bodies = bodies;
         $btn.button('loading');
-        http.execute(function (event) {
+        http.xhr.addEventListener("timeout", function () {
+            autosize.update(
+                $operation.find(".httpdoc-header")
+                    .show()
+                    .find("textarea")
+                    .text("timeout")
+            );
+        });
+        http.execute(function () {
             // 未完成
             if (this.readyState !== 4) return;
             $btn.button('reset');
@@ -943,6 +956,11 @@ function HttpDoc() {
         SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
         SETTING.port = DOC.port ? DOC.port : location.port;
         SETTING.context = DOC.context ? DOC.context : "";
+        SETTING.username = "";
+        SETTING.password = "";
+        SETTING.async = true;
+        SETTING.timeout = 0;
+        SETTING.withCredentials = false;
         SETTING.queries = [];
         SETTING.headers = [];
         SETTING.cookies = [];
@@ -964,6 +982,20 @@ function HttpDoc() {
             SETTING.hostname = hostname && hostname !== "" ? hostname : DOC.hostname ? DOC.hostname : location.hostname;
             SETTING.port = port && port !== "" && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port;
             SETTING.context = context && context !== "" ? context : DOC.context ? DOC.context : "";
+        }
+        // XMLHttpRequest 设置
+        {
+            var $xhr = $("#httpdoc-setting-xhr");
+            var username = $xhr.find("input[name='username']").val();
+            var password = $xhr.find("input[name='password']").val();
+            var async = $xhr.find("input[name='async']").val();
+            var timeout = $xhr.find("input[name='timeout']").val();
+            var withCredentials = $xhr.find("input[name='withCredentials']").val();
+            SETTING.username = username && username !== "" ? username : "";
+            SETTING.password = password && password !== "" ? password : "";
+            SETTING.async = async && async !== "" && /(true|false)/g.test(async) ? eval(async) : true;
+            SETTING.timeout = timeout && timeout !== "" && /\d+/.test(timeout) ? parseInt(timeout) : 0;
+            SETTING.withCredentials = withCredentials && withCredentials !== "" && /(true|false)/g.test(withCredentials) ? eval(withCredentials) : false;
         }
         // Query 设置
         {
@@ -1086,7 +1118,16 @@ function HTTP() {
         var url = this.url();
         xhr.method = method;
         xhr.url = url;
-        xhr.open(method, url);
+
+        var username = this.setting && this.setting.username ? this.setting.username : null;
+        var password = this.setting && this.setting.password ? this.setting.password : null;
+        var async = this.setting && this.setting.async ? this.setting.async : true;
+        var timeout = this.setting && this.setting.timeout ? this.setting.timeout : 0;
+        var withCredentials = this.setting && this.setting.withCredentials ? this.setting.withCredentials : false;
+
+        xhr.open(method, url, async, username, password);
+        xhr.timeout = timeout;
+        xhr.withCredentials = withCredentials;
 
         // multipart/form-data
         var bodies = this.bodies;
