@@ -184,7 +184,8 @@ function HttpDoc() {
         $.ajax({
             url: httpdocURL,
             data: {
-                "format.canonical": true
+                "format.canonical": true,
+                "format.pkgIncluded": false
             },
             method: "GET",
             beforeSend: function () {
