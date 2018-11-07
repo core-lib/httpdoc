@@ -74,6 +74,10 @@ public class SourceInterpreter implements Interpreter {
             Tag[] tags = doc.tags("alias");
             for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@alias", tags[i].name(), tags[i].text()));
         }
+        {
+            Tag[] tags = doc.tags("order");
+            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@order", tags[i].name(), tags[i].text()));
+        }
         return new MethodInterpretation(doc.commentText(), notes.toArray(new Note[0]), doc.getRawCommentText());
     }
 
