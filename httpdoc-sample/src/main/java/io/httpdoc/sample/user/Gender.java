@@ -1,13 +1,14 @@
 package io.httpdoc.sample.user;
 
+import io.httpdoc.core.annotation.Order;
+
 /**
  * 性别
  *
  * @author 杨昌沛 646742615@qq.com
  * 2018/11/5
- * @deprecated 废弃了
  */
-@Deprecated
+@Order(2)
 public enum Gender {
     /**
      * 男

@@ -70,4 +70,13 @@ public abstract class ExtendedInterpretation extends Interpretation {
         return aliases;
     }
 
+    public Integer getOrder() {
+        for (int i = 0; notes != null && i < notes.length; i++) {
+            if ("@order".equals(notes[i].getKind()) && notes[i].getText().matches("-?\\d+")) {
+                return Integer.valueOf(notes[i].getText());
+            }
+        }
+        return null;
+    }
+
 }

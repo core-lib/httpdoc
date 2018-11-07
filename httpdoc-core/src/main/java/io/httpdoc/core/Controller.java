@@ -9,7 +9,7 @@ import java.util.List;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:35
  **/
-public class Controller extends Definition {
+public class Controller extends Definition implements Ordered<Controller> {
     private static final long serialVersionUID = -8892526543537266934L;
 
     private String pkg;
@@ -21,6 +21,14 @@ public class Controller extends Definition {
     private List<String> tags = new ArrayList<>();
     private String summary;
     private String deprecated;
+    private int order = Integer.MAX_VALUE;
+
+    @Override
+    public int compareTo(Controller that) {
+        int c = Integer.compare(this.getOrder(), that.getOrder());
+        if (c != 0) return c;
+        else return this.getName().compareTo(that.getName());
+    }
 
     public String getPkg() {
         return pkg;
@@ -92,6 +100,16 @@ public class Controller extends Definition {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override

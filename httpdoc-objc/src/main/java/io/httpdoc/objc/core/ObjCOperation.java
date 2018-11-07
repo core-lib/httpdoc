@@ -134,6 +134,16 @@ public class ObjCOperation extends Operation {
     }
 
     @Override
+    public int getOrder() {
+        return operation.getOrder();
+    }
+
+    @Override
+    public void setOrder(int order) {
+        operation.setOrder(order);
+    }
+
+    @Override
     public String getDescription() {
         return operation.getDescription();
     }

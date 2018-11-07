@@ -8,7 +8,7 @@ package io.httpdoc.sample;
  */
 public class ApiResult {
     /**
-     * 状态码
+     * 状态码，0代表成功，非0则代表失败，且不同的状态码对应不同的错误类型
      */
     private int code = 0;
     /**

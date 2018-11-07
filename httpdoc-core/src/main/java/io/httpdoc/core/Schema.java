@@ -1,9 +1,7 @@
 package io.httpdoc.core;
 
-import io.httpdoc.core.annotation.Alias;
-import io.httpdoc.core.annotation.Name;
+import io.httpdoc.core.annotation.*;
 import io.httpdoc.core.annotation.Package;
-import io.httpdoc.core.annotation.Skip;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
@@ -25,7 +23,7 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:42
  **/
-public class Schema extends Definition {
+public class Schema extends Definition implements Ordered<Schema> {
     private static final long serialVersionUID = 9146240988324413872L;
 
     private Category category;
@@ -39,6 +37,7 @@ public class Schema extends Definition {
     private Collection<Schema> dependencies = new ArrayList<>();
     private String summary;
     private String deprecated;
+    private int order = Integer.MAX_VALUE;
 
     public Schema() {
     }
@@ -89,6 +88,9 @@ public class Schema extends Definition {
                             : clazz.isAnnotationPresent(Deprecated.class)
                             ? "deprecated"
                             : null;
+                    Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
+                    if (order != null) this.order = order;
+                    else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
                 } else {
                     ClassInterpretation classInterpretation = interpreter.interpret(clazz);
 
@@ -134,6 +136,9 @@ public class Schema extends Definition {
                             : clazz.isAnnotationPresent(Deprecated.class)
                             ? "deprecated"
                             : null;
+                    Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
+                    if (order != null) this.order = order;
+                    else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -195,6 +200,10 @@ public class Schema extends Definition {
                                 : clazz.isAnnotationPresent(Deprecated.class)
                                 ? "deprecated"
                                 : null;
+                        Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
+                        if (order != null) this.order = order;
+                        else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+
                         cache.remove(type);
                         cache.put(clazz, this);
                     }
@@ -215,6 +224,13 @@ public class Schema extends Definition {
             cache.remove(type);
             throw new HttpdocRuntimeException(e);
         }
+    }
+
+    @Override
+    public int compareTo(Schema that) {
+        int c = Integer.compare(this.getOrder(), that.getOrder());
+        if (c != 0) return c;
+        else return this.getName().compareTo(that.getName());
     }
 
     public static Schema valueOf(Type type) {
@@ -420,6 +436,16 @@ public class Schema extends Definition {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override

@@ -7,8 +7,8 @@ import java.util.Date;
  *
  * @author 杨昌沛 646742615@qq.com
  * 2018/11/5
+ * @order 1
  */
-@Deprecated
 public class User {
     /**
      * 用户ID

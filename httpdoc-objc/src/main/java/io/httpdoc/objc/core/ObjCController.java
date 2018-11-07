@@ -111,6 +111,16 @@ public class ObjCController extends Controller {
     }
 
     @Override
+    public int getOrder() {
+        return controller.getOrder();
+    }
+
+    @Override
+    public void setOrder(int order) {
+        controller.setOrder(order);
+    }
+
+    @Override
     public String getDescription() {
         return controller.getDescription();
     }

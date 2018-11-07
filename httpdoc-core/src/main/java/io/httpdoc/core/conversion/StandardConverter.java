@@ -34,6 +34,27 @@ public class StandardConverter implements Converter {
                 for (Schema schema : dependencies) document.getSchemas().put((format.isPkgIncluded() ? schema.getPkg() + "." : "") + schema.getName(), schema);
             }
         }
+        // 排序
+        {
+            List<Controller> controllers = new ArrayList<>(document.getControllers());
+            for (Controller controller : controllers) Collections.sort(controller.getOperations());
+            Collections.sort(controllers);
+            document.setControllers(new LinkedHashSet<>(controllers));
+
+            Map<String, Schema> schemas = document.getSchemas();
+            List<Map.Entry<String, Schema>> entries = new ArrayList<>(schemas.entrySet());
+            Collections.sort(entries, new Comparator<Map.Entry<String, Schema>>() {
+                @Override
+                public int compare(Map.Entry<String, Schema> a, Map.Entry<String, Schema> b) {
+                    int c = Integer.compare(a.getValue().getOrder(), b.getValue().getOrder());
+                    if (c != 0) return c;
+                    else return a.getKey().compareTo(b.getKey());
+                }
+            });
+            Map<String, Schema> map = new LinkedHashMap<>();
+            for (Map.Entry<String, Schema> entry : entries) map.put(entry.getKey(), entry.getValue());
+            document.setSchemas(map);
+        }
 
         Map<String, Object> map = new LinkedHashMap<>();
         if (document.getHttpdoc() != null) map.put("httpdoc", document.getHttpdoc());

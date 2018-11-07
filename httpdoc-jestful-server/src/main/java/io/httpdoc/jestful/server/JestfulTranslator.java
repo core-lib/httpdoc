@@ -115,6 +115,10 @@ public class JestfulTranslator implements Translator {
                                 : null
                 );
 
+                Integer order = interpretation != null ? interpretation.getOrder() : null;
+                if (order != null) controller.setOrder(order);
+                else controller.setOrder(clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
+
                 List<String> tags = interpretation != null ? interpretation.getTags() : null;
                 if (tags != null && !tags.isEmpty()) {
                     controller.setTags(tags);
@@ -159,6 +163,10 @@ public class JestfulTranslator implements Translator {
                         ? "deprecated"
                         : null
         );
+
+        Integer order = interpretation != null ? interpretation.getOrder() : null;
+        if (order != null) operation.setOrder(order);
+        else operation.setOrder(method.isAnnotationPresent(Order.class) ? method.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
 
         List<String> tags = interpretation != null ? interpretation.getTags() : null;
         if (tags != null && !tags.isEmpty()) {

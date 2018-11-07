@@ -218,6 +218,16 @@ public class ObjCSchema extends Schema {
     }
 
     @Override
+    public int getOrder() {
+        return schema.getOrder();
+    }
+
+    @Override
+    public void setOrder(int order) {
+        schema.setOrder(order);
+    }
+
+    @Override
     public String getDescription() {
         return schema.getDescription();
     }

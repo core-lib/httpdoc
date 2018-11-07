@@ -10,27 +10,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Random;
 
 /**
- * 用户管理器,用于管理用户相关的操作，提供针对用户数据的基础增删改查操作。
+ * <p>用户管理器,用于管理用户相关的操作。</p>
+ * <p style="color: red;">提供针对用户数据的基础增删改查操作。</p>
  *
  * @author 杨昌沛 646742615@qq.com
  * 2018/11/5
  * @summary 用户管理API
- * @tag 用户
- * @deprecated 不推荐再使用了
+ * @tag 用户模块
  */
 @Controller
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserAPI {
 
     /**
-     * 创建用户，该API接收用户对象数据，其中用户名称为必填。
+     * <p>创建用户，该API接收用户对象数据，其中用户名称为必填。</p>
+     * <p>该示例用于演示</p>
      *
      * @param user 用户数据
      * @return 用户创建结果
      * @summary 创建用户
-     * @name 创建
-     * @deprecated
-     * @alias user u
      */
     @ResponseBody
     @RequestMapping(
