@@ -437,7 +437,7 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
         Object constants = definition.get("constants");
         if (constants == null) {
             schema.setConstants(null);
-        } else if (Map.class.isInstance(constants)) {
+        } else if (constants instanceof Map<?, ?>) {
             schema.setCategory(Category.ENUM);
             Map<?, ?> map = (Map<?, ?>) constants;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -445,7 +445,7 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
                 String description = (String) entry.getValue();
                 schema.getConstants().add(new Constant(name, description));
             }
-        } else if (Collection.class.isInstance(constants)) {
+        } else if (constants instanceof Collection<?>) {
             schema.setCategory(Category.ENUM);
             Collection<?> collection = (Collection<?>) constants;
             for (Object element : collection) {
