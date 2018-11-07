@@ -126,6 +126,9 @@ public class Schema extends Definition implements Ordered<Schema> {
                             Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                             property.setAlias(annotation != null ? annotation.value() : field);
                         }
+                        Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
+                        if (order != null) property.setOrder(order);
+                        else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
                         this.properties.put(field, property);
                     }
 
@@ -190,6 +193,9 @@ public class Schema extends Definition implements Ordered<Schema> {
                                 Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                                 property.setAlias(annotation != null ? annotation.value() : field);
                             }
+                            Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
+                            if (order != null) property.setOrder(order);
+                            else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
                             this.properties.put(field, property);
                         }
 

@@ -6,11 +6,12 @@ package io.httpdoc.core;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-12 13:43
  **/
-public class Property extends Definition {
+public class Property extends Definition implements Ordered<Property> {
     private static final long serialVersionUID = 5280642997370612295L;
 
     private String alias;
     private Schema type;
+    private int order = Integer.MAX_VALUE;
 
     public Property() {
     }
@@ -18,6 +19,13 @@ public class Property extends Definition {
     Property(Schema type, String description) {
         this.type = type;
         this.description = description;
+    }
+
+    @Override
+    public int compareTo(Property that) {
+        int c = Integer.compare(this.getOrder(), that.getOrder());
+        if (c != 0) return c;
+        else return this.getAlias().compareTo(that.getAlias());
     }
 
     public String getAlias() {
@@ -34,6 +42,16 @@ public class Property extends Definition {
 
     public void setType(Schema type) {
         this.type = type;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override

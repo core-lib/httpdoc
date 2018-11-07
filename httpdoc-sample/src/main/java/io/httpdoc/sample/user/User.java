@@ -1,5 +1,7 @@
 package io.httpdoc.sample.user;
 
+import io.httpdoc.core.annotation.Order;
+
 import java.util.Date;
 
 /**
@@ -12,6 +14,8 @@ import java.util.Date;
 public class User {
     /**
      * 用户ID
+     *
+     * @order 1
      */
     private Long id;
     /**
@@ -20,15 +24,20 @@ public class User {
     private String name;
     /**
      * 用户性别
+     *
+     * @order 3
      */
     private Gender gender;
     /**
      * 出生日期
+     *
      * @alias date
+     * @order 4
      */
     private Date birthday;
     /**
      * 年龄
+     *
      * @skip
      */
     private int age;
@@ -41,6 +50,7 @@ public class User {
         this.id = id;
     }
 
+    @Order(2)
     public String getName() {
         return name;
     }

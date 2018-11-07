@@ -13,7 +13,12 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-16 14:40
  **/
-public class StandardConverter implements Converter {
+public class StandardConverter implements Converter, Comparator<Map.Entry<String, ? extends Comparable>> {
+
+    @Override
+    public int compare(Map.Entry<String, ? extends Comparable> a, Map.Entry<String, ? extends Comparable> b) {
+        return a.getValue().compareTo(b.getValue());
+    }
 
     @Override
     public Map<String, Object> convert(Document document) {
@@ -41,18 +46,20 @@ public class StandardConverter implements Converter {
             Collections.sort(controllers);
             document.setControllers(new LinkedHashSet<>(controllers));
 
-            Map<String, Schema> schemas = document.getSchemas();
-            List<Map.Entry<String, Schema>> entries = new ArrayList<>(schemas.entrySet());
-            Collections.sort(entries, new Comparator<Map.Entry<String, Schema>>() {
-                @Override
-                public int compare(Map.Entry<String, Schema> a, Map.Entry<String, Schema> b) {
-                    int c = Integer.compare(a.getValue().getOrder(), b.getValue().getOrder());
-                    if (c != 0) return c;
-                    else return a.getKey().compareTo(b.getKey());
-                }
-            });
+            List<Map.Entry<String, Schema>> schemas = new ArrayList<>(document.getSchemas().entrySet());
+            Collections.sort(schemas, this);
             Map<String, Schema> map = new LinkedHashMap<>();
-            for (Map.Entry<String, Schema> entry : entries) map.put(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Schema> entry : schemas) {
+                Schema schema = entry.getValue();
+                List<Map.Entry<String, Property>> properties = new ArrayList<>(schema.getProperties().entrySet());
+                Collections.sort(properties, this);
+
+                Map<String, Property> m = new LinkedHashMap<>();
+                for (Map.Entry<String, Property> property : properties) m.put(property.getKey(), property.getValue());
+                schema.setProperties(m);
+
+                map.put(entry.getKey(), schema);
+            }
             document.setSchemas(map);
         }
 

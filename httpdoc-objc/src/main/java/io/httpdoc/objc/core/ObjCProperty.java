@@ -36,6 +36,16 @@ public class ObjCProperty extends Property {
     }
 
     @Override
+    public int getOrder() {
+        return property.getOrder();
+    }
+
+    @Override
+    public void setOrder(int order) {
+        property.setOrder(order);
+    }
+
+    @Override
     public String getDescription() {
         return property.getDescription();
     }
