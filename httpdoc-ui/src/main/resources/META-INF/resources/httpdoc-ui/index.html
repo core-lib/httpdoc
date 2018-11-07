@@ -101,13 +101,15 @@
 <script id="tpl-httpdoc-introduction" type="text/html">
     <div class="jumbotron" style="background-color: #f8f8f8; border-bottom: 1px solid #e7e7e7;">
         <div class="container">
-            <h2>{{#httpdoc}}{{.}}{{/httpdoc}}{{^httpdoc}}HttpDoc{{/httpdoc}} <label class="badge">{{#version}}{{.}}{{/version}}{{^version}}1.0.0{{/version}}</label></h2>
-            <a href="{{url}}" target="_blank">{{url}}</a>
-            <br/>
-            {{#description}}
-            <p class="text-muted">{{description}}</p>
-            {{/description}}
-            <p><a href="https://github.com/core-lib/httpdoc" target="_blank">Learn more about HttpDoc</a></p>
+            <div class="col-md-8 col-md-offset-2">
+                <h2>{{#httpdoc}}{{.}}{{/httpdoc}}{{^httpdoc}}HttpDoc{{/httpdoc}} <label class="badge">{{#version}}{{.}}{{/version}}{{^version}}1.0.0{{/version}}</label></h2>
+                <a href="{{url}}" target="_blank">{{url}}</a>
+                <br/>
+                {{#description}}
+                <p class="text-muted">{{description}}</p>
+                {{/description}}
+                <p><a href="https://github.com/core-lib/httpdoc" target="_blank">Learn more about HttpDoc</a></p>
+            </div>
         </div>
     </div>
 </script>
@@ -115,13 +117,15 @@
 <script id="tpl-httpdoc-error" type="text/html">
     <div class="jumbotron" style="background-color: #f8f8f8; border-bottom: 1px solid #e7e7e7;">
         <div class="container">
-            <h2>{{code}}&nbsp{{message}}</h2>
-            <a href="{{url}}" target="_blank">{{url}}</a>
-            <br/>
-            {{#body}}
-            <pre style="max-height: 240px;">{{body}}</pre>
-            {{/body}}
-            <p><a href="https://github.com/core-lib/httpdoc" target="_blank">Learn more about HttpDoc</a></p>
+            <div class="col-md-8 col-md-offset-2">
+                <h2>{{code}}&nbsp{{message}}</h2>
+                <a href="{{url}}" target="_blank">{{url}}</a>
+                <br/>
+                {{#body}}
+                <pre style="max-height: 240px;">{{body}}</pre>
+                {{/body}}
+                <p><a href="https://github.com/core-lib/httpdoc" target="_blank">Learn more about HttpDoc</a></p>
+            </div>
         </div>
     </div>
 </script>
