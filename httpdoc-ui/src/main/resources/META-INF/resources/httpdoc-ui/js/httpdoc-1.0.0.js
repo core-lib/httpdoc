@@ -1222,9 +1222,9 @@ function HTTP() {
     this.url = function () {
         var protocol = this.setting && this.setting.protocol ? this.setting.protocol : location.protocol.replace(":", "");
         var hostname = this.setting && this.setting.hostname ? this.setting.hostname : location.hostname;
-        var port = this.setting && this.setting.port ? this.setting.port : location.port;
+        var port = this.setting && this.setting.port ? this.setting.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
         var context = this.setting && this.setting.context ? this.setting.context : "";
-        var url = protocol + "://" + hostname + (port <= 0 ? "" : ":" + port) + context + this.path();
+        var url = protocol + "://" + hostname + (port <= 0 || ("http" === protocol && port === 80) || ("https" === protocol && port === 443) ? "" : ":" + port) + context + this.path();
         var query = this.query();
         if (query && typeof query === 'string' && query !== "") url += url.indexOf("?") < 0 ? "?" + query : "&" + query;
         return url;
