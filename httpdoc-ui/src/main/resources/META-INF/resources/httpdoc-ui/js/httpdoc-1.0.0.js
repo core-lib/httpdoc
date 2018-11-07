@@ -382,7 +382,7 @@ function HttpDoc() {
             else {
                 SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
                 SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
-                SETTING.port = DOC.port ? DOC.port : location.port;
+                SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
                 SETTING.context = DOC.context ? DOC.context : "";
                 SETTING.username = "";
                 SETTING.password = "";
@@ -976,7 +976,7 @@ function HttpDoc() {
         localStorage.removeItem("setting");
         SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
         SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
-        SETTING.port = DOC.port ? DOC.port : location.port;
+        SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
         SETTING.context = DOC.context ? DOC.context : "";
         SETTING.username = "";
         SETTING.password = "";
@@ -1002,7 +1002,7 @@ function HttpDoc() {
             var context = $basic.find("input[name='context']").val();
             SETTING.protocol = protocol && protocol !== "" ? protocol : DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
             SETTING.hostname = hostname && hostname !== "" ? hostname : DOC.hostname ? DOC.hostname : location.hostname;
-            SETTING.port = port && port !== "" && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port;
+            SETTING.port = port && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
             SETTING.context = context && context !== "" ? context : DOC.context ? DOC.context : "";
         }
         // XMLHttpRequest 设置
