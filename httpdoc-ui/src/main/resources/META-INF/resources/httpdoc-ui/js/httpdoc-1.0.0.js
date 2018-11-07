@@ -200,6 +200,7 @@ function HttpDoc() {
                 } catch (e) {
                     $("#httpdoc-body").hide();
                     var tpl = $("#tpl-httpdoc-error").html();
+                    Mustache.parse(tpl);
                     var html = Mustache.render(tpl, {
                         code: -1,
                         message: "Unknown Error",
@@ -213,6 +214,7 @@ function HttpDoc() {
                 $("#httpdoc-body").hide();
 
                 var tpl = $("#tpl-httpdoc-error").html();
+                Mustache.parse(tpl);
                 var html = Mustache.render(tpl, {
                     code: xhr.status,
                     message: xhr.statusText,
@@ -310,6 +312,7 @@ function HttpDoc() {
 
         {
             var tpl = $("#tpl-httpdoc-introduction").html();
+            Mustache.parse(tpl);
             var html = Mustache.render(tpl, DOC);
             $("#httpdoc-head").html(html);
         }
@@ -318,6 +321,7 @@ function HttpDoc() {
             var tags = [];
             for (var tag in MAP) tags.push(tag);
             var tpl = $("#tpl-httpdoc-modules").html();
+            Mustache.parse(tpl);
             var html = Mustache.render(tpl, tags);
             $("#httpdoc-tags").html(html);
         }
@@ -331,6 +335,7 @@ function HttpDoc() {
 
         {
             var tpl = $("#tpl-httpdoc-models").html();
+            Mustache.parse(tpl);
             var models = [];
             for (var name in DOC.schemas) {
                 var model = DOC.schemas[name];
@@ -375,6 +380,7 @@ function HttpDoc() {
             if (setting) {
                 SETTING = JSON.parse(localStorage.getItem("setting"));
                 var tpl = $("#tpl-httpdoc-setting").html();
+                Mustache.parse(tpl);
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
                 $('#httpdoc-config').modal('show');
@@ -396,6 +402,7 @@ function HttpDoc() {
             }
             $('#httpdoc-config').on('show.bs.modal', function () {
                 var tpl = $("#tpl-httpdoc-setting").html();
+                Mustache.parse(tpl);
                 var html = Mustache.render(tpl, SETTING);
                 $("#httpdoc-config").find(".modal-body").html(html);
             });
@@ -454,6 +461,7 @@ function HttpDoc() {
 
         {
             var tpl = $("#tpl-httpdoc-apis").html();
+            Mustache.parse(tpl);
             var html = Mustache.render(tpl, controllers);
             $("#httpdoc-controllers").html(html);
             $("#httpdoc-controllers").find("[data-toggle='tooltip']").tooltip();
@@ -966,6 +974,7 @@ function HttpDoc() {
 
     this.addSettingRow = function (btn) {
         var tpl = $("#tpl-httpdoc-setting-row").html();
+        Mustache.parse(tpl);
         $(btn).parent().parent().before(tpl);
     };
 
@@ -988,6 +997,7 @@ function HttpDoc() {
         SETTING.headers = [];
         SETTING.cookies = [];
         var tpl = $("#tpl-httpdoc-setting").html();
+        Mustache.parse(tpl);
         var html = Mustache.render(tpl, SETTING);
         $("#httpdoc-config").find(".modal-body").html(html);
         $('#httpdoc-config').modal('hide');
