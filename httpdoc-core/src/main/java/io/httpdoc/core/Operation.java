@@ -29,7 +29,7 @@ public class Operation extends Definition implements Ordered<Operation> {
     public int compareTo(Operation that) {
         int c = Integer.compare(this.getOrder(), that.getOrder());
         if (c != 0) return c;
-        else return this.getName().compareTo(that.getName());
+        else return (this.getMethod() + " " + this.getPath()).compareTo(that.getMethod() + " " + that.getPath());
     }
 
     public String getName() {
