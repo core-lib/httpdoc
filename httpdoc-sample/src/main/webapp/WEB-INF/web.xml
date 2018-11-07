@@ -35,7 +35,7 @@
         </init-param>
         <init-param>
             <param-name>dateFormat</param-name>
-            <param-value>timestamp</param-value>
+            <param-value>yyyy-MM-dd HH:mm:ss</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
