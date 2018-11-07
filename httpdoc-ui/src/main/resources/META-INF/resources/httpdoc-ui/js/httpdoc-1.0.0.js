@@ -129,7 +129,7 @@ function JSONConversion() {
          *---> \r\n{\r\n'name':'ccy',\r\n'age':18,\r\n
          *'info':\r\n[\r\n'address':'wuhan',\r\n'interest':'playCards'\r\n]\r\n}\r\n
          */
-        json = json.replace(/[\r\n]/g, '').replace(/[ ]/g, '')
+        json = json.replace(/[\r\n]/g, '')
             .replace(/([{])/g, '$1\r\n')
             .replace(/([}])/g, '\r\n$1\r\n')
             .replace(/([\[])/g, '$1\r\n')
