@@ -170,7 +170,7 @@ JDK 1.7 +
     * 只需要在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
     
 ## 在线示例
-项目中的httpdoc-sample其实就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后编译查看源码和运行看效果，也可立即预览：
+项目中的httpdoc-sample其实就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后编译查看源码和运行看效果，也可立即预览：[httpdoc-sample](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html)
 
 ## 变更记录
 * v1.5.1 
