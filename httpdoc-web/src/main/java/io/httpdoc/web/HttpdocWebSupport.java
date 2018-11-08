@@ -6,8 +6,8 @@ import io.httpdoc.core.conversion.CustomFormat;
 import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.conversion.StandardConverter;
 import io.httpdoc.core.exception.DocumentTranslationException;
-import io.httpdoc.core.interpretation.DefaultInterpreter;
 import io.httpdoc.core.interpretation.Interpreter;
+import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.kit.IOKit;
 import io.httpdoc.core.serialization.Serializer;
 import io.httpdoc.core.supplier.Supplier;
@@ -47,7 +47,7 @@ public abstract class HttpdocWebSupport {
     private String contentType = null;
     private Translator translator = new HttpdocMergedTranslator();
     private Supplier supplier = new SystemSupplier();
-    private Interpreter interpreter = new DefaultInterpreter();
+    private Interpreter interpreter = new SourceInterpreter();
     private Converter converter = new StandardConverter();
     private Serializer serializer = new HttpdocSuffixSerializer();
     private ConversionProvider conversionProvider = new HttpdocConversionProvider();
