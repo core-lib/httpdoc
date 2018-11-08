@@ -71,7 +71,7 @@ JDK 1.7 +
 </dependency>
 <!-- Jackson依赖结束 如果项目中已有则不需要重复依赖了 -->
 
-<!-- Java tools.jar 依赖, 用于解析源码注释。 -->
+<!-- Java tools.jar 依赖, 用于解析源码注释。如果采用这种方式，则部署到tomcat中需要往Tomcat的lib目录中增加该tools.jar -->
 <dependency>
     <groupId>com.sun</groupId>
     <artifactId>tools</artifactId>
