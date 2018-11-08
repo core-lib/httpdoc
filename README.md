@@ -16,6 +16,14 @@ JDK 1.7 +
 ### Maven
 1. 引入依赖
 ```xml
+<!-- 设置 jitpack.io 仓库 -->
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://www.jitpack.io</url>
+    </repository>
+</repositories>
+
 <!-- 版本配置 -->
 <properties>
     <httpdoc.version>1.5.0</httpdoc.version>
@@ -170,4 +178,4 @@ JDK 1.7 +
 * 1.5.2 第一个正式版发布
 
 ## 协议声明
-项目遵循 [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) 协议
+项目遵循 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) 协议
