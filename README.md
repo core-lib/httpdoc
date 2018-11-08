@@ -26,7 +26,7 @@ JDK 1.7 +
 
 <!-- 版本配置 -->
 <properties>
-    <httpdoc.version>v1.5.0</httpdoc.version>
+    <httpdoc.version>v1.5.2</httpdoc.version>
     <jackson.version>2.9.5</jackson.version>
 </properties>
 
