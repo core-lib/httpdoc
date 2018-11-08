@@ -1,6 +1,6 @@
-package io.httpdoc.sample.user;
+package io.httpdoc.sample;
 
-import io.httpdoc.sample.ApiResult;
+import io.httpdoc.sample.user.User;
 
 public class LoginResult extends ApiResult {
     private User user;

@@ -1,5 +1,7 @@
-package io.httpdoc.sample.user;
+package io.httpdoc.sample;
 
+import io.httpdoc.sample.user.Gender;
+import io.httpdoc.sample.user.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,8 @@ import java.util.Random;
  * <p><b>用户登陆控制器</b></p>
  * <p>该示例用于展示<b>HttpDoc</b>框架可以与<b>SpringMVC</b>框架进行无缝集成。</p>
  * <p>并且你无需为配合框架多写一行代码，甚至你想偷懒的话，连这些注释都是可以不写的。</p>
+ *
+ * @order 0
  */
 @Controller
 @RequestMapping("/login")

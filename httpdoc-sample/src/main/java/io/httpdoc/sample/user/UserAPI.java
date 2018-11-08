@@ -13,16 +13,16 @@ import java.util.Random;
  * <p><b>用户管理器</b></p>
  * <p>该示例用于展示如何给<b>Controller</b>分组，分别有两种方式：</p>
  * <ul>
- * <li>1. 通过注释，通过在注释的下方添加一个或多个<b>@tag</b>标签，并在标签后写上分组名称即可，如果要分在多个组则可以多写几个。</li>
- * <li>2. 通过注解，通过在该<b>Controller</b>的类上标注一个<b>@Tag</b>注解，然后指定一个或多个分组名称即可。由此可知，<b>Controller</b>与分组是多对多的关系。</li>
+ * <li>1. 通过注释，在注释的下方添加一个或多个<b>@tag</b>标签，并在标签后写上分组名称即可，如果要分在多个组则可以多写几个。</li>
+ * <li>2. 通过注解，在该<b>Controller</b>的类上标注一个<b>@Tag</b>注解，然后指定一个或多个分组名称即可。由此可知，<b>Controller</b>与分组是多对多的关系。</li>
  * </ul>
  * <p>两种方式效果是一样的，推荐使用第一种方式，这样<b>HttpDoc</b>框架的代码就不会入侵到你的项目里面。</p>
  * <p>后面还会介绍若干个这样的特性，框架都提供了注释和注解两种方案来满足需求，并且都推荐使用注释的方式。</p>
- * <p>在该示例中，我把<b>UserAPI</b>用注释的方式分别归到了 a.用户模块，b.基础模块，在界面上我们可以通过这两个分组都能找到该<b>Controller</b></p>
- * <p></p>
+ * <p>在该示例中，我把<b>UserAPI</b>用注释的方式分别归到了 a.基础模块，b.用户模块，在界面上我们可以通过这两个分组都能找到该<b>Controller</b></p>
  *
- * @tag 用户模块
  * @tag 基础模块
+ * @tag 用户模块
+ * @order 1
  */
 @Controller
 @RequestMapping("/users")
@@ -104,7 +104,7 @@ public class UserAPI {
      * @param pageSize 页面容量， 大于0
      * @param keyword  模糊搜索关键字
      * @return 分页用户数据及符合条件的总用户数
-     * @deprecated 关键字模糊匹配方式的搜索性能太差，请使用xxx方法。
+     * @deprecated 关键字模糊匹配方式的搜索性能太差，请使用<u>xxx</u>方法。
      */
     @ResponseBody
     @RequestMapping(value = "/{pageNo}/{pageSize}", method = RequestMethod.GET)

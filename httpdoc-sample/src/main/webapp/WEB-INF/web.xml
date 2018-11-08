@@ -31,7 +31,7 @@
         </init-param>
         <init-param>
             <param-name>description</param-name>
-            <param-value>这是HttpDoc框架的一个官方示例</param-value>
+            <param-value><![CDATA[<b>HttpDoc</b>框架的官方示例]]></param-value>
         </init-param>
         <init-param>
             <param-name>dateFormat</param-name>
