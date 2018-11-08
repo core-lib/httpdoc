@@ -128,42 +128,42 @@ JDK 1.7 +
 3. 配置参数
 * SpringMVC
     * web.xml 中增加一个servlet和servlet-mapping标签
-        ```xml
-            <servlet>
-                <servlet-name>httpdoc</servlet-name>
-                <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
-                <init-param>
-                    <param-name>httpdoc</param-name>
-                    <param-value>项目名称</param-value>
-                </init-param>
-                <init-param>
-                    <param-name>version</param-name>
-                    <param-value>项目版本</param-value>
-                </init-param>
-                <init-param>
-                    <param-name>description</param-name>
-                    <param-value>
-                        <![CDATA[
-                            项目描述(可以内嵌HTML标签)
-                        ]]>
-                    </param-value>
-                </init-param>
-                <init-param>
-                    <param-name>dateFormat</param-name>
-                    <param-value>yyyy-MM-dd HH:mm:ss</param-value>
-                </init-param>
-                <load-on-startup>1</load-on-startup>
-            </servlet>
-            
-            <servlet-mapping>
-                <servlet-name>httpdoc</servlet-name>
-                <url-pattern>/httpdoc.json</url-pattern>
-            </servlet-mapping>
-        ```
+    ```xml
+        <servlet>
+            <servlet-name>httpdoc</servlet-name>
+            <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+            <init-param>
+                <param-name>httpdoc</param-name>
+                <param-value>项目名称</param-value>
+            </init-param>
+            <init-param>
+                <param-name>version</param-name>
+                <param-value>项目版本</param-value>
+            </init-param>
+            <init-param>
+                <param-name>description</param-name>
+                <param-value>
+                    <![CDATA[
+                        项目描述(可以内嵌HTML标签)
+                    ]]>
+                </param-value>
+            </init-param>
+            <init-param>
+                <param-name>dateFormat</param-name>
+                <param-value>yyyy-MM-dd HH:mm:ss</param-value>
+            </init-param>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+        
+        <servlet-mapping>
+            <servlet-name>httpdoc</servlet-name>
+            <url-pattern>/httpdoc.json</url-pattern>
+        </servlet-mapping>
+    ```
     * spring-servlet.xml 中增加一个标签以允许浏览器访问HttpDoc的页面静态资源
-        ```xml
-          <mvc:resources mapping="/httpdoc-ui/**" location="classpath:/META-INF/resources/httpdoc-ui/"/>
-        ```
+    ```xml
+      <mvc:resources mapping="/httpdoc-ui/**" location="classpath:/META-INF/resources/httpdoc-ui/"/>
+    ```
         
 * Spring Boot
     * 如果是Spring Boot项目则不需要上面的两个配置。
