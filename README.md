@@ -173,9 +173,11 @@ JDK 1.7 +
 项目中的httpdoc-sample其实就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后编译查看源码和运行看效果，也可立即预览：
 
 ## 变更记录
-* v1.5.0 增加示例模块
-* v1.5.1 增加README.md
-* v1.5.2 第一个正式版发布
+* v1.5.1 
+    * 增加示例模块 
+    * 增加README.md
+* v1.5.2 
+    * 第一个正式版发布
 
 ## 协议声明
 项目遵循 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) 协议
