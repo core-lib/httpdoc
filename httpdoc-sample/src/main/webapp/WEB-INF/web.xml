@@ -31,7 +31,21 @@
         </init-param>
         <init-param>
             <param-name>description</param-name>
-            <param-value><![CDATA[<b>HttpDoc</b>框架的官方示例]]></param-value>
+            <param-value>
+                <![CDATA[
+                    <h4><b>HttpDoc框架的官方示例</b><h4>
+                    <h4>界面元素介绍</h4>
+                    <ul>
+                        <li>左上方为框架LOGO及当前版本</li>
+                        <li>正上方输入框为后台文档解析地址</li>
+                        <li>右上方为全局设置对话框按钮</li>
+                        <li>中间这整块为项目的名称和版本以及简要描述区</li>
+                        <li>左下方为项目的模块列表</li>
+                        <li>内容区是项目的API文档区</li>
+                    </ul>
+                    <h5>该示例项目主要讲解如何利用<b>HttpDoc</b>与<b>SpringMVC</b>项目集成，并通过代码零侵入采用Java标准注释的方式去构建一份可在线阅览的API文档以及测试界面。</h5>
+                ]]>
+            </param-value>
         </init-param>
         <init-param>
             <param-name>dateFormat</param-name>

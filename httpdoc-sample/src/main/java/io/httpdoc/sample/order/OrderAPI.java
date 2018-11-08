@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * <p style="color: #337ab7; font-size: 16px;"><b>订单管理接口</b></p>
+ * <p style="color: #337ab7; font-size: 16px;"><b>美化界面</b></p>
  * <p style="color: #5cb85c;">该示例用于展示基于Java的标准注释模板+简单的<b>html</b>标签来美化文档的界面。</p>
  * <p style="color: #31b0d5;">在前面的例子中我们看到文档中虽然样子都差不多，但是其中不乏有字体加粗和列表显示的例子。其实还能支持更多的<b>html</b>标签语法，</p>
  * <p style="color: #f0ad4e;">而这种语法本身就是Java注释支持的，即便我们要用<b>javadoc</b>命令来生成项目文档时，这些标签也是必不可少的。</p>
