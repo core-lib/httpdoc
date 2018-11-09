@@ -123,6 +123,19 @@ JDK 1.7 +
     </dependency>
     ```
     
+## 参数说明
+* httpdoc       项目名称，缺省为HttpDoc
+* version       项目版本，缺省为1.0.0
+* description   项目描述，可以用<![CDATA[]]>套起来并使用HTML标签语法
+* protocol      访问协议，http或https，缺省为request.getProtocol();
+* hostname      主机名，缺省为request.getServerName();
+* port          端口号，缺省为request.getServerPort();
+* context       容器路径，缺省为request.getContextPath();
+* dateFormat    日期格式，缺省为yyyy-MM-dd HH:mm:ss
+* translator    文档翻译器，缺省为自动匹配当前项目的WEB框架
+* interpreter   文档解释器，缺省为源码解释器
+* serializer    文档序列化器，缺省为JSON序列化器，所以项目中需要依赖jackson-databind
+    
 ## 在线示例
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：[httpdoc-sample](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html)
 
