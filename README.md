@@ -147,6 +147,9 @@ JDK 1.7 +
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：[httpdoc-sample](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html)
 
 ## 变更记录
+* v1.5.4
+    * 极大提升源码注释解析速度
+    * 修复spring-boot模块的依赖，增加spring-mvc依赖
 * v1.5.3
     * 优化项目依赖让项目集成更简单
     * 默认采用JSON文档序列化器
