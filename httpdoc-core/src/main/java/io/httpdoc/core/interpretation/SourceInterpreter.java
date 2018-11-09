@@ -3,14 +3,13 @@ package io.httpdoc.core.interpretation;
 import com.sun.javadoc.*;
 import com.sun.tools.javadoc.ClassDocImpl;
 import com.sun.tools.javadoc.Main;
+import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.kit.IOKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -119,13 +118,27 @@ public class SourceInterpreter implements Interpreter {
     public static abstract class Javadoc {
         private static Logger logger = LoggerFactory.getLogger(Javadoc.class);
 
-        private static Map<String, RootDoc> cache = new HashMap<>();
         private static RootDoc root;
         private static String srcPath;
         private static String libPath;
+        private static String pkgPath;
 
         static {
             initial();
+            try {
+                File txt = new File(srcPath, "packages.txt");
+                Set<String> folders = getSrcFolders(new File(srcPath));
+                String separator = System.getProperty("line.separator");
+                StringBuilder builder = new StringBuilder();
+                for (String folder : folders) {
+                    String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
+                    builder.append(pkg).append(separator);
+                }
+                IOKit.transfer(new StringReader(builder.toString()), txt);
+                pkgPath = txt.getPath();
+            } catch (IOException e) {
+                throw new HttpdocRuntimeException(e);
+            }
         }
 
         private static void initial() {
@@ -318,17 +331,10 @@ public class SourceInterpreter implements Interpreter {
         }
 
         private synchronized static ClassDoc getClassDoc(Class<?> clazz) {
-            Package pkg = clazz.getPackage();
-            if (pkg == null) return null;
-            String pkgName = pkg.getName();
             String className = clazz.getName();
-            if (cache.containsKey(pkgName)) {
-                RootDoc root = cache.get(pkgName);
-                return root == null ? null : root.classNamed(className);
+            if (root != null) {
+                return root.classNamed(className);
             }
-
-            File file = new File(srcPath, className.replace('.', '/') + ".java");
-            if (!file.exists() || !file.isFile()) return null;
 
             Main.execute(new String[]{
                     "-doclet",
@@ -339,13 +345,23 @@ public class SourceInterpreter implements Interpreter {
                     libPath,
                     "-sourcepath",
                     srcPath,
-                    pkgName
+                    "@" + pkgPath
             });
-            ClassDoc doc = root == null ? null : root.classNamed(className);
 
-            cache.put(pkgName, root);
+            return root == null ? null : root.classNamed(className);
+        }
 
-            return doc;
+        private static Set<String> getSrcFolders(File file) {
+            Set<String> folders = new LinkedHashSet<>();
+            if (file.isDirectory()) {
+                File[] files = file.listFiles();
+                for (int i = 0; files != null && i < files.length; i++) {
+                    folders.addAll(getSrcFolders(files[i]));
+                }
+            } else if (file.isFile() && file.getName().endsWith(".java")) {
+                folders.add(file.getParent());
+            }
+            return folders;
         }
 
         private static ClassDoc of(Class<?> clazz) {

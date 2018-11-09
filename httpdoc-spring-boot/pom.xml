@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>io.httpdoc</groupId>
-            <artifactId>httpdoc-web</artifactId>
+            <artifactId>httpdoc-spring-mvc</artifactId>
             <version>v1.5.3</version>
         </dependency>
     </dependencies>
