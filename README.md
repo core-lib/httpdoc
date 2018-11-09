@@ -17,28 +17,32 @@ JDK 1.7 +
 1. 引入依赖
 ```xml
 <!-- 设置 jitpack.io 仓库 -->
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://www.jitpack.io</url>
-    </repository>
-</repositories>
+<project>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
+        </repository>
+    </repositories>
 
-<!-- 添加 HttpDoc 依赖 -->
-<dependency>
-    <groupId>com.github.core-lib.httpdoc</groupId>
-    <artifactId>httpdoc-spring-mvc</artifactId>
-    <version>v1.5.2</version>
-</dependency>
-
-<!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式部署到Tomcat中需要往Tomcat的lib目录增加该tools.jar -->
-<dependency>
-    <groupId>com.sun</groupId>
-    <artifactId>tools</artifactId>
-    <version>1.8</version>
-    <scope>system</scope>
-    <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
-</dependency>
+    <dependencies>
+        <!-- 添加 HttpDoc 依赖 -->
+        <dependency>
+            <groupId>com.github.core-lib.httpdoc</groupId>
+            <artifactId>httpdoc-spring-mvc</artifactId>
+            <version>v1.5.2</version>
+        </dependency>
+        
+        <!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式部署到Tomcat中需要往Tomcat的lib目录增加该tools.jar -->
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
+        </dependency>
+    </dependencies>
+</project>
 <!-- 当然还有很多种方式来依赖tools.jar，例如上传到自己的私服或从别的仓库中依赖进来 -->
 ```
 
@@ -76,36 +80,38 @@ JDK 1.7 +
 * SpringMVC
     * web.xml 中增加一个servlet和servlet-mapping标签
     ```xml
-    <servlet>
-        <servlet-name>httpdoc</servlet-name>
-        <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
-        <init-param>
-            <param-name>httpdoc</param-name>
-            <param-value>项目名称</param-value>
-        </init-param>
-        <init-param>
-            <param-name>version</param-name>
-            <param-value>项目版本</param-value>
-        </init-param>
-        <init-param>
-            <param-name>description</param-name>
-            <param-value>
-                <![CDATA[
-                    项目描述(可以内嵌HTML标签)
-                ]]>
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>dateFormat</param-name>
-            <param-value>yyyy-MM-dd HH:mm:ss</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>httpdoc</servlet-name>
-        <url-pattern>/httpdoc.json</url-pattern>
-    </servlet-mapping>
+    <web>
+        <servlet>
+            <servlet-name>httpdoc</servlet-name>
+            <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
+            <init-param>
+                <param-name>httpdoc</param-name>
+                <param-value>项目名称</param-value>
+            </init-param>
+            <init-param>
+                <param-name>version</param-name>
+                <param-value>项目版本</param-value>
+            </init-param>
+            <init-param>
+                <param-name>description</param-name>
+                <param-value>
+                    <![CDATA[
+                        项目描述(可以内嵌HTML标签)
+                    ]]>
+                </param-value>
+            </init-param>
+            <init-param>
+                <param-name>dateFormat</param-name>
+                <param-value>yyyy-MM-dd HH:mm:ss</param-value>
+            </init-param>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+        
+        <servlet-mapping>
+            <servlet-name>httpdoc</servlet-name>
+            <url-pattern>/httpdoc.json</url-pattern>
+        </servlet-mapping>
+    </web>
     ```
     * spring-servlet.xml 中增加一个标签以允许浏览器访问HttpDoc的页面静态资源
     ```xml
