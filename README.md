@@ -16,8 +16,8 @@ JDK 1.7 +
 ### Maven
 1. 引入依赖
 ```xml
-<!-- 设置 jitpack.io 仓库 -->
 <project>
+    <!-- 设置 jitpack.io 仓库 -->
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -80,7 +80,7 @@ JDK 1.7 +
 * SpringMVC
     * web.xml 中增加一个servlet和servlet-mapping标签
     ```xml
-    <web>
+    <web-app>
         <servlet>
             <servlet-name>httpdoc</servlet-name>
             <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
@@ -111,7 +111,7 @@ JDK 1.7 +
             <servlet-name>httpdoc</servlet-name>
             <url-pattern>/httpdoc.json</url-pattern>
         </servlet-mapping>
-    </web>
+    </web-app>
     ```
     * spring-servlet.xml 中增加一个标签以允许浏览器访问HttpDoc的页面静态资源
     ```xml
