@@ -112,13 +112,13 @@ JDK 1.7 +
     ```
         
 * Spring Boot
-    * 如果是Spring Boot项目则不需要上面的两个配置。
-    * 只需要添加依赖并在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
+    * 如果是Spring Boot项目则不需要上面的两个配置，实际上 Spring Boot 项目也没有web.xml文件来做配置。
+    * 只需要将httpdoc-spring-mvc依赖替换成下面的依赖并在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
     ```xml
     <dependency>
       <groupId>com.github.core-lib.httpdoc</groupId>
       <artifactId>httpdoc-spring-boot</artifactId>
-      <version>${httpdoc.version}</version>
+      <version>v1.5.2</version>
     </dependency>
     ```
     
