@@ -30,7 +30,7 @@ JDK 1.7 +
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
-            <version>v1.5.2</version>
+            <version>v1.5.3</version>
         </dependency>
         
         <!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式部署到Tomcat中需要往Tomcat的lib目录增加该tools.jar -->
@@ -146,14 +146,14 @@ JDK 1.7 +
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：[httpdoc-sample](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html)
 
 ## 变更记录
-* v1.5.1 
-    * 增加示例模块
-    * 增加README.md
-* v1.5.2 
-    * 第一个正式版发布
 * v1.5.3
     * 优化项目依赖让项目集成更简单
     * 默认采用JSON文档序列化器
+* v1.5.2
+    * 第一个正式版发布
+* v1.5.1
+    * 增加示例模块
+    * 增加README.md
 
 ## 协议声明
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)
