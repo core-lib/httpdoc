@@ -153,6 +153,7 @@ JDK 1.7 +
     * 第一个正式版发布
 * v1.5.3
     * 优化项目依赖让项目集成更简单
+    * 默认采用JSON文档序列化器
 
 ## 协议声明
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)
