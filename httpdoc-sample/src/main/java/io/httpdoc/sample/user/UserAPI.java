@@ -78,7 +78,7 @@ public class UserAPI {
      * <p>该示例用于展示如何在界面上给<b>API</b>方法写一个概要描述，出于查找的便利性考虑，界面上的方法都是折叠起来的。</p>
      * <p>当然方法的注释也被隐藏了，我们可以通过在注释上增加一个<b>@summary</b>标签来为方法做一个概要的描述。</p>
      * <p>在界面上可以看到，<b> PUT /users/{id} </b>方法比<b> POST /users </b>方法的右边多了一个概要描述。</p>
-     * <p>同样的，我们还可以利用这个注释标签<b>（@summary）</b>给<b>Controller</b>以及<b>Model</b>写一个概要描述。</p>
+     * <p>同样的，我们还可以利用这个注释标签<b>@summary</b>给<b>Controller</b>以及<b>Model</b>写一个概要描述。</p>
      *
      * @param id   用户ID
      * @param user 新用户对象
