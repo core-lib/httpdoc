@@ -15,6 +15,7 @@ import io.httpdoc.core.supplier.SystemSupplier;
 import io.httpdoc.core.translation.Container;
 import io.httpdoc.core.translation.Translation;
 import io.httpdoc.core.translation.Translator;
+import io.httpdoc.jackson.serialization.JsonSerializer;
 import io.httpdoc.web.conversion.Conversion;
 import io.httpdoc.web.conversion.ConversionProvider;
 import io.httpdoc.web.conversion.ConvertingException;
@@ -49,7 +50,7 @@ public abstract class HttpdocWebSupport {
     private Supplier supplier = new SystemSupplier();
     private Interpreter interpreter = new SourceInterpreter();
     private Converter converter = new StandardConverter();
-    private Serializer serializer = new HttpdocSuffixSerializer();
+    private Serializer serializer = new JsonSerializer();
     private ConversionProvider conversionProvider = new HttpdocConversionProvider();
     private Format format = new CustomFormat();
 

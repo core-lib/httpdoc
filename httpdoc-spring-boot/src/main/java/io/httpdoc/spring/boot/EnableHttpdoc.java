@@ -8,10 +8,10 @@ import io.httpdoc.core.serialization.Serializer;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
 import io.httpdoc.core.translation.Translator;
+import io.httpdoc.jackson.serialization.JsonSerializer;
 import io.httpdoc.web.HttpdocConversionProvider;
 import io.httpdoc.web.HttpdocFilterSupport;
 import io.httpdoc.web.HttpdocMergedTranslator;
-import io.httpdoc.web.HttpdocSuffixSerializer;
 import io.httpdoc.web.conversion.ConversionProvider;
 import org.springframework.context.annotation.Import;
 
@@ -155,7 +155,7 @@ public @interface EnableHttpdoc {
     /**
      * @return Document Serializer
      */
-    Class<? extends Serializer> serializer() default HttpdocSuffixSerializer.class;
+    Class<? extends Serializer> serializer() default JsonSerializer.class;
 
     /**
      * @return Document Conversion Provider
