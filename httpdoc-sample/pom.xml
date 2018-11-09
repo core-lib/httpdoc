@@ -20,13 +20,6 @@
         <httpdoc.version>v1.5.3</httpdoc.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>spring</id>
-            <url>http://repo.springsource.org/libs-release</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- SpringMVC 相关依赖 开始 -->
         <dependency>
