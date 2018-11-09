@@ -1,6 +1,8 @@
 package io.httpdoc.core.kit;
 
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -15,6 +17,7 @@ import java.util.jar.JarFile;
  * @date 2018-04-24 13:55
  **/
 public class LoadKit {
+    private final static Logger LOGGER = LoggerFactory.getLogger(LoadKit.class);
 
     public static Set<URL> load(ClassLoader classLoader) throws IOException {
         Set<URL> urls = new LinkedHashSet<>();
@@ -112,12 +115,16 @@ public class LoadKit {
                         String value = (String) properties.get(name);
                         Class<? extends T> clazz = classForName(value, type);
                         if (clazz == null) continue;
-                        T bean = clazz.newInstance();
-                        map.put(name, bean);
+                        try {
+                            T bean = clazz.newInstance();
+                            map.put(name, bean);
+                        } catch (Exception e) {
+                            LOGGER.warn("could not load " + type.getSimpleName() + " : " + clazz, e);
+                        }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new HttpdocRuntimeException(e);
         }
         return map;
