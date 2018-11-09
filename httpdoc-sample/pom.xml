@@ -5,7 +5,7 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.5.1</version>
+        <version>v1.5.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,23 +19,23 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <spring.version>4.3.9.RELEASE</spring.version>
+        <jackson.version>2.9.5</jackson.version>
+        <httpdoc.version>v1.5.2</httpdoc.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>spring-release</id>
-            <name>Spring Maven Release Repository</name>
+            <id>spring</id>
             <url>http://repo.springsource.org/libs-release</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- SpringMVC 相关依赖 开始 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -44,18 +44,20 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.5</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
+        <!-- SpringMVC 相关依赖 结束 -->
+
+        <!-- HttpDoc 相关依赖 开始 -->
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
-            <version>v1.5.1</version>
+            <version>${httpdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun</groupId>
@@ -64,6 +66,7 @@
             <scope>system</scope>
             <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
         </dependency>
+        <!-- HttpDoc 相关依赖 结束 -->
     </dependencies>
 
     <build>

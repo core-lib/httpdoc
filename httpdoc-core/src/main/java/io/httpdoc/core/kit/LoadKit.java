@@ -118,8 +118,8 @@ public class LoadKit {
                         try {
                             T bean = clazz.newInstance();
                             map.put(name, bean);
-                        } catch (Exception e) {
-                            LOGGER.warn("could not load " + type.getSimpleName() + " : " + clazz, e);
+                        } catch (Throwable e) {
+                            LOGGER.warn("could not load " + type.getSimpleName() + " for [" + clazz + "]", e);
                         }
                     }
                 }
