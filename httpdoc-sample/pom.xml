@@ -58,7 +58,7 @@
 
         <!-- HttpDoc 相关依赖 开始 -->
         <dependency>
-            <groupId>com.github.core-lib.httpdoc</groupId>
+            <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
             <version>${httpdoc.version}</version>
         </dependency>
