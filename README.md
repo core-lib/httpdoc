@@ -39,20 +39,6 @@ JDK 1.7 +
     <scope>system</scope>
     <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
 </dependency>
-
-<!-- 如果不想从本地依赖tools.jar也可以上传到自己的私服或从仓库中依赖进来 -->
-<repositories>
-    <repository>
-        <id>nuiton</id>
-        <url>http://maven.nuiton.org/release/</url>
-    </repository>
-</repositories>
-<dependency>
-    <groupId>com.sun</groupId>
-    <artifactId>tools</artifactId>
-    <version>1.7.0.13</version>
-</dependency>
-<!-- 但是这个依赖版本是1.7的，如果项目用了JDK 1.7+ 则有些新语法问题会造成源码注释读取不成功，但不会出错 -->
 ```
 
 2. 配置插件
