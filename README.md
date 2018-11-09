@@ -41,9 +41,9 @@ JDK 1.7 +
             <scope>system</scope>
             <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
         </dependency>
+        <!-- 当然还有很多种方式来依赖tools.jar，例如上传到自己的私服或从别的仓库中依赖进来 -->
     </dependencies>
 </project>
-<!-- 当然还有很多种方式来依赖tools.jar，例如上传到自己的私服或从别的仓库中依赖进来 -->
 ```
 
 2. 配置插件
