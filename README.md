@@ -24,14 +24,14 @@ JDK 1.7 +
     </repository>
 </repositories>
 
-<!-- 添加HttpDoc依赖 -->
+<!-- 添加 HttpDoc 依赖 -->
 <dependency>
     <groupId>com.github.core-lib.httpdoc</groupId>
     <artifactId>httpdoc-spring-mvc</artifactId>
     <version>v1.5.2</version>
 </dependency>
 
-<!-- Java tools.jar 依赖, 用于解析源码注释。如果采用这种方式，则部署到Tomcat中需要往Tomcat的lib目录中增加该tools.jar -->
+<!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式，则部署到Tomcat中需要往Tomcat的lib目录中增加该tools.jar -->
 <dependency>
     <groupId>com.sun</groupId>
     <artifactId>tools</artifactId>
@@ -39,6 +39,7 @@ JDK 1.7 +
     <scope>system</scope>
     <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
 </dependency>
+<!-- 当然还有很多种方式来依赖tools.jar，例如上传到自己的私服或从别的仓库中依赖进来 -->
 ```
 
 2. 配置插件
@@ -112,7 +113,7 @@ JDK 1.7 +
     ```
         
 * Spring Boot
-    * 如果是Spring Boot项目则不需要上面的两个配置，实际上 Spring Boot 项目也没有web.xml文件来做配置。
+    * 如果是Spring Boot项目则不需要上面SpringMVC的两个配置，实际上 Spring Boot 项目也没有web.xml文件来做配置。
     * 只需要将httpdoc-spring-mvc依赖替换成下面的依赖并在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
     ```xml
     <dependency>
@@ -133,4 +134,7 @@ JDK 1.7 +
     * 第一个正式版发布
 
 ## 协议声明
-项目遵循 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) 协议
+[Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+## 联系作者
+QQ 646742615
