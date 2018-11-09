@@ -119,7 +119,7 @@ public class SourceInterpreter implements Interpreter {
     public static abstract class Javadoc {
         private static Logger logger = LoggerFactory.getLogger(Javadoc.class);
 
-        private static Map<Class<?>, ClassDoc> cache = new HashMap<>();
+        private static Map<String, RootDoc> cache = new HashMap<>();
         private static RootDoc root;
         private static String srcPath;
         private static String libPath;
@@ -318,10 +318,16 @@ public class SourceInterpreter implements Interpreter {
         }
 
         private synchronized static ClassDoc getClassDoc(Class<?> clazz) {
-            if (cache.containsKey(clazz)) return cache.get(clazz);
+            Package pkg = clazz.getPackage();
+            if (pkg == null) return null;
+            String pkgName = pkg.getName();
+            String className = clazz.getName();
+            if (cache.containsKey(pkgName)) {
+                RootDoc root = cache.get(pkgName);
+                return root == null ? null : root.classNamed(className);
+            }
 
-            String name = clazz.getName();
-            File file = new File(srcPath, name.replace('.', '/') + ".java");
+            File file = new File(srcPath, className.replace('.', '/') + ".java");
             if (!file.exists() || !file.isFile()) return null;
 
             Main.execute(new String[]{
@@ -333,11 +339,11 @@ public class SourceInterpreter implements Interpreter {
                     libPath,
                     "-sourcepath",
                     srcPath,
-                    file.getPath()
+                    pkgName
             });
-            ClassDoc doc = root == null ? null : root.classNamed(name);
+            ClassDoc doc = root == null ? null : root.classNamed(className);
 
-            cache.put(clazz, doc);
+            cache.put(pkgName, root);
 
             return doc;
         }
