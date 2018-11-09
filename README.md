@@ -147,10 +147,12 @@ JDK 1.7 +
 
 ## 变更记录
 * v1.5.1 
-    * 增加示例模块 
+    * 增加示例模块
     * 增加README.md
 * v1.5.2 
     * 第一个正式版发布
+* v1.5.3
+    * 优化项目依赖让项目集成更简单
 
 ## 协议声明
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)
