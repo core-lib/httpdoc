@@ -25,10 +25,6 @@
             <id>spring</id>
             <url>http://repo.springsource.org/libs-release</url>
         </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://www.jitpack.io</url>
-        </repository>
     </repositories>
 
     <dependencies>
