@@ -31,7 +31,7 @@ JDK 1.7 +
     <version>v1.5.2</version>
 </dependency>
 
-<!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式，则部署到Tomcat中需要往Tomcat的lib目录中增加该tools.jar -->
+<!-- 添加 jdk 的 tools.jar 依赖, 用于解析源码注释。如果采用这种方式部署到Tomcat中需要往Tomcat的lib目录增加该tools.jar -->
 <dependency>
     <groupId>com.sun</groupId>
     <artifactId>tools</artifactId>
