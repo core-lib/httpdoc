@@ -125,7 +125,7 @@ JDK 1.7 +
     <dependency>
       <groupId>com.github.core-lib.httpdoc</groupId>
       <artifactId>httpdoc-spring-boot</artifactId>
-      <version>v1.5.2</version>
+      <version>v1.5.3</version>
     </dependency>
     ```
     
