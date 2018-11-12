@@ -1,6 +1,8 @@
 package io.httpdoc.web;
 
+import io.httpdoc.core.Config;
 import io.httpdoc.core.Document;
+import io.httpdoc.core.Lifecycle;
 import io.httpdoc.core.exception.DocumentTranslationException;
 import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.translation.Translation;
@@ -14,7 +16,7 @@ import java.util.Collection;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-23 16:16
  **/
-public class HttpdocMergedTranslator implements Translator {
+public class HttpdocMergedTranslator implements Translator, Lifecycle {
     private final Collection<Translator> translators = LoadKit.load(this.getClass().getClassLoader(), Translator.class).values();
 
     HttpdocMergedTranslator() {
@@ -44,4 +46,21 @@ public class HttpdocMergedTranslator implements Translator {
         return null;
     }
 
+    @Override
+    public void initial(Config config) throws Exception {
+        for (Translator translator : translators) {
+            if (translator instanceof Lifecycle) {
+                ((Lifecycle) translator).initial(config);
+            }
+        }
+    }
+
+    @Override
+    public void destroy() {
+        for (Translator translator : translators) {
+            if (translator instanceof Lifecycle) {
+                ((Lifecycle) translator).destroy();
+            }
+        }
+    }
 }

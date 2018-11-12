@@ -1,6 +1,7 @@
 package io.httpdoc.web;
 
 import io.httpdoc.core.Document;
+import io.httpdoc.core.Lifecycle;
 import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.CustomFormat;
 import io.httpdoc.core.conversion.Format;
@@ -54,7 +55,6 @@ public abstract class HttpdocWebSupport {
     private ConversionProvider conversionProvider = new HttpdocConversionProvider();
     private Format format = new CustomFormat();
 
-
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
             String httpdoc = config.getInitParameter("httpdoc");
@@ -97,31 +97,60 @@ public abstract class HttpdocWebSupport {
             if (contentType != null && contentType.trim().length() > 0) {
                 this.contentType = contentType;
             }
+
             String translator = config.getInitParameter("translator");
             if (translator != null && translator.trim().length() > 0) {
                 this.translator = Class.forName(translator).asSubclass(Translator.class).newInstance();
             }
+            if (this.translator instanceof Lifecycle) {
+                ((Lifecycle) this.translator).initial(config);
+            }
+
             String provider = config.getInitParameter("supplier");
             if (provider != null && provider.trim().length() > 0) {
                 this.supplier = Class.forName(provider).asSubclass(Supplier.class).newInstance();
             }
+            if (this.supplier instanceof Lifecycle) {
+                ((Lifecycle) this.supplier).initial(config);
+            }
+
             String interpreter = config.getInitParameter("interpreter");
             if (interpreter != null && interpreter.trim().length() > 0) {
                 this.interpreter = Class.forName(interpreter).asSubclass(Interpreter.class).newInstance();
             }
+            if (this.interpreter instanceof Lifecycle) {
+                ((Lifecycle) this.interpreter).initial(config);
+            }
+
             String converter = config.getInitParameter("converter");
             if (converter != null && converter.trim().length() > 0) {
                 this.converter = Class.forName(converter).asSubclass(Converter.class).newInstance();
             }
+            if (this.converter instanceof Lifecycle) {
+                ((Lifecycle) this.converter).initial(config);
+            }
+
             String serializer = config.getInitParameter("serializer");
             if (serializer != null && serializer.trim().length() > 0) {
                 this.serializer = Class.forName(serializer).asSubclass(Serializer.class).newInstance();
             }
+            if (this.serializer instanceof Lifecycle) {
+                ((Lifecycle) this.serializer).initial(config);
+            }
+
+            String conversionProvider = config.getInitParameter("conversionProvider");
+            if (conversionProvider != null && conversionProvider.trim().length() > 0) {
+                this.conversionProvider = Class.forName(conversionProvider).asSubclass(ConversionProvider.class).newInstance();
+            }
+            if (this.conversionProvider instanceof Lifecycle) {
+                ((Lifecycle) this.conversionProvider).initial(config);
+            }
+
             Enumeration<String> names = config.getInitParameterNames();
             while (names.hasMoreElements()) {
                 String expression = names.nextElement();
                 if (!expression.startsWith("format.")) continue;
-                conversionProvider.convert(new Conversion(
+                this.conversionProvider.convert(new Conversion(
                         "format",
                         format,
                         CustomFormat.class,

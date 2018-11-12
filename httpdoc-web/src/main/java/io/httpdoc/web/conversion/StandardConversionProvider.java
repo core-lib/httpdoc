@@ -1,5 +1,8 @@
 package io.httpdoc.web.conversion;
 
+import io.httpdoc.core.Config;
+import io.httpdoc.core.Lifecycle;
+
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -15,14 +18,14 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-06-04 13:47
  **/
-public class StandardConversionProvider implements ConversionProvider {
+public class StandardConversionProvider implements ConversionProvider, Lifecycle {
     private final List<Converter> converters;
     private volatile DateFormat serializationDateFormat = DateFormat.getDateTimeInstance();
     private volatile DateFormat deserializationDateFormat = DateFormat.getDateTimeInstance();
 
     public StandardConversionProvider(Collection<Converter> converters) {
         if (converters == null) throw new NullPointerException();
-        this.converters = new ArrayList<Converter>(converters);
+        this.converters = new ArrayList<>(converters);
     }
 
     @Override
@@ -157,4 +160,21 @@ public class StandardConversionProvider implements ConversionProvider {
         }
     }
 
+    @Override
+    public void initial(Config config) throws Exception {
+        for (Converter<?> converter : converters) {
+            if (converter instanceof Lifecycle) {
+                ((Lifecycle) converter).initial(config);
+            }
+        }
+    }
+
+    @Override
+    public void destroy() {
+        for (Converter<?> converter : converters) {
+            if (converter instanceof Lifecycle) {
+                ((Lifecycle) converter).destroy();
+            }
+        }
+    }
 }

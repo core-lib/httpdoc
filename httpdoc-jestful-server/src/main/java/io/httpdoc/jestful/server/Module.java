@@ -1,13 +1,13 @@
 package io.httpdoc.jestful.server;
 
-import io.httpdoc.core.Config;
+import io.httpdoc.core.Build;
 
 import java.io.Serializable;
 
 /**
  * Created by payne on 2017/3/28.
  */
-public class Module extends Config implements Serializable {
+public class Module extends Build implements Serializable {
     private static final long serialVersionUID = 8979830823718754930L;
 
     private static volatile Module instance;

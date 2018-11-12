@@ -90,7 +90,20 @@ public abstract class IOKit {
     }
 
     public static boolean delete(File file) {
-        return file != null && file.delete();
+        return delete(file, false);
+    }
+
+    public static boolean delete(File file, boolean recursively) {
+        if (file.isDirectory() && recursively) {
+            boolean deleted = true;
+            File[] files = file.listFiles();
+            for (int i = 0; files != null && i < files.length; i++) {
+                deleted &= delete(files[i], true);
+            }
+            return deleted;
+        } else {
+            return file.delete();
+        }
     }
 
 }

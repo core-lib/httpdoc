@@ -1,5 +1,7 @@
 package io.httpdoc.web;
 
+import io.httpdoc.core.Config;
+import io.httpdoc.core.Lifecycle;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.serialization.Serializer;
@@ -16,7 +18,7 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-24 13:07
  **/
-public class HttpdocSuffixSerializer implements Serializer {
+public class HttpdocSuffixSerializer implements Serializer, Lifecycle {
     private final Map<String, Serializer> map = LoadKit.load(this.getClass().getClassLoader(), Serializer.class);
 
     private Serializer get() {
@@ -48,5 +50,23 @@ public class HttpdocSuffixSerializer implements Serializer {
     @Override
     public void serialize(Map<String, Object> doc, Writer writer) throws IOException {
         get().serialize(doc, writer);
+    }
+
+    @Override
+    public void initial(Config config) throws Exception {
+        for (Serializer serializer : map.values()) {
+            if (serializer instanceof Lifecycle) {
+                ((Lifecycle) serializer).initial(config);
+            }
+        }
+    }
+
+    @Override
+    public void destroy() {
+        for (Serializer serializer : map.values()) {
+            if (serializer instanceof Lifecycle) {
+                ((Lifecycle) serializer).destroy();
+            }
+        }
     }
 }
