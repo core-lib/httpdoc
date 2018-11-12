@@ -45,6 +45,19 @@
         </dependency>
         <!-- SpringMVC 相关依赖 结束 -->
 
+        <!-- 日志相关依赖 开始 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <!-- 日志相关依赖 结束 -->
+
         <!-- HttpDoc 相关依赖 开始 -->
         <dependency>
             <groupId>io.httpdoc</groupId>

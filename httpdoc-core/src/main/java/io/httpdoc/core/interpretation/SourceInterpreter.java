@@ -167,7 +167,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 builder.append(pkg).append(separator);
             }
             IOKit.transfer(new StringReader(builder.toString().trim()), txt);
-            pkgPath = txt.getPath();
+            pkgPath = "@" + txt.getPath();
             Main.execute(new String[]{
                     "-doclet",
                     Javadoc.class.getName(),
@@ -178,7 +178,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     libPath,
                     "-sourcepath",
                     srcPath,
-                    "@" + pkgPath
+                    pkgPath
             });
         }
 
