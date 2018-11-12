@@ -171,6 +171,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             Main.execute(new String[]{
                     "-doclet",
                     Javadoc.class.getName(),
+                    "-quiet",
                     "-encoding",
                     "utf-8",
                     "-classpath",
