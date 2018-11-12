@@ -15,6 +15,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -198,7 +200,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     try {
                         // 只处理本地文件
                         if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
-                        String file = url.getFile();
+                        String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
                         // 如果文件不存在则忽略掉
                         if (!new File(file).exists()) {
                             continue;
@@ -211,7 +213,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                         else {
                             extract(file, new File(file), directory);
                         }
-                        libraries.append(new File(url.getFile()).getPath()).append(";");
+                        libraries.append(new File(file).getPath()).append(";");
                     } catch (Exception e) {
                         logger.warn("error reading classpath: " + url, e);
                     }
