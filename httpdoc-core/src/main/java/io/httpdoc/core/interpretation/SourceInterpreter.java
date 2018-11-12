@@ -285,7 +285,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     + File.separator
                     + "httpdoc"
                     + File.separator
-                    + UUID.randomUUID().toString().replace('-', ' ')
+                    + UUID.randomUUID()
             );
             if (!directory.exists() && !directory.mkdirs()) {
                 throw new IOException("could not create directory: " + directory);
