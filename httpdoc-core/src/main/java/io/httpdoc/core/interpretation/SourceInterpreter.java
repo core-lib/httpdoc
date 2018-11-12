@@ -174,7 +174,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     "-encoding",
                     "utf-8",
                     "-classpath",
-                    "@" + libPath,
+                    libPath,
                     "-sourcepath",
                     srcPath,
                     "@" + pkgPath
@@ -182,48 +182,42 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         }
 
         private static void forWebContent(File directory) {
-            try {
-                // 找出所有classpath
-                Set<URL> resources = new LinkedHashSet<>();
-                ClassLoader classLoader = Javadoc.class.getClassLoader();
-                while (classLoader != null) {
-                    if (classLoader instanceof URLClassLoader) {
-                        URL[] urls = ((URLClassLoader) classLoader).getURLs();
-                        resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
-                    }
-                    classLoader = classLoader.getParent();
+            // 找出所有classpath
+            Set<URL> resources = new LinkedHashSet<>();
+            ClassLoader classLoader = Javadoc.class.getClassLoader();
+            while (classLoader != null) {
+                if (classLoader instanceof URLClassLoader) {
+                    URL[] urls = ((URLClassLoader) classLoader).getURLs();
+                    resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
                 }
-
-                srcPath = directory.getPath();
-                StringBuilder libraries = new StringBuilder();
-                for (URL url : resources) {
-                    try {
-                        // 只处理本地文件
-                        if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
-                        String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-                        // 如果文件不存在则忽略掉
-                        if (!new File(file).exists()) {
-                            continue;
-                        }
-                        // 如果是一个jar包
-                        if (file.endsWith(".jar")) {
-                            extract(new JarFile(file, false), directory);
-                        }
-                        // 否则就是一个文件夹
-                        else {
-                            extract(file, new File(file), directory);
-                        }
-                        libraries.append(new File(file).getPath()).append(";");
-                    } catch (Exception e) {
-                        logger.warn("error reading classpath: " + url, e);
-                    }
-                }
-                File txt = new File(srcPath, "classpath.txt");
-                IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
-                libPath = txt.getPath();
-            } catch (IOException e) {
-                logger.warn("error reading classpath", e);
+                classLoader = classLoader.getParent();
             }
+
+            srcPath = directory.getPath();
+            StringBuilder libraries = new StringBuilder();
+            for (URL url : resources) {
+                try {
+                    // 只处理本地文件
+                    if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
+                    String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
+                    // 如果文件不存在则忽略掉
+                    if (!new File(file).exists()) {
+                        continue;
+                    }
+                    // 如果是一个jar包
+                    if (file.endsWith(".jar")) {
+                        extract(new JarFile(file, false), directory);
+                    }
+                    // 否则就是一个文件夹
+                    else {
+                        extract(file, new File(file), directory);
+                    }
+                    libraries.append(new File(file).getPath()).append(";");
+                } catch (Exception e) {
+                    logger.warn("error reading classpath: " + url, e);
+                }
+            }
+            libPath = libraries.toString().trim();
         }
 
         private static void forSpringBoot(File directory) {
