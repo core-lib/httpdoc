@@ -174,7 +174,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     "-encoding",
                     "utf-8",
                     "-classpath",
-                    "@" + libPath,
+                    libPath,
                     "-sourcepath",
                     srcPath,
                     "@" + pkgPath
@@ -197,6 +197,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 srcPath = directory.getPath();
                 StringBuilder libraries = new StringBuilder();
                 String separator = System.getProperty("path.separator");
+                libraries.append("\"");
                 for (URL url : resources) {
                     try {
                         // 只处理本地文件
@@ -220,10 +221,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                         logger.warn("error reading classpath: " + url, e);
                     }
                 }
-                File txt = new File(srcPath, "classpath.txt");
-                IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
-                libPath = txt.getPath();
-            } catch (IOException e) {
+                libraries.append("\"");
+//                File txt = new File(srcPath, "classpath.txt");
+//                IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
+                libPath = libraries.toString();
+            } catch (Exception e) {
                 logger.warn("error reading classpath");
             }
         }
@@ -257,6 +259,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 File[] libs = new File(directory, libLocation).listFiles();
                 StringBuilder libraries = new StringBuilder();
                 String separator = System.getProperty("path.separator");
+                libraries.append("\"");
                 for (int i = 0; libs != null && i < libs.length; i++) {
                     String path = libs[i].getPath();
                     libraries.append(path).append(separator);
@@ -273,6 +276,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
                     IOKit.close(jarFile);
                 }
+                libraries.append("\"");
                 File txt = new File(srcPath, "classpath.txt");
                 IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
                 libPath = txt.getPath();
