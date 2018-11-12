@@ -213,7 +213,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                         else {
                             extract(file, new File(file), directory);
                         }
-                        libraries.append(new File(file).getPath()).append(";");
+                        libraries.append("\"").append(new File(file).getPath()).append("\"").append(";");
                     } catch (Exception e) {
                         logger.warn("error reading classpath: " + url, e);
                     }
@@ -255,8 +255,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 File[] libs = new File(directory, libLocation).listFiles();
                 StringBuilder libraries = new StringBuilder();
                 for (int i = 0; libs != null && i < libs.length; i++) {
-                    if (i > 0) libraries.append(";");
-                    libraries.append(libs[i].getPath());
+                    libraries.append("\"").append(libs[i].getPath()).append("\"").append(";");
 
                     // 将其中的源码也提取到源码目录里面去
                     JarFile jarFile = new JarFile(libs[i]);
