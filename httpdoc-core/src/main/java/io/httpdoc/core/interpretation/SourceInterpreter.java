@@ -145,7 +145,17 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             else {
                 forWebContent(directory);
             }
-            // 构造packages.txt
+            // 构造RootDoc
+            build();
+        }
+
+        @Deprecated
+        public synchronized static boolean start(RootDoc root) {
+            Javadoc.root = root;
+            return true;
+        }
+
+        private static void build() throws IOException {
             File txt = new File(srcPath, "packages.txt");
             Set<String> folders = getSrcFolders(new File(srcPath));
             String separator = System.getProperty("line.separator");
@@ -156,45 +166,62 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             }
             IOKit.transfer(new StringReader(builder.toString()), txt);
             pkgPath = txt.getPath();
+            Main.execute(new String[]{
+                    "-doclet",
+                    Javadoc.class.getName(),
+                    "-encoding",
+                    "utf-8",
+                    "-classpath",
+                    "@" + libPath,
+                    "-sourcepath",
+                    srcPath,
+                    "@" + pkgPath
+            });
         }
 
         private static void forWebContent(File directory) {
-            // 找出所有classpath
-            Set<URL> resources = new LinkedHashSet<>();
-            ClassLoader classLoader = Javadoc.class.getClassLoader();
-            while (classLoader != null) {
-                if (classLoader instanceof URLClassLoader) {
-                    URL[] urls = ((URLClassLoader) classLoader).getURLs();
-                    resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
+            try {
+                // 找出所有classpath
+                Set<URL> resources = new LinkedHashSet<>();
+                ClassLoader classLoader = Javadoc.class.getClassLoader();
+                while (classLoader != null) {
+                    if (classLoader instanceof URLClassLoader) {
+                        URL[] urls = ((URLClassLoader) classLoader).getURLs();
+                        resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
+                    }
+                    classLoader = classLoader.getParent();
                 }
-                classLoader = classLoader.getParent();
-            }
 
-            srcPath = directory.getPath();
-            StringBuilder builder = new StringBuilder();
-            for (URL url : resources) {
-                try {
-                    // 只处理本地文件
-                    if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
-                    String file = url.getFile();
-                    // 如果文件不存在则忽略掉
-                    if (!new File(file).exists()) {
-                        continue;
+                srcPath = directory.getPath();
+                StringBuilder libraries = new StringBuilder();
+                for (URL url : resources) {
+                    try {
+                        // 只处理本地文件
+                        if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
+                        String file = url.getFile();
+                        // 如果文件不存在则忽略掉
+                        if (!new File(file).exists()) {
+                            continue;
+                        }
+                        // 如果是一个jar包
+                        if (file.endsWith(".jar")) {
+                            extract(new JarFile(file, false), directory);
+                        }
+                        // 否则就是一个文件夹
+                        else {
+                            extract(file, new File(file), directory);
+                        }
+                        libraries.append(new File(url.getFile()).getPath()).append(";");
+                    } catch (Exception e) {
+                        logger.warn("error reading classpath: " + url, e);
                     }
-                    // 如果是一个jar包
-                    if (file.endsWith(".jar")) {
-                        extract(new JarFile(file, false), directory);
-                    }
-                    // 否则就是一个文件夹
-                    else {
-                        extract(file, new File(file), directory);
-                    }
-                    builder.append(new File(url.getFile()).getPath()).append(";");
-                } catch (Exception e) {
-                    logger.warn("error reading classpath: " + url, e);
                 }
+                File txt = new File(srcPath, "classpath.txt");
+                IOKit.transfer(new StringReader(libraries.toString()), txt);
+                libPath = txt.getPath();
+            } catch (IOException e) {
+                logger.warn("error reading classpath", e);
             }
-            libPath = builder.toString();
         }
 
         private static void forSpringBoot(File directory) {
@@ -224,10 +251,10 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 srcPath = folder.getPath();
 
                 File[] libs = new File(directory, libLocation).listFiles();
-                StringBuilder lib = new StringBuilder();
+                StringBuilder libraries = new StringBuilder();
                 for (int i = 0; libs != null && i < libs.length; i++) {
-                    if (i > 0) lib.append(";");
-                    lib.append(libs[i].getPath());
+                    if (i > 0) libraries.append(";");
+                    libraries.append(libs[i].getPath());
 
                     // 将其中的源码也提取到源码目录里面去
                     JarFile jarFile = new JarFile(libs[i]);
@@ -241,8 +268,10 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
                     IOKit.close(jarFile);
                 }
-                libPath = lib.toString();
-            } catch (Exception e) {
+                File txt = new File(srcPath, "classpath.txt");
+                IOKit.transfer(new StringReader(libraries.toString()), txt);
+                libPath = txt.getPath();
+            } catch (IOException e) {
                 logger.warn("error reading classpath" + (boot != null ? boot.getName() : ""), e);
             } finally {
                 IOKit.close(boot);
@@ -285,6 +314,19 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 }
             }
             return false;
+        }
+
+        private static Set<String> getSrcFolders(File file) {
+            Set<String> folders = new LinkedHashSet<>();
+            if (file.isDirectory()) {
+                File[] files = file.listFiles();
+                for (int i = 0; files != null && i < files.length; i++) {
+                    folders.addAll(getSrcFolders(files[i]));
+                }
+            } else if (file.isFile() && file.getName().endsWith(".java")) {
+                folders.add(file.getParent());
+            }
+            return folders;
         }
 
         private static void extract(final JarFile jarFile, final JarEntry jarEntry, final File directory) {
@@ -347,44 +389,8 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             IOKit.delete(new File(srcPath), true);
         }
 
-        @Deprecated
-        public synchronized static boolean start(RootDoc root) {
-            Javadoc.root = root;
-            return true;
-        }
-
         private synchronized static ClassDoc getClassDoc(Class<?> clazz) {
-            String className = clazz.getName();
-            if (root != null) {
-                return root.classNamed(className);
-            }
-
-            Main.execute(new String[]{
-                    "-doclet",
-                    Javadoc.class.getName(),
-                    "-encoding",
-                    "utf-8",
-                    "-classpath",
-                    libPath,
-                    "-sourcepath",
-                    srcPath,
-                    "@" + pkgPath
-            });
-
-            return root == null ? null : root.classNamed(className);
-        }
-
-        private static Set<String> getSrcFolders(File file) {
-            Set<String> folders = new LinkedHashSet<>();
-            if (file.isDirectory()) {
-                File[] files = file.listFiles();
-                for (int i = 0; files != null && i < files.length; i++) {
-                    folders.addAll(getSrcFolders(files[i]));
-                }
-            } else if (file.isFile() && file.getName().endsWith(".java")) {
-                folders.add(file.getParent());
-            }
-            return folders;
+            return root != null ? root.classNamed(clazz.getName()) : null;
         }
 
         private static ClassDoc of(Class<?> clazz) {
