@@ -164,7 +164,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
                 builder.append(pkg).append(separator);
             }
-            IOKit.transfer(new StringReader(builder.toString()), txt);
+            IOKit.transfer(new StringReader(builder.toString().trim()), txt);
             pkgPath = txt.getPath();
             Main.execute(new String[]{
                     "-doclet",
@@ -217,7 +217,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     }
                 }
                 File txt = new File(srcPath, "classpath.txt");
-                IOKit.transfer(new StringReader(libraries.toString()), txt);
+                IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
                 libPath = txt.getPath();
             } catch (IOException e) {
                 logger.warn("error reading classpath", e);
@@ -269,7 +269,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     IOKit.close(jarFile);
                 }
                 File txt = new File(srcPath, "classpath.txt");
-                IOKit.transfer(new StringReader(libraries.toString()), txt);
+                IOKit.transfer(new StringReader(libraries.toString().trim()), txt);
                 libPath = txt.getPath();
             } catch (IOException e) {
                 logger.warn("error reading classpath" + (boot != null ? boot.getName() : ""), e);
