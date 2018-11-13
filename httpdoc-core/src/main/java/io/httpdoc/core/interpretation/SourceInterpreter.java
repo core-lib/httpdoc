@@ -129,7 +129,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
     }
 
     public static abstract class Javadoc {
-        private static Logger logger = LoggerFactory.getLogger(Javadoc.class);
+        private static Logger logger = LoggerFactory.getLogger(SourceInterpreter.class);
 
         private static RootDoc root;
         private static String srcPath;
@@ -165,9 +165,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             for (String folder : folders) {
                 String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
                 builder.append(pkg).append(separator);
+                logger.info("adding package: " + pkg);
             }
             IOKit.transfer(new StringReader(builder.toString().trim()), txt);
-            pkgPath = "@" + txt.getPath();
+            pkgPath = txt.getPath();
+            logger.info("start building root doc");
             Main.execute(new String[]{
                     "-doclet",
                     Javadoc.class.getName(),
@@ -175,11 +177,12 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     "-encoding",
                     "utf-8",
                     "-classpath",
-                    libPath,
+                    "\"" + libPath + "\"",
                     "-sourcepath",
                     srcPath,
-                    pkgPath
+                    "@" + pkgPath
             });
+            logger.info("end building root doc found " + (root != null && root.classes() != null ? root.classes().length : 0) + " class(es)");
         }
 
         private static void forWebContent(File directory) {
@@ -197,7 +200,6 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             srcPath = directory.getPath();
             StringBuilder libraries = new StringBuilder();
             String separator = System.getProperty("path.separator");
-            libraries.append("\"");
             for (URL url : resources) {
                 try {
                     // 只处理本地文件
@@ -217,11 +219,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     }
                     String path = new File(file).getPath();
                     libraries.append(path).append(separator);
+                    logger.info("adding classpath: " + path);
                 } catch (Exception e) {
                     logger.warn("error reading classpath: " + url, e);
                 }
             }
-            libraries.append("\"");
             libPath = libraries.toString();
         }
 
@@ -254,10 +256,10 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 File[] libs = new File(directory, libLocation).listFiles();
                 StringBuilder libraries = new StringBuilder();
                 String separator = System.getProperty("path.separator");
-                libraries.append("\"");
                 for (int i = 0; libs != null && i < libs.length; i++) {
                     String path = libs[i].getPath();
                     libraries.append(path).append(separator);
+                    logger.info("adding classpath: " + path);
 
                     // 将其中的源码也提取到源码目录里面去
                     JarFile jarFile = new JarFile(libs[i]);
@@ -271,7 +273,6 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
                     IOKit.close(jarFile);
                 }
-                libraries.append("\"");
                 libPath = libraries.toString();
             } catch (IOException e) {
                 logger.warn("error reading classpath" + (boot != null ? boot.getName() : ""), e);
