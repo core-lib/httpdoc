@@ -34,5 +34,6 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
     <mvc:resources mapping="/httpdoc-ui/**" location="classpath:/META-INF/resources/httpdoc-ui/"/>
+    <mvc:resources mapping="/httpdoc-ui-v2/**" location="classpath:/META-INF/resources/httpdoc-ui-v2/"/>
 
 </beans>
