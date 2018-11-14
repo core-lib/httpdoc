@@ -751,6 +751,64 @@ function HttpDoc() {
         return xml;
     };
 
+    /**
+     * 根据类型名称转换成JSONEditor的schema对象
+     * @param typeName
+     */
+    this.toJSONSchema = function (type) {
+        if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
+            // 元素类型
+            var elementType = type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length);
+            // 递归元素类型
+            var items = this.toJSONSchema(elementType);
+            // 构造schema
+            var schema = {
+                type: "array",
+                items: items
+            };
+            return schema;
+        }
+
+        if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
+            var schema = {
+                type: "null"
+            };
+            return schema;
+        }
+
+        if (type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX)) {
+            var name = type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length);
+            var model = DOC.schemas[name];
+
+            // 枚举类型
+            if (model.constants) {
+                var options = [];
+                for (var con in model.constants) {
+                    options.push(con);
+                }
+                var schema = {
+                    type: "string",
+                    enum: options
+                };
+                return schema;
+            }
+            // 自定义类型
+            else {
+                var properties = {};
+                for (var field in (model.properties ? model.properties : {})) {
+                    var property = model.properties[field];
+                    property[field] = this.toJSONSchema(property.type);
+                }
+                var schema = {
+                    type: "object",
+                    properties: properties
+                };
+                return schema;
+            }
+        }
+
+    };
+
     this.clean = function (string) {
         var lines = string.split("\n");
         var cleaned = "";
