@@ -361,11 +361,11 @@ function HttpDoc() {
             $("#httpdoc-schemas").find("[data-toggle='tooltip']").tooltip();
 
             $("#panel-models").on("show.bs.collapse", function () {
-                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
             });
 
             $("#panel-models").on("hide.bs.collapse", function () {
-                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
 
             $("#httpdoc-schemas").find(".collapse").on("shown.bs.collapse", function () {
@@ -374,12 +374,12 @@ function HttpDoc() {
 
             $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function (event) {
                 event.stopPropagation();
-                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
             });
 
             $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function (event) {
                 event.stopPropagation();
-                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
         }
 
@@ -466,11 +466,12 @@ function HttpDoc() {
             JSON_EDITORS = {};
             $("#httpdoc-controllers").find(".json-editor-holder").each(function (index, div) {
                 var id = $(div).attr("x-id");
+                var name = $(div).attr("x-name");
                 var type = $(div).attr("x-type");
                 var description = $(div).attr("x-description");
                 var style = $(div).attr("x-style");
                 var schema = self.toJSONSchema(type, description);
-                schema.title = type;
+                schema.title = name;
                 if (style && style !== "") schema.format = style;
                 JSON_EDITORS["parameter-" + id] = new JSONEditor(div, {
                     schema: schema
@@ -483,11 +484,11 @@ function HttpDoc() {
         });
 
         $("#httpdoc-controllers").find(".collapse").on("show.bs.collapse", function () {
-            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
         });
 
         $("#httpdoc-controllers").find(".collapse").on("hide.bs.collapse", function () {
-            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
         });
     };
 

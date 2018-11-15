@@ -351,11 +351,11 @@ function HttpDoc() {
             $("#httpdoc-schemas").find("[data-toggle='tooltip']").tooltip();
 
             $("#panel-models").on("show.bs.collapse", function () {
-                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
             });
 
             $("#panel-models").on("hide.bs.collapse", function () {
-                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $(this).parent().find(".glyphicon:first").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
 
             $("#httpdoc-schemas").find(".collapse").on("shown.bs.collapse", function () {
@@ -364,12 +364,12 @@ function HttpDoc() {
 
             $("#httpdoc-schemas").find(".collapse").on("show.bs.collapse", function (event) {
                 event.stopPropagation();
-                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
             });
 
             $("#httpdoc-schemas").find(".collapse").on("hide.bs.collapse", function (event) {
                 event.stopPropagation();
-                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
         }
 
@@ -472,11 +472,11 @@ function HttpDoc() {
         });
 
         $("#httpdoc-controllers").find(".collapse").on("show.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
         });
 
         $("#httpdoc-controllers").find(".collapse").on("hide.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
         });
     };
 
