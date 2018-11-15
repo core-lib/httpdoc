@@ -173,6 +173,32 @@ function JSONConversion() {
 
 window.JSONConverter = new JSONConversion();
 
+function DefaultConversion() {
+    this.supports = function (type) {
+        return true;
+    };
+
+    this.stringify = function (obj) {
+        return JSONConverter.stringify(obj);
+    };
+
+    this.parse = function (json) {
+        return JSONConverter.parse(json);
+    };
+
+    this.beautify = function (json) {
+        return JSONConverter.beautify(json);
+    };
+
+    this.build = function (indent, type, doc, tag) {
+        return JSONConverter.build(indent, type, doc, tag);
+    };
+
+    return this;
+}
+
+window.defaultConverter = new DefaultConversion();
+
 var HTTPDOC_CONVERTERS = [
     new JSONConversion(),
     new XMLConversion()
@@ -471,7 +497,14 @@ function HttpDoc() {
                 var operation = operations[j];
                 var result = operation.result;
                 var type = result.type;
-                result.value = this.toJSONString(0, type, true).trim();
+                var produce = operation.produces && operation.produces.length > 0 ? operation.produces[0] : null;
+                for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+                    var converter = HTTPDOC_CONVERTERS[c];
+                    if (converter.supports(produce)) {
+                        var name = null;
+                        result.value = converter.build(0, type, true, name).trim();
+                    }
+                }
             }
         }
 
@@ -631,7 +664,7 @@ function HttpDoc() {
 
     this.toXMLString = function (indent, type, doc, tag) {
         var xml = "";
-        tag = tag ? tag : "xml";
+        tag = tag ? tag : type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             // 缩进
             for (var i = 0; i < indent; i++) xml += INDENT;
@@ -1250,7 +1283,7 @@ function HttpDoc() {
             for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
                 var converter = HTTPDOC_CONVERTERS[c];
                 if (converter.supports(value)) {
-                    var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "root";
+                    var name = null;
                     $textarea.text(converter.build(0, type, true, name).trim());
                     break;
                 }
@@ -1266,7 +1299,7 @@ function HttpDoc() {
         for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
             var converter = HTTPDOC_CONVERTERS[c];
             if (converter.supports(value)) {
-                var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "root";
+                var name = null;
                 $textarea.text(converter.build(0, type, true, name).trim());
                 break;
             }
