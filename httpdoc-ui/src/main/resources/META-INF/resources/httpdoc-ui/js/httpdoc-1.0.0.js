@@ -520,6 +520,11 @@ function HttpDoc() {
 
         {
             var self = this;
+            // destroy
+            for (var e in JSON_EDITORS) {
+                var editor = JSON_EDITORS[e];
+                editor.destroy();
+            }
             JSON_EDITORS = {};
             $("#httpdoc-controllers").find(".json-editor-holder").each(function (index, div) {
                 var id = $(div).attr("x-id");

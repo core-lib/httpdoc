@@ -31,6 +31,9 @@ public class OrderAPI {
      * <a target="_blank" href="https://mustache.github.io/" style="margin-left: 10px; height: 80px;" title="Mustache">
      * <span style="font-size: 56px; line-height: 80px; vertical-align: middle;">{{Mustache}}</span>
      * </a>
+     * <a target="_blank" href="https://github.com/jdorn/json-editor" style="margin-left: 10px; height: 80px;" title="JSON-Editor">
+     * <span style="font-size: 56px; line-height: 80px; vertical-align: middle;">JSON-Editor</span>
+     * </a>
      * </p>
      */
     @ResponseBody
