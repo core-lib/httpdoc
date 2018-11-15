@@ -503,6 +503,7 @@ function HttpDoc() {
                     if (converter.supports(produce)) {
                         var name = null;
                         result.value = converter.build(0, type, true, name).trim();
+                        break;
                     }
                 }
             }

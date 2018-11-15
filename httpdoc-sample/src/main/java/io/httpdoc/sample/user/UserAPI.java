@@ -58,7 +58,7 @@ public class UserAPI {
      * @return 用户创建结果
      */
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
+    @RequestMapping(method = RequestMethod.POST, consumes = {"application/xml"}, produces = {"application/xml"})
     public UserCreateResult create(@RequestBody User user) {
         UserCreateResult result = new UserCreateResult();
 
