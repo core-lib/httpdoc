@@ -29,8 +29,6 @@ public class Product {
     private Brand brand;
     /**
      * SKU列表
-     *
-     * @style table
      */
     private List<Sku> skus;
 
