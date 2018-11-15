@@ -201,7 +201,8 @@ window.defaultConverter = new DefaultConversion();
 
 var HTTPDOC_CONVERTERS = [
     new JSONConversion(),
-    new XMLConversion()
+    new XMLConversion(),
+    new DefaultConversion()
 ];
 
 window.objTree = new ObjTree();
