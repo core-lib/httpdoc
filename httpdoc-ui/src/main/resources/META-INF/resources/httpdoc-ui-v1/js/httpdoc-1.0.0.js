@@ -669,7 +669,7 @@ function HttpDoc() {
 
     this.toXMLString = function (indent, type, doc, tag) {
         var xml = "";
-        tag = tag ? tag : "xml";
+        tag = tag ? tag : type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             // 缩进
             for (var i = 0; i < indent; i++) xml += INDENT;
