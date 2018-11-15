@@ -483,11 +483,11 @@ function HttpDoc() {
         });
 
         $("#httpdoc-controllers").find(".collapse").on("show.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
         });
 
         $("#httpdoc-controllers").find(".collapse").on("hide.bs.collapse", function () {
-            $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+            $(this).parent().find(".httpdoc-icon").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
         });
     };
 

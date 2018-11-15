@@ -5,30 +5,38 @@ import java.util.List;
 
 /**
  * 产品模型
+ * @style grid
  */
 public class Product {
     /**
      * 产品ID
+     * @order 1
      */
     private Long id;
     /**
      * 货号
+     * @order 2
      */
     private String number;
     /**
      * 名称
+     * @order 3
      */
     private String name;
     /**
      * 价格
+     * @order 4
      */
     private BigDecimal price;
     /**
      * 品牌
+     * @order 5
      */
     private Brand brand;
     /**
      * SKU列表
+     * @order 6
+     * @style table
      */
     private List<Sku> skus;
 

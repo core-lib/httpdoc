@@ -2,6 +2,7 @@ package io.httpdoc.sample.product;
 
 /**
  * 品牌
+ * @style grid
  */
 public class Brand {
     /**

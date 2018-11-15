@@ -270,11 +270,3 @@
 .btn-group > .btn {
     border-radius: 0 !important;
 }
-
-.glyphicon-plus:before {
-    content: "\002b" !important;
-}
-
-.glyphicon-remove:before {
-    content: "\e014" !important;
-}
