@@ -50,6 +50,10 @@ Date.prototype.format = function (pattern) {
  */
 function XMLConversion() {
 
+    this.supports = function (type) {
+        return type && type.toLowerCase().indexOf("xml") >= 0;
+    };
+
     this.stringify = function (obj, name) {
         name = name ? name : "xml";
         var xml = "";
@@ -95,6 +99,10 @@ function XMLConversion() {
         return formatXml(xml);
     };
 
+    this.build = function (indent, type, doc, tag) {
+        return httpdoc.toXMLString(indent, type, doc, tag);
+    };
+
     return this;
 }
 
@@ -105,6 +113,10 @@ window.XMLConverter = new XMLConversion();
  * @constructor
  */
 function JSONConversion() {
+
+    this.supports = function (type) {
+        return type && type.toLowerCase().indexOf("json") >= 0;
+    };
 
     this.stringify = function (obj) {
         return JSON.stringify(obj);
@@ -152,10 +164,19 @@ function JSONConversion() {
         return formatted;
     };
 
+    this.build = function (indent, type, doc, tag) {
+        return httpdoc.toJSONString(indent, type, doc);
+    };
+
     return this;
 }
 
 window.JSONConverter = new JSONConversion();
+
+var HTTPDOC_CONVERTERS = [
+    new JSONConversion(),
+    new XMLConversion()
+];
 
 window.objTree = new ObjTree();
 window.jklDump = new JKL.Dumper();
@@ -182,6 +203,7 @@ function HttpDoc() {
     var DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     var JSON_EDITORS = {};
+
 
     this.explore = function () {
         var self = this;
@@ -607,7 +629,7 @@ function HttpDoc() {
         return json;
     };
 
-    this.toXMLString = function (indent, tag, type, doc) {
+    this.toXMLString = function (indent, type, doc, tag) {
         var xml = "";
         tag = tag ? tag : "xml";
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
@@ -617,7 +639,7 @@ function HttpDoc() {
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, tag, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc);
+            xml += this.toXMLString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag);
 
             // 缩进
             for (var i = 0; i < indent; i++) xml += INDENT;
@@ -633,7 +655,7 @@ function HttpDoc() {
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, tag, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc);
+            xml += this.toXMLString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag);
 
             // 缩进
             for (var i = 0; i < indent; i++) xml += INDENT;
@@ -677,7 +699,7 @@ function HttpDoc() {
                             xml += "// " + descriptions[d].trim() + "\n";
                         }
                     }
-                    xml += this.toXMLString(indent + 1, key, properties[key].type, doc);
+                    xml += this.toXMLString(indent + 1, properties[key].type, doc, key);
                 }
                 // 缩进
                 for (var i = 0; i < indent; i++) xml += INDENT;
@@ -1089,10 +1111,12 @@ function HttpDoc() {
             var contentType = this.getResponseHeader("Content-Type");
             if (typeof contentType !== 'string') contentType = "";
 
-            if (contentType.startsWith("application/json")) {
-                responseText = JSONConverter.beautify(responseText);
-            } else if (contentType.startsWith("application/xml")) {
-                responseText = XMLConverter.beautify(responseText);
+            for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+                var converter = HTTPDOC_CONVERTERS[c];
+                if (converter.supports(contentType)) {
+                    responseText = converter.beautify(responseText);
+                    break;
+                }
             }
 
             autosize.update(
@@ -1220,18 +1244,16 @@ function HttpDoc() {
     this.onConsumeChanged = function (value, id) {
         var $operation = $("#operation-" + id);
         var $textareas = $operation.find("textarea[x-scope='body']");
-        var self = this;
         $textareas.each(function (index, textarea) {
             var $textarea = $(textarea);
             var type = $textarea.attr("x-type");
-            switch (value) {
-                case "application/json":
-                    $textarea.text(self.toJSONString(0, type, true).trim());
+            for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+                var converter = HTTPDOC_CONVERTERS[c];
+                if (converter.supports(value)) {
+                    var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "root";
+                    $textarea.text(converter.build(0, type, true, name).trim());
                     break;
-                case "application/xml":
-                    var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
-                    $textarea.text(self.toXMLString(0, name, type, true).trim());
-                    break;
+                }
             }
             autosize.update($textarea);
         });
@@ -1241,14 +1263,13 @@ function HttpDoc() {
         var $operation = $("#operation-" + id);
         var $textarea = $operation.find(".httpdoc-example").find("textarea");
         var type = $textarea.attr("x-type");
-        switch (value) {
-            case "application/json":
-                $textarea.text(this.toJSONString(0, type, true).trim());
+        for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+            var converter = HTTPDOC_CONVERTERS[c];
+            if (converter.supports(value)) {
+                var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "root";
+                $textarea.text(converter.build(0, type, true, name).trim());
                 break;
-            case "application/xml":
-                var name = type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
-                $textarea.text(this.toXMLString(0, name, type, true).trim());
-                break;
+            }
         }
         autosize.update($textarea);
     };
@@ -1315,12 +1336,12 @@ function HTTP() {
                 multipart += "content-type: " + contentType + CRLF;
                 multipart += CRLF;
                 var body = "";
-                if (contentType.startsWith("application/json")) {
-                    body = JSONConverter.stringify(metadata.value);
-                } else if (contentType.startsWith("application/xml")) {
-                    body = XMLConverter.stringify(metadata.value);
-                } else {
-                    body = JSONConverter.stringify(metadata.value);
+                for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+                    var converter = HTTPDOC_CONVERTERS[c];
+                    if (converter.supports(contentType)) {
+                        body = converter.stringify(metadata.value);
+                        break;
+                    }
                 }
                 multipart += body + CRLF;
             }
@@ -1347,12 +1368,12 @@ function HTTP() {
                     header["content-type"] = [contentType];
                 }
                 var body = "";
-                if (contentType.startsWith("application/json")) {
-                    body = JSONConverter.stringify(bodies[0].value);
-                } else if (contentType.startsWith("application/xml")) {
-                    body = XMLConverter.stringify(bodies[0].value);
-                } else {
-                    body = JSONConverter.stringify(bodies[0].value);
+                for (var c = 0; c < HTTPDOC_CONVERTERS.length; c++) {
+                    var converter = HTTPDOC_CONVERTERS[c];
+                    if (converter.supports(contentType)) {
+                        body = converter.stringify(bodies[0].value);
+                        break;
+                    }
                 }
 
                 for (var key in header) {
