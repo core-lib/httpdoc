@@ -66,6 +66,16 @@ public class ObjCParameter extends Parameter {
     }
 
     @Override
+    public String getStyle() {
+        return super.getStyle();
+    }
+
+    @Override
+    public void setStyle(String style) {
+        super.setStyle(style);
+    }
+
+    @Override
     public String getDescription() {
         return parameter.getDescription();
     }

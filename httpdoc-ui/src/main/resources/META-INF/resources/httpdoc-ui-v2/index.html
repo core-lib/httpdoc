@@ -406,8 +406,15 @@
                                     <h5 class="text-muted">{{{description}}}</h5>
                                 </td>
                                 <td>
-                                    <!--<textarea class="form-control autosize x-param" x-name="{{name}}" x-scope="{{scope}}" x-type="{{type}}" x-path="{{path}}">{{value}}</textarea>-->
-                                    <div class="json-editor-holder" x-id="{{id}}" x-name="{{name}}" x-scope="{{scope}}" x-type="{{type}}" x-path="{{path}}" x-description="{{description}}"></div>
+                                    <div class="json-editor-holder"
+                                         x-id="{{id}}"
+                                         x-name="{{name}}"
+                                         x-scope="{{scope}}"
+                                         x-type="{{type}}"
+                                         x-path="{{path}}"
+                                         x-description="{{description}}"
+                                         x-style="{{style}}"
+                                    ></div>
                                 </td>
                             </tr>
                             {{/parameters}}

@@ -20,6 +20,7 @@ public class Parameter extends Definition {
     private String scope;
     private Schema type;
     private String path;
+    private String style;
 
     public String getName() {
         return name;
@@ -59,5 +60,13 @@ public class Parameter extends Definition {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 }

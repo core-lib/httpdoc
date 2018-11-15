@@ -38,6 +38,7 @@ public class Schema extends Definition implements Ordered<Schema> {
     private String summary;
     private String deprecated;
     private int order = Integer.MAX_VALUE;
+    private String style;
 
     public Schema() {
     }
@@ -91,6 +92,10 @@ public class Schema extends Definition implements Ordered<Schema> {
                     Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
                     if (order != null) this.order = order;
                     else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+
+                    String style = classInterpretation != null ? classInterpretation.getStyle() : null;
+                    if (style != null && !style.trim().isEmpty()) this.style = style;
+                    else this.style = clazz.isAnnotationPresent(Style.class) ? clazz.getAnnotation(Style.class).value() : null;
                 } else {
                     ClassInterpretation classInterpretation = interpreter.interpret(clazz);
 
@@ -119,9 +124,9 @@ public class Schema extends Definition implements Ordered<Schema> {
                         Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                         String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                         Property property = new Property(schema, description);
-                        Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();
-                        if (aliases != null && !aliases.isEmpty()) {
-                            property.setAlias(aliases.entrySet().iterator().next().getValue());
+                        String alias = extendedInterpretation != null ? extendedInterpretation.getAlias() : null;
+                        if (alias != null && !alias.isEmpty()) {
+                            property.setAlias(alias);
                         } else {
                             Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                             property.setAlias(annotation != null ? annotation.value() : field);
@@ -129,6 +134,10 @@ public class Schema extends Definition implements Ordered<Schema> {
                         Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
                         if (order != null) property.setOrder(order);
                         else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
+                        String style = extendedInterpretation != null ? extendedInterpretation.getStyle() : null;
+                        if (style != null && !style.trim().isEmpty()) property.setStyle(style);
+                        else property.setStyle(getter.isAnnotationPresent(Style.class) ? getter.getAnnotation(Style.class).value() : null);
+
                         this.properties.put(field, property);
                     }
 
@@ -142,6 +151,10 @@ public class Schema extends Definition implements Ordered<Schema> {
                     Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
                     if (order != null) this.order = order;
                     else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+
+                    String style = classInterpretation != null ? classInterpretation.getStyle() : null;
+                    if (style != null && !style.trim().isEmpty()) this.style = style;
+                    else this.style = clazz.isAnnotationPresent(Style.class) ? clazz.getAnnotation(Style.class).value() : null;
                 }
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -186,9 +199,9 @@ public class Schema extends Definition implements Ordered<Schema> {
                             Schema schema = Schema.valueOf(t, cache, supplier, interpreter);
                             String description = extendedInterpretation != null ? extendedInterpretation.getContent() : null;
                             Property property = new Property(schema, description);
-                            Map<String, String> aliases = extendedInterpretation != null ? extendedInterpretation.getAliases() : Collections.<String, String>emptyMap();
-                            if (aliases != null && !aliases.isEmpty()) {
-                                property.setAlias(aliases.entrySet().iterator().next().getValue());
+                            String alias = extendedInterpretation != null ? extendedInterpretation.getAlias() : null;
+                            if (alias != null && !alias.isEmpty()) {
+                                property.setAlias(alias);
                             } else {
                                 Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                                 property.setAlias(annotation != null ? annotation.value() : field);
@@ -196,6 +209,10 @@ public class Schema extends Definition implements Ordered<Schema> {
                             Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
                             if (order != null) property.setOrder(order);
                             else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
+                            String style = extendedInterpretation != null ? extendedInterpretation.getStyle() : null;
+                            if (style != null && !style.trim().isEmpty()) property.setStyle(style);
+                            else property.setStyle(getter.isAnnotationPresent(Style.class) ? getter.getAnnotation(Style.class).value() : null);
+
                             this.properties.put(field, property);
                         }
 
@@ -209,6 +226,10 @@ public class Schema extends Definition implements Ordered<Schema> {
                         Integer order = classInterpretation != null ? classInterpretation.getOrder() : null;
                         if (order != null) this.order = order;
                         else this.order = clazz.isAnnotationPresent(Order.class) ? clazz.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+
+                        String style = classInterpretation != null ? classInterpretation.getStyle() : null;
+                        if (style != null && !style.trim().isEmpty()) this.style = style;
+                        else this.style = clazz.isAnnotationPresent(Style.class) ? clazz.getAnnotation(Style.class).value() : null;
 
                         cache.remove(type);
                         cache.put(clazz, this);
@@ -452,6 +473,14 @@ public class Schema extends Definition implements Ordered<Schema> {
     @Override
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     @Override

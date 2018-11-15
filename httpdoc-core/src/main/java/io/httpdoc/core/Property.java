@@ -12,6 +12,7 @@ public class Property extends Definition implements Ordered<Property> {
     private String alias;
     private Schema type;
     private int order = Integer.MAX_VALUE;
+    private String style;
 
     public Property() {
     }
@@ -52,6 +53,14 @@ public class Property extends Definition implements Ordered<Property> {
     @Override
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     @Override

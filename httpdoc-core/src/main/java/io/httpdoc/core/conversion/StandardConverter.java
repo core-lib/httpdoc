@@ -220,6 +220,9 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
         String alias = parameter.getAlias();
         if (!StringKit.isBlank(alias) && !alias.equals(name)) map.put("alias", alias);
 
+        String style = parameter.getStyle();
+        if (!StringKit.isBlank(style)) map.put("style", style);
+
         String scope = parameter.getScope();
         if (scope != null) map.put("scope", scope);
 
@@ -298,12 +301,14 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
                     String name = entry.getKey();
                     Property property = entry.getValue();
                     String alias = property.getAlias();
+                    String style = property.getStyle();
                     Schema type = property.getType();
                     String description = property.getDescription();
                     String reference = doConvertReference(type, format);
-                    if (format.isCanonical() || !StringKit.isBlank(description) || (!StringKit.isBlank(alias) && !alias.equals(name))) {
+                    if (format.isCanonical() || !StringKit.isBlank(description) || (!StringKit.isBlank(alias) && !alias.equals(name)) || !StringKit.isBlank(style)) {
                         Map<String, Object> p = new LinkedHashMap<>();
                         if (!StringKit.isBlank(alias) && !alias.equals(name)) p.put("alias", alias);
+                        if (!StringKit.isBlank(style)) p.put("style", style);
                         if (reference != null) p.put("type", reference);
                         if (!StringKit.isBlank(description)) p.put("description", description);
                         m.put(name, p);
@@ -319,6 +324,9 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
 
         String deprecated = schema.getDeprecated();
         if (!StringKit.isBlank(deprecated)) map.put("deprecated", deprecated);
+
+        String style = schema.getStyle();
+        if (!StringKit.isBlank(style)) map.put("style", style);
 
         String description = schema.getDescription();
         if (!StringKit.isBlank(description)) map.put("description", description);
@@ -420,9 +428,11 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
                 } else if (value instanceof Map<?, ?>) {
                     Map<?, ?> m = (Map<?, ?>) value;
                     String alias = (String) m.get("alias");
+                    String style = (String) m.get("style");
                     String type = (String) m.get("type");
                     String description = (String) m.get("description");
                     property.setAlias(!StringKit.isBlank(alias) ? alias : name);
+                    property.setStyle(style);
                     property.setType(doConvertReference(document, type));
                     property.setDescription(description);
                 } else {
@@ -468,6 +478,9 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
 
         String deprecated = (String) definition.get("deprecated");
         schema.setDeprecated(deprecated);
+
+        String style = (String) definition.get("style");
+        schema.setStyle(style);
 
         String description = (String) definition.get("description");
         schema.setDescription(description);
@@ -632,10 +645,12 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
 
         String name = (String) map.get("name");
         String alias = (String) map.get("alias");
+        String style = (String) map.get("style");
         String scope = (String) map.get("scope");
         String path = (String) map.get("path");
         parameter.setName(name);
         parameter.setAlias(!StringKit.isBlank(alias) ? alias : name);
+        parameter.setStyle(style);
         parameter.setScope(scope);
         parameter.setPath(path);
 

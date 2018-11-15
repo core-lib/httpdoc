@@ -70,6 +70,11 @@ public abstract class ExtendedInterpretation extends Interpretation {
         return aliases;
     }
 
+    public String getAlias() {
+        Map<String, String> aliases = getAliases();
+        return aliases != null && !aliases.isEmpty() ? aliases.entrySet().iterator().next().getValue() : null;
+    }
+
     public Integer getOrder() {
         for (int i = 0; notes != null && i < notes.length; i++) {
             if ("@order".equals(notes[i].getKind()) && notes[i].getText().matches("-?\\d+")) {
@@ -77,6 +82,25 @@ public abstract class ExtendedInterpretation extends Interpretation {
             }
         }
         return null;
+    }
+
+    public Map<String, String> getStyles() {
+        Map<String, String> aliases = new LinkedHashMap<>();
+        for (int i = 0; notes != null && i < notes.length; i++) {
+            if ("@style".equals(notes[i].getKind())) {
+                String text = notes[i].getText();
+                if (text == null) text = "";
+                String[] texts = text.trim().split("\\s+");
+                if (texts.length > 1) aliases.put(texts[0], texts[1]);
+                else aliases.put("", texts[0]);
+            }
+        }
+        return aliases;
+    }
+
+    public String getStyle() {
+        Map<String, String> styles = getStyles();
+        return styles != null && !styles.isEmpty() ? styles.entrySet().iterator().next().getValue() : null;
     }
 
 }

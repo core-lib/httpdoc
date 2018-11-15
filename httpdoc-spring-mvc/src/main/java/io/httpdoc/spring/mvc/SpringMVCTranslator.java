@@ -465,6 +465,7 @@ public class SpringMVCTranslator implements Translator {
         // 忽略的参数名称
         List<String> ignores = interpretation != null ? interpretation.getIgnores() : Collections.<String>emptyList();
         Map<String, String> aliases = interpretation != null ? interpretation.getAliases() : Collections.<String, String>emptyMap();
+        Map<String, String> styles = interpretation != null ? interpretation.getStyles() : Collections.<String, String>emptyMap();
 
         MethodParameter[] params = handler.getMethodParameters();
         for (int i = 0; i < params.length; i++) {
@@ -482,6 +483,11 @@ public class SpringMVCTranslator implements Translator {
                 parameter.setAlias(aliases.get(names[i]).trim());
             } else {
                 parameter.setAlias(param.hasParameterAnnotation(Alias.class) ? param.getParameterAnnotation(Alias.class).value() : parameter.getName());
+            }
+            if (StringUtils.hasText(styles.get(names[i]))) {
+                parameter.setStyle(styles.get(names[i]).trim());
+            } else {
+                parameter.setStyle(param.hasParameterAnnotation(Style.class) ? param.getParameterAnnotation(Style.class).value() : null);
             }
             String scope = getBindScope(param);
             bodies = bodies + (Parameter.HTTP_PARAM_SCOPE_BODY.equals(scope) ? 1 : 0);

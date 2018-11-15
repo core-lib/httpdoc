@@ -42,6 +42,7 @@ public class ProductAPI {
      * @return 产品创建结果
      * @order 1
      * @summary @order 1
+     * @style product grid
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})

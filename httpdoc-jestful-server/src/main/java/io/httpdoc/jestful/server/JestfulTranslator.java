@@ -205,6 +205,7 @@ public class JestfulTranslator implements Translator {
         // 忽略的参数名称
         List<String> ignores = interpretation != null ? interpretation.getIgnores() : Collections.<String>emptyList();
         Map<String, String> aliases = interpretation != null ? interpretation.getAliases() : Collections.<String, String>emptyMap();
+        Map<String, String> styles = interpretation != null ? interpretation.getStyles() : Collections.<String, String>emptyMap();
 
         for (org.qfox.jestful.core.Parameter param : mapping.getParameters()) {
             // 忽略
@@ -217,6 +218,11 @@ public class JestfulTranslator implements Translator {
                 parameter.setAlias(aliases.get(names[index]).trim());
             } else {
                 parameter.setAlias(param.isAnnotationPresent(Alias.class) ? param.getAnnotation(Alias.class).value() : parameter.getName());
+            }
+            if (StringUtils.hasText(names.length > index ? styles.get(names[index]) : "")) {
+                parameter.setStyle(styles.get(names[index]).trim());
+            } else {
+                parameter.setStyle(param.isAnnotationPresent(Style.class) ? param.getAnnotation(Style.class).value() : null);
             }
             int bodies = 0;
             int position = param.getPosition();

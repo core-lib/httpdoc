@@ -447,22 +447,6 @@ function HttpDoc() {
             var operations = controller.operations;
             for (var j = 0; operations && j < operations.length; j++) {
                 var operation = operations[j];
-                var parameters = operation.parameters;
-                for (var k = 0; parameters && k < parameters.length; k++) {
-                    var parameter = parameters[k];
-                    if (parameter.resolved) continue;
-                    else parameter.resolved = true;
-
-                    var type = parameter.type;
-
-                    var value = this.toJSONString(0, type, true).trim();
-                    // 如果是字符串则去掉前后双引号
-                    if (value.startsWith("\"") && value.endsWith("\"")) {
-                        value = value.substring(1, value.length - 1);
-                    }
-                    parameter.value = value;
-                }
-
                 var result = operation.result;
                 var type = result.type;
                 result.value = this.toJSONString(0, type, true).trim();
@@ -484,9 +468,10 @@ function HttpDoc() {
                 var id = $(div).attr("x-id");
                 var type = $(div).attr("x-type");
                 var description = $(div).attr("x-description");
+                var style = $(div).attr("x-style");
                 var schema = self.toJSONSchema(type, description);
                 schema.title = type;
-                console.log(JSON.stringify(schema));
+                if (style && style !== "") schema.format = style;
                 JSON_EDITORS["parameter-" + id] = new JSONEditor(div, {
                     schema: schema
                 });
@@ -827,13 +812,16 @@ function HttpDoc() {
                 var properties = {};
                 for (var field in (model.properties ? model.properties : {})) {
                     var property = model.properties[field];
-                    properties[field] = this.toJSONSchema(property.type, property.description);
+                    var schema = this.toJSONSchema(property.type, property.description);
+                    if (property.style && property.style !== "") schema.format = property.style;
+                    properties[field] = schema;
                 }
                 var schema = {
                     type: "object",
                     description: description,
                     properties: properties
                 };
+                if (model.style && model.style !== "") schema.format = model.style;
                 return schema;
             }
         }
@@ -910,7 +898,6 @@ function HttpDoc() {
         var method = $btn.attr("x-method");
         var path = $btn.attr("x-path");
         var $operation = $("#operation-" + id);
-        // var $params = $operation.find(".x-param");
 
         var paths = [];
         var matrices = [];
@@ -918,47 +905,6 @@ function HttpDoc() {
         var headers = [];
         var cookies = [];
         var bodies = [];
-
-        var self = this;
-        // 构建参数
-        // $params.each(function (index, param) {
-        //     var $param = $(param);
-        //     var name = $param.attr("x-name");
-        //     var scope = $param.attr("x-scope");
-        //     var path = $param.attr("x-path");
-        //     var value = scope === "body" ? self.clean($param.val()) : self.toJSONObject($param.val());
-        //     var metadata = {
-        //         name: name,
-        //         scope: scope,
-        //         path: path,
-        //         value: value
-        //     };
-        //     switch (scope) {
-        //         case "path":
-        //             paths.push(metadata);
-        //             break;
-        //         case "matrix":
-        //             matrices.push(metadata);
-        //             break;
-        //         case "query":
-        //             queries.push(metadata);
-        //             break;
-        //         case "field":
-        //             queries.push(metadata);
-        //             break;
-        //         case "header":
-        //             headers.push(metadata);
-        //             break;
-        //         case "cookie":
-        //             cookies.push(metadata);
-        //             break;
-        //         case "body":
-        //             bodies.push(metadata);
-        //             break;
-        //         default:
-        //             break;
-        //     }
-        // });
 
         var $params = $operation.find(".json-editor-holder,.x-param");
         $params.each(function (index, param) {
@@ -1367,7 +1313,15 @@ function HTTP() {
                 multipart += "content-disposition: form-data; name=\"" + encodeURIComponent(metadata.name) + "\"" + CRLF;
                 multipart += "content-type: " + contentType + CRLF;
                 multipart += CRLF;
-                multipart += metadata.value + CRLF;
+                var body = "";
+                if (contentType.startsWith("application/json")) {
+                    body = JSONConverter.stringify(metadata.value);
+                } else if (contentType.startsWith("application/xml")) {
+                    body = XMLConverter.stringify(metadata.value);
+                } else {
+                    body = JSONConverter.stringify(metadata.value);
+                }
+                multipart += body + CRLF;
             }
             multipart += "--" + boundary + "--" + CRLF;
             header['content-type'] = ["multipart/form-data; boundary=" + boundary];

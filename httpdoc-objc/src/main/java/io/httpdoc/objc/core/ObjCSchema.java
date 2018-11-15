@@ -228,6 +228,16 @@ public class ObjCSchema extends Schema {
     }
 
     @Override
+    public String getStyle() {
+        return super.getStyle();
+    }
+
+    @Override
+    public void setStyle(String style) {
+        super.setStyle(style);
+    }
+
+    @Override
     public String getDescription() {
         return schema.getDescription();
     }
