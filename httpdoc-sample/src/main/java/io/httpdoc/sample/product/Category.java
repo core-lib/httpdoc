@@ -16,7 +16,7 @@ public class Category {
      */
     private String name;
     /**
-     * 父类别
+     * 父类别，自引用/递归属性
      */
     private Category parent;
 

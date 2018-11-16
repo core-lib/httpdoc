@@ -308,6 +308,7 @@ function HttpDoc() {
                 operation.summary = operation.summary ? operation.summary : "";
                 operation.description = operation.description ? operation.description : "";
                 operation.deprecated = operation.deprecated ? operation.deprecated : "";
+
             });
         });
 
@@ -318,11 +319,12 @@ function HttpDoc() {
                 if (!operation.parameters) return;
                 operation.parameters.forEach(function (parameter) {
                     parameter.path = parameter.path ? parameter.path : "";
+                    parameter.description = parameter.description ? parameter.description : "";
                 });
             });
         });
 
-        // 补全Operation的path信息，方便Mustache渲染时取了Controller的path
+        // 补全Operation的path信息，避免Mustache渲染时取了Controller的path
         DOC.controllers.forEach(function (controller) {
             if (!controller.operations) return;
             controller.operations.forEach(function (operation) {

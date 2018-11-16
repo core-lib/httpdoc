@@ -65,6 +65,44 @@ public class ProductAPI {
     }
 
     /**
+     * <p><b>产品更新接口</b></p>
+     * <p>该示例用于展示当<b>Model</b>类中有间接或直接的自引用/递归属性时框架会渲染到指定的最大深度时自动停止</p>
+     * <p>例如<b>Product</b>模型中的<b>category</b>属性，即产品类别是常见的自引用/递归属性，因为其<b>parent</b>属性的类型仍然是<b>Category</b></p>
+     * <p>缺省情况下，框架渲染最大深度为5，但可以通过右上角的<b>Global Settings</b> -> <b>Schema</b> -> <b>max depth</b>进行设置以满足不同的需求。</p>
+     * <p>同样的，全局设置里面的其他设置也在这里做一个简单描述：</p>
+     * <ul>
+     * <li>Basic: 基础设置，用于设定接口测试的协议，域名，端口以及根路径</li>
+     * <li>Schema: 模型设置，用于设定模型展示的样式，包括缩进，最大深度，是否显示注释，缺省JSON-Editor样式</li>
+     * <li>XMLHttpRequest: 请求设置，用于设定用户名，密码，是否异步，超时时间，跨域凭证传输</li>
+     * <li>Query: 查询参数，用于设定请求的固定查询参数</li>
+     * <li>Header: 头部参数，用于设定请求的固定头部参数</li>
+     * <li>Cookie: Cookie参数，用于设定请求的固定Cookie参数</li>
+     * </ul>
+     *
+     * @param product 产品对象
+     * @return 产品创建结果
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
+    public ProductUpdateResult update(@PathVariable("id") Long id, @RequestBody Product product) {
+        ProductUpdateResult result = new ProductUpdateResult();
+
+        if (StringUtils.isEmpty(product.getName())) {
+            result.setCode(400);
+            result.setMessage("产品名称不能为空");
+            return result;
+        }
+
+        if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            result.setCode(400);
+            result.setMessage("产品价格不能为空或小于等于0");
+            return result;
+        }
+
+        return result;
+    }
+
+    /**
      * <p><b>产品按名称获取方法</b></p>
      * <p>该示例用于展示由于排序参数的作用，让本来排在<b>POST /products</b>上面的而现在排在其下面。</p>
      * <p>另外展示不仅可以改变<b>API</b>元素的相对位置，我们还可以通过两种方式隐藏某些不希望展示在文档界面上的<b>Controller</b>和方法以及<b>Model</b>字段。</p>
