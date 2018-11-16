@@ -43,7 +43,7 @@ public class Product {
      * 类别
      * @order 6
      */
-//    private Category category;
+    private Category category;
     /**
      * SKU列表
      *
@@ -92,13 +92,13 @@ public class Product {
         this.brand = brand;
     }
 
-//    public Category getCategory() {
-//        return category;
-//    }
-//
-//    public void setCategory(Category category) {
-//        this.category = category;
-//    }
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public List<Sku> getSkus() {
         return skus;

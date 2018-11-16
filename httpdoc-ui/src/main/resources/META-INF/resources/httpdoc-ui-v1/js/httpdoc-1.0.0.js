@@ -165,7 +165,7 @@ function JSONConversion() {
     };
 
     this.build = function (indent, type, doc, tag) {
-        return httpdoc.toJSONString(indent, type, doc);
+        return httpdoc.toJSONString(indent, type, doc, tag);
     };
 
     return this;
@@ -353,6 +353,17 @@ function HttpDoc() {
         /** @namespace doc.dateFormat */
         DATE_FORMAT = doc.dateFormat ? doc.dateFormat : DATE_FORMAT;
 
+        {
+            this.load();
+
+            $('#httpdoc-config').on('show.bs.modal', function () {
+                var tpl = $("#tpl-httpdoc-setting").html();
+                Mustache.parse(tpl);
+                var html = Mustache.render(tpl, SETTING);
+                $("#httpdoc-config").find(".modal-body").html(html);
+            });
+        }
+
         for (var name in DOC.schemas) {
             var schema = DOC.schemas[name];
             schema.properties = this.properties(schema);
@@ -390,7 +401,7 @@ function HttpDoc() {
                 model.name = name;
 
                 var type = REF_PREFIX + name + REF_SUFFIX;
-                model.value = this.toJSONString(0, type, true).trim();
+                model.value = this.toJSONString(0, type, SETTING && SETTING.showDescription, null).trim();
 
                 models.push(model);
             }
@@ -420,40 +431,37 @@ function HttpDoc() {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
         }
+    };
 
-        {
-            // 读取本地设置
-            var setting = localStorage.getItem("setting");
-            // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
-            if (setting) {
-                SETTING = JSON.parse(localStorage.getItem("setting"));
-                var tpl = $("#tpl-httpdoc-setting").html();
-                Mustache.parse(tpl);
-                var html = Mustache.render(tpl, SETTING);
-                $("#httpdoc-config").find(".modal-body").html(html);
-                $('#httpdoc-config').modal('show');
-            }
-            // 如果本地设置没有则初始化之
-            else {
-                SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
-                SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
-                SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
-                SETTING.context = DOC.context ? DOC.context : "";
-                SETTING.username = "";
-                SETTING.password = "";
-                SETTING.async = true;
-                SETTING.timeout = 0;
-                SETTING.withCredentials = false;
-                SETTING.queries = [];
-                SETTING.headers = [];
-                SETTING.cookies = [];
-            }
-            $('#httpdoc-config').on('show.bs.modal', function () {
-                var tpl = $("#tpl-httpdoc-setting").html();
-                Mustache.parse(tpl);
-                var html = Mustache.render(tpl, SETTING);
-                $("#httpdoc-config").find(".modal-body").html(html);
-            });
+    this.load = function () {
+        // 读取本地设置
+        var setting = localStorage.getItem("setting");
+        // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
+        if (setting) {
+            SETTING = JSON.parse(localStorage.getItem("setting"));
+            var tpl = $("#tpl-httpdoc-setting").html();
+            Mustache.parse(tpl);
+            var html = Mustache.render(tpl, SETTING);
+            $("#httpdoc-config").find(".modal-body").html(html);
+            // $('#httpdoc-config').modal('show');
+        }
+        // 如果本地设置没有则初始化之
+        else {
+            SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
+            SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
+            SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
+            SETTING.context = DOC.context ? DOC.context : "";
+            SETTING.indent = "    ";
+            SETTING.maxDepth = 5;
+            SETTING.showDescription = true;
+            SETTING.username = "";
+            SETTING.password = "";
+            SETTING.async = true;
+            SETTING.timeout = 0;
+            SETTING.withCredentials = false;
+            SETTING.queries = [];
+            SETTING.headers = [];
+            SETTING.cookies = [];
         }
     };
 
@@ -502,13 +510,13 @@ function HttpDoc() {
                                 var converter = HTTPDOC_CONVERTERS[c];
                                 if (converter.supports(consume)) {
                                     var name = null;
-                                    value = converter.build(0, type, true, name).trim();
+                                    value = converter.build(0, type, SETTING && SETTING.showDescription, name).trim();
                                     break;
                                 }
                             }
                             break;
                         default :
-                            value = this.toJSONString(0, type, true).trim();
+                            value = this.toJSONString(0, type, SETTING && SETTING.showDescription, null).trim();
                             break;
                     }
                     // 如果是字符串则去掉前后双引号
@@ -525,7 +533,7 @@ function HttpDoc() {
                     var converter = HTTPDOC_CONVERTERS[c];
                     if (converter.supports(produce)) {
                         var name = null;
-                        result.value = converter.build(0, type, true, name).trim();
+                        result.value = converter.build(0, type, SETTING && SETTING.showDescription, name).trim();
                         break;
                     }
                 }
@@ -553,22 +561,30 @@ function HttpDoc() {
         });
     };
 
-    this.toJSONString = function (indent, type, doc) {
-        var json = "";
+    this.indent = function () {
+        return SETTING && SETTING.indent && typeof SETTING.indent === 'string' ? SETTING.indent : "    ";
+    };
 
+    this.maxDepth = function () {
+        return SETTING && SETTING.maxDepth && typeof SETTING.maxDepth === 'number' ? SETTING.maxDepth : 5;
+    };
+
+    this.toJSONString = function (indent, type, doc, tag, level) {
+        var json = "";
+        level = (level && typeof level === 'number') ? level : 0;
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             json += "[\n";
-            for (var i = 0; i < indent + 1; i++) json += INDENT;
-            json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc);
+            for (var i = 0; i < indent + 1; i++) json += this.indent();
+            json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag, level);
             json += "\n";
-            for (var i = 0; i < indent; i++) json += INDENT;
+            for (var i = 0; i < indent; i++) json += this.indent();
             json += "]";
             return json;
         }
 
         if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
             json += "{\n";
-            json += "\"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc);
+            json += "\"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag, level + 1);
             json += "\n}";
             return json;
         }
@@ -589,24 +605,27 @@ function HttpDoc() {
             }
             // 自定义类型
             else {
-                var properties = schema.properties;
+                if (level >= this.maxDepth()) {
+                    return "null";
+                }
                 json += "{\n";
+                var properties = schema.properties;
                 var index = 0;
                 for (var key in properties) {
                     if (index++ > 0) json += ",\n";
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
                         for (var d = 0; descriptions && d < descriptions.length; d++) {
-                            for (var i = 0; i < indent + 1; i++) json += INDENT;
+                            for (var i = 0; i < indent + 1; i++) json += this.indent();
                             json += "// " + descriptions[d].trim() + "\n";
                         }
                     }
-                    for (var i = 0; i < indent + 1; i++) json += INDENT;
+                    for (var i = 0; i < indent + 1; i++) json += this.indent();
                     json += "\"" + key + "\": ";
-                    json += this.toJSONString(indent + 1, properties[key].type, doc);
+                    json += this.toJSONString(indent + 1, properties[key].type, doc, tag, level + 1);
                 }
                 json += "\n";
-                for (var i = 0; i < indent; i++) json += INDENT;
+                for (var i = 0; i < indent; i++) json += this.indent();
                 json += "}";
                 return json;
             }
@@ -668,20 +687,21 @@ function HttpDoc() {
         return json;
     };
 
-    this.toXMLString = function (indent, type, doc, tag) {
+    this.toXMLString = function (indent, type, doc, tag, level) {
         var xml = "";
         tag = tag ? tag : type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
+        level = (level && typeof level === 'number') ? level : 0;
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 开始
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag);
+            xml += this.toXMLString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag, level);
 
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 结束
             xml += "</" + tag + ">\n";
             return xml;
@@ -689,15 +709,15 @@ function HttpDoc() {
 
         if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 开始
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag);
+            xml += this.toXMLString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag, level + 1);
 
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 结束
             xml += "</" + tag + ">\n";
             return xml;
@@ -710,7 +730,7 @@ function HttpDoc() {
             // 枚举类型
             if (schema.constants) {
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 开始
                 xml += "<" + tag + ">";
 
@@ -725,8 +745,15 @@ function HttpDoc() {
             }
             // 自定义类型
             else {
+                if (level >= this.maxDepth()) {
+                    // 缩进
+                    for (var i = 0; i < indent; i++) xml += this.indent();
+                    // 开始
+                    xml += "<" + tag + "/>\n";
+                    return xml;
+                }
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 开始
                 xml += "<" + tag + ">\n";
                 var properties = schema.properties;
@@ -734,14 +761,14 @@ function HttpDoc() {
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
                         for (var d = 0; descriptions && d < descriptions.length; d++) {
-                            for (var i = 0; i < indent + 1; i++) xml += INDENT;
+                            for (var i = 0; i < indent + 1; i++) xml += this.indent();
                             xml += "// " + descriptions[d].trim() + "\n";
                         }
                     }
-                    xml += this.toXMLString(indent + 1, properties[key].type, doc, key);
+                    xml += this.toXMLString(indent + 1, properties[key].type, doc, key, level + 1);
                 }
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 结束
                 xml += "</" + tag + ">\n";
                 return xml;
@@ -749,7 +776,7 @@ function HttpDoc() {
         }
 
         // 缩进
-        for (var i = 0; i < indent; i++) xml += INDENT;
+        for (var i = 0; i < indent; i++) xml += this.indent();
         // 开始
         xml += "<" + tag + ">";
         switch (type) {
@@ -1063,6 +1090,9 @@ function HttpDoc() {
         SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
         SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
         SETTING.context = DOC.context ? DOC.context : "";
+        SETTING.indent = "    ";
+        SETTING.maxDepth = 5;
+        SETTING.showDescription = true;
         SETTING.username = "";
         SETTING.password = "";
         SETTING.async = true;
@@ -1076,6 +1106,7 @@ function HttpDoc() {
         var html = Mustache.render(tpl, SETTING);
         $("#httpdoc-config").find(".modal-body").html(html);
         $('#httpdoc-config').modal('hide');
+        this.explore();
     };
 
     this.mergeSetting = function () {
@@ -1090,6 +1121,16 @@ function HttpDoc() {
             SETTING.hostname = hostname && hostname !== "" ? hostname : DOC.hostname ? DOC.hostname : location.hostname;
             SETTING.port = port && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
             SETTING.context = context && context !== "" ? context : DOC.context ? DOC.context : "";
+        }
+        // Schema 设置
+        {
+            var $schema = $("#httpdoc-setting-schema");
+            var indent = $schema.find("input[name='indent']").val();
+            var maxDepth = $schema.find("input[name='maxDepth']").val();
+            var showDescription = $schema.find("input[name='showDescription']").val();
+            SETTING.indent = indent && indent !== "" ? indent : "    ";
+            SETTING.maxDepth = maxDepth && maxDepth !== "" && /\d+/.test(maxDepth) ? parseInt(maxDepth) : 5;
+            SETTING.showDescription = showDescription && showDescription !== "" && /(true|false)/g.test(showDescription) ? eval(showDescription) : true;
         }
         // XMLHttpRequest 设置
         {
@@ -1158,6 +1199,7 @@ function HttpDoc() {
         }
         localStorage.setItem("setting", JSON.stringify(SETTING));
         $('#httpdoc-config').modal('hide');
+        this.explore();
     };
 
     this.onConsumeChanged = function (value, id) {
@@ -1170,7 +1212,7 @@ function HttpDoc() {
                 var converter = HTTPDOC_CONVERTERS[c];
                 if (converter.supports(value)) {
                     var name = null;
-                    $textarea.text(converter.build(0, type, true, name).trim());
+                    $textarea.text(converter.build(0, type, SETTING && SETTING.showDescription, name).trim());
                     break;
                 }
             }
@@ -1186,7 +1228,7 @@ function HttpDoc() {
             var converter = HTTPDOC_CONVERTERS[c];
             if (converter.supports(value)) {
                 var name = null;
-                $textarea.text(converter.build(0, type, true, name).trim());
+                $textarea.text(converter.build(0, type, SETTING && SETTING.showDescription, name).trim());
                 break;
             }
         }
