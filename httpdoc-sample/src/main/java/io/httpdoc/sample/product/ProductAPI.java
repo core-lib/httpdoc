@@ -71,14 +71,14 @@ public class ProductAPI {
      * <p>缺省情况下，框架渲染最大深度为5，但可以通过右上角的<b>Global Settings</b> -> <b>Schema</b> -> <b>max depth</b>进行设置以满足不同的需求。</p>
      * <p>同样的，全局设置里面的其他设置也在这里做一个简单描述：</p>
      * <ul>
-     * <li>Basic: 基础设置，用于设定接口测试的协议，域名，端口以及根路径</li>
-     * <li>Schema: 模型设置，用于设定模型展示的样式，包括缩进，最大深度，是否显示注释，缺省JSON-Editor样式</li>
-     * <li>XMLHttpRequest: 请求设置，用于设定用户名，密码，是否异步，超时时间，跨域凭证传输</li>
-     * <li>Query: 查询参数，用于设定请求的固定查询参数</li>
-     * <li>Header: 头部参数，用于设定请求的固定头部参数</li>
-     * <li>Cookie: Cookie参数，用于设定请求的固定Cookie参数</li>
+     * <li>1. Basic: 基础设置，用于设定接口测试的协议，域名，端口以及根路径</li>
+     * <li>2. Schema: 模型设置，用于设定模型展示的样式，包括缩进，最大深度，是否显示注释，缺省JSON-Editor样式</li>
+     * <li>3. XMLHttpRequest: 请求设置，用于设定用户名，密码，是否异步，超时时间，跨域凭证传输</li>
+     * <li>4. Query: 查询参数，用于设定请求的固定查询参数</li>
+     * <li>5. Header: 头部参数，用于设定请求的固定头部参数</li>
+     * <li>6. Cookie: Cookie参数，用于设定请求的固定Cookie参数</li>
      * </ul>
-     *
+     * @param id 产品ID
      * @param product 产品对象
      * @return 产品创建结果
      */
