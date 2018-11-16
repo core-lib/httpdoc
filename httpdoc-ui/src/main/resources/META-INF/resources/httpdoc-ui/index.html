@@ -133,6 +133,7 @@
 <script id="tpl-httpdoc-setting" type="text/html">
     <ul class="nav nav-tabs">
         <li class="active"><a href="#httpdoc-setting-basic" data-toggle="tab">Basic</a></li>
+        <li><a href="#httpdoc-setting-schema" data-toggle="tab">Schema</a></li>
         <li><a href="#httpdoc-setting-xhr" data-toggle="tab">XMLHttpRequest</a></li>
         <li><a href="#httpdoc-setting-query" data-toggle="tab">Query</a></li>
         <li><a href="#httpdoc-setting-header" data-toggle="tab">Header</a></li>
@@ -163,6 +164,34 @@
                 <tr>
                     <td>context</td>
                     <td><input class="form-control" name="context" value="{{context}}" placeholder="context path"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="httpdoc-setting-schema">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="30%"></th>
+                    <th width="70%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>indent</td>
+                    <td><input class="form-control" name="indent" value="{{indent}}" placeholder="line indent string"/></td>
+                </tr>
+                <tr>
+                    <td>max depth</td>
+                    <td><input class="form-control" name="maxDepth" value="{{maxDepth}}" placeholder="max depth when recursion"/></td>
+                </tr>
+                <tr>
+                    <td>show description</td>
+                    <td><input class="form-control" name="showDescription" value="{{showDescription}}" placeholder="true or false"/></td>
+                </tr>
+                <tr>
+                    <td>default format</td>
+                    <td><input class="form-control" name="defaultFormat" value="{{defaultFormat}}" placeholder="normal | table | grid"/></td>
                 </tr>
                 </tbody>
             </table>

@@ -16,6 +16,10 @@
     }
 }
 
+body {
+    padding-right: 0 !important;
+}
+
 .method {
     min-width: 72px;
     color: silver;

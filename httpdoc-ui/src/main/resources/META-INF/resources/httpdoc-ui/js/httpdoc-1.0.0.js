@@ -165,7 +165,7 @@ function JSONConversion() {
     };
 
     this.build = function (indent, type, doc, tag) {
-        return httpdoc.toJSONString(indent, type, doc);
+        return httpdoc.toJSONString(indent, type, doc, tag);
     };
 
     return this;
@@ -211,8 +211,6 @@ window.jklDump = new JKL.Dumper();
 JSONEditor.defaults.options.theme = 'bootstrap3';
 JSONEditor.defaults.options.iconlib = 'bootstrap3';
 
-// JSONEditor.defaults.options.object_layout = 'grid';
-
 /**
  * HttpDoc 框架
  */
@@ -225,12 +223,10 @@ function HttpDoc() {
     var MAP_SUFFIX = ">";
     var ARR_PREFIX = "";
     var ARR_SUFFIX = "[]";
-    var INDENT = "    ";
     var SETTING = {};
     var DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     var JSON_EDITORS = {};
-
 
     this.explore = function () {
         var self = this;
@@ -364,6 +360,19 @@ function HttpDoc() {
         /** @namespace doc.dateFormat */
         DATE_FORMAT = doc.dateFormat ? doc.dateFormat : DATE_FORMAT;
 
+        {
+            this.load();
+
+            JSONEditor.defaults.options.object_layout = SETTING.defaultFormat;
+
+            $('#httpdoc-config').on('show.bs.modal', function () {
+                var tpl = $("#tpl-httpdoc-setting").html();
+                Mustache.parse(tpl);
+                var html = Mustache.render(tpl, SETTING);
+                $("#httpdoc-config").find(".modal-body").html(html);
+            });
+        }
+
         for (var name in DOC.schemas) {
             var schema = DOC.schemas[name];
             schema.properties = this.properties(schema);
@@ -401,7 +410,7 @@ function HttpDoc() {
                 model.name = name;
 
                 var type = REF_PREFIX + name + REF_SUFFIX;
-                model.value = this.toJSONString(0, type, true).trim();
+                model.value = this.toJSONString(0, type, SETTING && SETTING.showDescription, null).trim();
 
                 models.push(model);
             }
@@ -431,40 +440,38 @@ function HttpDoc() {
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
         }
+    };
 
-        {
-            // 读取本地设置
-            var setting = localStorage.getItem("setting");
-            // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
-            if (setting) {
-                SETTING = JSON.parse(localStorage.getItem("setting"));
-                var tpl = $("#tpl-httpdoc-setting").html();
-                Mustache.parse(tpl);
-                var html = Mustache.render(tpl, SETTING);
-                $("#httpdoc-config").find(".modal-body").html(html);
-                $('#httpdoc-config').modal('show');
-            }
-            // 如果本地设置没有则初始化之
-            else {
-                SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
-                SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
-                SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
-                SETTING.context = DOC.context ? DOC.context : "";
-                SETTING.username = "";
-                SETTING.password = "";
-                SETTING.async = true;
-                SETTING.timeout = 0;
-                SETTING.withCredentials = false;
-                SETTING.queries = [];
-                SETTING.headers = [];
-                SETTING.cookies = [];
-            }
-            $('#httpdoc-config').on('show.bs.modal', function () {
-                var tpl = $("#tpl-httpdoc-setting").html();
-                Mustache.parse(tpl);
-                var html = Mustache.render(tpl, SETTING);
-                $("#httpdoc-config").find(".modal-body").html(html);
-            });
+    this.load = function () {
+        // 读取本地设置
+        var setting = localStorage.getItem("setting");
+        // 如果本地设置存在则读取并且弹出窗口让用户决定是否要修改
+        if (setting) {
+            SETTING = JSON.parse(localStorage.getItem("setting"));
+            var tpl = $("#tpl-httpdoc-setting").html();
+            Mustache.parse(tpl);
+            var html = Mustache.render(tpl, SETTING);
+            $("#httpdoc-config").find(".modal-body").html(html);
+            $('#httpdoc-config').modal('show');
+        }
+        // 如果本地设置没有则初始化之
+        else {
+            SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
+            SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
+            SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
+            SETTING.context = DOC.context ? DOC.context : "";
+            SETTING.indent = "    ";
+            SETTING.maxDepth = 5;
+            SETTING.showDescription = true;
+            SETTING.defaultFormat = "normal";
+            SETTING.username = "";
+            SETTING.password = "";
+            SETTING.async = true;
+            SETTING.timeout = 0;
+            SETTING.withCredentials = false;
+            SETTING.queries = [];
+            SETTING.headers = [];
+            SETTING.cookies = [];
         }
     };
 
@@ -503,7 +510,7 @@ function HttpDoc() {
                     var converter = HTTPDOC_CONVERTERS[c];
                     if (converter.supports(produce)) {
                         var name = null;
-                        result.value = converter.build(0, type, true, name).trim();
+                        result.value = converter.build(0, type, SETTING && SETTING.showDescription, name).trim();
                         break;
                     }
                 }
@@ -554,22 +561,30 @@ function HttpDoc() {
         });
     };
 
-    this.toJSONString = function (indent, type, doc) {
-        var json = "";
+    this.indent = function () {
+        return SETTING && SETTING.indent && typeof SETTING.indent === 'string' ? SETTING.indent : "    ";
+    };
 
+    this.maxDepth = function () {
+        return SETTING && SETTING.maxDepth && typeof SETTING.maxDepth === 'number' ? SETTING.maxDepth : 5;
+    };
+
+    this.toJSONString = function (indent, type, doc, tag, level) {
+        var json = "";
+        level = (level && typeof level === 'number') ? level : 0;
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             json += "[\n";
-            for (var i = 0; i < indent + 1; i++) json += INDENT;
-            json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc);
+            for (var i = 0; i < indent + 1; i++) json += this.indent();
+            json += this.toJSONString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag, level);
             json += "\n";
-            for (var i = 0; i < indent; i++) json += INDENT;
+            for (var i = 0; i < indent; i++) json += this.indent();
             json += "]";
             return json;
         }
 
         if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
             json += "{\n";
-            json += "\"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc);
+            json += "\"\": " + this.toJSONString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag, level + 1);
             json += "\n}";
             return json;
         }
@@ -590,24 +605,27 @@ function HttpDoc() {
             }
             // 自定义类型
             else {
-                var properties = schema.properties;
+                if (level >= this.maxDepth()) {
+                    return "null";
+                }
                 json += "{\n";
+                var properties = schema.properties;
                 var index = 0;
-                for (var key in properties) {
+                for (var key in (properties ? properties : {})) {
                     if (index++ > 0) json += ",\n";
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
                         for (var d = 0; descriptions && d < descriptions.length; d++) {
-                            for (var i = 0; i < indent + 1; i++) json += INDENT;
+                            for (var i = 0; i < indent + 1; i++) json += this.indent();
                             json += "// " + descriptions[d].trim() + "\n";
                         }
                     }
-                    for (var i = 0; i < indent + 1; i++) json += INDENT;
+                    for (var i = 0; i < indent + 1; i++) json += this.indent();
                     json += "\"" + key + "\": ";
-                    json += this.toJSONString(indent + 1, properties[key].type, doc);
+                    json += this.toJSONString(indent + 1, properties[key].type, doc, tag, level + 1);
                 }
                 json += "\n";
-                for (var i = 0; i < indent; i++) json += INDENT;
+                for (var i = 0; i < indent; i++) json += this.indent();
                 json += "}";
                 return json;
             }
@@ -669,20 +687,21 @@ function HttpDoc() {
         return json;
     };
 
-    this.toXMLString = function (indent, type, doc, tag) {
+    this.toXMLString = function (indent, type, doc, tag, level) {
         var xml = "";
         tag = tag ? tag : type && type.startsWith(REF_PREFIX) && type.endsWith(REF_SUFFIX) ? type.substring(REF_PREFIX.length, type.length - REF_SUFFIX.length) : "xml";
+        level = (level && typeof level === 'number') ? level : 0;
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 开始
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag);
+            xml += this.toXMLString(indent + 1, type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length), doc, tag, level);
 
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 结束
             xml += "</" + tag + ">\n";
             return xml;
@@ -690,15 +709,15 @@ function HttpDoc() {
 
         if (type.startsWith(MAP_PREFIX) && type.endsWith(MAP_SUFFIX)) {
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 开始
             xml += "<" + tag + ">\n";
 
             // 内部
-            xml += this.toXMLString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag);
+            xml += this.toXMLString(indent + 1, type.substring(MAP_PREFIX.length, type.length - MAP_SUFFIX.length), doc, tag, level + 1);
 
             // 缩进
-            for (var i = 0; i < indent; i++) xml += INDENT;
+            for (var i = 0; i < indent; i++) xml += this.indent();
             // 结束
             xml += "</" + tag + ">\n";
             return xml;
@@ -711,7 +730,7 @@ function HttpDoc() {
             // 枚举类型
             if (schema.constants) {
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 开始
                 xml += "<" + tag + ">";
 
@@ -726,23 +745,30 @@ function HttpDoc() {
             }
             // 自定义类型
             else {
+                if (level >= this.maxDepth()) {
+                    // 缩进
+                    for (var i = 0; i < indent; i++) xml += this.indent();
+                    // 开始
+                    xml += "<" + tag + "/>\n";
+                    return xml;
+                }
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 开始
                 xml += "<" + tag + ">\n";
                 var properties = schema.properties;
-                for (var key in properties) {
+                for (var key in (properties ? properties : {})) {
                     if (doc && properties[key].description) {
                         var descriptions = properties[key].description.split("\n");
                         for (var d = 0; descriptions && d < descriptions.length; d++) {
-                            for (var i = 0; i < indent + 1; i++) xml += INDENT;
+                            for (var i = 0; i < indent + 1; i++) xml += this.indent();
                             xml += "// " + descriptions[d].trim() + "\n";
                         }
                     }
-                    xml += this.toXMLString(indent + 1, properties[key].type, doc, key);
+                    xml += this.toXMLString(indent + 1, properties[key].type, doc, key, level + 1);
                 }
                 // 缩进
-                for (var i = 0; i < indent; i++) xml += INDENT;
+                for (var i = 0; i < indent; i++) xml += this.indent();
                 // 结束
                 xml += "</" + tag + ">\n";
                 return xml;
@@ -750,7 +776,7 @@ function HttpDoc() {
         }
 
         // 缩进
-        for (var i = 0; i < indent; i++) xml += INDENT;
+        for (var i = 0; i < indent; i++) xml += this.indent();
         // 开始
         xml += "<" + tag + ">";
         switch (type) {
@@ -830,12 +856,13 @@ function HttpDoc() {
      * @param type 类型名称
      * @param description 描述
      */
-    this.toJSONSchema = function (type, description) {
+    this.toJSONSchema = function (type, description, level) {
+        level = (level && typeof level === 'number') ? level : 0;
         if (type.startsWith(ARR_PREFIX) && type.endsWith(ARR_SUFFIX)) {
             // 元素类型
             var elementType = type.substring(ARR_PREFIX.length, type.length - ARR_SUFFIX.length);
             // 递归元素类型
-            var items = this.toJSONSchema(elementType);
+            var items = this.toJSONSchema(elementType, "", level + 1);
             // 构造schema
             var schema = {
                 type: "array",
@@ -872,10 +899,16 @@ function HttpDoc() {
             }
             // 自定义类型
             else {
+                if (level >= this.maxDepth()) {
+                    return {
+                        type: "null",
+                        description: description
+                    };
+                }
                 var properties = {};
                 for (var field in (model.properties ? model.properties : {})) {
                     var property = model.properties[field];
-                    var schema = this.toJSONSchema(property.type, property.description);
+                    var schema = this.toJSONSchema(property.type, property.description, level + 1);
                     if (property.style && property.style !== "") schema.format = property.style;
                     properties[field] = schema;
                 }
@@ -1184,6 +1217,10 @@ function HttpDoc() {
         SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
         SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
         SETTING.context = DOC.context ? DOC.context : "";
+        SETTING.indent = "    ";
+        SETTING.maxDepth = 5;
+        SETTING.showDescription = true;
+        SETTING.defaultFormat = "normal";
         SETTING.username = "";
         SETTING.password = "";
         SETTING.async = true;
@@ -1211,6 +1248,18 @@ function HttpDoc() {
             SETTING.hostname = hostname && hostname !== "" ? hostname : DOC.hostname ? DOC.hostname : location.hostname;
             SETTING.port = port && /\d+/.test(port) ? parseInt(port) : DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
             SETTING.context = context && context !== "" ? context : DOC.context ? DOC.context : "";
+        }
+        // Schema 设置
+        {
+            var $schema = $("#httpdoc-setting-schema");
+            var indent = $schema.find("input[name='indent']").val();
+            var maxDepth = $schema.find("input[name='maxDepth']").val();
+            var showDescription = $schema.find("input[name='showDescription']").val();
+            var defaultFormat = $schema.find("input[name='defaultFormat']").val();
+            SETTING.indent = indent && indent !== "" ? indent : "    ";
+            SETTING.maxDepth = maxDepth && maxDepth !== "" && /\d+/.test(maxDepth) ? parseInt(maxDepth) : 5;
+            SETTING.showDescription = showDescription && showDescription !== "" && /(true|false)/g.test(showDescription) ? eval(showDescription) : true;
+            SETTING.defaultFormat = defaultFormat && defaultFormat !== "" && /(normal|table|grid)/g.test(defaultFormat) ? defaultFormat : "normal";
         }
         // XMLHttpRequest 设置
         {
@@ -1291,7 +1340,7 @@ function HttpDoc() {
                 var converter = HTTPDOC_CONVERTERS[c];
                 if (converter.supports(value)) {
                     var name = null;
-                    $textarea.text(converter.build(0, type, true, name).trim());
+                    $textarea.text(converter.build(0, type, SETTING && SETTING.showDescription, name).trim());
                     break;
                 }
             }
@@ -1307,7 +1356,7 @@ function HttpDoc() {
             var converter = HTTPDOC_CONVERTERS[c];
             if (converter.supports(value)) {
                 var name = null;
-                $textarea.text(converter.build(0, type, true, name).trim());
+                $textarea.text(converter.build(0, type, SETTING && SETTING.showDescription, name).trim());
                 break;
             }
         }
