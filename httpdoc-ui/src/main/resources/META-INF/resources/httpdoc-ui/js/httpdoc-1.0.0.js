@@ -452,7 +452,7 @@ function HttpDoc() {
             Mustache.parse(tpl);
             var html = Mustache.render(tpl, SETTING);
             $("#httpdoc-config").find(".modal-body").html(html);
-            $('#httpdoc-config').modal('show');
+            // $('#httpdoc-config').modal('show');
         }
         // 如果本地设置没有则初始化之
         else {
@@ -1234,6 +1234,7 @@ function HttpDoc() {
         var html = Mustache.render(tpl, SETTING);
         $("#httpdoc-config").find(".modal-body").html(html);
         $('#httpdoc-config').modal('hide');
+        this.explore();
     };
 
     this.mergeSetting = function () {
@@ -1328,6 +1329,7 @@ function HttpDoc() {
         }
         localStorage.setItem("setting", JSON.stringify(SETTING));
         $('#httpdoc-config').modal('hide');
+        this.explore();
     };
 
     this.onConsumeChanged = function (value, id) {
