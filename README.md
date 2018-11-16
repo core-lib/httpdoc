@@ -144,9 +144,12 @@ JDK 1.7 +
 * serializer    文档序列化器，缺省为JSON序列化器，所以项目中需要依赖jackson-databind
 
 ## 在线示例
-项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：[httpdoc-sample](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html)
+项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui-v1/index.html)
 
 ## 变更记录
+* v1.5.8
+    * 增加Schema的全局设置
+    * 适配递归Schema的问题
 * v1.5.7
     * 增加JSONEditor的前端实现
     * 增加@style标签用于控制参数展示的样式
