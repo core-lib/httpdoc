@@ -16,7 +16,7 @@ public class JestfulExporter extends BundleExporter implements Exporter {
 
     @Override
     public String platform() {
-        return "java";
+        return "Java";
     }
 
     @Override
@@ -38,6 +38,5 @@ public class JestfulExporter extends BundleExporter implements Exporter {
 
         generator.generate(generation);
     }
-
 
 }

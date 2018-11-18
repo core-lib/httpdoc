@@ -16,7 +16,7 @@ public class ObjCExporter extends BundleExporter implements Exporter {
 
     @Override
     public String platform() {
-        return "objective-c";
+        return "Objective-C";
     }
 
     @Override
@@ -38,6 +38,5 @@ public class ObjCExporter extends BundleExporter implements Exporter {
 
         generator.generate(generation);
     }
-
 
 }
