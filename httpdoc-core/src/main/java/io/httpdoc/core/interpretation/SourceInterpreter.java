@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -133,9 +134,10 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
     }
 
     public static abstract class Javadoc {
-        private static Logger logger = LoggerFactory.getLogger(SourceInterpreter.class);
-
-        private static RootDoc root;
+        private static final Logger logger = LoggerFactory.getLogger(SourceInterpreter.class);
+        private static final Object lock = new Object();
+        // 避免一直占用用户太多内存
+        private static volatile SoftReference<RootDoc> rootDoc;
         private static String srcPath;
         private static String libPath;
         private static String pkgPath;
@@ -151,42 +153,44 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             else {
                 forWebContent(directory);
             }
-            // 构造RootDoc
-            build();
+            // 构造程序包
+            forPackages();
         }
 
         @Deprecated
-        public synchronized static boolean start(RootDoc root) {
-            Javadoc.root = root;
+        public static boolean start(RootDoc rootDoc) {
+            Javadoc.rootDoc = new SoftReference<>(rootDoc);
             return true;
         }
 
-        private static void build() throws IOException {
-            File txt = new File(srcPath, "packages.txt");
-            Set<String> folders = getSrcFolders(new File(srcPath));
-            String separator = System.getProperty("line.separator");
-            StringBuilder builder = new StringBuilder();
-            for (String folder : folders) {
-                String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
-                builder.append(pkg).append(separator);
-                logger.info("adding package: " + pkg);
+        private static RootDoc build() {
+            RootDoc doc = rootDoc != null ? rootDoc.get() : null;
+            if (doc != null) {
+                return doc;
             }
-            IOKit.transfer(new StringReader(builder.toString().trim()), txt);
-            pkgPath = txt.getPath();
-            logger.info("start building root doc");
-            Main.execute(new String[]{
-                    "-doclet",
-                    Javadoc.class.getName(),
-                    "-quiet",
-                    "-encoding",
-                    "utf-8",
-                    "-classpath",
-                    "\"" + libPath + "\"",
-                    "-sourcepath",
-                    srcPath,
-                    "@" + pkgPath
-            });
-            logger.info("end building root doc found " + (root != null && root.classes() != null ? root.classes().length : 0) + " class(es)");
+            // double check
+            synchronized (lock) {
+                doc = rootDoc != null ? rootDoc.get() : null;
+                if (doc != null) {
+                    return doc;
+                }
+                logger.info("start building root doc soft reference, if building frequently you should increase the JVM memories!");
+                Main.execute(new String[]{
+                        "-doclet",
+                        Javadoc.class.getName(),
+                        "-quiet",
+                        "-encoding",
+                        "utf-8",
+                        "-classpath",
+                        "\"" + libPath + "\"",
+                        "-sourcepath",
+                        srcPath,
+                        "@" + pkgPath
+                });
+                doc = rootDoc != null ? rootDoc.get() : null;
+                logger.info("end building root doc found " + (doc != null && doc.classes() != null ? doc.classes().length : 0) + " class(es)");
+            }
+            return doc;
         }
 
         private static void forWebContent(File directory) {
@@ -323,6 +327,20 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             return false;
         }
 
+        private static void forPackages() throws IOException {
+            File txt = new File(srcPath, "packages.txt");
+            Set<String> folders = getSrcFolders(new File(srcPath));
+            String separator = System.getProperty("line.separator");
+            StringBuilder builder = new StringBuilder();
+            for (String folder : folders) {
+                String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
+                builder.append(pkg).append(separator);
+                logger.info("adding package: " + pkg);
+            }
+            IOKit.transfer(new StringReader(builder.toString().trim()), txt);
+            pkgPath = txt.getPath();
+        }
+
         private static Set<String> getSrcFolders(File file) {
             Set<String> folders = new LinkedHashSet<>();
             if (file.isDirectory()) {
@@ -392,21 +410,18 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         }
 
         private static void destroy() {
-            root = null;
+            rootDoc = null;
             IOKit.delete(new File(srcPath), true);
         }
 
-        private synchronized static ClassDoc getClassDoc(Class<?> clazz) {
-            return root != null ? root.classNamed(clazz.getName()) : null;
-        }
-
         private static ClassDoc of(Class<?> clazz) {
-            return getClassDoc(clazz);
+            RootDoc rootDoc = build();
+            return rootDoc != null ? rootDoc.classNamed(clazz.getName()) : null;
         }
 
         private static FieldDoc of(Field field) {
             Class<?> clazz = field.getDeclaringClass();
-            ClassDoc doc = getClassDoc(clazz);
+            ClassDoc doc = of(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields(false);
             for (FieldDoc fd : fields) if (fd.name().equals(field.getName())) return fd;
@@ -416,7 +431,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         private static FieldDoc of(Enum<?> constant) {
             Class<?> clazz = constant.getDeclaringClass();
             String name = constant.name();
-            ClassDoc doc = getClassDoc(clazz);
+            ClassDoc doc = of(clazz);
             if (doc == null) return null;
             FieldDoc[] fields = doc.fields();
             for (FieldDoc fd : fields) if (fd.name().equals(name)) return fd;
@@ -425,7 +440,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
         private static MethodDoc of(Method method) {
             Class<?> clazz = method.getDeclaringClass();
-            ClassDoc doc = getClassDoc(clazz);
+            ClassDoc doc = of(clazz);
             if (!(doc instanceof ClassDocImpl)) return null;
             ClassDocImpl impl = (ClassDocImpl) doc;
             String name = method.getName();
