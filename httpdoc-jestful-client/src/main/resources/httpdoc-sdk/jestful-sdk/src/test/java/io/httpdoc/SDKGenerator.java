@@ -27,7 +27,7 @@ public class SDKGenerator {
         Document document = Document.from(new URL("http://localhost:8080/httpdoc.json"), new JsonDeserializer());
         Generation generation = new Generation(document);
         generation.setDirectory(System.getProperty("user.dir") + "/src/main/java"); // set generate directory
-        generation.setSupplier(new JestfulSupplier());                             // set type supplier
+        generation.setSupplier(new JestfulSupplier());                              // set type supplier
 //        generation.setPkg();                                                      // set default package
 //        generation.setPkgForced();                                                // set forced package
 //        generation.setStrategy();                                                 // set generate strategy
