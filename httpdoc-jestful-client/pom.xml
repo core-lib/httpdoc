@@ -35,10 +35,15 @@
             <version>v1.5.8</version>
         </dependency>
         <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-jackson</artifactId>
+            <version>v1.5.8</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-client</artifactId>
             <version>${jestful.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>

@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.httpdoc</groupId>
-    <artifactId>retrofit-sdk</artifactId>
+    <artifactId>jestful-sdk</artifactId>
     <version>1.0.0</version>
 
-    <name>retrofit-sdk</name>
+    <name>jestful-sdk</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
-            <artifactId>httpdoc-retrofit</artifactId>
+            <artifactId>httpdoc-jestful-client</artifactId>
             <version>v1.5.8</version>
             <scope>test</scope>
         </dependency>
@@ -50,28 +50,28 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- retrofit2 依赖 -->
+        <!-- Jestful 依赖 -->
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-client</artifactId>
+            <version>v2.3.8</version>
         </dependency>
 
         <!-- 可选依赖
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>adapter-rxjava2</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-guava</artifactId>
+            <version>v2.3.8</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>adapter-java8</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>adapter-guava</artifactId>
-            <version>2.4.0</version>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.1.5</version>
         </dependency>
         -->
     </dependencies>
