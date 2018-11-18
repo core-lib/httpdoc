@@ -1,8 +1,6 @@
 package io.httpdoc.web;
 
-import io.httpdoc.core.Config;
-import io.httpdoc.core.Document;
-import io.httpdoc.core.Lifecycle;
+import io.httpdoc.core.*;
 import io.httpdoc.core.export.Exporter;
 import io.httpdoc.core.kit.IOKit;
 import io.httpdoc.core.kit.LoadKit;
@@ -14,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,10 +29,22 @@ public class HttpdocExportHandler implements Handler, Lifecycle {
             return;
         }
         UUID random = UUID.randomUUID();
-        File folder = new File(root, random + File.separator + sdk + "-sdk");
+        File folder = new File(root, random + File.separator + sdk + "-SDK");
         try {
             if (!folder.exists() && !folder.mkdirs()) {
                 throw new IOException("could not make directory: " + folder);
+            }
+            for (Controller controller : document.getControllers()) {
+                for (Operation operation : controller.getOperations()) {
+                    for (Parameter parameter : operation.getParameters()) {
+                        Schema type = parameter.getType();
+                        Collection<Schema> dependencies = type.getDependencies();
+                        for (Schema schema : dependencies) document.getSchemas().put(schema.getPkg() + "." + schema.getName(), schema);
+                    }
+                    Schema type = operation.getResult().getType();
+                    Collection<Schema> dependencies = type.getDependencies();
+                    for (Schema schema : dependencies) document.getSchemas().put(schema.getPkg() + "." + schema.getName(), schema);
+                }
             }
             exporter.export(document, folder.getPath());
             response.setContentType("application/x-zip-compressed");
