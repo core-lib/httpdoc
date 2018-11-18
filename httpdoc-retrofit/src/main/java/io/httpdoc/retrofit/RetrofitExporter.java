@@ -21,7 +21,7 @@ public class RetrofitExporter extends BundleExporter implements Exporter {
 
     @Override
     public String framework() {
-        return "retrofit";
+        return "Retrofit";
     }
 
     @Override

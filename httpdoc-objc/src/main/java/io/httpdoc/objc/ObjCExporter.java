@@ -1,4 +1,4 @@
-package io.httpdoc.jestful.client;
+package io.httpdoc.objc;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.export.BundleExporter;
@@ -10,31 +10,31 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Jestful 导出器
+ * ObjC 导出器
  */
-public class JestfulExporter extends BundleExporter implements Exporter {
+public class ObjCExporter extends BundleExporter implements Exporter {
 
     @Override
     public String platform() {
-        return "java";
+        return "objective-c";
     }
 
     @Override
     public String framework() {
-        return "Jestful";
+        return "RSNetworking";
     }
 
     @Override
     public void export(String docURL, String folder) throws IOException {
         // 将工程模板文件复制到该目录
-        copy("httpdoc-sdk/jestful-sdk", folder);
+        copy("httpdoc-sdk/objc-sdk", folder);
 
-        JestfulMergedGenerator generator = new JestfulMergedGenerator();
+        ObjCRSNetworkingGenerator generator = new ObjCRSNetworkingGenerator();
 
         Document document = Document.from(new URL(docURL), new JsonDeserializer());
         Generation generation = new Generation(document);
         generation.setDirectory(folder + "/src/main/java");
-        generation.setSupplier(new JestfulSupplier());
+        generation.setSupplier(new ObjCSupplier());
 
         generator.generate(generation);
     }
