@@ -30,7 +30,7 @@ public class ObjCExporter extends BundleExporter implements Exporter {
         ObjCRSNetworkingGenerator generator = new ObjCRSNetworkingGenerator();
 
         Generation generation = new Generation(document);
-        generation.setDirectory(folder + "/sdk");
+        generation.setDirectory(folder + "/SDK");
         generation.setSupplier(new ObjCSupplier());
 
         generator.generate(generation);
