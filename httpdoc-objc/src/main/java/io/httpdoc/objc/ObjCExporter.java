@@ -33,7 +33,7 @@ public class ObjCExporter extends BundleExporter implements Exporter {
 
         Document document = Document.from(new URL(docURL), new JsonDeserializer());
         Generation generation = new Generation(document);
-        generation.setDirectory(folder + "/src/main/java");
+        generation.setDirectory(folder + "/sdk");
         generation.setSupplier(new ObjCSupplier());
 
         generator.generate(generation);
