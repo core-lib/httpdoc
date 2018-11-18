@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -28,7 +30,8 @@ public class LoadKit {
             if (url == null) {
                 throw new NullPointerException();
             } else if (url.getProtocol().equalsIgnoreCase("file")) {
-                File file = new File(url.getFile());
+                String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
+                File file = new File(path);
                 if (file.isDirectory()) {
                     File[] files = file.listFiles();
                     for (int i = 0; files != null && i < files.length; i++) {
@@ -43,21 +46,21 @@ public class LoadKit {
                 }
             } else if (url.getProtocol().equalsIgnoreCase("jar")) {
                 // 有可能是jar里面还包含jar
-                String file = url.getFile();
+                String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
                 String[] paths = file.split("!");
                 if (paths.length > 2) {
                     File jar = null;
                     InputStream in = null;
                     OutputStream out = null;
                     try {
-                        StringBuilder path = new StringBuilder();
+                        StringBuilder builder = new StringBuilder();
                         for (int i = 0; i < paths.length - 1; i++) {
-                            if (i == 0) path.append("jar:");
-                            else path.append("!");
-                            path.append(paths[i]);
+                            if (i == 0) builder.append("jar:");
+                            else builder.append("!");
+                            builder.append(paths[i]);
                         }
                         jar = File.createTempFile("httpdoc-", ".jar");
-                        in = new URL(path.toString()).openStream();
+                        in = new URL(builder.toString()).openStream();
                         out = new FileOutputStream(jar);
                         IOKit.transfer(in, out);
                         out.flush();
@@ -70,7 +73,7 @@ public class LoadKit {
                             }
                             String name = jarEntry.getName();
                             if (name.startsWith("httpdoc/") && name.endsWith(".properties")) {
-                                urls.add(new URL(path + "!/" + jarEntry.getName()));
+                                urls.add(new URL(builder + "!/" + jarEntry.getName()));
                             }
                         }
                     } finally {
@@ -105,7 +108,7 @@ public class LoadKit {
         try {
             Set<URL> urls = LoadKit.load(classLoader);
             for (URL url : urls) {
-                if (url.getFile().endsWith(".properties")) {
+                if (url.getPath().endsWith(".properties")) {
                     Properties properties = new Properties();
                     properties.load(url.openStream());
                     if (properties.isEmpty()) continue;

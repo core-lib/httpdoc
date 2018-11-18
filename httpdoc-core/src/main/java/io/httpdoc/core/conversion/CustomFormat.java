@@ -15,8 +15,8 @@ public class CustomFormat implements Format {
     private String mapSuffix = Format.MAP_SUFFIX;
     private String arrPrefix = Format.ARR_PREFIX;
     private String arrSuffix = Format.ARR_SUFFIX;
-    private boolean pkgIncluded = false;
-    private boolean canonical = false;
+    private boolean pkgIncluded = true;
+    private boolean canonical = true;
 
     @Override
     public String getRefPrefix() {
