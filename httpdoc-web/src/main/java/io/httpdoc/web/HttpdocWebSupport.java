@@ -2,14 +2,16 @@ package io.httpdoc.web;
 
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Lifecycle;
+import io.httpdoc.core.Sdk;
 import io.httpdoc.core.conversion.Converter;
 import io.httpdoc.core.conversion.CustomFormat;
 import io.httpdoc.core.conversion.Format;
 import io.httpdoc.core.conversion.StandardConverter;
-import io.httpdoc.core.exception.DocumentTranslationException;
+import io.httpdoc.core.export.Exporter;
 import io.httpdoc.core.interpretation.Interpreter;
 import io.httpdoc.core.interpretation.SourceInterpreter;
 import io.httpdoc.core.kit.IOKit;
+import io.httpdoc.core.kit.LoadKit;
 import io.httpdoc.core.serialization.Serializer;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
@@ -36,7 +38,7 @@ import java.util.Map;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-23 16:26
  **/
-public abstract class HttpdocWebSupport {
+public abstract class HttpdocWebSupport implements Handler {
     private String httpdoc;
     private String protocol;
     private String hostname;
@@ -54,6 +56,8 @@ public abstract class HttpdocWebSupport {
     private Serializer serializer = new JsonSerializer();
     private ConversionProvider conversionProvider = new HttpdocConversionProvider();
     private Format format = new CustomFormat();
+    private Map<String, Handler> handlers = LoadKit.load(this.getClass().getClassLoader(), Handler.class);
+    private Map<String, Exporter> exporters = LoadKit.load(this.getClass().getClassLoader(), Exporter.class);
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
@@ -146,6 +150,18 @@ public abstract class HttpdocWebSupport {
                 ((Lifecycle) this.conversionProvider).initial(config);
             }
 
+            for (Handler handler : handlers.values()) {
+                if (handler instanceof Lifecycle) {
+                    ((Lifecycle) handler).initial(config);
+                }
+            }
+
+            for (Exporter exporter : exporters.values()) {
+                if (exporter instanceof Lifecycle) {
+                    ((Lifecycle) exporter).initial(config);
+                }
+            }
+
             Enumeration<String> names = config.getInitParameterNames();
             while (names.hasMoreElements()) {
                 String expression = names.nextElement();
@@ -183,22 +199,38 @@ public abstract class HttpdocWebSupport {
             translation.setDateFormat(dateFormat);
             translation.setDescription(description);
 
-            Format clone = IOKit.clone(format);
-
             Map<String, String[]> map = request.getParameterMap();
-            assign("format", clone, map);
             assign("translation", translation, map);
 
-            Document document = translator.translate(translation);
-            response.setCharacterEncoding(charset);
-            response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);
-            Map<String, Object> doc = converter.convert(document, clone);
-            serializer.serialize(doc, response.getOutputStream());
-        } catch (DocumentTranslationException | ClassNotFoundException | ConvertingException e) {
+            Document doc = translator.translate(translation);
+            for (Map.Entry<String, Exporter> entry : exporters.entrySet()) {
+                Sdk sdk = new Sdk();
+                sdk.setPlatform(entry.getValue().platform());
+                sdk.setFramework(entry.getKey());
+                doc.getSdks().add(sdk);
+            }
+
+            String action = request.getParameter("action");
+
+            Handler handler = handlers.containsKey(action) ? handlers.get(action) : this;
+            handler.handle(doc, req, res);
+        } catch (IOException | ServletException e) {
+            throw e;
+        } catch (Exception e) {
             throw new ServletException(e);
         } finally {
             HttpdocThreadLocal.clear();
         }
+    }
+
+    public void handle(Document document, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map<String, String[]> map = request.getParameterMap();
+        response.setCharacterEncoding(charset);
+        response.setContentType(contentType != null ? contentType : serializer.getType() + "; charset=" + charset);
+        Format clone = IOKit.clone(format);
+        assign("format", clone, map);
+        Map<String, Object> doc = converter.convert(document, clone);
+        serializer.serialize(doc, response.getOutputStream());
     }
 
     private void assign(String name, Object object, Map<String, String[]> map) throws ConvertingException {
@@ -219,6 +251,34 @@ public abstract class HttpdocWebSupport {
     }
 
     public void destroy() {
+        if (translator instanceof Lifecycle) {
+            ((Lifecycle) translator).destroy();
+        }
+        if (supplier instanceof Lifecycle) {
+            ((Lifecycle) supplier).destroy();
+        }
+        if (interpreter instanceof Lifecycle) {
+            ((Lifecycle) interpreter).destroy();
+        }
+        if (converter instanceof Lifecycle) {
+            ((Lifecycle) converter).destroy();
+        }
+        if (serializer instanceof Lifecycle) {
+            ((Lifecycle) serializer).destroy();
+        }
+        if (conversionProvider instanceof Lifecycle) {
+            ((Lifecycle) conversionProvider).destroy();
+        }
+        for (Handler handler : handlers.values()) {
+            if (handler instanceof Lifecycle) {
+                ((Lifecycle) handler).destroy();
+            }
+        }
+        for (Exporter exporter : exporters.values()) {
+            if (exporter instanceof Lifecycle) {
+                ((Lifecycle) exporter).destroy();
+            }
+        }
     }
 
 }

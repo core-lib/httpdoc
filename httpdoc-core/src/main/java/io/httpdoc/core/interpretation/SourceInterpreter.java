@@ -334,8 +334,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             StringBuilder builder = new StringBuilder();
             for (String folder : folders) {
                 String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
-                builder.append(pkg).append(separator);
-                logger.info("adding package: " + pkg);
+                // 检查包名是否合法
+                if (pkg.matches("[a-zA-Z]+[0-9a-zA-Z_]*(\\.[a-zA-Z]+[0-9a-zA-Z_]*)*")) {
+                    builder.append(pkg).append(separator);
+                    logger.info("adding package: " + pkg);
+                }
             }
             IOKit.transfer(new StringReader(builder.toString().trim()), txt);
             pkgPath = txt.getPath();

@@ -3,11 +3,9 @@ package io.httpdoc.objc.core;
 import io.httpdoc.core.Controller;
 import io.httpdoc.core.Document;
 import io.httpdoc.core.Schema;
+import io.httpdoc.core.Sdk;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ObjCDocument extends Document {
     private static final long serialVersionUID = -1120462878218884601L;
@@ -175,6 +173,16 @@ public class ObjCDocument extends Document {
     @Override
     public void setSchemas(Map<String, Schema> schemas) {
         document.setSchemas(schemas);
+    }
+
+    @Override
+    public List<Sdk> getSdks() {
+        return document.getSdks();
+    }
+
+    @Override
+    public void setSdks(List<Sdk> sdks) {
+        document.setSdks(sdks);
     }
 
     @Override

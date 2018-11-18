@@ -34,11 +34,6 @@
             <artifactId>httpdoc-core</artifactId>
             <version>v1.5.8</version>
         </dependency>
-        <dependency>
-            <groupId>io.httpdoc</groupId>
-            <artifactId>httpdoc-jackson</artifactId>
-            <version>v1.5.8</version>
-        </dependency>
 
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>

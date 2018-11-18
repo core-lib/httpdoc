@@ -9,10 +9,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 文档
@@ -38,6 +35,7 @@ public class Document extends Definition {
     private String arrSuffix = Format.ARR_SUFFIX;
     private Set<Controller> controllers = new LinkedHashSet<>();
     private Map<String, Schema> schemas = new LinkedHashMap<>();
+    private List<Sdk> sdks = new ArrayList<>();
 
     public static Document from(URLConnection connection, Deserializer deserializer) throws IOException {
         try (InputStream in = connection.getInputStream()) {
@@ -220,4 +218,11 @@ public class Document extends Definition {
         this.schemas = schemas;
     }
 
+    public List<Sdk> getSdks() {
+        return sdks;
+    }
+
+    public void setSdks(List<Sdk> sdks) {
+        this.sdks = sdks;
+    }
 }

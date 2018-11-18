@@ -215,6 +215,7 @@ JSONEditor.defaults.options.iconlib = 'bootstrap3';
  * HttpDoc 框架
  */
 function HttpDoc() {
+    var HTTPDOC_URL = "../httpdoc.json";
     var DOC = {};
     var MAP = {};
     var REF_PREFIX = "$/schemas/";
@@ -231,7 +232,7 @@ function HttpDoc() {
     this.explore = function () {
         var self = this;
         var httpdocURL = $("#httpdoc-url").val();
-
+        HTTPDOC_URL = httpdocURL;
         $.ajax({
             url: httpdocURL,
             data: {
@@ -285,6 +286,7 @@ function HttpDoc() {
         DOC = doc;
 
         DOC.controllers = DOC.controllers ? DOC.controllers : [];
+        DOC.schemas = DOC.schemas ? DOC.schemas : {};
 
         // 给对象取一个唯一标识
         var id = 0;
@@ -441,6 +443,14 @@ function HttpDoc() {
                 event.stopPropagation();
                 $(this).parent().find(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
             });
+        }
+
+        {
+            var sdks = DOC.sdks ? DOC.sdks : [];
+            var tpl = $("#tpl-httpdoc-sdk").html();
+            Mustache.parse(tpl);
+            var html = Mustache.render(tpl, sdks);
+            $("#httpdoc-sdks").html(html);
         }
     };
 
@@ -1365,6 +1375,10 @@ function HttpDoc() {
             }
         }
         autosize.update($textarea);
+    };
+
+    this.download = function (framework) {
+        window.open(HTTPDOC_URL + (HTTPDOC_URL.indexOf("?") < 0 ? "?" : "&") + "action=export&sdk=" + framework, "_blank");
     };
 
     return this;

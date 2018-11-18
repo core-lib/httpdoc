@@ -80,6 +80,7 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
         if (!Format.ARR_SUFFIX.equals(format.getArrSuffix())) map.put("arrSuffix", format.getArrSuffix());
         if (document.getControllers() != null) map.put("controllers", doConvertControllers(document.getControllers(), format));
         if (document.getSchemas() != null) map.put("schemas", doConvertSchemas(document.getSchemas(), format));
+        if (document.getSdks() != null) map.put("sdks", doConvertSdks(document.getSdks(), format));
         return map;
     }
 
@@ -334,6 +335,28 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
         return map;
     }
 
+    private Object doConvertSdks(List<Sdk> sdks, Format format) {
+        if (!format.isCanonical() && sdks.size() == 1) {
+            return doConvertSdk(sdks.get(0), format);
+        } else {
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (Sdk sdk : sdks) list.add(doConvertSdk(sdk, format));
+            return list;
+        }
+    }
+
+    private Map<String, Object> doConvertSdk(Sdk sdk, Format format) {
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        String platform = sdk.getPlatform();
+        if (platform != null) map.put("platform", platform);
+
+        String framework = sdk.getFramework();
+        if (framework != null) map.put("framework", framework);
+
+        return map;
+    }
+
     private String doConvertReference(Schema schema, Format format) {
         Category category = schema.getCategory();
         switch (category) {
@@ -381,6 +404,8 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
 
         doConvertSchemas(document, dictionary.get("schemas"));
         doConvertControllers(document, dictionary.get("controllers"));
+        doConvertSdks(document, dictionary.get("sdks"));
+
         return document;
     }
 
@@ -713,6 +738,41 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
             schema = array;
         }
         return schema;
+    }
+
+    private List<Sdk> doConvertSdks(Document document, Object object) {
+        List<Sdk> list = new ArrayList<>();
+
+        if (object == null) {
+            list = null;
+        } else if (object instanceof Collection<?>) {
+            Collection<?> controllers = (Collection<?>) object;
+            for (Object controller : controllers) {
+                Map<?, ?> map = (Map<?, ?>) controller;
+                Sdk sdk = doConvertSdk(document, map);
+                list.add(sdk);
+            }
+        } else if (object instanceof Map<?, ?>) {
+            Map<?, ?> map = (Map<?, ?>) object;
+            Sdk sdk = doConvertSdk(document, map);
+            list.add(sdk);
+        } else {
+            list = null;
+        }
+
+        return list;
+    }
+
+    private Sdk doConvertSdk(Document document, Map<?, ?> map) {
+        Sdk sdk = new Sdk();
+
+        String platform = (String) map.get("platform");
+        sdk.setPlatform(platform);
+
+        String framework = (String) map.get("framework");
+        sdk.setFramework(framework);
+
+        return sdk;
     }
 
     private class SchemaDefinition {

@@ -58,7 +58,7 @@
         </dependency>
         <!-- 日志相关依赖 结束 -->
 
-        <!-- HttpDoc 相关依赖 开始 -->
+        <!-- HttpDoc UI 相关依赖 开始 -->
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
@@ -71,7 +71,25 @@
             <scope>system</scope>
             <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
         </dependency>
-        <!-- HttpDoc 相关依赖 结束 -->
+        <!-- HttpDoc UI 相关依赖 结束 -->
+
+        <!-- HttpDoc SDK 相关依赖 开始 -->
+        <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-retrofit</artifactId>
+            <version>${httpdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-jestful-client</artifactId>
+            <version>${httpdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.httpdoc</groupId>
+            <artifactId>httpdoc-objc</artifactId>
+            <version>${httpdoc.version}</version>
+        </dependency>
+        <!-- HttpDoc SDK 相关依赖 结束 -->
     </dependencies>
 
     <build>

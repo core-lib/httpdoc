@@ -46,6 +46,11 @@
             <artifactId>httpdoc-jackson</artifactId>
             <version>v1.5.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.18</version>
+        </dependency>
     </dependencies>
 
     <build>

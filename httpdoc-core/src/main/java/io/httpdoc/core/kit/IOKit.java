@@ -100,7 +100,7 @@ public abstract class IOKit {
             for (int i = 0; files != null && i < files.length; i++) {
                 deleted &= delete(files[i], true);
             }
-            return deleted;
+            return deleted && file.delete();
         } else {
             return file.delete();
         }

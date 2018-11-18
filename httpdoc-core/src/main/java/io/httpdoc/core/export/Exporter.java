@@ -1,5 +1,7 @@
 package io.httpdoc.core.export;
 
+import io.httpdoc.core.Document;
+
 import java.io.IOException;
 
 /**
@@ -20,10 +22,10 @@ public interface Exporter {
     /**
      * 导出
      *
-     * @param url    文档地址
-     * @param folder 导出目录
+     * @param document 文档
+     * @param folder   导出目录
      * @throws IOException I/O 异常
      */
-    void export(String url, String folder) throws IOException;
+    void export(Document document, String folder) throws IOException;
 
 }
