@@ -17,6 +17,10 @@
             <id>nuiton</id>
             <url>http://maven.nuiton.org/release/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -28,6 +32,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib</groupId>
+            <artifactId>detector</artifactId>
+            <version>v1.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun</groupId>

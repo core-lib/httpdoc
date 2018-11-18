@@ -12,13 +12,6 @@
     <artifactId>httpdoc-retrofit</artifactId>
     <name>httpdoc-retrofit</name>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://www.jitpack.io</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -34,16 +27,6 @@
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-jackson</artifactId>
             <version>v1.5.8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.core-lib</groupId>
-            <artifactId>detector</artifactId>
-            <version>v1.0.2</version>
         </dependency>
 
         <dependency>
