@@ -1,16 +1,15 @@
 package io.httpdoc.core.kit;
 
+import io.detector.Resource;
+import io.detector.SimpleDetector;
+import io.detector.SuffixFilter;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * 配置加载器
@@ -21,109 +20,36 @@ import java.util.jar.JarFile;
 public class LoadKit {
     private final static Logger LOGGER = LoggerFactory.getLogger(LoadKit.class);
 
-    public static Set<URL> load(ClassLoader classLoader) throws IOException {
-        Set<URL> urls = new LinkedHashSet<>();
-        Enumeration<URL> enumeration = classLoader.getResources("httpdoc");
-        enumeration = enumeration != null && enumeration.hasMoreElements() ? enumeration : null;
-        while (enumeration != null && enumeration.hasMoreElements()) {
-            URL url = enumeration.nextElement();
-            if (url == null) {
-                throw new NullPointerException();
-            } else if (url.getProtocol().equalsIgnoreCase("file")) {
-                String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-                File file = new File(path);
-                if (file.isDirectory()) {
-                    File[] files = file.listFiles();
-                    for (int i = 0; files != null && i < files.length; i++) {
-                        File f = files[i];
-                        if (f.isDirectory()) {
-                            continue;
-                        }
-                        if (f.isFile() && f.getName().endsWith(".properties")) {
-                            urls.add(f.toURI().toURL());
-                        }
-                    }
-                }
-            } else if (url.getProtocol().equalsIgnoreCase("jar")) {
-                // 有可能是jar里面还包含jar
-                String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-                String[] paths = file.split("!");
-                if (paths.length > 2) {
-                    File jar = null;
-                    InputStream in = null;
-                    OutputStream out = null;
-                    try {
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 0; i < paths.length - 1; i++) {
-                            if (i == 0) builder.append("jar:");
-                            else builder.append("!");
-                            builder.append(paths[i]);
-                        }
-                        jar = File.createTempFile("httpdoc-", ".jar");
-                        in = new URL(builder.toString()).openStream();
-                        out = new FileOutputStream(jar);
-                        IOKit.transfer(in, out);
-                        out.flush();
-                        JarFile jarFile = new JarFile(jar);
-                        Enumeration<JarEntry> entries = jarFile.entries();
-                        while (entries.hasMoreElements()) {
-                            JarEntry jarEntry = entries.nextElement();
-                            if (jarEntry.isDirectory()) {
-                                continue;
-                            }
-                            String name = jarEntry.getName();
-                            if (name.startsWith("httpdoc/") && name.endsWith(".properties")) {
-                                urls.add(new URL(builder + "!/" + jarEntry.getName()));
-                            }
-                        }
-                    } finally {
-                        IOKit.delete(jar);
-                        IOKit.close(in);
-                        IOKit.close(out);
-                    }
-                } else {
-                    String path = file.substring(file.indexOf(":") + 1, file.lastIndexOf("!"));
-                    JarFile jarFile = new JarFile(path);
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    while (entries.hasMoreElements()) {
-                        JarEntry jarEntry = entries.nextElement();
-                        if (jarEntry.isDirectory()) {
-                            continue;
-                        }
-                        String name = jarEntry.getName();
-                        if (name.startsWith("httpdoc/") && name.endsWith(".properties")) {
-                            urls.add(new URL("jar:file:" + jarFile.getName() + "!/" + jarEntry.getName()));
-                        }
-                    }
-                }
-            } else {
-                throw new IOException("unknown protocol " + url.getProtocol());
-            }
-        }
-        return urls;
+    public static Collection<Resource> load(ClassLoader classLoader) throws IOException {
+        return SimpleDetector.Builder
+                .scan("httpdoc")
+                .by(classLoader)
+                .includeJar()
+                .recursively()
+                .build()
+                .detect(new SuffixFilter(".properties"));
     }
 
     public static <T> Map<String, T> load(ClassLoader classLoader, Class<T> type) {
         Map<String, T> map = new LinkedHashMap<>();
         try {
-            Set<URL> urls = LoadKit.load(classLoader);
-            for (URL url : urls) {
-                if (url.getPath().endsWith(".properties")) {
-                    Properties properties = new Properties();
-                    properties.load(url.openStream());
-                    if (properties.isEmpty()) continue;
-                    Enumeration<Object> keys = properties.keys();
-                    while (keys.hasMoreElements()) {
-                        String name = (String) keys.nextElement();
-                        String value = (String) properties.get(name);
-                        Class<? extends T> clazz = classForName(value, type);
-                        if (clazz == null) continue;
-                        try {
-                            T bean = clazz.newInstance();
-                            map.put(name, bean);
-                        } catch (Throwable e) {
-                            LOGGER.warn("could not load " + type.getSimpleName() + " for [" + clazz + "]", e);
-                        }
+            Collection<Resource> resources = LoadKit.load(classLoader);
+            for (Resource resource : resources) {
+                URL url = resource.getUrl();
+                Properties properties = new Properties();
+                properties.load(url.openStream());
+                if (properties.isEmpty()) continue;
+                Enumeration<Object> keys = properties.keys();
+                while (keys.hasMoreElements()) {
+                    String name = (String) keys.nextElement();
+                    String value = (String) properties.get(name);
+                    Class<? extends T> clazz = load(value, type);
+                    if (clazz == null) continue;
+                    try {
+                        T bean = clazz.newInstance();
+                        map.put(name, bean);
+                    } catch (Exception e) {
+                        LOGGER.warn("could not load " + type.getSimpleName() + " for [" + clazz + "]", e);
                     }
                 }
             }
@@ -133,7 +59,7 @@ public class LoadKit {
         return map;
     }
 
-    public static <T> Class<? extends T> classForName(String className, Class<T> superType) {
+    public static <T> Class<? extends T> load(String className, Class<T> superType) {
         try {
             Class<?> subType = Class.forName(className);
             if (superType.isAssignableFrom(subType)) return subType.asSubclass(superType);
