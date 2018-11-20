@@ -32,7 +32,8 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         if (doc == null) return null;
         Tag[] tags = doc.tags();
         Note[] notes = new Note[tags != null ? tags.length : 0];
-        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        for (int i = 0; tags != null && i < tags.length; i++)
+            notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
         return new ClassInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
@@ -43,47 +44,58 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         List<Note> notes = new ArrayList<>();
         {
             ParamTag[] tags = doc.paramTags();
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@param", tags[i].parameterName(), tags[i].parameterComment()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@param", tags[i].parameterName(), tags[i].parameterComment()));
         }
         {
             ThrowsTag[] tags = doc.throwsTags();
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@throws", tags[i].exceptionName(), tags[i].exceptionComment()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@throws", tags[i].exceptionName(), tags[i].exceptionComment()));
         }
         {
             Tag[] tags = doc.tags("return");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@return", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@return", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("summary");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@summary", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@summary", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("deprecated");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@deprecated", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@deprecated", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("skip");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@skip", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@skip", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("tag");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@tag", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@tag", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("ignore");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@ignore", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@ignore", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("alias");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@alias", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@alias", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("order");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@order", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@order", tags[i].name(), tags[i].text()));
         }
         {
             Tag[] tags = doc.tags("style");
-            for (int i = 0; tags != null && i < tags.length; i++) notes.add(new Note("@style", tags[i].name(), tags[i].text()));
+            for (int i = 0; tags != null && i < tags.length; i++)
+                notes.add(new Note("@style", tags[i].name(), tags[i].text()));
         }
         return new MethodInterpretation(doc.commentText(), notes.toArray(new Note[0]), doc.getRawCommentText());
     }
@@ -94,7 +106,8 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         if (doc == null) return null;
         Tag[] tags = doc.tags();
         Note[] notes = new Note[tags != null ? tags.length : 0];
-        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        for (int i = 0; tags != null && i < tags.length; i++)
+            notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
         return new FieldInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
@@ -104,7 +117,8 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         if (doc == null) return null;
         Tag[] tags = doc.tags();
         Note[] notes = new Note[tags != null ? tags.length : 0];
-        for (int i = 0; tags != null && i < tags.length; i++) notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
+        for (int i = 0; tags != null && i < tags.length; i++)
+            notes[i] = new Note(tags[i].kind(), tags[i].name(), tags[i].text());
         return new EnumInterpretation(doc.commentText(), notes, doc.getRawCommentText());
     }
 
@@ -113,7 +127,8 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         try {
             Method method = descriptor.getReadMethod();
             Interpretation interpretation = interpret(method);
-            if (interpretation != null && interpretation.getContent() != null && interpretation.getContent().trim().length() > 0) return interpretation;
+            if (interpretation != null && interpretation.getContent() != null && interpretation.getContent().trim().length() > 0)
+                return interpretation;
             Class<?> clazz = method.getDeclaringClass();
             String name = descriptor.getName();
             Field field = clazz.getDeclaredField(name);
@@ -134,6 +149,21 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
     }
 
     public static abstract class Javadoc {
+        // 采用HashSet当List.retainAll(keywords) 时时间复杂度度可以从 O(n * m) 下降为 O(n) 因为HashSet的contains(o)方法时间复杂度为O(1)
+        private static final Set<String> keywords = new HashSet<>(
+                Arrays.asList(
+                        "abstract", "assert", "boolean", "break", "byte",
+                        "case", "catch", "char", "class", "const", "continue",
+                        "default", "do", "double", "else", "enum", "extends",
+                        "final", "finally", "float", "for", "goto", "if",
+                        "implements", "import", "instanceof", "int", "interface",
+                        "long", "native", "new", "package", "private", "protected",
+                        "public", "return", "strictfp", "short", "static", "super",
+                        "switch", "synchronized", "this", "throw", "throws",
+                        "transient", "try", "void", "volatile", "while",
+                        "null", "true", "false"
+                )
+        );
         private static final Logger logger = LoggerFactory.getLogger(SourceInterpreter.class);
         private static final Object lock = new Object();
         // 避免一直占用用户太多内存
@@ -336,6 +366,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
                 // 检查包名是否合法
                 if (pkg.matches("[a-zA-Z_$]+[0-9a-zA-Z_$]*(\\.[a-zA-Z_$]+[0-9a-zA-Z_$]+)*")) {
+                    List<String> packages = new ArrayList<>(Arrays.asList(pkg.split("\\.")));
+                    // 包含关键字
+                    if (packages.removeAll(keywords)) {
+                        continue;
+                    }
                     builder.append(pkg).append(separator);
                     logger.info("adding package: " + pkg);
                 }
