@@ -130,6 +130,19 @@ JDK 1.7 +
       <version>v1.5.3</version>
     </dependency>
     ```
+    ```java
+    @SpringBootApplication
+    @EnableHttpdoc(
+          httpdoc = "服务名称", 
+          version = "服务版本", 
+          description = "服务描述-支持HTML语法。"
+    )
+    public class HttpdocApplication {   
+        public static void main(String[] args) {
+            SpringApplication.run(HttpdocApplication.class, args);
+        }
+    }
+    ```
     
 ## 参数说明
 * httpdoc       项目名称，缺省为HttpDoc
