@@ -335,7 +335,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             for (String folder : folders) {
                 String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
                 // 检查包名是否合法
-                if (pkg.matches("[a-zA-Z]+[0-9a-zA-Z_]*(\\.[a-zA-Z]+[0-9a-zA-Z_]*)*")) {
+                if (pkg.matches("[a-zA-Z_$]+[0-9a-zA-Z_$]*(\\.[a-zA-Z_$]+[0-9a-zA-Z_$]+)*")) {
                     builder.append(pkg).append(separator);
                     logger.info("adding package: " + pkg);
                 }
