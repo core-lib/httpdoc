@@ -1706,3 +1706,15 @@ function HTTP() {
  * @type {HttpDoc} HttpDoc
  */
 window.httpdoc = new HttpDoc();
+
+(function () {
+    var url = location.protocol + "//" + location.hostname + (location.port && location.port !== "" ? ":" + location.port : "");
+    var levels = location.pathname.split("/");
+    for (var i = 1; i < levels.length - 2; i++) {
+        url += "/" + levels[i];
+    }
+    url += "/httpdoc.json";
+    $("#httpdoc-url").val(url);
+})();
+
+httpdoc.explore();

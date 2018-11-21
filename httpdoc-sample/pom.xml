@@ -150,7 +150,7 @@
                     <username>admin</username>
                     <password>admin</password>
                     <uriEncoding>UTF-8</uriEncoding>
-                    <path>/</path>
+                    <path>/httpdoc-sample</path>
                 </configuration>
             </plugin>
             <!-- Jetty插件 -->
@@ -161,7 +161,7 @@
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <httpConnector>
-                        <port>8080</port>
+                        <port>80</port>
                     </httpConnector>
                     <webApp>
                         <contextPath>/</contextPath>
