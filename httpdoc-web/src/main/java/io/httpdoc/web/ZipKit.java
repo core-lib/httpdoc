@@ -15,51 +15,49 @@ public class ZipKit {
     }
 
     public static void pack(File source, File target) throws IOException {
-        try (OutputStream out = new FileOutputStream(target)) {
-            pack(source, out);
+        try (OutputStream outputStream = new FileOutputStream(target)) {
+            pack(source, outputStream);
         }
     }
 
     public static void pack(File source, OutputStream out) throws IOException {
-        if (!source.exists()) {
-            throw new FileNotFoundException("file not found: " + source.getAbsolutePath());
+        try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(out)) {
+            pack(source, zipArchiveOutputStream);
+        }
+    }
+
+    public static void pack(File source, ZipArchiveOutputStream zipArchiveOutputStream) throws IOException {
+        Stack<String> parents = new Stack<>();
+        Stack<File> files = new Stack<>();
+
+        if (source.exists()) {
+            parents.push(null);
+            files.push(source);
         }
 
-        ZipArchiveOutputStream zipArchiveOutputStream = null;
-        try {
-            zipArchiveOutputStream = new ZipArchiveOutputStream(out);
+        while (!files.isEmpty()) {
+            File file = files.pop();
+            String parent = parents.pop();
 
-            Stack<String> parent = new Stack<>();
-            parent.push(null);
-            Stack<File> file = new Stack<>();
-            file.push(source);
-
-            while (!file.isEmpty()) {
-                File f = file.pop();
-                String p = parent.pop();
-
-                if (f.isDirectory()) {
-                    File[] children = f.listFiles();
-                    for (int i = 0; children != null && i < children.length; i++) {
-                        File child = children[i];
-                        parent.push(p == null ? f.getName() : p + File.separator + f.getName());
-                        file.push(child);
-                    }
-                } else {
-                    ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(f, p == null ? f.getName() : p + File.separator + f.getName());
-                    zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
-                    FileInputStream fis = null;
-                    try {
-                        fis = new FileInputStream(f);
-                        IOKit.transfer(fis, zipArchiveOutputStream);
-                        zipArchiveOutputStream.closeArchiveEntry();
-                    } finally {
-                        IOKit.close(fis);
-                    }
+            if (file.isDirectory()) {
+                File[] children = file.listFiles();
+                for (int i = 0; children != null && i < children.length; i++) {
+                    File child = children[i];
+                    parents.push(parent == null ? file.getName() : parent + File.separator + file.getName());
+                    files.push(child);
+                }
+            } else {
+                ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, parent == null ? file.getName() : parent + File.separator + file.getName());
+                zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(file);
+                    IOKit.transfer(fileInputStream, zipArchiveOutputStream);
+                    zipArchiveOutputStream.closeArchiveEntry();
+                } finally {
+                    IOKit.close(fileInputStream);
                 }
             }
-        } finally {
-            IOKit.close(zipArchiveOutputStream);
         }
     }
 
@@ -68,38 +66,38 @@ public class ZipKit {
     }
 
     public static void unpack(File source, File target) throws IOException {
-        if (!source.exists()) {
-            throw new FileNotFoundException("file not found: " + source.getAbsolutePath());
+        try (InputStream inputStream = new FileInputStream(source)) {
+            unpack(inputStream, target);
         }
-        ZipArchiveInputStream zipArchiveInputStream = null;
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(source);
-            zipArchiveInputStream = new ZipArchiveInputStream(fileInputStream);
-            ZipArchiveEntry zipArchiveEntry;
-            while ((zipArchiveEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
-                if (zipArchiveEntry.isDirectory()) {
-                    File directory = new File(target, zipArchiveEntry.getName());
-                    if (!directory.exists() && !directory.mkdirs()) {
-                        throw new IOException("could not make directory: " + directory);
-                    }
-                    continue;
+    }
+
+    public static void unpack(InputStream in, File target) throws IOException {
+        try (ZipArchiveInputStream zipArchiveInputStream = new ZipArchiveInputStream(in)) {
+            unpack(zipArchiveInputStream, target);
+        }
+    }
+
+    public static void unpack(ZipArchiveInputStream zipArchiveInputStream, File target) throws IOException {
+        ZipArchiveEntry zipArchiveEntry;
+        while ((zipArchiveEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
+            if (zipArchiveEntry.isDirectory()) {
+                File directory = new File(target, zipArchiveEntry.getName());
+                if (!directory.exists() && !directory.mkdirs()) {
+                    throw new IOException("could not make directory: " + directory);
                 }
-                FileOutputStream fileOutputStream = null;
-                try {
-                    File file = new File(target, zipArchiveEntry.getName());
-                    if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                        throw new IOException("could not make directory: " + file.getParentFile());
-                    }
-                    fileOutputStream = new FileOutputStream(file);
-                    IOKit.transfer(zipArchiveInputStream, fileOutputStream);
-                } finally {
-                    IOKit.close(fileOutputStream);
-                }
+                continue;
             }
-        } finally {
-            IOKit.close(zipArchiveInputStream);
-            IOKit.close(fileInputStream);
+            FileOutputStream fileOutputStream = null;
+            try {
+                File file = new File(target, zipArchiveEntry.getName());
+                if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+                    throw new IOException("could not make directory: " + file.getParentFile());
+                }
+                fileOutputStream = new FileOutputStream(file);
+                IOKit.transfer(zipArchiveInputStream, fileOutputStream);
+            } finally {
+                IOKit.close(fileOutputStream);
+            }
         }
     }
 
