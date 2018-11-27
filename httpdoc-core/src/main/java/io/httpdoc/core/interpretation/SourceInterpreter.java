@@ -244,13 +244,13 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     JarEntry entry = entries.nextElement();
                     String name = entry.getName();
                     if (name.endsWith(".java")) {
-                        String path = UriKit.encodePath(name, Charset.defaultCharset());
                         File child = new File(toDIR, name);
                         File folder = child.getParentFile();
                         if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
                             throw new IOException("could not make directory: " + folder);
                         }
                         folders.add(folder.getPath());
+                        String path = UriKit.encodePath(name, Charset.defaultCharset());
                         URL url = new URL(classpath, "jar:" + classpath + "!/" + path);
                         try (
                                 InputStream in = url.openStream();
@@ -287,13 +287,13 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
                 if (name.endsWith(".java")) {
-                    String path = UriKit.encodePath(name, Charset.defaultCharset());
                     File child = new File(toDIR, name);
                     File folder = child.getParentFile();
                     if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
                         throw new IOException("could not make directory: " + folder);
                     }
                     folders.add(folder.getPath());
+                    String path = UriKit.encodePath(name, Charset.defaultCharset());
                     URL url = new URL(classpath, path);
                     try (
                             InputStream in = url.openStream();
