@@ -288,7 +288,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 String name = entry.getName();
                 if (name.endsWith(".java")) {
                     String path = UriKit.encodePath(name, Charset.defaultCharset());
-                    File child = new File(toDIR, path);
+                    File child = new File(toDIR, name);
                     File folder = child.getParentFile();
                     if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
                         throw new IOException("could not make directory: " + folder);
