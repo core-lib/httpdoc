@@ -3,6 +3,7 @@ package io.httpdoc.core.interpretation;
 import com.sun.javadoc.*;
 import com.sun.tools.javadoc.ClassDocImpl;
 import com.sun.tools.javadoc.Main;
+import io.detector.IoKit;
 import io.detector.UriKit;
 import io.httpdoc.core.Config;
 import io.httpdoc.core.Lifecycle;
@@ -16,15 +17,13 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 public class SourceInterpreter implements Interpreter, Lifecycle {
 
@@ -171,48 +170,55 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         // 避免一直占用用户太多内存
         private static volatile SoftReference<RootDoc> rootDoc;
         private static String srcPath;
-        private static String libPath;
         private static String pkgPath;
 
         private static void initial() throws IOException {
             // 临时目录
-            File directory = getDirectory();
-            // 判断当前是不是Spring-Boot的单JAR包启动
-            if (isSpringBoot()) {
-                forSpringBoot(directory);
+            File toDIR = new File(""
+                    + System.getProperty("java.io.tmpdir")
+                    + File.separator
+                    + "httpdoc"
+                    + File.separator
+                    + UUID.randomUUID()
+            );
+            // 事先创建
+            if (!toDIR.exists() && !toDIR.mkdirs() && !toDIR.exists()) {
+                throw new IOException("could not create directory: " + toDIR);
             }
-            // 其他都是用通用方案
-            else {
-                forWebContent(directory);
-            }
-            // 构造程序包
-            forPackages();
+            // 提取源码
+            Set<String> folders = extract(toDIR);
+            srcPath = toDIR.getPath();
+            // 提取包名
+            File toTXT = new File(toDIR, "packages.txt");
+            extract(folders, toTXT);
+            pkgPath = toTXT.getPath();
         }
 
-        private static void extract(File toDIR) {
+        private static Set<String> extract(final File toDIR) {
+            Set<String> folders = new LinkedHashSet<>();
             Set<URL> classpaths = new LinkedHashSet<>();
-            ClassLoader classLoader = Javadoc.class.getClassLoader();
-            while (classLoader != null) {
+            ClassLoader classLoader = SourceInterpreter.Javadoc.class.getClassLoader();
+            while (classLoader != null && !classLoader.getClass().getName().equals("sun.misc.Launcher$ExtClassLoader")) {
                 if (classLoader instanceof URLClassLoader) {
                     URL[] urls = ((URLClassLoader) classLoader).getURLs();
                     classpaths.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
                 }
                 classLoader = classLoader.getParent();
             }
-            for (URL classpath : classpaths) {
+            for (final URL classpath : classpaths) {
                 try {
                     String protocol = classpath.getProtocol().toLowerCase();
                     switch (protocol) {
                         case "file": {
-                            String path = UriKit.decode(classpath.getPath(), Charset.defaultCharset().name());
+                            String path = UriKit.decode(classpath.getPath(), Charset.defaultCharset());
                             File file = new File(path);
-                            extract(classpath, file, toDIR);
+                            folders.addAll(extract(classpath, file, toDIR));
                         }
                         break;
                         case "jar": {
                             JarURLConnection jarURLConnection = (JarURLConnection) classpath.openConnection();
                             JarFile jarFile = jarURLConnection.getJarFile();
-                            extract(classpath, jarFile, toDIR);
+                            folders.addAll(extract(classpath, jarFile, toDIR));
                         }
                         break;
                     }
@@ -220,14 +226,105 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     logger.warn("error reading classpath: " + classpath, e);
                 }
             }
+            return folders;
         }
 
-        private static void extract(URL classpath, File file, File toDIR) {
-
+        private static Set<String> extract(URL classpath, File file, File toDIR) throws Exception {
+            Set<String> folders = new LinkedHashSet<>();
+            if (file.isDirectory()) {
+                File[] children = file.listFiles();
+                for (int i = 0; children != null && i < children.length; i++) {
+                    File child = children[i];
+                    folders.addAll(extract(classpath, child, toDIR));
+                }
+            } else if (file.getName().endsWith(".jar")) {
+                JarFile jarFile = new JarFile(file, false);
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String name = entry.getName();
+                    if (name.endsWith(".java")) {
+                        String path = UriKit.encodePath(name, Charset.defaultCharset());
+                        File child = new File(toDIR, path);
+                        File folder = child.getParentFile();
+                        if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
+                            throw new IOException("could not make directory: " + folder);
+                        }
+                        folders.add(folder.getPath());
+                        URL url = new URL(classpath, "jar:" + classpath + "!/" + path);
+                        try (
+                                InputStream in = url.openStream();
+                                OutputStream out = new FileOutputStream(child)
+                        ) {
+                            IoKit.transfer(in, out);
+                        }
+                    }
+                }
+            } else if (file.getName().endsWith(".java")) {
+                URI uri = classpath.toURI().relativize(file.toURI());
+                String path = UriKit.decode(uri.getPath(), Charset.defaultCharset());
+                File child = new File(toDIR, path);
+                File folder = child.getParentFile();
+                if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
+                    throw new IOException("could not make directory: " + folder);
+                }
+                folders.add(folder.getPath());
+                URL url = new URL(classpath, uri.toString());
+                try (
+                        InputStream in = url.openStream();
+                        OutputStream out = new FileOutputStream(child)
+                ) {
+                    IoKit.transfer(in, out);
+                }
+            }
+            return folders;
         }
 
-        private static void extract(URL classpath, JarFile jarFile, File toDIR) {
+        private static Set<String> extract(URL classpath, JarFile jarFile, File toDIR) throws Exception {
+            Set<String> folders = new LinkedHashSet<>();
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.endsWith(".java")) {
+                    String path = UriKit.encodePath(name, Charset.defaultCharset());
+                    File child = new File(toDIR, path);
+                    File folder = child.getParentFile();
+                    if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
+                        throw new IOException("could not make directory: " + folder);
+                    }
+                    folders.add(folder.getPath());
+                    URL url = new URL(classpath, path);
+                    try (
+                            InputStream in = url.openStream();
+                            OutputStream out = new FileOutputStream(child)
+                    ) {
+                        IoKit.transfer(in, out);
+                    }
+                }
+            }
+            return folders;
+        }
 
+        private static void extract(Set<String> folders, File toTXT) throws IOException {
+            try (
+                    OutputStream out = new FileOutputStream(toTXT);
+                    Writer writer = new OutputStreamWriter(out)
+            ) {
+                String separator = System.getProperty("line.separator");
+                for (String folder : folders) {
+                    String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
+                    // 检查包名是否合法
+                    if (pkg.matches("[a-zA-Z_$]+[0-9a-zA-Z_$]*(\\.[a-zA-Z_$]+[0-9a-zA-Z_$]+)*")) {
+                        List<String> packages = new ArrayList<>(Arrays.asList(pkg.split("\\.")));
+                        // 包含关键字
+                        if (packages.removeAll(keywords)) {
+                            continue;
+                        }
+                        writer.append(pkg).append(separator);
+                    }
+                }
+            }
         }
 
         @Deprecated
@@ -243,251 +340,47 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             }
             // double check
             synchronized (lock) {
-                doc = rootDoc != null ? rootDoc.get() : null;
-                if (doc != null) {
-                    return doc;
+                PrintWriter error = null;
+                PrintWriter warn = null;
+                PrintWriter notice = null;
+                try {
+                    error = new PrintWriter(new FileOutputStream(new File(srcPath, "error.log"), true));
+                    warn = new PrintWriter(new FileOutputStream(new File(srcPath, "warn.log"), true));
+                    notice = new PrintWriter(new FileOutputStream(new File(srcPath, "notice.log"), true));
+
+                    doc = rootDoc != null ? rootDoc.get() : null;
+                    if (doc != null) return doc;
+                    logger.info("start building root doc soft reference, if building frequently you should increase the JVM memories!");
+
+                    Main.execute(
+                            "httpdoc",
+                            error,
+                            warn,
+                            notice,
+                            "javadoc",
+                            Javadoc.class.getClassLoader(),
+                            "-doclet",
+                            Javadoc.class.getName(),
+                            "-verbose",
+                            "-encoding",
+                            "utf-8",
+                            "-sourcepath",
+                            srcPath,
+                            "@" + pkgPath
+                    );
+
+                    doc = rootDoc != null ? rootDoc.get() : null;
+                    logger.info("end building root doc found " + (doc != null && doc.classes() != null ? doc.classes().length : 0) + " class(es)");
+                    logger.info("more logs is located in directory: " + srcPath);
+                } catch (IOException e) {
+                    logger.error("error building httpdoc", e);
+                } finally {
+                    IoKit.close(error);
+                    IoKit.close(warn);
+                    IoKit.close(notice);
                 }
-                logger.info("start building root doc soft reference, if building frequently you should increase the JVM memories!");
-                Main.execute(new String[]{
-                        "-doclet",
-                        Javadoc.class.getName(),
-                        "-quiet",
-                        "-encoding",
-                        "utf-8",
-                        "-classpath",
-                        "\"" + libPath + "\"",
-                        "-sourcepath",
-                        srcPath,
-                        "@" + pkgPath
-                });
-                doc = rootDoc != null ? rootDoc.get() : null;
-                logger.info("end building root doc found " + (doc != null && doc.classes() != null ? doc.classes().length : 0) + " class(es)");
             }
             return doc;
-        }
-
-        private static void forWebContent(File directory) {
-            // 找出所有classpath
-            Set<URL> resources = new LinkedHashSet<>();
-            ClassLoader classLoader = Javadoc.class.getClassLoader();
-            while (classLoader != null) {
-                if (classLoader instanceof URLClassLoader) {
-                    URL[] urls = ((URLClassLoader) classLoader).getURLs();
-                    resources.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
-                }
-                classLoader = classLoader.getParent();
-            }
-
-            srcPath = directory.getPath();
-            StringBuilder libraries = new StringBuilder();
-            String separator = System.getProperty("path.separator");
-            for (URL url : resources) {
-                try {
-                    // 只处理本地文件
-                    if (!"file".equalsIgnoreCase(url.getProtocol())) continue;
-                    String file = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-                    // 如果文件不存在则忽略掉
-                    if (!new File(file).exists()) {
-                        continue;
-                    }
-                    // 如果是一个jar包
-                    if (file.endsWith(".jar")) {
-                        extract(new JarFile(file, false), directory);
-                    }
-                    // 否则就是一个文件夹
-                    else {
-                        extract(file, new File(file), directory);
-                    }
-                    String path = new File(file).getPath();
-                    libraries.append(path).append(separator);
-                    logger.info("adding classpath: " + path);
-                } catch (Exception e) {
-                    logger.warn("error reading classpath: " + url, e);
-                }
-            }
-            libPath = libraries.toString();
-        }
-
-        private static void forSpringBoot(File directory) {
-            JarFile boot = null;
-            try {
-                String classpath = System.getProperty("java.class.path");
-                // 1. 将整个Spring Boot 打包之后的JAR包 解压
-                String workspace = System.getProperty("user.dir");
-                String filepath = workspace + File.separator + classpath;
-                boot = new JarFile(filepath);
-                Manifest manifest = boot.getManifest();
-                Attributes attributes = manifest.getMainAttributes();
-
-                String clsLocation = attributes.getValue("Spring-Boot-Classes");
-                String libLocation = attributes.getValue("Spring-Boot-Lib");
-
-                Enumeration<JarEntry> entries = boot.entries();
-                while (entries != null && entries.hasMoreElements()) {
-                    JarEntry jarEntry = entries.nextElement();
-                    if (jarEntry.isDirectory()) continue;
-                    String name = jarEntry.getName();
-                    if (name.startsWith(clsLocation) && name.endsWith(".java")) extract(boot, jarEntry, directory);
-                    if (name.startsWith(libLocation) && name.endsWith(".jar")) extract(boot, jarEntry, directory);
-                }
-
-                File folder = new File(directory, clsLocation);
-                srcPath = folder.getPath();
-
-                File[] libs = new File(directory, libLocation).listFiles();
-                StringBuilder libraries = new StringBuilder();
-                String separator = System.getProperty("path.separator");
-                for (int i = 0; libs != null && i < libs.length; i++) {
-                    String path = libs[i].getPath();
-                    libraries.append(path).append(separator);
-                    logger.info("adding classpath: " + path);
-
-                    // 将其中的源码也提取到源码目录里面去
-                    JarFile jarFile = new JarFile(libs[i]);
-                    Enumeration<JarEntry> jarEntries = jarFile.entries();
-                    while (jarEntries != null && jarEntries.hasMoreElements()) {
-                        JarEntry jarEntry = jarEntries.nextElement();
-                        if (jarEntry.isDirectory()) continue;
-                        String name = jarEntry.getName();
-                        if (name.endsWith(".java")) extract(jarFile, jarEntry, folder);
-                    }
-
-                    IOKit.close(jarFile);
-                }
-                libPath = libraries.toString();
-            } catch (IOException e) {
-                logger.warn("error reading classpath" + (boot != null ? boot.getName() : ""), e);
-            } finally {
-                IOKit.close(boot);
-            }
-        }
-
-        private static File getDirectory() throws IOException {
-            File directory = new File(""
-                    + System.getProperty("java.io.tmpdir")
-                    + File.separator
-                    + "httpdoc"
-                    + File.separator
-                    + UUID.randomUUID()
-            );
-            if (!directory.exists() && !directory.mkdirs()) {
-                throw new IOException("could not create directory: " + directory);
-            }
-            return directory;
-        }
-
-        private static boolean isSpringBoot() {
-            String classpath = System.getProperty("java.class.path");
-            String[] jarLocations = classpath.split(";");
-            if (jarLocations.length == 1) {
-                JarFile jar = null;
-                try {
-                    String workspace = System.getProperty("user.dir");
-                    String filepath = workspace + File.separator + classpath;
-                    File file = new File(filepath);
-                    jar = new JarFile(file, false);
-                    Manifest manifest = jar.getManifest();
-                    Attributes attributes = manifest.getMainAttributes();
-                    String clsLocation = attributes.getValue("Spring-Boot-Classes");
-                    String libLocation = attributes.getValue("Spring-Boot-Lib");
-                    return clsLocation != null && libLocation != null;
-                } catch (Exception e) {
-                    return false;
-                } finally {
-                    IOKit.close(jar);
-                }
-            }
-            return false;
-        }
-
-        private static void forPackages() throws IOException {
-            File txt = new File(srcPath, "packages.txt");
-            Set<String> folders = getSrcFolders(new File(srcPath));
-            String separator = System.getProperty("line.separator");
-            StringBuilder builder = new StringBuilder();
-            for (String folder : folders) {
-                String pkg = folder.substring(srcPath.length() + 1).replace(File.separator, ".");
-                // 检查包名是否合法
-                if (pkg.matches("[a-zA-Z_$]+[0-9a-zA-Z_$]*(\\.[a-zA-Z_$]+[0-9a-zA-Z_$]+)*")) {
-                    List<String> packages = new ArrayList<>(Arrays.asList(pkg.split("\\.")));
-                    // 包含关键字
-                    if (packages.removeAll(keywords)) {
-                        continue;
-                    }
-                    builder.append(pkg).append(separator);
-                    logger.info("adding package: " + pkg);
-                }
-            }
-            IOKit.transfer(new StringReader(builder.toString().trim()), txt);
-            pkgPath = txt.getPath();
-        }
-
-        private static Set<String> getSrcFolders(File file) {
-            Set<String> folders = new LinkedHashSet<>();
-            if (file.isDirectory()) {
-                File[] files = file.listFiles();
-                for (int i = 0; files != null && i < files.length; i++) {
-                    folders.addAll(getSrcFolders(files[i]));
-                }
-            } else if (file.isFile() && file.getName().endsWith(".java")) {
-                folders.add(file.getParent());
-            }
-            return folders;
-        }
-
-        private static void extract(final JarFile jarFile, final JarEntry jarEntry, final File directory) {
-            InputStream in = null;
-            File src = null;
-            try {
-                String name = jarEntry.getName();
-                src = new File(directory, name);
-                if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
-                    logger.warn("could not create directory: " + src.getParentFile());
-                    return;
-                }
-                in = jarFile.getInputStream(jarEntry);
-                IOKit.transfer(in, src);
-            } catch (Exception e) {
-                logger.warn("error occur while copying jar src file: " + jarEntry + " to: " + src);
-            } finally {
-                IOKit.close(in);
-            }
-        }
-
-        private static void extract(final String root, final File file, final File directory) {
-            if (file.isDirectory()) {
-                File[] files = file.listFiles();
-                for (int i = 0; files != null && i < files.length; i++) {
-                    extract(root, files[i], directory);
-                }
-            } else if (file.isFile() && file.getName().endsWith(".java")) {
-                File src = null;
-                InputStream in = null;
-                try {
-                    String name = file.getAbsolutePath().substring(new File(root).getAbsolutePath().length());
-                    src = new File(directory, name);
-                    if (!src.getParentFile().exists() && !src.getParentFile().mkdirs()) {
-                        logger.warn("could not create directory: " + src.getParentFile());
-                        return;
-                    }
-                    in = new FileInputStream(file);
-                    IOKit.transfer(in, src);
-                } catch (Exception e) {
-                    logger.warn("error occur while copying src file: " + file + " to: " + src);
-                } finally {
-                    IOKit.close(in);
-                }
-            }
-        }
-
-        private static void extract(final JarFile jarFile, final File directory) {
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                String name = jarEntry.getName();
-                if (!name.endsWith(".java")) continue;
-                extract(jarFile, jarEntry, directory);
-            }
         }
 
         private static void destroy() {
