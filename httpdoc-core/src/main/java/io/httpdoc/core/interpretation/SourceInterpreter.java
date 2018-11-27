@@ -3,6 +3,7 @@ package io.httpdoc.core.interpretation;
 import com.sun.javadoc.*;
 import com.sun.tools.javadoc.ClassDocImpl;
 import com.sun.tools.javadoc.Main;
+import io.detector.UriKit;
 import io.httpdoc.core.Config;
 import io.httpdoc.core.Lifecycle;
 import io.httpdoc.core.kit.IOKit;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -185,6 +187,47 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             }
             // 构造程序包
             forPackages();
+        }
+
+        private static void extract(File toDIR) {
+            Set<URL> classpaths = new LinkedHashSet<>();
+            ClassLoader classLoader = Javadoc.class.getClassLoader();
+            while (classLoader != null) {
+                if (classLoader instanceof URLClassLoader) {
+                    URL[] urls = ((URLClassLoader) classLoader).getURLs();
+                    classpaths.addAll(urls != null && urls.length > 0 ? Arrays.asList(urls) : Collections.<URL>emptySet());
+                }
+                classLoader = classLoader.getParent();
+            }
+            for (URL classpath : classpaths) {
+                try {
+                    String protocol = classpath.getProtocol().toLowerCase();
+                    switch (protocol) {
+                        case "file": {
+                            String path = UriKit.decode(classpath.getPath(), Charset.defaultCharset().name());
+                            File file = new File(path);
+                            extract(classpath, file, toDIR);
+                        }
+                        break;
+                        case "jar": {
+                            JarURLConnection jarURLConnection = (JarURLConnection) classpath.openConnection();
+                            JarFile jarFile = jarURLConnection.getJarFile();
+                            extract(classpath, jarFile, toDIR);
+                        }
+                        break;
+                    }
+                } catch (Exception e) {
+                    logger.warn("error reading classpath: " + classpath, e);
+                }
+            }
+        }
+
+        private static void extract(URL classpath, File file, File toDIR) {
+
+        }
+
+        private static void extract(URL classpath, JarFile jarFile, File toDIR) {
+
         }
 
         @Deprecated
