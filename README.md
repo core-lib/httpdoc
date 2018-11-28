@@ -87,6 +87,10 @@ JDK 1.7 +
             <servlet-name>httpdoc</servlet-name>
             <servlet-class>io.httpdoc.web.HttpdocServletSupport</servlet-class>
             <init-param>
+                <param-name>packages</param-name>
+                <param-value>io.httpdoc.sample</param-value>
+            </init-param>
+            <init-param>
                 <param-name>httpdoc</param-name>
                 <param-value>项目名称</param-value>
             </init-param>
@@ -133,6 +137,7 @@ JDK 1.7 +
     ```java
     @SpringBootApplication
     @EnableHttpdoc(
+          packages = {"io.httpdoc.sample"},
           httpdoc = "服务名称", 
           version = "服务版本", 
           description = "服务描述-支持HTML语法。"
