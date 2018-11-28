@@ -1,6 +1,7 @@
 package io.httpdoc.web;
 
 import io.httpdoc.core.kit.IOKit;
+import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -40,18 +41,22 @@ public class ZipKit {
             String parent = parents.pop();
 
             if (file.isDirectory()) {
+                JarArchiveEntry jarArchiveEntry = new JarArchiveEntry(parent == null ? file.getName() + "/" : parent + "/" + file.getName() + "/");
+                jarArchiveEntry.setTime(file.lastModified());
+                zipArchiveOutputStream.putArchiveEntry(jarArchiveEntry);
+                zipArchiveOutputStream.closeArchiveEntry();
                 File[] children = file.listFiles();
                 for (int i = 0; children != null && i < children.length; i++) {
                     File child = children[i];
-                    parents.push(parent == null ? file.getName() : parent + File.separator + file.getName());
+                    parents.push(parent == null ? file.getName() : parent + "/" + file.getName());
                     files.push(child);
                 }
             } else {
-                ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, parent == null ? file.getName() : parent + File.separator + file.getName());
-                zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
                 FileInputStream fileInputStream = null;
                 try {
                     fileInputStream = new FileInputStream(file);
+                    ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, parent == null ? file.getName() : parent + "/" + file.getName());
+                    zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
                     IOKit.transfer(fileInputStream, zipArchiveOutputStream);
                     zipArchiveOutputStream.closeArchiveEntry();
                 } finally {
@@ -81,17 +86,18 @@ public class ZipKit {
         ZipArchiveEntry zipArchiveEntry;
         while ((zipArchiveEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
             if (zipArchiveEntry.isDirectory()) {
-                File directory = new File(target, zipArchiveEntry.getName());
-                if (!directory.exists() && !directory.mkdirs()) {
-                    throw new IOException("could not make directory: " + directory);
+                File parent = new File(target, zipArchiveEntry.getName());
+                if (!parent.exists() && !parent.mkdirs() && !parent.exists()) {
+                    throw new IOException("could not make directory: " + parent);
                 }
                 continue;
             }
             FileOutputStream fileOutputStream = null;
             try {
                 File file = new File(target, zipArchiveEntry.getName());
-                if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-                    throw new IOException("could not make directory: " + file.getParentFile());
+                File parent = file.getParentFile();
+                if (!parent.exists() && !parent.mkdirs() && !parent.exists()) {
+                    throw new IOException("could not make directory: " + parent);
                 }
                 fileOutputStream = new FileOutputStream(file);
                 IOKit.transfer(zipArchiveInputStream, fileOutputStream);
