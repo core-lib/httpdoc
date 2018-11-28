@@ -61,6 +61,10 @@ public abstract class HttpdocWebSupport implements Handler {
 
     public void init(HttpdocWebConfig config) throws ServletException {
         try {
+            String packages = config.getInitParameter("packages");
+            if (packages == null || packages.trim().length() == 0) {
+                throw new IllegalArgumentException("packages to scan is not defined");
+            }
             String httpdoc = config.getInitParameter("httpdoc");
             if (httpdoc != null && httpdoc.trim().length() > 0) {
                 this.httpdoc = httpdoc;

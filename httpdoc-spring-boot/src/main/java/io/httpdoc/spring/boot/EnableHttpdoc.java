@@ -33,6 +33,11 @@ import java.lang.annotation.*;
 public @interface EnableHttpdoc {
 
     /**
+     * @return Java src packages to scan
+     */
+    String[] packages();
+
+    /**
      * @return Filter name
      */
     String name() default "httpdoc";

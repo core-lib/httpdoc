@@ -7,6 +7,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.DispatcherType;
 import java.util.Arrays;
@@ -55,6 +56,7 @@ public class HttpdocFilterRegistrar implements ImportBeanDefinitionRegistrar {
         AnnotationAttributes[] params = attributes.getAnnotationArray("params");
         for (AnnotationAttributes param : params) parameters.put(param.getString("name"), param.getString("value"));
 
+        parameters.put("packages", concat(attributes.getStringArray("packages")));
         parameters.put("httpdoc", attributes.getString("httpdoc"));
         parameters.put("protocol", attributes.getString("protocol"));
         parameters.put("hostname", attributes.getString("hostname"));
@@ -84,6 +86,20 @@ public class HttpdocFilterRegistrar implements ImportBeanDefinitionRegistrar {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String concat(String... values) {
+        StringBuilder builder = new StringBuilder();
+        for (String value : values) {
+            if (!StringUtils.hasText(value)) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(", ");
+            }
+            builder.append(value);
+        }
+        return builder.toString();
     }
 
 }
