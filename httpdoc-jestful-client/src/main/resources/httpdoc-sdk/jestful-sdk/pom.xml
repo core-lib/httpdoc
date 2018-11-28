@@ -34,13 +34,13 @@
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
             <artifactId>httpdoc-jestful-client</artifactId>
-            <version>v1.6.2</version>
+            <version>v1.6.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
             <artifactId>httpdoc-jackson</artifactId>
-            <version>v1.6.2</version>
+            <version>v1.6.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
