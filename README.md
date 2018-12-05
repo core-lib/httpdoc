@@ -1,8 +1,8 @@
-# **HttpDoc** [![](https://www.jitpack.io/v/core-lib/httpdoc.svg)](https://www.jitpack.io/#core-lib/httpdoc)
+# HttpDoc [![](https://www.jitpack.io/v/core-lib/httpdoc.svg)](https://www.jitpack.io/#core-lib/httpdoc)
 ##### 基于Java标准doc注释构建的代码零侵入的HTTP RESTful API在线阅览文档及测试界面框架
 JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui-v1/index.html)
 
-## **功能特性**
+## 功能特性
 * 基础功能无需为配合HttpDoc框架而多写一句代码，甚至连doc注释都不必写，即可拥有项目的API文档和测试界面。
 * 遵循 [RFC 2616 HTTP/1.1](https://tools.ietf.org/html/rfc2616) 规范，适配主流后台WEB框架。
 * 拓展多个 Java Doc 注释标签，满足不同的文档阅览及在线测试需求。
@@ -10,10 +10,10 @@ JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/in
 * WEB服务器无关，同时支持 Spring Boot 命令方式启动。
 * 支持 Maven Gradle 或JAR包依赖。
 
-## **环境依赖**
+## 环境依赖
 JDK 1.7 +
 
-## **集成步骤**
+## 集成步骤
 ### Maven
 1. 引入依赖
 ```xml
@@ -150,18 +150,20 @@ JDK 1.7 +
     ```
     
 ## 参数说明
-* packages      源码包名，必填参数，支持配置多个，通过英文逗号，空格及换行符拆分，支持递归搜索
-* httpdoc       项目名称，缺省为HttpDoc
-* version       项目版本，缺省为1.0.0
-* description   项目描述，可以用<![CDATA[]]>套起来并使用HTML标签语法
-* protocol      访问协议，http或https，缺省为request.getProtocol();
-* hostname      主机名，缺省为request.getServerName();
-* port          端口号，缺省为request.getServerPort();
-* context       容器路径，缺省为request.getContextPath();
-* dateFormat    日期格式，缺省为yyyy-MM-dd HH:mm:ss
-* translator    文档翻译器，缺省为自动匹配当前项目的WEB框架
-* interpreter   文档解释器，缺省为源码解释器
-* serializer    文档序列化器，缺省为JSON序列化器，所以项目中需要依赖jackson-databind
+| 参数名称 | 参数说明 | 缺省值 |
+| :------- | :------- | :----- |
+| packages     | 源码包名    | 必填参数，支持配置多个，通过英文逗号，空格及换行符拆分，支持递归搜索 |
+| httpdoc      | 项目名称    | HttpDoc |
+| version      | 项目版本    | 1.0.0 |
+| description  | 项目描述    | 可以用<![CDATA[]]>套起来并使用HTML标签语法 |
+| protocol     | 访问协议    | http或https，缺省为request.getProtocol(); |
+| hostname     | 主机名      | request.getServerName(); |
+| port         | 端口号      | request.getServerPort(); |
+| context      | 容器路径    | request.getContextPath(); |
+| dateFormat   | 日期格式    | yyyy-MM-dd HH:mm:ss |
+| translator   | 文档翻译器  | 自动匹配当前项目的WEB框架 |
+| interpreter  | 文档解释器  | 源码解释器 |
+| serializer   | 文档序列化器| JSON序列化器，所以项目中需要依赖jackson-databind |
 
 ## 在线示例
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui-v1/index.html)
