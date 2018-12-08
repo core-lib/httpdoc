@@ -79,6 +79,31 @@ JDK 1.7 +
 ```
 
 3. 配置参数
+* Spring Boot
+    * 如果是Spring Boot项目则不需要上面SpringMVC的两个配置，实际上 Spring Boot 项目也没有web.xml文件来做配置。
+    * 只需要将httpdoc-spring-mvc依赖替换成下面的依赖并在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
+    ```xml
+    <dependency>
+      <groupId>com.github.core-lib.httpdoc</groupId>
+      <artifactId>httpdoc-spring-boot</artifactId>
+      <version>LATEST_VERSION</version>
+    </dependency>
+    ```
+    ```java
+    @SpringBootApplication
+    @EnableHttpdoc(
+          packages = {"io.httpdoc.sample"},
+          httpdoc = "服务名称", 
+          version = "服务版本", 
+          description = "服务描述-支持HTML语法。"
+    )
+    public class HttpdocApplication {   
+        public static void main(String[] args) {
+            SpringApplication.run(HttpdocApplication.class, args);
+        }
+    }
+    ```
+    
 * SpringMVC
     * web.xml 中增加一个servlet和servlet-mapping标签
     ```xml
@@ -122,31 +147,6 @@ JDK 1.7 +
     * spring-servlet.xml 中增加一个标签以允许浏览器访问HttpDoc的页面静态资源
     ```xml
     <mvc:resources mapping="/httpdoc-ui/**" location="classpath:/META-INF/resources/httpdoc-ui/"/>
-    ```
-        
-* Spring Boot
-    * 如果是Spring Boot项目则不需要上面SpringMVC的两个配置，实际上 Spring Boot 项目也没有web.xml文件来做配置。
-    * 只需要将httpdoc-spring-mvc依赖替换成下面的依赖并在项目入口主类上标注一个@EnableHttpdoc() 注解即可，对应的参数也可以在注解上设置。
-    ```xml
-    <dependency>
-      <groupId>com.github.core-lib.httpdoc</groupId>
-      <artifactId>httpdoc-spring-boot</artifactId>
-      <version>LATEST_VERSION</version>
-    </dependency>
-    ```
-    ```java
-    @SpringBootApplication
-    @EnableHttpdoc(
-          packages = {"io.httpdoc.sample"},
-          httpdoc = "服务名称", 
-          version = "服务版本", 
-          description = "服务描述-支持HTML语法。"
-    )
-    public class HttpdocApplication {   
-        public static void main(String[] args) {
-            SpringApplication.run(HttpdocApplication.class, args);
-        }
-    }
     ```
     
 ## 参数说明
