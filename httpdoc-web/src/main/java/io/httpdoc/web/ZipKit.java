@@ -1,7 +1,6 @@
 package io.httpdoc.web;
 
 import io.httpdoc.core.kit.IOKit;
-import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -41,9 +40,9 @@ public class ZipKit {
             String parent = parents.pop();
 
             if (file.isDirectory()) {
-                JarArchiveEntry jarArchiveEntry = new JarArchiveEntry(parent == null ? file.getName() + "/" : parent + "/" + file.getName() + "/");
-                jarArchiveEntry.setTime(file.lastModified());
-                zipArchiveOutputStream.putArchiveEntry(jarArchiveEntry);
+                ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(parent == null ? file.getName() + "/" : parent + "/" + file.getName() + "/");
+                zipArchiveEntry.setTime(file.lastModified());
+                zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
                 zipArchiveOutputStream.closeArchiveEntry();
                 File[] children = file.listFiles();
                 for (int i = 0; children != null && i < children.length; i++) {
