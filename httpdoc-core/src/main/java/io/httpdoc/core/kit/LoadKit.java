@@ -1,15 +1,17 @@
 package io.httpdoc.core.kit;
 
-import io.detector.Resource;
-import io.detector.SimpleDetector;
-import io.detector.SuffixFilter;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
+import io.loadkit.Loaders;
+import io.loadkit.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * 配置加载器
@@ -20,21 +22,17 @@ import java.util.*;
 public class LoadKit {
     private final static Logger LOGGER = LoggerFactory.getLogger(LoadKit.class);
 
-    public static Collection<Resource> load(ClassLoader classLoader) throws IOException {
-        return SimpleDetector.Builder
-                .scan("httpdoc")
-                .by(classLoader)
-                .includeJar()
-                .recursively()
-                .build()
-                .detect(new SuffixFilter(".properties"));
+    public static Enumeration<Resource> load(ClassLoader classLoader) throws IOException {
+        return Loaders.ant(classLoader)
+                .load("httpdoc/*.properties");
     }
 
     public static <T> Map<String, T> load(ClassLoader classLoader, Class<T> type) {
         Map<String, T> map = new LinkedHashMap<>();
         try {
-            Collection<Resource> resources = LoadKit.load(classLoader);
-            for (Resource resource : resources) {
+            Enumeration<Resource> resources = LoadKit.load(classLoader);
+            while (resources.hasMoreElements()) {
+                Resource resource = resources.nextElement();
                 URL url = resource.getUrl();
                 Properties properties = new Properties();
                 properties.load(url.openStream());

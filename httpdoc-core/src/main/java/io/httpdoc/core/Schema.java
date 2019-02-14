@@ -5,6 +5,7 @@ import io.httpdoc.core.annotation.Package;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
 import io.httpdoc.core.exception.SchemaUnsupportedException;
 import io.httpdoc.core.interpretation.*;
+import io.httpdoc.core.kit.ReflectionKit;
 import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.supplier.SystemSupplier;
@@ -112,6 +113,7 @@ public class Schema extends Definition implements Ordered<Schema> {
                     this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                     this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                     PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+                    List<String> indexes = ReflectionKit.getFieldNames(clazz);
                     for (PropertyDescriptor descriptor : descriptors) {
                         String field = descriptor.getName();
                         if (field.equals("class")) continue;
@@ -131,9 +133,11 @@ public class Schema extends Definition implements Ordered<Schema> {
                             Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                             property.setAlias(annotation != null ? annotation.value() : field);
                         }
+                        int index = indexes.indexOf(field);
+                        if (index >= 0) property.setOrder(index);
                         Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
                         if (order != null) property.setOrder(order);
-                        else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
+                        else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : property.getOrder());
                         String style = extendedInterpretation != null ? extendedInterpretation.getStyle() : null;
                         if (style != null && !style.trim().isEmpty()) property.setStyle(style);
                         else property.setStyle(getter.isAnnotationPresent(Style.class) ? getter.getAnnotation(Style.class).value() : null);
@@ -187,6 +191,7 @@ public class Schema extends Definition implements Ordered<Schema> {
                         this.owner = clazz.getEnclosingClass() != null ? Schema.valueOf(clazz.getEnclosingClass(), cache, supplier, interpreter) : null;
                         this.superclass = Schema.valueOf(clazz.getSuperclass() != null ? clazz.getSuperclass() : Object.class, cache, supplier, interpreter);
                         PropertyDescriptor[] descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+                        List<String> indexes = ReflectionKit.getFieldNames(clazz);
                         for (PropertyDescriptor descriptor : descriptors) {
                             String field = descriptor.getName();
                             if (field.equals("class")) continue;
@@ -206,9 +211,11 @@ public class Schema extends Definition implements Ordered<Schema> {
                                 Alias annotation = getter.isAnnotationPresent(Alias.class) ? getter.getAnnotation(Alias.class) : null;
                                 property.setAlias(annotation != null ? annotation.value() : field);
                             }
+                            int index = indexes.indexOf(field);
+                            if (index >= 0) property.setOrder(index);
                             Integer order = extendedInterpretation != null ? extendedInterpretation.getOrder() : null;
                             if (order != null) property.setOrder(order);
-                            else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : Integer.MAX_VALUE);
+                            else property.setOrder(getter.isAnnotationPresent(Order.class) ? getter.getAnnotation(Order.class).value() : property.getOrder());
                             String style = extendedInterpretation != null ? extendedInterpretation.getStyle() : null;
                             if (style != null && !style.trim().isEmpty()) property.setStyle(style);
                             else property.setStyle(getter.isAnnotationPresent(Style.class) ? getter.getAnnotation(Style.class).value() : null);

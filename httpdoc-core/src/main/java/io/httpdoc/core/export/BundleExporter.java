@@ -1,15 +1,16 @@
 package io.httpdoc.core.export;
 
-import io.detector.Resource;
-import io.detector.SimpleDetector;
 import io.httpdoc.core.kit.IOKit;
+import io.loadkit.Loaders;
+import io.loadkit.Resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.Collection;
+import java.util.Enumeration;
 
 /**
  * 工程模板导出器
@@ -24,14 +25,11 @@ public abstract class BundleExporter implements Exporter {
      * @throws IOException I/O异常
      */
     protected void copy(String bundle, String folder) throws IOException {
-        Collection<Resource> resources = SimpleDetector.Builder.scan(bundle)
-                .by(this.getClass().getClassLoader())
-                .includeJar()
-                .recursively()
-                .build()
-                .detect();
-        for (Resource resource : resources) {
-            try {
+        Enumeration<Resource> resources = Loaders.ant(this.getClass().getClassLoader())
+                .load(bundle + "/**");
+        while (resources.hasMoreElements()) {
+            Resource resource = resources.nextElement();
+            try (InputStream in = resource.getInputStream()) {
                 URL url = resource.getUrl();
                 String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
                 int index = path.lastIndexOf(bundle);
@@ -40,9 +38,7 @@ public abstract class BundleExporter implements Exporter {
                 if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
                     throw new IOException("could not make directory: " + file.getParentFile());
                 }
-                IOKit.transfer(resource.getInputStream(), file);
-            } finally {
-                IOKit.close(resource);
+                IOKit.transfer(in, file);
             }
         }
     }

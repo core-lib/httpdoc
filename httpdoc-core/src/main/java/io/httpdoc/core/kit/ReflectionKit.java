@@ -2,6 +2,8 @@ package io.httpdoc.core.kit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 反射工具
@@ -43,6 +45,17 @@ public class ReflectionKit {
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static List<String> getFieldNames(Class<?> clazz) {
+        if (clazz == null) throw new NullPointerException();
+        List<String> names = new ArrayList<>();
+        while (clazz != Object.class && clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) names.add(field.getName());
+            clazz = clazz.getSuperclass();
+        }
+        return names;
     }
 
 }

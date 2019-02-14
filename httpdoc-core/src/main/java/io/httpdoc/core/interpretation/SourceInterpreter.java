@@ -3,13 +3,11 @@ package io.httpdoc.core.interpretation;
 import com.sun.javadoc.*;
 import com.sun.tools.javadoc.ClassDocImpl;
 import com.sun.tools.javadoc.Main;
-import io.detector.IoKit;
-import io.detector.Resource;
-import io.detector.SimpleDetector;
-import io.detector.SuffixFilter;
 import io.httpdoc.core.Config;
 import io.httpdoc.core.Lifecycle;
 import io.httpdoc.core.kit.IOKit;
+import io.loadkit.Loaders;
+import io.loadkit.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,13 +183,10 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
             Set<String> folders = new LinkedHashSet<>();
             String[] packages = config.getInitParameter("packages").split("[,\\s\r\n]+");
             for (String pkg : packages) {
-                Collection<Resource> resources = SimpleDetector.Builder.scan(pkg)
-                        .includeJar()
-                        .recursively()
-                        .by(Javadoc.class.getClassLoader())
-                        .build()
-                        .detect(new SuffixFilter(".java"));
-                for (Resource resource : resources) {
+                Enumeration<Resource> resources = Loaders.ant(Javadoc.class.getClassLoader())
+                        .load(pkg.replace('.', '/') + "/**.java");
+                while (resources.hasMoreElements()) {
+                    Resource resource = resources.nextElement();
                     File file = new File(toDIR, resource.getName());
                     File folder = file.getParentFile();
                     if (!folder.exists() && !folder.mkdirs() && !folder.exists()) {
@@ -202,7 +197,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                             InputStream in = resource.getInputStream();
                             OutputStream out = new FileOutputStream(file)
                     ) {
-                        IoKit.transfer(in, out);
+                        IOKit.transfer(in, out);
                     }
                 }
             }
@@ -279,9 +274,9 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                 } catch (IOException e) {
                     logger.error("error building httpdoc", e);
                 } finally {
-                    IoKit.close(error);
-                    IoKit.close(warn);
-                    IoKit.close(notice);
+                    IOKit.close(error);
+                    IOKit.close(warn);
+                    IOKit.close(notice);
                 }
             }
             return doc;
