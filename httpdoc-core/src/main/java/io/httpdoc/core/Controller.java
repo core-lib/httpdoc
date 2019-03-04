@@ -14,6 +14,7 @@ public class Controller extends Definition implements Ordered<Controller> {
 
     private String pkg;
     private String name;
+    private String alias;
     private String path;
     private List<String> produces = new ArrayList<>();
     private List<String> consumes = new ArrayList<>();
@@ -44,6 +45,14 @@ public class Controller extends Definition implements Ordered<Controller> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getPath() {

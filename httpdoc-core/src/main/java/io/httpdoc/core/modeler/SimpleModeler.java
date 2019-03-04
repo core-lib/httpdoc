@@ -10,10 +10,7 @@ import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 简单的模型师
@@ -22,6 +19,20 @@ import java.util.Set;
  * @date 2018-05-18 11:15
  **/
 public class SimpleModeler implements Modeler<ClassFragment> {
+    private static final Set<String> KEYWORDS = new HashSet<>(
+            Arrays.asList(
+                    "abstract", "assert", "boolean", "break", "byte",
+                    "case", "catch", "char", "class", "const", "continue",
+                    "default", "do", "double", "else", "enum", "extends",
+                    "final", "finally", "float", "for", "goto", "if",
+                    "implements", "import", "instanceof", "int", "interface",
+                    "long", "native", "new", "package", "private", "protected",
+                    "public", "return", "strictfp", "short", "static", "super",
+                    "switch", "synchronized", "this", "throw", "throws",
+                    "transient", "try", "void", "volatile", "while",
+                    "null", "true", "false"
+            )
+    );
 
     @Override
     public Collection<ClassFragment> design(Archetype archetype) throws SchemaDesignException {
@@ -54,15 +65,16 @@ public class SimpleModeler implements Modeler<ClassFragment> {
                     Property property = entry.getValue();
                     HDType type = property.getType().toType(pkgGenerated, pkgForced, supplier);
                     FieldFragment field = new FieldFragment();
-                    field.setName(entry.getKey());
+                    String alias = KEYWORDS.contains(entry.getKey()) ? "_" + entry.getKey() : entry.getKey();
+                    field.setName(alias);
                     field.setType(type);
                     field.setCommentFragment(new CommentFragment(property.getDescription()));
                     clazz.getFieldFragments().add(field);
 
-                    GetterMethodFragment getter = new GetterMethodFragment(type, entry.getKey());
+                    GetterMethodFragment getter = new GetterMethodFragment(type, entry.getKey(), alias);
                     clazz.getMethodFragments().add(getter);
 
-                    SetterMethodFragment setter = new SetterMethodFragment(type, entry.getKey());
+                    SetterMethodFragment setter = new SetterMethodFragment(type, entry.getKey(), alias);
                     clazz.getMethodFragments().add(setter);
                 }
                 break;

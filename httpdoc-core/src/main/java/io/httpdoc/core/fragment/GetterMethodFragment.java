@@ -10,10 +10,10 @@ import io.httpdoc.core.type.HDType;
  **/
 public class GetterMethodFragment extends MethodFragment {
 
-    public GetterMethodFragment(HDType type, String name) {
+    public GetterMethodFragment(HDType type, String name, String alias) {
         this.resultFragment = new ResultFragment(type);
         this.name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
-        this.blockFragment = new BlockFragment("return " + name + ";");
+        this.blockFragment = new BlockFragment("return " + alias + ";");
     }
 
 }

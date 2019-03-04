@@ -102,6 +102,10 @@ public class JestfulTranslator implements Translator {
                 if (StringUtils.hasText(name)) controller.setName(name);
                 else controller.setName(clazz.isAnnotationPresent(Name.class) ? clazz.getAnnotation(Name.class).value() : clazz.getSimpleName());
 
+                String alias = interpretation != null ? interpretation.getAlias() : null;
+                if (StringUtils.hasText(alias)) controller.setAlias(alias);
+                else controller.setAlias(clazz.isAnnotationPresent(Alias.class) ? clazz.getAnnotation(Alias.class).value() : controller.getName());
+
                 Resource resource = mapping.getResource();
                 controller.setPath(normalize(resource.getExpression()));
 

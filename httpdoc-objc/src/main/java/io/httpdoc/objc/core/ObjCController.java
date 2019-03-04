@@ -37,6 +37,16 @@ public class ObjCController extends Controller {
     }
 
     @Override
+    public String getAlias() {
+        return controller.getAlias();
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        controller.setAlias(alias);
+    }
+
+    @Override
     public String getPath() {
         return controller.getPath();
     }

@@ -144,7 +144,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
     public static abstract class Javadoc {
         // 采用HashSet当List.retainAll(keywords) 时时间复杂度度可以从 O(n * m) 下降为 O(n) 因为HashSet的contains(o)方法时间复杂度为O(1)
-        private static final Set<String> keywords = new HashSet<>(
+        private static final Set<String> KEYWORDS = new HashSet<>(
                 Arrays.asList(
                         "abstract", "assert", "boolean", "break", "byte",
                         "case", "catch", "char", "class", "const", "continue",
@@ -216,7 +216,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                     if (pkg.matches("[a-zA-Z_$]+[0-9a-zA-Z_$]*(\\.[a-zA-Z_$]+[0-9a-zA-Z_$]+)*")) {
                         List<String> parts = new ArrayList<>(Arrays.asList(pkg.split("\\.")));
                         // 包含关键字
-                        if (parts.removeAll(keywords)) {
+                        if (parts.removeAll(KEYWORDS)) {
                             continue;
                         }
                         writer.append(pkg).append(separator);

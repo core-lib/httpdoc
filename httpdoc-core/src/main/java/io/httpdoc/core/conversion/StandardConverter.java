@@ -100,6 +100,9 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
         String name = controller.getName();
         if (name != null) map.put("name", name);
 
+        String alias = controller.getAlias();
+        if (alias != null) map.put("alias", alias);
+
         String pkg = controller.getPkg();
         if (pkg != null && format.isPkgIncluded()) map.put("pkg", pkg);
 
@@ -533,6 +536,7 @@ public class StandardConverter implements Converter, Comparator<Map.Entry<String
 
         controller.setPkg((String) map.get("pkg"));
         controller.setName((String) map.get("name"));
+        controller.setAlias((String) map.get("alias"));
         controller.setPath((String) map.get("path"));
 
         Object produces = map.get("produces");

@@ -10,12 +10,12 @@ import io.httpdoc.core.type.HDType;
  **/
 public class SetterMethodFragment extends MethodFragment {
 
-    public SetterMethodFragment(HDType type, String name) {
+    public SetterMethodFragment(HDType type, String name, String alias) {
         this.resultFragment = new ResultFragment(HDType.valueOf(void.class));
         this.name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-        ParameterFragment parameter = new ParameterFragment(type, name);
+        ParameterFragment parameter = new ParameterFragment(type, alias);
         this.parameterFragments.add(parameter);
-        this.blockFragment = new BlockFragment("this." + name + " = " + name + ";");
+        this.blockFragment = new BlockFragment("this." + alias + " = " + alias + ";");
     }
 
 }
