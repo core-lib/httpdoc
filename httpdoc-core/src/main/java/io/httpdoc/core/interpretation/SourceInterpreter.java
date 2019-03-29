@@ -164,6 +164,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
         private static volatile SoftReference<RootDoc> rootDoc;
         private static String srcPath;
         private static String pkgPath;
+        private static volatile boolean hasError = false;
 
         private static void initial(Config config) throws IOException {
             // 临时目录
@@ -234,7 +235,7 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
 
         private static RootDoc build() {
             RootDoc doc = rootDoc != null ? rootDoc.get() : null;
-            if (doc != null) {
+            if (doc != null || hasError) {
                 return doc;
             }
             // double check
@@ -267,6 +268,11 @@ public class SourceInterpreter implements Interpreter, Lifecycle {
                             srcPath,
                             "@" + pkgPath
                     );
+
+                    // 如果获取不了
+                    if (rootDoc == null) {
+                        hasError = true;
+                    }
 
                     doc = rootDoc != null ? rootDoc.get() : null;
                     logger.info("end building root doc found " + (doc != null && doc.classes() != null ? doc.classes().length : 0) + " class(es)");
