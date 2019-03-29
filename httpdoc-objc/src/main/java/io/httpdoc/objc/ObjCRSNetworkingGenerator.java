@@ -236,7 +236,7 @@ public class ObjCRSNetworkingGenerator implements Generator {
                     selector.addSentence("[invocation addBodyValue:" + variable + " ofName:" + name + "];");
                     break;
                 case Parameter.HTTP_PARAM_SCOPE_COOKIE:
-                    selector.addSentence("[invocation adCookieValue:" + variable + " ofName:" + name + "];");
+                    selector.addSentence("[invocation addCookieValue:" + variable + " ofName:" + name + "];");
                     break;
                 case Parameter.HTTP_PARAM_SCOPE_FIELD:
                     selector.addSentence("[invocation addQueryValue:" + variable + " ofName:" + name + "];");

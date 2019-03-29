@@ -125,7 +125,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 多请求体情况下的该参数部分的绑定名称
      */
-    protected static String getPartName(MethodParameter parameter) {
+    protected String getPartName(MethodParameter parameter) {
         Method method = parameter.getMethod();
         int index = parameter.getParameterIndex();
         String[] names = DISCOVERER.getParameterNames(method);
@@ -150,7 +150,7 @@ public class SpringMVCTranslator implements Translator {
      * @param handler 处理器方法
      * @return 方法的返回值结果类型
      */
-    protected static Type getReturnType(HandlerMethod handler) {
+    protected Type getReturnType(HandlerMethod handler) {
         Type returnType = handler.getReturnType().getGenericParameterType();
         if (returnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) returnType;
@@ -166,7 +166,7 @@ public class SpringMVCTranslator implements Translator {
      * @param type 类型
      * @return 是否为简单类型
      */
-    protected static boolean isSimpleType(Type type) {
+    protected boolean isSimpleType(Type type) {
         // 普通类
         if (type instanceof Class<?>) {
             Class<?> clazz = (Class<?>) type;
@@ -205,12 +205,12 @@ public class SpringMVCTranslator implements Translator {
         return false;
     }
 
-    protected static boolean isMultipartFile(Type type) {
+    protected boolean isMultipartFile(Type type) {
         return type instanceof Class<?>
                 && (MultipartFile.class.isAssignableFrom((Class<?>) type) || Part.class.isAssignableFrom((Class<?>) type));
     }
 
-    protected static boolean isMultipartFiles(Type type) {
+    protected boolean isMultipartFiles(Type type) {
         if (type instanceof Class<?>) {
             Class<?> clazz = (Class<?>) type;
             return clazz.isArray() && isMultipartFile(clazz.getComponentType());
@@ -235,7 +235,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 绑定域
      */
-    protected static String getBindScope(MethodParameter parameter) {
+    protected String getBindScope(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(RequestBody.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(RequestPart.class)) return Parameter.HTTP_PARAM_SCOPE_BODY;
         if (parameter.hasParameterAnnotation(PathVariable.class)) return Parameter.HTTP_PARAM_SCOPE_PATH;
@@ -253,7 +253,7 @@ public class SpringMVCTranslator implements Translator {
      * @param parameter 参数
      * @return 参数名
      */
-    protected static String getBindName(MethodParameter parameter) {
+    protected String getBindName(MethodParameter parameter) {
         Method method = parameter.getMethod();
         int index = parameter.getParameterIndex();
         String[] names = DISCOVERER.getParameterNames(method);
