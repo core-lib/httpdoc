@@ -192,7 +192,7 @@ public class SpringMVCTranslator implements Translator {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type rawType = parameterizedType.getRawType();
             // 未知类型
-            if (!Class.class.isInstance(rawType)) return false;
+            if (!(rawType instanceof Class)) return false;
             Class<?> clazz = (Class<?>) rawType;
             // 集合类型 则看元素类型是否是简单类型
             if (Collection.class.isAssignableFrom(clazz)) return isSimpleType(parameterizedType.getActualTypeArguments()[0]);
