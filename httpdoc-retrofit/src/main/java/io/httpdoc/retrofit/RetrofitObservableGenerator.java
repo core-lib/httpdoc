@@ -30,37 +30,37 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class RetrofitRxJavaGenerator extends RetrofitAbstractGenerator {
+public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
 
-    public RetrofitRxJavaGenerator() {
-        super("", "ForRxJava");
+    public RetrofitObservableGenerator() {
+        super("", "ForObservable");
     }
 
-    public RetrofitRxJavaGenerator(String prefix, String suffix) {
+    public RetrofitObservableGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitRxJavaGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitObservableGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitRxJavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitObservableGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitRxJavaGenerator(Modeler<ClassFragment> modeler) {
+    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitRxJavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitRxJavaGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitRxJavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 

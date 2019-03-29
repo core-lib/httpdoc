@@ -90,6 +90,17 @@
             <version>${httpdoc.version}</version>
         </dependency>
         <!-- HttpDoc SDK 相关依赖 结束 -->
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.1.5</version>
+        </dependency>
     </dependencies>
 
     <build>

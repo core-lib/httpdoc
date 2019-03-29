@@ -6,7 +6,6 @@ import io.httpdoc.core.Property;
 import io.httpdoc.core.Schema;
 import io.httpdoc.core.exception.SchemaDesignException;
 import io.httpdoc.core.modeler.Archetype;
-import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.objc.core.ObjCSchema;
 import io.httpdoc.objc.foundation.NSDictionary;
@@ -23,7 +22,7 @@ import java.util.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:37
  **/
-public class ObjCMJExtensionModeler implements Modeler<ObjCFile> {
+public class ObjCMJExtensionModeler implements ObjCModeler {
 
     /**
      * 设计

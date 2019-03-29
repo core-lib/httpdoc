@@ -15,7 +15,7 @@ public class SDKGenerator {
     public void generate() throws Exception {
         RetrofitMergedGenerator generator = new RetrofitMergedGenerator();
 //        generator.include(RetrofitCallGenerator.class);       // default
-//        generator.include(RetrofitRxJavaGenerator.class);     // need retrofit2: adapter-rxjava2
+//        generator.include(RetrofitObservableGenerator.class);     // need retrofit2: adapter-rxjava2
 //        generator.include(RetrofitJava8Generator.class);      // need retrofit2: adapter-java8
 //        generator.include(RetrofitGuavaGenerator.class);      // need retrofit2: adapter-guava
 
