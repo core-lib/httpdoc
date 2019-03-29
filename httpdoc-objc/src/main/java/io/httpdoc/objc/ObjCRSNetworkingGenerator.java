@@ -34,6 +34,7 @@ public class ObjCRSNetworkingGenerator implements Generator {
     private final static String DEFAULT_PREFIX = "HD";
     private final String prefix;
     private final Modeler<ObjCFile> modeler;
+    private ObjCSELNamingStrategy selNamingStrategy = new ObjCSELDefaultNamingStrategy();
 
     public ObjCRSNetworkingGenerator() {
         this(DEFAULT_PREFIX);
@@ -168,6 +169,7 @@ public class ObjCRSNetworkingGenerator implements Generator {
     protected Collection<ObjCSelectorFragment> generate(OperationGenerateContext context) {
         Operation operation = context.getOperation();
         ObjCSelectorFragment selector = new ObjCSelectorFragment();
+        selector.setSelNamingStrategy(selNamingStrategy);
         selector.setComment(operation.getDescription());
         Result result = operation.getResult();
         String comment = result != null ? result.getDescription() : null;
@@ -280,4 +282,11 @@ public class ObjCRSNetworkingGenerator implements Generator {
         return fragments;
     }
 
+    public ObjCSELNamingStrategy getSelNamingStrategy() {
+        return selNamingStrategy;
+    }
+
+    public void setSelNamingStrategy(ObjCSELNamingStrategy selNamingStrategy) {
+        this.selNamingStrategy = selNamingStrategy;
+    }
 }

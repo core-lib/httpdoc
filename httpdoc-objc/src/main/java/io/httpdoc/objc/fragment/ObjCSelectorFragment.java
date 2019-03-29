@@ -2,10 +2,11 @@ package io.httpdoc.objc.fragment;
 
 import io.httpdoc.core.Preference;
 import io.httpdoc.core.appender.LineAppender;
-import io.httpdoc.core.appender.TitleCasedAppender;
 import io.httpdoc.core.fragment.Fragment;
 import io.httpdoc.core.kit.StringKit;
 import io.httpdoc.objc.ObjC;
+import io.httpdoc.objc.ObjCSELDefaultNamingStrategy;
+import io.httpdoc.objc.ObjCSELNamingStrategy;
 import io.httpdoc.objc.type.ObjCType;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ObjCSelectorFragment implements Fragment {
     private Set<ObjCParameterFragment> parameterFragments = new LinkedHashSet<>();
     private String comment;
     private ObjCBlockFragment blockFragment;
+    private ObjCSELNamingStrategy selNamingStrategy = new ObjCSELDefaultNamingStrategy();
 
     public ObjCSelectorFragment() {
     }
@@ -61,6 +63,7 @@ public class ObjCSelectorFragment implements Fragment {
         declaration.setName(name);
         declaration.setParameterFragments(parameterFragments);
         declaration.setComment(comment);
+        declaration.setSelNamingStrategy(selNamingStrategy);
         return declaration;
     }
 
@@ -84,15 +87,7 @@ public class ObjCSelectorFragment implements Fragment {
         if (resultFragment != null) resultFragment.joinTo(appender, preference);
         else appender.append("(void)");
 
-        appender.append(name);
-        TitleCasedAppender tca = new TitleCasedAppender(appender);
-        int index = 0;
-        for (ObjCParameterFragment parameterFragment : parameterFragments) {
-            if (index++ == 0) appender.append("With");
-            else appender.enter().append("    ");
-            parameterFragment.joinTo(tca, preference);
-        }
-        tca.close();
+        selNamingStrategy.joinTo(appender, preference, name, parameterFragments);
 
         if (blockFragment != null) blockFragment.joinTo(appender, preference);
         else appender.append(";");
@@ -209,4 +204,12 @@ public class ObjCSelectorFragment implements Fragment {
         return this;
     }
 
+    public ObjCSELNamingStrategy getSelNamingStrategy() {
+        return selNamingStrategy;
+    }
+
+    public ObjCSelectorFragment setSelNamingStrategy(ObjCSELNamingStrategy selNamingStrategy) {
+        this.selNamingStrategy = selNamingStrategy;
+        return this;
+    }
 }

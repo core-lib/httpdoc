@@ -45,6 +45,10 @@
             <param-value>MJExtension</param-value>
         </init-param>
         <init-param>
+            <param-name>objc.exporter.selector-naming-strategy</param-name>
+            <param-value>underline</param-value>
+        </init-param>
+        <init-param>
             <param-name>httpdoc</param-name>
             <param-value>HttpDoc-Sample</param-value>
         </init-param>

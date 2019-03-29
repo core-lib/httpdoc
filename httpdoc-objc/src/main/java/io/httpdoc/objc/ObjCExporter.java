@@ -19,6 +19,7 @@ import java.util.Map;
 public class ObjCExporter extends BundleExporter implements Exporter, Lifecycle {
     private String prefix = "HD";
     private ObjCModeler modeler = new ObjCMJExtensionModeler();
+    private ObjCSELNamingStrategy selNamingStrategy = new ObjCSELDefaultNamingStrategy();
 
     @Override
     public String platform() {
@@ -36,6 +37,7 @@ public class ObjCExporter extends BundleExporter implements Exporter, Lifecycle 
         copy("httpdoc-sdk/objc-sdk", folder);
 
         ObjCRSNetworkingGenerator generator = new ObjCRSNetworkingGenerator(prefix, modeler);
+        generator.setSelNamingStrategy(selNamingStrategy);
 
         Generation generation = new Generation(document);
         generation.setDirectory(folder + "/SDK");
@@ -46,20 +48,32 @@ public class ObjCExporter extends BundleExporter implements Exporter, Lifecycle 
 
     @Override
     public void initial(Config config) throws Exception {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
         {
             String value = config.getInitParameter("objc.exporter.prefix");
             if (!StringKit.isBlank(value)) {
                 prefix = value.trim();
             }
         }
+
         {
             String value = config.getInitParameter("objc.exporter.modeler");
             if (!StringKit.isBlank(value)) {
-                ClassLoader classLoader = this.getClass().getClassLoader();
                 Map<String, ObjCModeler> map = LoadKit.load(classLoader, ObjCModeler.class);
                 ObjCModeler modeler = map.get(value.trim());
                 if (modeler == null) throw new HttpdocException("unrecognized modeler named: " + value + " currently supports " + map.keySet());
                 this.modeler = modeler;
+            }
+        }
+
+        {
+            String value = config.getInitParameter("objc.exporter.selector-naming-strategy");
+            if (!StringKit.isBlank(value)) {
+                Map<String, ObjCSELNamingStrategy> map = LoadKit.load(classLoader, ObjCSELNamingStrategy.class);
+                ObjCSELNamingStrategy selNamingStrategy = map.get(value.trim());
+                if (modeler == null) throw new HttpdocException("unrecognized selector naming strategy named: " + value + " currently supports " + map.keySet());
+                this.selNamingStrategy = selNamingStrategy;
             }
         }
     }
