@@ -19,10 +19,21 @@ import io.httpdoc.objc.type.ObjCType;
 import java.util.*;
 
 /**
+ * MJExtension 风格的模型师
+ *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-07-25 16:37
  **/
 public class ObjCMJExtensionModeler implements ObjCModeler {
+    private final Class<? extends ObjC> defaultSuperclass;
+
+    public ObjCMJExtensionModeler() {
+        this(NSObject.class);
+    }
+
+    public ObjCMJExtensionModeler(Class<? extends ObjC> defaultSuperclass) {
+        this.defaultSuperclass = defaultSuperclass;
+    }
 
     /**
      * 设计
@@ -68,8 +79,9 @@ public class ObjCMJExtensionModeler implements ObjCModeler {
                 ObjCClassHeaderFragment interfase = new ObjCClassHeaderFragment();
                 interfase.setName(name);
                 interfase.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
-                ObjCSchema superclass = (ObjCSchema) schema.getSuperclass();
-                interfase.setSuperclass(superclass != null ? (ObjCClass) superclass.toObjCType(supplier) : ObjCType.valueOf(NSObject.class));
+                ObjCSchema parent = (ObjCSchema) schema.getSuperclass();
+                ObjCClass superclass = parent != null ? (ObjCClass) parent.toObjCType(supplier) : ObjCType.valueOf(defaultSuperclass);
+                interfase.setSuperclass(superclass == null || superclass.equals(ObjCType.valueOf(NSObject.class)) ? ObjCType.valueOf(defaultSuperclass) : superclass);
                 Map<String, Property> properties = schema.getProperties();
                 for (Map.Entry<String, Property> entry : (properties != null ? properties.entrySet() : Collections.<Map.Entry<String, Property>>emptySet())) {
                     Property property = entry.getValue();
