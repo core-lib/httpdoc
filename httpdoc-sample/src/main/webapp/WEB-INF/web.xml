@@ -30,7 +30,7 @@
         </init-param>
         <init-param>
             <param-name>retrofit.exporter.generators</param-name>
-            <param-value>call, guava</param-value>
+            <param-value>standard, callback, observable</param-value>
         </init-param>
         <init-param>
             <param-name>jestful.exporter.generators</param-name>
