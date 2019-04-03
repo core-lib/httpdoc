@@ -6,8 +6,6 @@ import io.httpdoc.core.fragment.MethodFragment;
 import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.modeler.SimpleModeler;
-import retrofit2.CallAdapter;
-import retrofit2.Converter;
 
 import java.util.*;
 
@@ -21,7 +19,7 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     private final Map<Class<? extends RetrofitAbstractGenerator>, RetrofitAbstractGenerator> generators = new LinkedHashMap<>();
 
     public RetrofitMergedGenerator() {
-        this(Collections.singleton(new RetrofitCallGenerator()));
+        this(Collections.singleton(new RetrofitStandardGenerator()));
     }
 
     public RetrofitMergedGenerator(Collection<? extends RetrofitAbstractGenerator> generators) {
@@ -29,7 +27,7 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     }
 
     public RetrofitMergedGenerator(Modeler<ClassFragment> modeler) {
-        this(modeler, Collections.singleton(new RetrofitCallGenerator()));
+        this(modeler, Collections.singleton(new RetrofitStandardGenerator()));
     }
 
     public RetrofitMergedGenerator(Modeler<ClassFragment> modeler, Collection<? extends RetrofitAbstractGenerator> generators) {
@@ -43,13 +41,6 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
         Collection<MethodFragment> fragments = new LinkedHashSet<>();
         for (RetrofitAbstractGenerator generator : generators.values()) fragments.addAll(generator.generate(context));
         return fragments;
-    }
-
-    @Override
-    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
-        Set<Class<? extends CallAdapter.Factory>> callAdapterFactories = new LinkedHashSet<>();
-        for (RetrofitAbstractGenerator generator : generators.values()) callAdapterFactories.addAll(generator.getCallAdapterFactories());
-        return callAdapterFactories;
     }
 
     public RetrofitMergedGenerator include(Class<? extends RetrofitAbstractGenerator> clazz) {
@@ -75,16 +66,6 @@ public class RetrofitMergedGenerator extends RetrofitAbstractGenerator {
     public RetrofitMergedGenerator exclude(RetrofitAbstractGenerator generator) {
         if (generator == null) throw new NullPointerException();
         return exclude(generator.getClass());
-    }
-
-    public RetrofitMergedGenerator add(Class<? extends Converter.Factory> converterFactory) {
-        converterFactories.add(converterFactory);
-        return this;
-    }
-
-    public RetrofitMergedGenerator remove(Class<? extends Converter.Factory> converterFactory) {
-        converterFactories.remove(converterFactory);
-        return this;
     }
 
 }

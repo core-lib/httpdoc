@@ -1,4 +1,4 @@
-package io.httpdoc.retrofit;
+package io.httpdoc.retrofit2;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
@@ -14,50 +14,52 @@ import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import okhttp3.ResponseBody;
-import retrofit.converter.Converter;
-import rx.Observable;
+import retrofit2.Call;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Jestful Client Observable 生成器
+ * Jestful Client Future 生成器
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
+public class Retrofit2CallGenerator extends Retrofit2AbstractGenerator {
 
-    public RetrofitObservableGenerator() {
-        super("", "ForObservable");
+    public Retrofit2CallGenerator() {
+        super("", "");
     }
 
-    public RetrofitObservableGenerator(String prefix, String suffix) {
+    public Retrofit2CallGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitObservableGenerator(Collection<Class<? extends Converter>> converterFactories) {
+    public Retrofit2CallGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitObservableGenerator(String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
+    public Retrofit2CallGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler) {
+    public Retrofit2CallGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public Retrofit2CallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter>> converterFactories) {
+    public Retrofit2CallGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
+    public Retrofit2CallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 
@@ -82,7 +84,7 @@ public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
                 ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
                 : result.getType().toType(pkg, pkgForced, supplier)
                 : null;
-        HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Observable.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
+        HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Call.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
         String comment = result != null ? result.getDescription() : null;
         method.setResultFragment(new ResultFragment(returnType, comment));
         method.setName(name(operation.getName()));
@@ -92,4 +94,8 @@ public class RetrofitObservableGenerator extends RetrofitAbstractGenerator {
         return Collections.singleton(method);
     }
 
+    @Override
+    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
+        return Collections.emptySet();
+    }
 }

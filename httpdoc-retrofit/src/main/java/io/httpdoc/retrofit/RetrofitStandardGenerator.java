@@ -11,55 +11,51 @@ import io.httpdoc.core.generation.OperationGenerateContext;
 import io.httpdoc.core.generation.ParameterGenerateContext;
 import io.httpdoc.core.modeler.Modeler;
 import io.httpdoc.core.supplier.Supplier;
-import io.httpdoc.core.type.HDParameterizedType;
 import io.httpdoc.core.type.HDType;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.CallAdapter;
-import retrofit2.Converter;
+import retrofit.converter.Converter;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
- * Jestful Client Future 生成器
+ * Retrofit Client 标准生成器
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
+public class RetrofitStandardGenerator extends RetrofitAbstractGenerator {
 
-    public RetrofitCallGenerator() {
+    public RetrofitStandardGenerator() {
         super("", "");
     }
 
-    public RetrofitCallGenerator(String prefix, String suffix) {
+    public RetrofitStandardGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitCallGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitStandardGenerator(Collection<Class<? extends Converter>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitCallGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitStandardGenerator(String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitCallGenerator(Modeler<ClassFragment> modeler) {
+    public RetrofitStandardGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public RetrofitStandardGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitStandardGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitCallGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public RetrofitStandardGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 
@@ -77,14 +73,8 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
         Collection<HDAnnotation> annotations = annotate(document, controller, operation);
         method.getAnnotations().addAll(annotations);
         Result result = operation.getResult();
-        HDType type = result != null && result.getType() != null
-                ? result.getType().isVoid()
-                ? null
-                : result.getType().isPrimitive()
-                ? result.getType().toWrapper().toType(pkg, pkgForced, supplier)
-                : result.getType().toType(pkg, pkgForced, supplier)
-                : null;
-        HDParameterizedType returnType = new HDParameterizedType(HDType.valueOf(Call.class), null, type != null ? type : HDType.valueOf(ResponseBody.class));
+        HDType type = result != null && result.getType() != null ? result.getType().isVoid() ? null : result.getType().toType(pkg, pkgForced, supplier) : null;
+        HDType returnType = type != null ? type : HDType.valueOf(ResponseBody.class);
         String comment = result != null ? result.getDescription() : null;
         method.setResultFragment(new ResultFragment(returnType, comment));
         method.setName(name(operation.getName()));
@@ -94,8 +84,4 @@ public class RetrofitCallGenerator extends RetrofitAbstractGenerator {
         return Collections.singleton(method);
     }
 
-    @Override
-    protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
-        return Collections.emptySet();
-    }
 }

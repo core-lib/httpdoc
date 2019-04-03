@@ -1,4 +1,4 @@
-package io.httpdoc.retrofit;
+package io.httpdoc.retrofit2;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.fragment.ClassFragment;
@@ -14,8 +14,9 @@ import io.httpdoc.core.modeler.SimpleModeler;
 import io.httpdoc.core.supplier.Supplier;
 import io.httpdoc.core.type.HDClass;
 import io.httpdoc.core.type.HDType;
-import retrofit.converter.Converter;
-import retrofit.http.*;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
+import retrofit2.http.*;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ import static io.httpdoc.core.Parameter.*;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-04-27 15:59
  **/
-public abstract class RetrofitAbstractGenerator extends FragmentGenerator implements Generator {
+public abstract class Retrofit2AbstractGenerator extends FragmentGenerator implements Generator {
     protected final static Collection<String> SCOPES = Arrays.asList(
             Parameter.HTTP_PARAM_SCOPE_HEADER,
             Parameter.HTTP_PARAM_SCOPE_PATH,
@@ -37,37 +38,37 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
     );
     protected final String prefix;
     protected final String suffix;
-    protected final Set<Class<? extends Converter>> converterFactories = new LinkedHashSet<>();
+    protected final Set<Class<? extends Converter.Factory>> converterFactories = new LinkedHashSet<>();
 
-    protected RetrofitAbstractGenerator() {
+    protected Retrofit2AbstractGenerator() {
         this("", "");
     }
 
-    protected RetrofitAbstractGenerator(String prefix, String suffix) {
-        this(prefix, suffix, Collections.<Class<? extends Converter>>emptyList());
+    protected Retrofit2AbstractGenerator(String prefix, String suffix) {
+        this(prefix, suffix, Collections.<Class<? extends Converter.Factory>>emptyList());
     }
 
-    protected RetrofitAbstractGenerator(Collection<Class<? extends Converter>> converterFactories) {
+    protected Retrofit2AbstractGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         this("", "", converterFactories);
     }
 
-    protected RetrofitAbstractGenerator(String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
+    protected Retrofit2AbstractGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         this(new SimpleModeler(), prefix, suffix, converterFactories);
     }
 
-    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler) {
+    protected Retrofit2AbstractGenerator(Modeler<ClassFragment> modeler) {
         this(modeler, "", "");
     }
 
-    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
-        this(modeler, prefix, suffix, Collections.<Class<? extends Converter>>emptyList());
+    protected Retrofit2AbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+        this(modeler, prefix, suffix, Collections.<Class<? extends Converter.Factory>>emptyList());
     }
 
-    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter>> converterFactories) {
+    protected Retrofit2AbstractGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         this(modeler, "", "", converterFactories);
     }
 
-    protected RetrofitAbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter>> converterFactories) {
+    protected Retrofit2AbstractGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler);
         if (prefix == null || suffix == null || converterFactories == null) throw new NullPointerException();
         this.prefix = prefix.trim();
@@ -96,6 +97,8 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
     }
 
     protected abstract Collection<MethodFragment> generate(OperationGenerateContext context);
+
+    protected abstract Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories();
 
     protected String name(String name) {
         if (prefix.isEmpty()) return name + suffix;
@@ -214,6 +217,12 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
                 HDAnnotation head = new HDAnnotation(HEAD.class);
                 head.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
                 annotations.add(head);
+                break;
+            }
+            case "OPTIONS": {
+                HDAnnotation options = new HDAnnotation(OPTIONS.class);
+                options.getProperties().put("value", HDAnnotationConstant.valuesOf(path));
+                annotations.add(options);
                 break;
             }
             case "GET": {

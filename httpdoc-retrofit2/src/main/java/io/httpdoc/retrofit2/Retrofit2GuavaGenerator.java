@@ -1,4 +1,4 @@
-package io.httpdoc.retrofit;
+package io.httpdoc.retrofit2;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import io.httpdoc.core.*;
@@ -30,36 +30,36 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-17 17:45
  **/
-public class RetrofitGuavaGenerator extends RetrofitAbstractGenerator {
-    public RetrofitGuavaGenerator() {
+public class Retrofit2GuavaGenerator extends Retrofit2AbstractGenerator {
+    public Retrofit2GuavaGenerator() {
         super("", "ForGuava");
     }
 
-    public RetrofitGuavaGenerator(String prefix, String suffix) {
+    public Retrofit2GuavaGenerator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitGuavaGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2GuavaGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitGuavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2GuavaGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitGuavaGenerator(Modeler<ClassFragment> modeler) {
+    public Retrofit2GuavaGenerator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitGuavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public Retrofit2GuavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitGuavaGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2GuavaGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitGuavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2GuavaGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 

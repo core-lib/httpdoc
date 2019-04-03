@@ -1,4 +1,4 @@
-package io.httpdoc.retrofit;
+package io.httpdoc.retrofit2;
 
 import io.httpdoc.core.*;
 import io.httpdoc.core.exception.HttpdocRuntimeException;
@@ -30,37 +30,37 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-17 17:40
  **/
-public class RetrofitJava8Generator extends RetrofitAbstractGenerator {
+public class Retrofit2Java8Generator extends Retrofit2AbstractGenerator {
 
-    public RetrofitJava8Generator() {
+    public Retrofit2Java8Generator() {
         super("", "ForJava8");
     }
 
-    public RetrofitJava8Generator(String prefix, String suffix) {
+    public Retrofit2Java8Generator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public RetrofitJava8Generator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2Java8Generator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public RetrofitJava8Generator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2Java8Generator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public RetrofitJava8Generator(Modeler<ClassFragment> modeler) {
+    public Retrofit2Java8Generator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public RetrofitJava8Generator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public Retrofit2Java8Generator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public RetrofitJava8Generator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2Java8Generator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public RetrofitJava8Generator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2Java8Generator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 
