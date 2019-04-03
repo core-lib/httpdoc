@@ -10,7 +10,7 @@ import io.httpdoc.core.modeler.SimpleModeler;
 import java.util.*;
 
 /**
- * Jestful Client 合并生成器
+ * Retrofit Client 合并生成器
  *
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:42
