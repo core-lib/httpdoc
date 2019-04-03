@@ -169,6 +169,9 @@ JDK 1.7 +
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui-v1/index.html)
 
 ## 变更记录
+* v1.6.9
+    * 增加对 retrofit 1 的支持
+    * 修改 retrofit 2 模块的包名
 * v1.6.8
     * 可通过参数配置SDK导出形式
     * 开放更多第三方拓展能力
