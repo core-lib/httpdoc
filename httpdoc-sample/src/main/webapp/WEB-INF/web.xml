@@ -33,6 +33,10 @@
             <param-value>standard, callback, observable</param-value>
         </init-param>
         <init-param>
+            <param-name>retrofit2.exporter.generators</param-name>
+            <param-value>call</param-value>
+        </init-param>
+        <init-param>
             <param-name>jestful.exporter.generators</param-name>
             <param-value>standard, callback, observable, java8</param-value>
         </init-param>

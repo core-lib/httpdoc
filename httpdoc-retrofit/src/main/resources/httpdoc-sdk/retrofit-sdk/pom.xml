@@ -60,7 +60,6 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>3.10.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>
