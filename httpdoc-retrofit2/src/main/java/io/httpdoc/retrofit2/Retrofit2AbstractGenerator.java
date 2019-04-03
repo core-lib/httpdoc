@@ -137,6 +137,7 @@ public abstract class Retrofit2AbstractGenerator extends FragmentGenerator imple
                 break;
             }
             parameter.setName(name);
+            parameter.setComment(param.getDescription());
             Collection<HDAnnotation> annotations = annotate(param, multipart);
             parameter.getAnnotations().addAll(annotations);
             HDType type = param.getType().toType(pkg, pkgForced, supplier);
