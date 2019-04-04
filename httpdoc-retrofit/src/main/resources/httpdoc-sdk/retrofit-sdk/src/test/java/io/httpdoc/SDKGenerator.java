@@ -14,10 +14,9 @@ public class SDKGenerator {
     @Test
     public void generate() throws Exception {
         RetrofitMergedGenerator generator = new RetrofitMergedGenerator();
-//        generator.include(RetrofitStandardGenerator.class);       // default
-//        generator.include(RetrofitObservableGenerator.class);     // need retrofit2: adapter-rxjava2
-//        generator.include(RetrofitJava8Generator.class);      // need retrofit2: adapter-java8
-//        generator.include(RetrofitGuavaGenerator.class);      // need retrofit2: adapter-guava
+//        generator.include(RetrofitStandardGenerator.class);
+//        generator.include(RetrofitCallbackGenerator.class);
+//        generator.include(RetrofitObservableGenerator.class);
 
         Document document = Document.from(new URL("http://localhost:8080/httpdoc.json"), new JsonDeserializer());
         Generation generation = new Generation(document);
