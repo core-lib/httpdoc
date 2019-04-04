@@ -5,16 +5,12 @@
     <parent>
         <artifactId>httpdoc</artifactId>
         <groupId>io.httpdoc</groupId>
-        <version>v1.7.0</version>
+        <version>v1.7.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>httpdoc-jestful-server</artifactId>
     <name>httpdoc-jestful-server</name>
-
-    <properties>
-        <jestful.version>v2.3.8</jestful.version>
-    </properties>
 
     <repositories>
         <repository>
@@ -32,12 +28,12 @@
         <dependency>
             <groupId>io.httpdoc</groupId>
             <artifactId>httpdoc-web</artifactId>
-            <version>v1.7.0</version>
+            <version>v1.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-server</artifactId>
-            <version>${jestful.version}</version>
+            <version>v2.4.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
