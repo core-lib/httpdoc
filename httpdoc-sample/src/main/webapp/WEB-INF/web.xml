@@ -34,11 +34,13 @@
         </init-param>
         <init-param>
             <param-name>retrofit2.exporter.generators</param-name>
-            <param-value>call</param-value>
+            <param-value>call, guava, java8, observable</param-value>
         </init-param>
         <init-param>
             <param-name>jestful.exporter.generators</param-name>
-            <param-value>standard, callback, observable, java8</param-value>
+            <param-value>
+                standard, callback, entity, future, guava, header, java8, lambda, message, observable
+            </param-value>
         </init-param>
         <init-param>
             <param-name>objc.exporter.prefix</param-name>

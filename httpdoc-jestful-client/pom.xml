@@ -12,10 +12,6 @@
     <artifactId>httpdoc-jestful-client</artifactId>
     <name>httpdoc-jestful-client</name>
 
-    <properties>
-        <jestful.version>v2.3.8</jestful.version>
-    </properties>
-
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -38,7 +34,7 @@
         <dependency>
             <groupId>com.github.core-lib.jestful</groupId>
             <artifactId>jestful-client</artifactId>
-            <version>${jestful.version}</version>
+            <version>v2.3.8</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
