@@ -41,22 +41,14 @@
             <version>${jestful.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.core-lib.jestful</groupId>
-            <artifactId>jestful-guava</artifactId>
-            <version>${jestful.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>23.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
             <version>1.1.5</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
