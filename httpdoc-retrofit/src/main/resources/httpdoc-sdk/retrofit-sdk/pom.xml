@@ -50,7 +50,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- retrofit2 依赖 -->
+        <!-- retrofit 依赖 -->
         <dependency>
             <groupId>com.squareup.retrofit</groupId>
             <artifactId>retrofit</artifactId>
