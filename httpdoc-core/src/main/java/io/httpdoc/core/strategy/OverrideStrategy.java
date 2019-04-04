@@ -7,6 +7,7 @@ import io.httpdoc.core.appender.WriterAppender;
 import io.httpdoc.core.kit.IOKit;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 覆盖策略
@@ -28,7 +29,7 @@ public class OverrideStrategy implements Strategy {
                 File folder = file.getParentFile();
                 if (!folder.exists() && !folder.mkdirs()) throw new IOException("could not create directory : " + folder);
                 out = new FileOutputStream(file);
-                writer = new OutputStreamWriter(out);
+                writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
                 Src<Preference> src = claxx.getSrc();
                 Preference preference = claxx.getPreference();
                 WriterAppender appender = new WriterAppender(writer);
