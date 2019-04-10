@@ -24,7 +24,7 @@ public class RetrofitExporter extends BundleExporter implements Exporter, Lifecy
     private Collection<RetrofitAbstractGenerator> generators = Arrays.asList(
             new RetrofitStandardGenerator(),
             new RetrofitCallbackGenerator(),
-            new RetrofitObservableGenerator()
+            new RetrofitRxJavaGenerator()
     );
 
     @Override

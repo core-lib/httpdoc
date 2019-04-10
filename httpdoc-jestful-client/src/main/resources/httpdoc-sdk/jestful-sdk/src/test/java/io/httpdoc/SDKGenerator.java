@@ -22,7 +22,7 @@ public class SDKGenerator {
 //        generator.include(JestfulJava8Generator.class);
 //        generator.include(JestfulLambdaGenerator.class);
 //        generator.include(JestfulMessageGenerator.class);
-//        generator.include(JestfulObservableGenerator.class);
+//        generator.include(JestfulRxJavaGenerator.class);
 
         Document document = Document.from(new URL("http://localhost:8080/httpdoc.json"), new JsonDeserializer());
         Generation generation = new Generation(document);

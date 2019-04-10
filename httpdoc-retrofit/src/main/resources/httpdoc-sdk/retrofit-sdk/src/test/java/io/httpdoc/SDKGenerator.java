@@ -16,7 +16,7 @@ public class SDKGenerator {
         RetrofitMergedGenerator generator = new RetrofitMergedGenerator();
 //        generator.include(RetrofitStandardGenerator.class);
 //        generator.include(RetrofitCallbackGenerator.class);
-//        generator.include(RetrofitObservableGenerator.class);
+//        generator.include(RetrofitRxJavaGenerator.class);
 
         Document document = Document.from(new URL("http://localhost:8080/httpdoc.json"), new JsonDeserializer());
         Generation generation = new Generation(document);
