@@ -16,7 +16,7 @@ import io.httpdoc.core.type.HDType;
 import okhttp3.ResponseBody;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 
 import java.util.Collection;
@@ -97,7 +97,7 @@ public class Retrofit2RxJavaGenerator extends Retrofit2AbstractGenerator {
 
     @Override
     protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
-        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJava2CallAdapterFactory.class);
+        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJavaCallAdapterFactory.class);
     }
 
 }
