@@ -9,10 +9,11 @@ import io.httpdoc.core.type.HDType;
  * @date 2018-04-27 16:34
  **/
 public class GetterMethodFragment extends MethodFragment {
+    private static final HDType BOOLEAN_TYPE = HDType.valueOf(boolean.class);
 
     public GetterMethodFragment(HDType type, String name, String alias) {
         this.resultFragment = new ResultFragment(type);
-        this.name = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+        this.name = (BOOLEAN_TYPE.equals(type) ? "is" : "get") + name.substring(0, 1).toUpperCase() + name.substring(1);
         this.blockFragment = new BlockFragment("return " + alias + ";");
     }
 
