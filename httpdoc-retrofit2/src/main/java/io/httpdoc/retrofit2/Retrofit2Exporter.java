@@ -23,7 +23,7 @@ public class Retrofit2Exporter extends BundleExporter implements Exporter, Lifec
     private Retrofit2Modeler modeler = new Retrofit2SimpleModeler();
     private Collection<Retrofit2AbstractGenerator> generators = Arrays.asList(
             new Retrofit2CallGenerator(),
-            new Retrofit2ObservableGenerator()
+            new Retrofit2RxJava2Generator()
     );
 
     @Override

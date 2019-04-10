@@ -17,7 +17,7 @@ import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,37 +30,37 @@ import java.util.Set;
  * @author 杨昌沛 646742615@qq.com
  * @date 2018-05-14 13:39
  **/
-public class Retrofit2ObservableGenerator extends Retrofit2AbstractGenerator {
+public class Retrofit2RxJava2Generator extends Retrofit2AbstractGenerator {
 
-    public Retrofit2ObservableGenerator() {
-        super("", "ForObservable");
+    public Retrofit2RxJava2Generator() {
+        super("", "ForRxJava2");
     }
 
-    public Retrofit2ObservableGenerator(String prefix, String suffix) {
+    public Retrofit2RxJava2Generator(String prefix, String suffix) {
         super(prefix, suffix);
     }
 
-    public Retrofit2ObservableGenerator(Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2RxJava2Generator(Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(converterFactories);
     }
 
-    public Retrofit2ObservableGenerator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2RxJava2Generator(String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(prefix, suffix, converterFactories);
     }
 
-    public Retrofit2ObservableGenerator(Modeler<ClassFragment> modeler) {
+    public Retrofit2RxJava2Generator(Modeler<ClassFragment> modeler) {
         super(modeler);
     }
 
-    public Retrofit2ObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
+    public Retrofit2RxJava2Generator(Modeler<ClassFragment> modeler, String prefix, String suffix) {
         super(modeler, prefix, suffix);
     }
 
-    public Retrofit2ObservableGenerator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2RxJava2Generator(Modeler<ClassFragment> modeler, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, converterFactories);
     }
 
-    public Retrofit2ObservableGenerator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
+    public Retrofit2RxJava2Generator(Modeler<ClassFragment> modeler, String prefix, String suffix, Collection<Class<? extends Converter.Factory>> converterFactories) {
         super(modeler, prefix, suffix, converterFactories);
     }
 
@@ -97,7 +97,7 @@ public class Retrofit2ObservableGenerator extends Retrofit2AbstractGenerator {
 
     @Override
     protected Set<Class<? extends CallAdapter.Factory>> getCallAdapterFactories() {
-        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJava2CallAdapterFactory.class);
+        return Collections.<Class<? extends CallAdapter.Factory>>singleton(RxJavaCallAdapterFactory.class);
     }
 
 }
