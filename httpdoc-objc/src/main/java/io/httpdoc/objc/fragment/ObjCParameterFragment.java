@@ -54,7 +54,7 @@ public class ObjCParameterFragment implements Fragment {
     @Override
     public <T extends LineAppender<T>> void joinTo(T appender, Preference preference) throws IOException {
         boolean simple = type.isPrimitive() || type.isTypedef() || type.isBlock();
-        appender.append(name).append(":(").append(type.getName()).append(simple ? "" : " *").append(")").append(variable);
+        appender.append(variable).append(":(").append(type.getName()).append(simple ? "" : " *").append(")").append(variable);
     }
 
     public String getName() {
