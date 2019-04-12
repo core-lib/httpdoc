@@ -29,32 +29,6 @@
             </param-value>
         </init-param>
         <init-param>
-            <param-name>retrofit.exporter.generators</param-name>
-            <param-value>standard, callback, observable</param-value>
-        </init-param>
-        <init-param>
-            <param-name>retrofit2.exporter.generators</param-name>
-            <param-value>call, guava, java8, observable</param-value>
-        </init-param>
-        <init-param>
-            <param-name>jestful.exporter.generators</param-name>
-            <param-value>
-                standard, callback, entity, future, guava, header, java8, lambda, message, observable
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>objc.exporter.prefix</param-name>
-            <param-value>PG</param-value>
-        </init-param>
-        <init-param>
-            <param-name>objc.exporter.modeler</param-name>
-            <param-value>MJExtension</param-value>
-        </init-param>
-        <init-param>
-            <param-name>objc.exporter.selector-naming-strategy</param-name>
-            <param-value>underline</param-value>
-        </init-param>
-        <init-param>
             <param-name>httpdoc</param-name>
             <param-value>HttpDoc-Sample</param-value>
         </init-param>
