@@ -99,10 +99,19 @@ public class ObjCMJExtensionModeler implements ObjCModeler {
                 implementation.setName(name);
                 implementation.setCommentFragment(new ObjCCommentFragment(schema.getDescription() != null ? schema.getDescription() + "\n" + comment : comment));
 
-                ObjCSelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(properties);
+                // 递归获取所有属性
+                Map<String, Property> all = new HashMap<>();
+                Schema current = schema;
+                while (current != null) {
+                    Map<String, Property> map = current.getProperties();
+                    if (map != null) all.putAll(map);
+                    current = current.getSuperclass();
+                }
+
+                ObjCSelectorFragment objectClassInArrayMethod = getObjectClassInArrayMethodFragment(all);
                 if (objectClassInArrayMethod != null) implementation.addSelectorFragment(objectClassInArrayMethod);
 
-                ObjCSelectorFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(properties);
+                ObjCSelectorFragment replacedKeyFromPropertyNameMethod = getReplacedKeyFromPropertyNameMethodFragment(all);
                 if (replacedKeyFromPropertyNameMethod != null) implementation.addSelectorFragment(replacedKeyFromPropertyNameMethod);
 
                 return Arrays.asList(
