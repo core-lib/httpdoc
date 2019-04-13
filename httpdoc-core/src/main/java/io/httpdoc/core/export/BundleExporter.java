@@ -3,12 +3,12 @@ package io.httpdoc.core.export;
 import io.httpdoc.core.kit.IOKit;
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
+import io.loadkit.Uris;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
 
@@ -31,7 +31,7 @@ public abstract class BundleExporter implements Exporter {
             Resource resource = resources.nextElement();
             try (InputStream in = resource.getInputStream()) {
                 URL url = resource.getUrl();
-                String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
+                String path = Uris.decode(url.getPath(), Charset.defaultCharset().name());
                 int index = path.lastIndexOf(bundle);
                 String uri = path.substring(index + bundle.length());
                 File file = new File(folder, uri);
