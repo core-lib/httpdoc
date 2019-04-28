@@ -1000,6 +1000,51 @@ function HttpDoc() {
         this.display(controllers);
     };
 
+    this.isEmptyValue = function (value) {
+        if (value === null || value === undefined) {
+            return true;
+        }
+        var valueType = typeof value;
+        switch (valueType) {
+            case 'boolean':
+                return false;
+            case 'number':
+                return false;
+            case 'string':
+                return value === "";
+            case 'object':
+                if (Array.isArray(value)) {
+                    return value.length === 0;
+                } else {
+                    for (var ignored in value) {
+                        return false;
+                    }
+                    return true;
+                }
+            default:
+                return false;
+        }
+    };
+
+    this.deleteEmptyProperties = function (value) {
+        var valueType = typeof value;
+        if (valueType === 'object') {
+            if (Array.isArray(value)) {
+                for (var i in value) {
+                    this.deleteEmptyProperties(value[i]);
+                }
+            } else {
+                for (var n in value) {
+                    if (this.isEmptyValue(value[n])) {
+                        delete value[n];
+                        continue;
+                    }
+                    this.deleteEmptyProperties(value[n]);
+                }
+            }
+        }
+    };
+
     this.submit = function (btn) {
         var $btn = $(btn);
         var id = $btn.attr("x-operation");
@@ -1026,6 +1071,7 @@ function HttpDoc() {
             if (id) {
                 var editor = JSON_EDITORS["parameter-" + id];
                 value = editor.getValue();
+                httpdoc.deleteEmptyProperties(value);
             }
             // 其他参数，如 Content-Type, Accept ...
             else {
