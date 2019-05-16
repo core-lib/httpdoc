@@ -22,7 +22,7 @@ JDK 1.7 +
     <repositories>
         <repository>
             <id>jitpack.io</id>
-            <url>https://www.jitpack.io</url>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -31,7 +31,7 @@ JDK 1.7 +
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
-            <version>LATEST_VERSION</version>
+            <version>v1.7.5</version>
         </dependency>
         
         <!-- 添加JDK的tools.jar依赖用于解析源码注释，采用这种方式部署到Tomcat时需要往Tomcat的lib目录增加该tools.jar -->
@@ -131,7 +131,7 @@ JDK 1.7 +
     <dependency>
       <groupId>com.github.core-lib.httpdoc</groupId>
       <artifactId>httpdoc-spring-boot</artifactId>
-      <version>LATEST_VERSION</version>
+      <version>v1.7.5</version>
     </dependency>
     ```
     ```java
