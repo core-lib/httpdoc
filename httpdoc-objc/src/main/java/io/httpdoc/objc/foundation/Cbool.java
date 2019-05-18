@@ -12,7 +12,7 @@ public class Cbool implements ObjC {
 
     @Override
     public String getName() {
-        return "bool";
+        return "BOOL";
     }
 
     @Override
