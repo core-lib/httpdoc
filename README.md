@@ -31,7 +31,7 @@ JDK 1.7 +
         <dependency>
             <groupId>com.github.core-lib.httpdoc</groupId>
             <artifactId>httpdoc-spring-mvc</artifactId>
-            <version>v1.7.6</version>
+            <version>v1.7.7</version>
         </dependency>
         
         <!-- 添加JDK的tools.jar依赖用于解析源码注释，采用这种方式部署到Tomcat时需要往Tomcat的lib目录增加该tools.jar -->
@@ -131,7 +131,7 @@ JDK 1.7 +
     <dependency>
       <groupId>com.github.core-lib.httpdoc</groupId>
       <artifactId>httpdoc-spring-boot</artifactId>
-      <version>v1.7.6</version>
+      <version>v1.7.7</version>
     </dependency>
     ```
     ```java
@@ -169,6 +169,8 @@ JDK 1.7 +
 项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://47.106.196.10:8090/httpdoc-sample/httpdoc-ui-v1/index.html)
 
 ## 变更记录
+* v1.7.7
+    * 升级[LoadKit](https://github.com/core-lib/loadkit)依赖版本解决ANT表达式无法正确匹配**/*通配符的问题
 * v1.7.6
     * ObjC 生成时采用 BOOL 代替 bool
 * v1.7.5
