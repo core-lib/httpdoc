@@ -475,7 +475,7 @@ function HttpDoc() {
             SETTING.indent = "    ";
             SETTING.maxDepth = 5;
             SETTING.showDescription = true;
-            SETTING.defaultFormat = "normal";
+            SETTING.defaultFormat = "grid";
             SETTING.username = "";
             SETTING.password = "";
             SETTING.async = true;
@@ -1278,7 +1278,7 @@ function HttpDoc() {
         SETTING.indent = "    ";
         SETTING.maxDepth = 5;
         SETTING.showDescription = true;
-        SETTING.defaultFormat = "normal";
+        SETTING.defaultFormat = "grid";
         SETTING.username = "";
         SETTING.password = "";
         SETTING.async = true;
@@ -1318,7 +1318,7 @@ function HttpDoc() {
             SETTING.indent = indent && indent !== "" ? indent : "    ";
             SETTING.maxDepth = maxDepth && maxDepth !== "" && /\d+/.test(maxDepth) ? parseInt(maxDepth) : 5;
             SETTING.showDescription = showDescription && showDescription !== "" && /(true|false)/g.test(showDescription) ? eval(showDescription) : true;
-            SETTING.defaultFormat = defaultFormat && defaultFormat !== "" && /(normal|table|grid)/g.test(defaultFormat) ? defaultFormat : "normal";
+            SETTING.defaultFormat = defaultFormat && defaultFormat !== "" && /(normal|table|grid)/g.test(defaultFormat) ? defaultFormat : "grid";
         }
         // XMLHttpRequest 设置
         {
