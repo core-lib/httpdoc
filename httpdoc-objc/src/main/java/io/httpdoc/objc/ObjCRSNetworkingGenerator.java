@@ -177,7 +177,6 @@ public class ObjCRSNetworkingGenerator implements Generator {
         selector.setResultFragment(call);
         selector.setName(operation.getName());
         Generation generation = context.getGeneration();
-        Document document = context.getDocument();
         Controller controller = context.getController();
         List<Parameter> parameters = operation.getParameters() != null ? operation.getParameters() : Collections.<Parameter>emptyList();
         Collection<ObjCParameterFragment> fragments = generate(new ParameterGenerateContext(generation, controller, operation, parameters));
@@ -206,12 +205,15 @@ public class ObjCRSNetworkingGenerator implements Generator {
         selector.getParameterFragments().add(success);
 
         StringBuilder builder = new StringBuilder();
-        List<String> segments = Arrays.asList(document.getContext(), controller.getPath(), operation.getPath());
+        List<String> segments = Arrays.asList(controller.getPath(), operation.getPath());
         for (String segment : segments) {
             if (segment == null) continue;
             builder.append("/").append(segment);
         }
         String uri = builder.toString().replaceAll("/+", "/");
+        while (uri.startsWith("/")) {
+            uri = uri.substring(1);
+        }
         String method = operation.getMethod();
 
         selector.addSentence("RSInvocation *invocation = [RSInvocation " + method.toUpperCase() + ":@\"" + uri + "\"];", RSInvocation.class);

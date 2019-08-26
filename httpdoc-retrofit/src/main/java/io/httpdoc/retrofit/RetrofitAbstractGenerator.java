@@ -203,12 +203,15 @@ public abstract class RetrofitAbstractGenerator extends FragmentGenerator implem
         }
 
         StringBuilder builder = new StringBuilder();
-        List<String> segments = Arrays.asList(document.getContext(), controller.getPath(), operation.getPath());
+        List<String> segments = Arrays.asList(controller.getPath(), operation.getPath());
         for (String segment : segments) {
             if (segment == null) continue;
             builder.append("/").append(segment);
         }
         String path = builder.toString().replaceAll("/+", "/");
+        while (path.startsWith("/")) {
+            path = path.substring(1);
+        }
 
         switch (operation.getMethod()) {
             case "HEAD": {
