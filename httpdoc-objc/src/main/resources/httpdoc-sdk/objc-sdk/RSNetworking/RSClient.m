@@ -164,7 +164,7 @@
     NSError *serializationError = nil;
     AFHTTPRequestSerializer<AFURLRequestSerialization> * serializer = _sessionManager.requestSerializer;
     NSMutableURLRequest *request = [serializer requestWithMethod:method
-                                                       URLString:[[NSURL URLWithString:URLString relativeToURL:_sessionManager.baseURL] absoluteString]
+                                                       URLString:[[_sessionManager.baseURL URLByAppendingPathComponent:URLString] absoluteString]
                                                       parameters:parameters
                                                            error:&serializationError];
     
@@ -215,7 +215,7 @@
     NSError *serializationError = nil;
     AFHTTPRequestSerializer<AFURLRequestSerialization> * serializer = _sessionManager.requestSerializer;
     NSMutableURLRequest *request = [serializer multipartFormRequestWithMethod:method
-                                                                    URLString:[[NSURL URLWithString:URLString relativeToURL:_sessionManager.baseURL] absoluteString]
+                                                                    URLString:[[_sessionManager.baseURL URLByAppendingPathComponent:URLString] absoluteString]
                                                                    parameters:parameters
                                                     constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
                                                         for (RSPart *part in parts) {

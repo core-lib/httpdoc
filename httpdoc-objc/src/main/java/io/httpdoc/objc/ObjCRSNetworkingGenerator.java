@@ -211,9 +211,6 @@ public class ObjCRSNetworkingGenerator implements Generator {
             builder.append("/").append(segment);
         }
         String uri = builder.toString().replaceAll("/+", "/");
-        while (uri.startsWith("/")) {
-            uri = uri.substring(1);
-        }
         String method = operation.getMethod();
 
         selector.addSentence("RSInvocation *invocation = [RSInvocation " + method.toUpperCase() + ":@\"" + uri + "\"];", RSInvocation.class);
