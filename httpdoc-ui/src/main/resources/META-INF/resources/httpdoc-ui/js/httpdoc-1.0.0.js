@@ -468,10 +468,15 @@ function HttpDoc() {
         }
         // 如果本地设置没有则初始化之
         else {
-            SETTING.protocol = DOC.protocol ? DOC.protocol : location.protocol.replace(":", "");
-            SETTING.hostname = DOC.hostname ? DOC.hostname : location.hostname;
-            SETTING.port = DOC.port ? DOC.port : location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
-            SETTING.context = DOC.context ? DOC.context : "";
+            SETTING.protocol = location.protocol.replace(":", "");
+            SETTING.hostname = location.hostname;
+            SETTING.port = location.port && /\d+/g.test(location.port) ? parseInt(location.port) : 0;
+            var levels = location.pathname.split("/");
+            var context = "";
+            for (var i = 1; i < levels.length - 2; i++) {
+                context += "/" + levels[i];
+            }
+            SETTING.context = context;
             SETTING.indent = "    ";
             SETTING.maxDepth = 5;
             SETTING.showDescription = true;
