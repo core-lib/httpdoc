@@ -1,6 +1,6 @@
 # HttpDoc [![](https://www.jitpack.io/v/core-lib/httpdoc.svg)](https://www.jitpack.io/#core-lib/httpdoc)
 ##### 基于Java标准doc注释构建的代码零侵入的HTTP RESTful API在线测试，文档阅览以及SDK导出框架，支持Spring-Boot和Spring-MVC
-JSON-Editor: [httpdoc-ui](http://106.13.16.25:8080/httpdoc-sample-v1.8.1/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://106.13.16.25:8080/httpdoc-sample-v1.8.1/httpdoc-ui-v1/index.html)
+JSON-Editor: [httpdoc-ui](http://106.13.16.25/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://106.13.16.25/httpdoc-sample/httpdoc-ui-v1/index.html)
 
 ## 功能特性
 * 基础功能无需为配合HttpDoc框架而多写一句代码，甚至连doc注释都不必写，即可拥有项目的API文档和测试界面。
@@ -166,7 +166,7 @@ JDK 1.7 +
 | serializer   | 文档序列化器| JSON序列化器，所以项目中需要依赖jackson-databind |
 
 ## 在线示例
-项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://106.13.16.25:8080/httpdoc-sample-v1.8.1/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://106.13.16.25:8080/httpdoc-sample-v1.8.1/httpdoc-ui-v1/index.html)
+项目中的httpdoc-sample模块就是一个HttpDoc + SpringMVC的一个标准示例，可checkout后查看源码和编译运行查看效果，也可立即预览：JSON-Editor: [httpdoc-ui](http://106.13.16.25/httpdoc-sample/httpdoc-ui/index.html) TextArea: [httpdoc-ui-v1](http://106.13.16.25/httpdoc-sample/httpdoc-ui-v1/index.html)
 
 ## 变更记录
 * v1.8.1
