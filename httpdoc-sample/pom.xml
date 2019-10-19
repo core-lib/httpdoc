@@ -20,6 +20,13 @@
         <httpdoc.version>v1.8.1</httpdoc.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>exJava</id>
+            <url>http://106.13.16.25/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- SpringMVC 相关依赖 开始 -->
         <dependency>
@@ -67,9 +74,7 @@
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
-            <version>1.8</version>
-            <scope>system</scope>
-            <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
+            <version>1.8.0</version>
         </dependency>
         <!-- HttpDoc UI 相关依赖 结束 -->
 
