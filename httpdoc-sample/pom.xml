@@ -22,7 +22,7 @@
 
     <repositories>
         <repository>
-            <id>exJava</id>
+            <id>ExJava</id>
             <url>http://106.13.16.25/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
