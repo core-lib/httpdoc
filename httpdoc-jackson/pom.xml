@@ -13,7 +13,7 @@
     <name>httpdoc-jackson</name>
 
     <properties>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.13.2</jackson.version>
     </properties>
 
     <dependencies>
