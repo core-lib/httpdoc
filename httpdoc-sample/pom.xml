@@ -15,7 +15,7 @@
     <name>httpdoc-sample</name>
 
     <properties>
-        <spring.version>4.3.9.RELEASE</spring.version>
+        <spring.version>5.2.20.RELEASE</spring.version>
         <jackson.version>2.9.5</jackson.version>
         <httpdoc.version>v1.8.1</httpdoc.version>
     </properties>
